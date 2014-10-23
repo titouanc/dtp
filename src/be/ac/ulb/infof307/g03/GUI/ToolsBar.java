@@ -32,16 +32,11 @@ public class ToolsBar extends JPanel  {
         _toolBar.setFloatable(false); // define if toolsbar can move 
         _addButons();
 
-        //Create the text area used for output.  Request
-        //enough space for 5 rows and 30 columns.
-        textArea = new JTextArea(5, 30);
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
 
         //Lay out the main panel.
-        setPreferredSize(new Dimension(450, 130));
         add(_toolBar, BorderLayout.PAGE_START);
-        add(scrollPane, BorderLayout.CENTER);
+        
+
     }
     
     private void _addButons(){
