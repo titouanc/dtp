@@ -13,12 +13,9 @@ import javax.swing.ButtonGroup;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import java.awt.BorderLayout;
 
@@ -32,7 +29,7 @@ public class ToolsBar extends JPanel  {
     	super(new BorderLayout());
 
         //Create the toolBar.
-        _toolBar.setFloatable(false); // defini si la toolBar peut bouger 
+        _toolBar.setFloatable(false); // define if toolsbar can move 
         _addButons();
 
         //Create the text area used for output.  Request
@@ -104,34 +101,4 @@ public class ToolsBar extends JPanel  {
 
 
 
-
-    /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event dispatch thread.
-     */
-    private static void createAndShowGUI() {
-        //Create and set up the window.
-        JFrame frame = new JFrame("toolBarDemo");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        //Add content to the window.
-        frame.add(new ToolsBar());
-
-        //Display the window.
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        //Schedule a job for the event dispatch thread:
-        //creating and showing this application's GUI.
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                //Turn off metal's use of bold fonts
-	        UIManager.put("swing.boldMetal", Boolean.FALSE);
-	        createAndShowGUI();
-            }
-        });
-    }
 }
