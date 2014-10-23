@@ -8,7 +8,11 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		// Mac Os X : Menu name configuration
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
+		
+		// Call GUI
 		GUI gui = new GUI();
 	}
 
