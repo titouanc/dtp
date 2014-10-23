@@ -13,7 +13,7 @@ import com.j256.ormlite.support.ConnectionSource;
 
 public class TestPoint {
 	private ConnectionSource _db;
-	private Dao<Point, String> _dao;
+	private Dao<Point, Integer> _dao;
 
 	@Before
 	public void setUp() throws Exception {
@@ -40,7 +40,7 @@ public class TestPoint {
 		int pointId = p.getId();
 		assertNotEquals(0, pointId);
 		
-		Point q = _dao.queryForSameId(p);
+		Point q = _dao.queryForId(pointId);
 		assertEquals(p.getX(), q.getX(), 0);
 		assertEquals(p.getY(), q.getY(), 0);
 		assertEquals(p.getZ(), q.getZ(), 0);

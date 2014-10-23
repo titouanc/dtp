@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="all" name="HomePlans">
+    <property environment="env"/>
+    <property name="src" value="src/"/>
+    <property name="tests" value="test/"/>
+    <property name="build" value="bin/"/>
+
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+
+    <path id="JUnit4.libraryclasspath">
+        <pathelement location="lib/junit-4.11.jar"/>
+        <pathelement location="lib/hamcrest-core-1.3.jar"/>
+    </path>
+
+    <path id="HomePlans.classpath">
+        <pathelement location="${build}"/>
+        <path refid="JUnit4.libraryclasspath"/>
+        <fileset dir="lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="all" depends="dist,tests" description="Build final JAR and run tests" />
+
+
+    <target name="init" description="Create build structure">
+        <mkdir dir="${build}"/>
+        <mkdir dir="${junit.output.dir}"/>
+    </target>
+
+    <target depends="init" name="build" description="Build project classes">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="${src}"/>
+            <classpath refid="HomePlans.classpath"/>
+        </javac>
+    </target>
+
+    <target depends="init" name="build-tests" description="Build project tests">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="${tests}"/>
+            <classpath refid="HomePlans.classpath"/>
+        </javac>
+    </target>
+
+    <target depends="build-tests" name="tests" description="Run tests">
+        <junit printsummary="yes" haltonfailure="yes">
+            <classpath>
+                <path refid="HomePlans.classpath"/>
+            </classpath>
+            <formatter type="plain"/>
+            <batchtest fork="yes" todir="${junit.output.dir}">
+                <fileset dir="${tests}">
+                  <include name="**/*Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target depends="build" name="dist" description="Create final JAR">
+        <jar destfile="dist/g03-iteration-0.jar" basedir="${build}" excludes="Test**.class"/>
+    </target>
+
+    <!-- Clean -->
+    <target name="clean">
+      <delete dir="${build}"/>
+      <delete dir="${junit.output.dir}"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+</project>

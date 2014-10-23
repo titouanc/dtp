@@ -23,7 +23,7 @@ import com.j256.ormlite.support.ConnectionSource;
 
 public class TestLine {
 	private ConnectionSource _db;
-	private Dao<Line, String> _dao;
+	private Dao<Line, Integer> _dao;
 
 	@Before
 	public void setUp() throws Exception {
@@ -42,7 +42,7 @@ public class TestLine {
 	 * @throws SQLException
 	 */
 	@Test
-	public void test_line_length() throws SQLException {
+	public void test_line_length() {
 		Point p1 = new Point(0, 0, 0);
 		Point p2 = new Point(3, 4, 0);
 		Line l = new Line(p1, p2);
