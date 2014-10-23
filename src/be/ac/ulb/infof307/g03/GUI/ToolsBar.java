@@ -21,10 +21,18 @@ import java.awt.BorderLayout;
 
 import java.awt.Dimension;
 
+
+/**
+ * This class implement a toolbar for the HomePlan GUI
+ */
 public class ToolsBar extends JPanel  {
 	private JToolBar _toolBar = new JToolBar("HomePlan Toolbox");
     protected JTextArea textArea;
 
+    /**
+     * Constructor of the class ToolsBar.
+     * It add property to the bar: Buttons, not flotable, lay out
+     */
     public ToolsBar() {
     	super(new BorderLayout());
 
@@ -38,14 +46,19 @@ public class ToolsBar extends JPanel  {
         
 
     }
-    
+    /**
+     * The private method used for creating all the buttons 
+     */
     private void _addButons(){
         _addButtonsUndoRedo();
         _addForms();
         _addButtonsFloor();
         _addButtonsDimension();
     }
-
+    /**
+     * The private method used for creating the button undo to 
+     * go back in history and the button redo that does the opposite  
+     */
     private void _addButtonsUndoRedo() {
         JButton buttonUndo = new JButton("Undo");
         _toolBar.add(buttonUndo);
@@ -56,7 +69,11 @@ public class ToolsBar extends JPanel  {
 
         _toolBar.addSeparator();
     }
-
+    
+    /**
+     * The private method used for creating buttons for all the form
+     * possible to add on the project
+     */
     private void _addForms() {
     	JButton rectangle = new JButton("Rectangle");
     	JButton circle = new JButton("Circle");
@@ -70,6 +87,10 @@ public class ToolsBar extends JPanel  {
         _toolBar.addSeparator();
     }
 
+    /**
+     * The private method used for creating buttons to switch
+     * from one floor to another
+     */
     private void _addButtonsFloor() {
     	JButton floorMinus = new JButton("-");
     	JButton floorPlus = new JButton("+");
@@ -80,6 +101,10 @@ public class ToolsBar extends JPanel  {
         _toolBar.addSeparator();
     }
     
+    /**
+     * The private method used for creating buttons to switch
+     * between 2D and 3D. Those buttons are mutually exclusive
+     */  
     private void _addButtonsDimension() {
     	JToggleButton secondDimension = new JToggleButton("2D");
     	secondDimension.setSelected(true);
