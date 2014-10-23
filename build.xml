@@ -77,7 +77,7 @@
     </target>
 
     <target depends="build" name="dist" description="Create final JAR">
-        <jar destfile="dist/g03-iteration-0.jar" basedir="${build}" excludes="Test**.class"/>
+        <jar destfile="dist/HomePlans.jar" basedir="${build}" excludes="Test**.class"/>
     </target>
 
     <!-- Clean -->
