@@ -67,7 +67,7 @@
         </junit>
     </target>
 
-    <target name="tests-reports" description="Make tests reporting">
+    <target name="tests-reports" depends="tests" description="Make tests reporting">
         <junitreport todir="${junit.output.dir}">
             <fileset dir="${junit.output.dir}">
                 <include name="TEST-*.xml"/>
