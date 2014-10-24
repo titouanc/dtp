@@ -5,7 +5,7 @@ package be.ac.ulb.infof307.g03.GUI;
 
 /**
  * @author pierre
- *
+ * @brief GUI's toolbar
  */
 
 

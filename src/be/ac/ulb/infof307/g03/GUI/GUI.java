@@ -14,7 +14,7 @@ import javax.swing.*;
  */
 public class GUI {
 	/**
-	 * 
+	 * Creation of top level components
 	 */
 	public GUI() {
 		// Create and set up the window
@@ -25,18 +25,42 @@ public class GUI {
         MenuBar menuBar = new MenuBar();
         frame.setJMenuBar(menuBar.createMenuBar());
         
-        // Create the ToolsBar
+        // Creation du main panel
+        // http://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html
+        JPanel contentPane = new JPanel(new BorderLayout());
+        
         ToolsBar toolsBar = new ToolsBar();
-        frame.add(toolsBar, BorderLayout.NORTH);
+        contentPane.add(toolsBar, BorderLayout.NORTH);
         
-        // TODO Create blank content
+        // blank split plane 
+        String[] listShape = new String[] {"Rectangle", "Rectangle", "Rond", "Cercle"};
+        JList list = new JList(listShape);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+         
+        JScrollPane listScrollPane = new JScrollPane(list);
+        JLabel blankJlabel = new JLabel();
+        blankJlabel.setHorizontalAlignment(JLabel.CENTER);
+        JScrollPane pictureScrollPane = new JScrollPane(blankJlabel);
+        //Create a split pane with the two scroll panes in it.
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,listScrollPane, pictureScrollPane);
+        splitPane.setOneTouchExpandable(true);
+        splitPane.setDividerLocation(150);
+ 
+        //Provide minimum sizes for the two components in the split pane.
+        Dimension minimumSize = new Dimension(100, 50);
+        listScrollPane.setMinimumSize(minimumSize);
+        pictureScrollPane.setMinimumSize(minimumSize);
+ 
+        //Provide a preferred size for the split pane.
+        splitPane.setPreferredSize(new Dimension(800, 400));
         
-        //JTextArea textArea = new JTextArea(5, 30);
-        //textArea.setEditable(false);
-        //JScrollPane scrollPane = new JScrollPane(textArea);
+
         
-        frame.setPreferredSize(new Dimension(900, 600));
-        //frame.add(scrollPane, BorderLayout.SOUTH);
+        //frame.setPreferredSize(new Dimension(900, 600));
+        contentPane.add(splitPane, BorderLayout.SOUTH);
+        
+        // ajoute le panel principal au frame
+        frame.setContentPane(contentPane);
         
         // Display the window.
         frame.pack();
