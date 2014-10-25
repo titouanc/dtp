@@ -1,0 +1,5 @@
+iteration*/substories/*.tex
+iteration*/pv/*.tex
+iteration*/main.tex
+*.aux
+*.log
