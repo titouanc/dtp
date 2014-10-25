@@ -1,5 +1,5 @@
 main.tex: substories
-	echo "\\\\chapter{Itération 1} \\\\section{Histoires utilisateur}" > $@
+	/bin/echo "\\chapter{Itération 1}\\section{Histoires utilisateur}" > $@
 	cat substories/*.tex >> $@
 
 .PHONY: substories clean
