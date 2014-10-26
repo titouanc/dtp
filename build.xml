@@ -4,13 +4,12 @@
     <property name="src" value="src/"/>
     <property name="tests" value="test/"/>
     <property name="build" value="bin/"/>
+    <property name="documentation" value="doc/"/>
 
     <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
-
-
 
     <path id="JUnit4.libraryclasspath">
         <pathelement location="lib/junit-4.11.jar"/>
@@ -25,12 +24,7 @@
         </fileset>
     </path>
 
-
-
-
     <target name="all" depends="dist,tests-reports" description="Build final JAR and run tests" />
-
-
 
     <target name="init" description="Create build structure">
         <mkdir dir="${build}"/>
@@ -77,7 +71,28 @@
     </target>
 
     <target depends="build" name="dist" description="Create final JAR">
-        <jar destfile="dist/HomePlans.jar" basedir="${build}" excludes="Test**.class"/>
+        <jar destfile="dist/HomePlans.jar" basedir="${build}" excludes="Test**.class">
+            <manifest>
+                <attribute name="Main-class" value="be.ac.ulb.infof307.g03.Main"/>
+                <attribute name="Class-path" value="*.jar"/>
+            </manifest>
+            <fileset dir="lib/" includes="**/*.jar"/>
+        </jar>
+    </target>
+
+    <target name="doc">
+        <javadoc destdir="${documentation}" author="true" version="true" use="true" windowtitle="HomePlans">
+
+            <fileset dir="${src}" defaultexcludes="yes">
+                <exclude name="**/*Test*.java"/>
+            </fileset>
+
+            <doctitle><![CDATA[<h1>HomePlan's documentation</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &#169; 2014 Group 03. All Rights Reserved.</i>]]></bottom>
+            <tag name="todo" scope="all" description="To do:"/>
+            <group title="Models" packages="be.ac.ulb.infof307.g03.models.*"/>
+            <group title="Main" packages="be.ac.ulb.infof307.g03.*"/>
+        </javadoc>
     </target>
 
     <!-- Clean -->
