@@ -1,6 +1,4 @@
-**Durée estimée: 10h**
-**Difficulté estimée: 2/3**
-**Assigné à: Pierre**
+**Durée estimée: 10h** | **Difficulté estimée: 2/3** | **Assigné à: Pierre**
 
 Il faut intégrer jmonkey qui s'occupe de la 3d dans swing qui s'occupe de l'interface graphique
 

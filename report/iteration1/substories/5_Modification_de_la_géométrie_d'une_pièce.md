@@ -1,6 +1,4 @@
-**Durée estimée: 40h**
-**Difficulté estimée: 3/3**
-**Assigné à: Walter, Titouan, Bruno, Florentin**
+**Durée estimée: 40h** | **Difficulté estimée: 3/3** | **Assigné à: Walter, Titouan, Bruno, Florentin**
 
 L'utilisateur a accès à une vue d'édition lui permettant de rajouter ou éditer des murs et des étages. 
 

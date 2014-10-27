@@ -1,6 +1,4 @@
-**Durée estimée: 20h**
-**Difficulté estimée: 2/3**
-**Assigné à: Titouan**
+**Durée estimée: 20h** | **Difficulté estimée: 2/3** | **Assigné à: Titouan**
 
 Les projets d'architecture doivent être enregistrables dans des fichiers, et il
 doit être possible de charger un projet depuis un fichier. Différents éléments
