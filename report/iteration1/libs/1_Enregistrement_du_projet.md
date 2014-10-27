@@ -10,3 +10,5 @@ productivité en permettant d'éditer les fichiers de projets dans le
 langage préféré de chaque dev
 * ORM facilite l'accès aux données (Design pattern DataMapper 
 http://martinfowler.com/eaaCatalog/dataMapper.html)
+* ORMLite permet d'utiliser plusieurs types de bases de données différentes à
+travers JDBC. Possibilité donc d'utiliser autre chose qu'SQLite si nécessaire.
