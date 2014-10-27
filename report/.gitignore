@@ -3,3 +3,4 @@ iteration*/pv/*.tex
 iteration*/main.tex
 *.aux
 *.log
+*.toc
