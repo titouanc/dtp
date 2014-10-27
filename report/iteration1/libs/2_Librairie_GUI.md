@@ -1,13 +1,10 @@
-### Requirements de l'interface graphique
-
+Les requirements de l'interface graphique sont les suivants
 
 * Afficher une fenêtre esthétique 
 * Mettre des menus / boutons
 * Incorporer une vue 2D/3D
 * Compatible avec la lib 3D choisie
 
-
-### Choix possibles 
 
 Les différentes possibilités de GUI sont :
 
@@ -18,77 +15,64 @@ Les différentes possibilités de GUI sont :
 * Apache Pivot
 * Qt Jambi
 
-### Choix retenu
+### Swing
+Nous avons retenu **Swing**.
 
-#### Swing
-
-Customisable : Oui
-Léger : Non
-Cross-Platform : Oui
-Documentation : Complet
-
-Informations :
-
+* Customisable : Oui
+* Léger : Non
+* Cross-Platform : Oui
+* Documentation : Complet
 * Faiblement couplé
 * Suit le design pattern MVC
-* Compatible avec jmonkey engine
+* Compatible avec jMonkeyEngine
 
-Toutes ces raison font qu'on utilisera Swing comme librairie pour 
+Toutes ces raisons font qu'on utilisera Swing comme librairie pour 
 construire notre interface graphique.
+Voici un aperçu des autres libraires éligibles, et les raisons pour 
+lesquelles elles ont été refusées.
 
-### Choix refusé
+### AWT
 
-#### AWT
-
-Customisable : Non
-Léger : Oui
-Cross-Platform : Oui
-Documentation : Complet
-
-Informations :
-
+* Customisable : Non
+* Léger : Oui
+* Cross-Platform : Oui
+* Documentation : Complet
 * AWT utilise les objets du système
 * Swing hérite des objets de AWT
 
 On n'utilisera pas AWT car il n'est pas assez customisable.
 
-#### SWT
+### SWT
 
-Customisable : Non
-Léger : Oui
-Cross-Platform : Oui
-Documentation : Très complet
+* Customisable : Non
+* Léger : Oui
+* Cross-Platform : Oui
+* Documentation : Très complet
+* Développé par l'équipe d'Eclipse
+* Se place un peu comme premier concurrent de Swing
 
-Informations :
+On n'utilisera pas SWT car il n'est pas assez customisable.
 
-- Développé par l'équipe d'Eclipse
-- Se place un peu comme premier concurrent de Swing
+### Java FX
 
-On n'utilisera pas AWT car il n'est pas assez customisable.
-
-#### Java FX
-
-On utilisera pas Java FX car ils se sont spécialiser dans les 
+On n'utilisera pas Java FX car ils se sont spécialisés dans les 
 interfaces d'application web et ce n'est pas forcément utile ici.
 
-#### Apache Pivot
+### Apache Pivot
 
-On utilisera pas Apache Pivot pour les mêmes raisons que Java FX.
+On n'utilisera pas Apache Pivot pour les mêmes raisons que Java FX.
 
-#### Qt Jambi
+### Qt Jambi
 
-Customisable : Oui
-Léger : Non
-Cross-Platform : Oui mais limité à QT4.6
-Documentation : Mauvaise
+* Customisable : Oui
+* Léger : Non
+* Cross-Platform : Oui mais limité à QT4.6
+* Documentation : Mauvaise
+* Intégré à Eclipse
+* Assez complet
+* Accès a une database sql incluse
 
-Avantage : 
-
-- Intégré a éclipse
-- Assez complet
-- acces a une database sql incluse
-
-Inconvenient :
+Inconvénients :
 
 - Pas de doc sur le site QtJambi
 - Compliqué pour l'intégration de la 3D . Il existe Qt3D mais on s'est 
