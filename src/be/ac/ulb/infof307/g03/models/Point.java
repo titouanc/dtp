@@ -4,7 +4,6 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
-
 import javax.vecmath.Vector3f;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -15,7 +14,7 @@ import com.j256.ormlite.support.ConnectionSource;
  * @author Titouan Christophe
  * @brief Primitive saveable object for 3D building
  */
-@DatabaseTable()
+@DatabaseTable
 public class Point {
 	/**
 	 * @brief Point id
@@ -26,19 +25,19 @@ public class Point {
 	/**
 	 * @brief first coordinate
 	 */
-	@DatabaseField()
+	@DatabaseField(uniqueCombo = true)
 	private double _x = 0;
 	
 	/**
 	 * @brief second coordinate
 	 */
-	@DatabaseField()
+	@DatabaseField(uniqueCombo = true)
 	private double _y = 0;
 	
 	/**
 	 * @brief third coordinate
 	 */
-	@DatabaseField()
+	@DatabaseField(uniqueCombo = true)
 	private double _z = 0;
 	
 	public static void migrate(ConnectionSource database) throws SQLException {
@@ -86,5 +85,16 @@ public class Point {
 
 	void setZ(double z) {
 		this._z = z;
+	}
+	
+	public String toString(){
+		return String.format("(%f,%f,%f)", _x, _y, _z);
+	}
+	
+	public Boolean equals(Point other){
+		Boolean by_id = true;
+		if (getId() != 0 && other.getId() != 0)
+			by_id = other.getId() == getId();
+		return by_id && other.getX() == getX() && other.getY() == getY() && other.getZ() == getZ();
 	}
 }
