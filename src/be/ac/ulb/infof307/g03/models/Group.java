@@ -25,4 +25,10 @@ public class Group extends Shape {
 	void addShape(Shape shape) {
 		_shapes.add(shape.getRecord());
 	}
+
+	@Override
+	public Boolean equalsByContent(Shape other) {
+		return true;
+		// TODO implement real comparison
+	}
 }
