@@ -56,11 +56,11 @@ public class Geometry {
 	
 	/**
 	 * Return all points constituing given ShapeRecord
-	 * @param shapeRec The unique ShapeRecord for the set of points
+	 * @param shapeId The Shape unique ID
 	 * @return All points for this Shape
 	 */
-	public List<Point> getPointsForShape(ShapeRecord shapeRec){
-		Shape shape = getShape(shapeRec.getId());
+	public List<Point> getPointsForShape(int shapeId){
+		Shape shape = getShape(shapeId);
 		
 		if (shape.getClass() == Line.class){
 			Line l = (Line) shape;

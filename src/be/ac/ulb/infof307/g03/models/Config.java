@@ -41,4 +41,8 @@ public class Config {
 	public String getValue(){
 		return _value;
 	}
+
+	public void setValue(String value) {
+		_value = value;
+	}
 }

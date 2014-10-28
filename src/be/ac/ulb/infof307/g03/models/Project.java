@@ -23,21 +23,66 @@ public class Project {
 
 	}
 
+	/**
+	 * Create a new project
+	 * @param filename The destination filename of the new project
+	 * @throws SQLException
+	 */
 	public void create(String filename) throws SQLException {
 		load(filename);
 		Config.migrate(_db);
 		Geometry.migrate(_db);
 	}
 
+	/**
+	 * Open an existing project.
+	 * @param filename The location of the project's database
+	 * @throws SQLException
+	 */
 	public void load(String filename) throws SQLException {
 		_db = new JdbcConnectionSource("jdbc:sqlite:" + filename);
 		_config = DaoManager.createDao(_db, Config.class);
 	}
 
-	public String getName() throws SQLException {
-		return _config.queryForId("name").getValue();
+	/**
+	 * Retrieve a configuration value from the project.
+	 * If the configuration key is not found, create an empty one.
+	 * @param name The configuration key
+	 * @return The configuration value
+	 * @throws SQLException 
+	 */
+	public String config(String name) throws SQLException{
+		Config entry;
+		try {
+			entry = _config.queryForId(name);
+		} catch (SQLException err){
+			entry = new Config(name, "");
+			_config.create(entry);
+		}
+		return entry.getValue();
 	}
-
+	
+	/**
+	 * Create a new configuration key,value pair in the project.
+	 * If the configuration key already exists, only update its value.
+	 * @param name The configuration key
+	 * @param value The configuration value
+	 * @return The new value for this configuration key
+	 * @throws SQLException
+	 */
+	public String config(String name, String value) throws SQLException{
+		Config entry;
+		try {
+			entry = _config.queryForId(name);
+			entry.setValue(value);
+			_config.update(entry);
+		} catch (SQLException err){
+			entry = new Config(name, value);
+			_config.create(entry);
+		}
+		return entry.getValue();
+	}
+	
 	public Geometry getGeometry() throws SQLException {
 		return new Geometry(_db);
 	}
