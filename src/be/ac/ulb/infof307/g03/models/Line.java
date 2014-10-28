@@ -40,9 +40,11 @@ public class Line extends Shape {
 	}
 
 	public Line() {
+		super();
 	}
 
 	public Line(Point p1, Point p2) {
+		super();
 		_p1 = p1;
 		_p2 = p2;
 	}
