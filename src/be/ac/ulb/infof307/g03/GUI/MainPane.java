@@ -21,10 +21,11 @@ import com.jme3.system.JmeCanvasContext;
  * @author pierre
  *
  */
-public class MainPane extends JPanel {
+public class MainPane extends JPanel{
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
 	private JPanel _thirdDimensionPane;
+	private Canvas3D _canvas;
 	
 	public MainPane(){
 		super(new BorderLayout());
@@ -43,15 +44,14 @@ public class MainPane extends JPanel {
         AppSettings settings = new AppSettings(true);
         settings.setWidth(640);
         settings.setHeight(480);
-        Canvas3D canvas = new Canvas3D();
-        canvas.setSettings(settings);
-        canvas.createCanvas();
-        JmeCanvasContext context = (JmeCanvasContext) canvas.getContext();
-        context.setSystemListener(canvas);
+        Canvas3D _canvas = new Canvas3D();
+        _canvas.setSettings(settings);
+        _canvas.createCanvas();
+        JmeCanvasContext context = (JmeCanvasContext) _canvas.getContext();
+        context.setSystemListener(_canvas);
         Dimension dimension = new Dimension(640, 480);
         context.getCanvas().setPreferredSize(dimension);
-        canvas.startCanvas();
-        
+        _canvas.startCanvas();
         
         _thirdDimensionPane = new JPanel();
         _thirdDimensionPane.setMinimumSize(minimumSize);
