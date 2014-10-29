@@ -42,7 +42,7 @@ public class MainPane extends JPanel{
         AppSettings settings = new AppSettings(true);
         settings.setWidth(640);
         settings.setHeight(480);
-        Canvas3D _canvas = new Canvas3D();
+        _canvas = new Canvas3D();
         _canvas.setSettings(settings);
         _canvas.createCanvas();
         JmeCanvasContext context = (JmeCanvasContext) _canvas.getContext();
