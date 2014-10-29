@@ -21,6 +21,10 @@ public class MainPane extends JPanel {
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
 	private JScrollPane _thirdDimensionPane;
+    /**
+     * The constructor of the main pane. The main pane is a splipane in two column :
+     * the list of the group drawn and jmonkey integration.
+     */
 	public MainPane(){
 		super(new BorderLayout());
 		Dimension minimumSize = new Dimension(100, 50);
