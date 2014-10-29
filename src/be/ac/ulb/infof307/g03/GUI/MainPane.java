@@ -37,9 +37,7 @@ public class MainPane extends JPanel{
         
         _listScrollPane = new JScrollPane(list);
         _listScrollPane.setMinimumSize(minimumSize);
-        
-        JLabel blankJlabel = new JLabel();
-        blankJlabel.setHorizontalAlignment(JLabel.CENTER);
+
         
         AppSettings settings = new AppSettings(true);
         settings.setWidth(640);
