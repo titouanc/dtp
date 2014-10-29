@@ -18,6 +18,8 @@ import javax.swing.ListSelectionModel;
  *
  */
 public class MainPane extends JPanel {
+	private static final long serialVersionUID = 1L;
+	
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
 	private JScrollPane _thirdDimensionPane;
