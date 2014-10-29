@@ -1,5 +1,8 @@
 /**
+ * @author julianschembri
+ * based on Oracle examples
  * 
+ * This class implement the menu bar for the HomePlan GUI
  */
 package be.ac.ulb.infof307.g03.GUI;
 
@@ -10,15 +13,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-/**
- * @author julianschembri
- * based on Oracle example
- */
+
 public class MenuBar extends JMenuBar implements ActionListener {
-	/**
-	 * 
-	 */
-	
+
 	private static final long serialVersionUID = 1L;
 	
 	static private final String _NEW  = "new" ;
@@ -28,6 +25,10 @@ public class MenuBar extends JMenuBar implements ActionListener {
 	static private final String _UNDO = "undo";
 	static private final String _REDO = "redo";
 	
+	/**
+	 * Constructor of the class MenuBar
+	 * Build all the menu and the menu items
+	 */
     public MenuBar() {
     	super();
     	
@@ -69,24 +70,35 @@ public class MenuBar extends JMenuBar implements ActionListener {
         this.add(menu);
     }
     
-	@Override
+    /**
+     * Inherited method from interface ActionListener
+     */ 
+    @Override
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if (cmd.equals(_NEW)) {
-			actionNew();
+			_clickedNew();
 		} else if (cmd.equals(_OPEN)) {
-			actionOpen();
+			_clickedOpen();
 		} else if (cmd.equals(_SAVE)) {
-			actionSave();
+			_clickedSave();
 		} else if (cmd.equals(_QUIT)) {
-			actionQuit();
+			_clickedQuit();
 		} else if (cmd.equals(_UNDO)) {
-			actionUndo();
+			_clickedUndo();
 		} else if (cmd.equals(_REDO)) {
-			actionRedo();
+			_clickedRedo();
 		}
 	}    
 	
+	/**
+	 * Create a menu item binded with the relative handler
+	 * @param label A String used as menu name
+	 * @param keyEvent An int used as key number 
+	 * @param cmd A String used as id
+	 * @param descr A String used to describe the behavior of the menu item
+	 * @return A JMenuItem instance
+	 */
 	private JMenuItem createMenuItem(String label, int keyEvent, String cmd, String descr ) {
     	JMenuItem menuItem;
     	menuItem = new JMenuItem(label, keyEvent);
@@ -97,22 +109,40 @@ public class MenuBar extends JMenuBar implements ActionListener {
     	return menuItem;
     }
 	
-	private void actionNew() {
+	/**
+	 * Handler launched when menu item "New" is clicked
+	 */
+	private void _clickedNew() {
 		System.out.println("new");
 	}
-	private void actionOpen() {
+	/**
+	 * Handler launched when menu item "Open" is clicked
+	 */
+	private void _clickedOpen() {
 		System.out.println("open");
 	}
-	private void actionSave() {
+	/**
+	 * Handler launched when menu item "Save" clicked
+	 */
+	private void _clickedSave() {
 		System.out.println("save");
 	}
-	private void actionQuit() {
+	/**
+	 * Handler launched when menu item "Quit" clicked
+	 */
+	private void _clickedQuit() {
 		System.exit(0);
 	}
-	private void actionUndo() {
+	/**
+	 * Handler launched when menu item "Undo" clicked
+	 */
+	private void _clickedUndo() {
 		System.out.println("undo");
 	}
-	private void actionRedo() {
+	/**
+	 * Handler launched when menu item "Redo" clicked
+	 */
+	private void _clickedRedo() {
 		System.out.println("redo");
 	}
 
