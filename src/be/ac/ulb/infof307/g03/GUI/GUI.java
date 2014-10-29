@@ -22,8 +22,7 @@ public class GUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Create the menuBar
-        MenuBar menuBar = new MenuBar();
-        frame.setJMenuBar(menuBar.createMenuBar());
+        frame.setJMenuBar(new MenuBar());
         
         // Creation du main panel
         // http://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html

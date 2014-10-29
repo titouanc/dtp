@@ -3,7 +3,6 @@
  */
 package be.ac.ulb.infof307.g03.GUI;
 
-import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.JMenu;
@@ -15,80 +14,106 @@ import javax.swing.KeyStroke;
  * @author julianschembri
  * based on Oracle example
  */
-public class MenuBar {
- 
-    public JMenuBar createMenuBar() {
-        JMenuBar menuBar;
+public class MenuBar extends JMenuBar implements ActionListener {
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = 1L;
+	
+	static private final String _NEW  = "new" ;
+	static private final String _OPEN = "open";
+	static private final String _SAVE = "save";
+	static private final String _QUIT = "quit";
+	static private final String _UNDO = "undo";
+	static private final String _REDO = "redo";
+	
+    public MenuBar() {
+    	super();
+    	
         JMenu menu;
-        JMenuItem menuItem;
-
-        // Create the menu bar
-        menuBar = new JMenuBar();
- 
         
         // Build the File menu
         menu = new JMenu("File");
-        menu.setMnemonic(KeyEvent.VK_A);
         menu.getAccessibleContext().setAccessibleDescription("Manage the file.");
-        menuBar.add(menu);
+        this.add(menu);
         
         // Build New action
-        menuItem = new JMenuItem("New",KeyEvent.VK_T);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
-        menuItem.getAccessibleContext().setAccessibleDescription("Create a new project.");
-        menu.add(menuItem);
-        
+        menu.add(createMenuItem("New", KeyEvent.VK_N, _NEW, "Create a new project."));
         // Build Open action
-        menuItem = new JMenuItem("Open",KeyEvent.VK_T);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK));
-        menuItem.getAccessibleContext().setAccessibleDescription("Open a saved project.");
-        menu.add(menuItem);
-        
+        menu.add(createMenuItem("Open", KeyEvent.VK_O, _OPEN, "Open a saved project."));
         // Separator
         menu.addSeparator();
-        
         // Build Save action
-        menuItem = new JMenuItem("Save",KeyEvent.VK_T);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
-        menuItem.getAccessibleContext().setAccessibleDescription("Save the current project.");
-        menu.add(menuItem);
-        
+        menu.add(createMenuItem("Save", KeyEvent.VK_S, _SAVE, "Save the current project."));
         // Separator
         menu.addSeparator();
-        
         // Build Quit action
-        menuItem = new JMenuItem("Quit",KeyEvent.VK_T);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.ALT_MASK));
-        menuItem.getAccessibleContext().setAccessibleDescription("Quit HomePlans application.");
-        menu.add(menuItem);
+        menu.add(createMenuItem("Quit", KeyEvent.VK_Q, _QUIT, "Quit HomePlans application."));
         
         
         // Build the Edit menu
         menu = new JMenu("Edit");
-        menu.setMnemonic(KeyEvent.VK_A);
         menu.getAccessibleContext().setAccessibleDescription("Edit the project.");
-        menuBar.add(menu);
+        this.add(menu);
         
         // Build Undo action
-        menuItem = new JMenuItem("Undo",KeyEvent.VK_T);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.ALT_MASK));
-        menuItem.getAccessibleContext().setAccessibleDescription("Undo last action.");
-        menu.add(menuItem);
-        
+        menu.add(createMenuItem("Undo", KeyEvent.VK_Z, _UNDO, "Undo last action."));
         // Build Redo action
-        menuItem = new JMenuItem("Redo",KeyEvent.VK_T);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionEvent.ALT_MASK));
-        menuItem.getAccessibleContext().setAccessibleDescription("Redo last undo action.");
-        menu.add(menuItem);
+        menu.add(createMenuItem("Redo", KeyEvent.VK_Y, _REDO, "Redo last undo action."));
         
         
         // Build the Help menu
         menu = new JMenu("Help");
-        menu.setMnemonic(KeyEvent.VK_A);
         menu.getAccessibleContext().setAccessibleDescription("Help.");
-        menuBar.add(menu);
- 
-        return menuBar;
+        this.add(menu);
     }
+    
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String cmd = e.getActionCommand();
+		if (cmd.equals(_NEW)) {
+			actionNew();
+		} else if (cmd.equals(_OPEN)) {
+			actionOpen();
+		} else if (cmd.equals(_SAVE)) {
+			actionSave();
+		} else if (cmd.equals(_QUIT)) {
+			actionQuit();
+		} else if (cmd.equals(_UNDO)) {
+			actionUndo();
+		} else if (cmd.equals(_REDO)) {
+			actionRedo();
+		}
+	}    
+	
+	private JMenuItem createMenuItem(String label, int keyEvent, String cmd, String descr ) {
+    	JMenuItem menuItem;
+    	menuItem = new JMenuItem(label, keyEvent);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(keyEvent, ActionEvent.CTRL_MASK));
+        menuItem.getAccessibleContext().setAccessibleDescription(descr);
+        menuItem.addActionListener(this);
+        menuItem.setActionCommand(cmd);
+    	return menuItem;
+    }
+	
+	private void actionNew() {
+		System.out.println("new");
+	}
+	private void actionOpen() {
+		System.out.println("open");
+	}
+	private void actionSave() {
+		System.out.println("save");
+	}
+	private void actionQuit() {
+		System.exit(0);
+	}
+	private void actionUndo() {
+		System.out.println("undo");
+	}
+	private void actionRedo() {
+		System.out.println("redo");
+	}
 
 }
