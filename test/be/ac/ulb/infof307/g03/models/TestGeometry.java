@@ -27,7 +27,7 @@ public class TestGeometry {
 	}
 
 	/**
-	 * @brief Geometry on empty database: could not get any shape
+	 * Geometry on empty database: could not get any shape
 	 * @throws SQLException
 	 */
 	@Test
@@ -37,9 +37,9 @@ public class TestGeometry {
 	}
 	
 	/**
-	 * @brief Insert a line in the database, 
-	 *        assert that getting a Shape with the line unique ID is equals to 
-	 *        the initial object, either by ID or content.
+	 * Insert a line in the database, 
+	 * assert that getting a Shape with the line unique ID is equals to 
+	 * the initial object, either by ID or content.
 	 * @throws SQLException
 	 */
 	@Test
@@ -56,9 +56,9 @@ public class TestGeometry {
 	}
 
 	/**
-	 * @brief Insert a line in the database, 
-	 *        assert that getting points associated to its unique ID are the original ones
-	 *        the assert that the type of Shape associated with this unique ID is a Line
+	 * Insert a line in the database, 
+	 * assert that getting points associated to its unique ID are the original ones
+	 * the assert that the type of Shape associated with this unique ID is a Line
 	 * @throws SQLException
 	 */
 	@Test
@@ -78,8 +78,8 @@ public class TestGeometry {
 	}
 	
 	/**
-	 * @brief Insert 2 lines in database, with a common point.
-	 *        Assert both could be retrieved and points are correctly ordered.
+	 * Insert 2 lines in database, with a common point.
+	 * Assert both could be retrieved and points are correctly ordered.
 	 * @throws SQLException
 	 */
 	@Test
@@ -101,5 +101,28 @@ public class TestGeometry {
 		points = geo.getPointsForShape(l2.getShapeId());
 		assertTrue(p2.equals(points.get(0)));
 		assertTrue(p3.equals(points.get(1)));
+	}
+	
+	@Test
+	public void test_group_points() throws SQLException {
+		Geometry geo = new Geometry(_db);
+		Point p1 = new Point(0, 0, 0);
+		Point p2 = new Point(3, 4, 0);
+		Point p3 = new Point(0, -4, -3);
+		Line l1 = new Line(p1, p2);
+		Line l2 = new Line(p2, p3);
+		
+		Group g = geo.createGroup();
+		g.addShape(l1);
+		g.addShape(l2);
+		geo.addLine(l1);
+		geo.addLine(l2);
+		geo.update(g);
+		
+		List<Point> points = geo.getPointsForShape(g.getShapeId());
+		assertEquals(3, points.size());
+		assertTrue(p1.equals(points.get(0)));
+		assertTrue(p2.equals(points.get(1)));
+		assertTrue(p3.equals(points.get(2)));
 	}
 }

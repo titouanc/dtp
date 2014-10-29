@@ -52,10 +52,8 @@ public class Project {
 	 * @throws SQLException 
 	 */
 	public String config(String name) throws SQLException{
-		Config entry;
-		try {
-			entry = _config.queryForId(name);
-		} catch (SQLException err){
+		Config entry = _config.queryForId(name);
+		if (entry == null){
 			entry = new Config(name, "");
 			_config.create(entry);
 		}
@@ -71,12 +69,11 @@ public class Project {
 	 * @throws SQLException
 	 */
 	public String config(String name, String value) throws SQLException{
-		Config entry;
-		try {
-			entry = _config.queryForId(name);
+		Config entry = _config.queryForId(name);
+		if (entry != null){
 			entry.setValue(value);
 			_config.update(entry);
-		} catch (SQLException err){
+		} else {
 			entry = new Config(name, value);
 			_config.create(entry);
 		}

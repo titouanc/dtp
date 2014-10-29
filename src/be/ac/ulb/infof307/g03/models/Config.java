@@ -34,10 +34,6 @@ public class Config {
 		_value = value;
 	}
 	
-	public String getKey(){
-		return _key;
-	}
-	
 	public String getValue(){
 		return _value;
 	}
