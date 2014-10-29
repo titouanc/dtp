@@ -12,21 +12,24 @@ import javax.swing.*;
  * @author julianschembri, pierre
  *
  */
-public class GUI {
+public class GUI extends JFrame {
 	/**
 	 * Constructor of GUI.
 	 * It put every frame needed at the right place on the main frame
 	 * Menu, toolsbar and the main workspace (splitpane)
 	 */
+	
+	private static final long serialVersionUID = 1L;
+	
 	public GUI() {
 		// Create and set up the window
-		JFrame frame = new JFrame("HomePlans");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		super("HomePlans");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Create the menuBar
-        frame.setJMenuBar(new MenuBar());
+        this.setJMenuBar(new MenuBar());
         
-        // Creation du main panel
+        // Create the main panel
         // http://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html
         JPanel contentPane = new JPanel(new BorderLayout());
         
@@ -39,11 +42,11 @@ public class GUI {
         MainPane workspace = new MainPane();
         contentPane.add(workspace, BorderLayout.SOUTH);
         
-        // ajoute le panel principal au frame
-        frame.setContentPane(contentPane);
+        // add main panel to the frame
+        this.setContentPane(contentPane);
         
-        // Display the window.
-        frame.pack();
-        frame.setVisible(true);
+        // Display the window
+        this.pack();
+        this.setVisible(true);
 	}
 }
