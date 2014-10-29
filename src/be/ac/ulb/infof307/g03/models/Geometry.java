@@ -54,6 +54,12 @@ public class Geometry {
 		return newLine;
 	}
 	
+	public Group createGroup() throws SQLException {
+		Group res = new Group();
+		_groups.create(res);
+		return _groups.queryForSameId(res);
+	}
+	
 	/**
 	 * Return all points constituing given ShapeRecord
 	 * @param shapeId The Shape unique ID
@@ -68,7 +74,30 @@ public class Geometry {
 		}
 		
 		List<Point> res = new LinkedList<Point>();
+		if (shape.getClass() == Group.class){
+			Group g = (Group) shape;
+			for (ShapeRecord subshape : g.getShapes()){
+				int start_at = 0;
+				List<Point> subpoints = getPointsForShape(subshape.getId());
+				while (res.size() > 0 && start_at < subpoints.size() && subpoints.get(start_at).equals(res.get(res.size()-1)))
+					start_at ++;
+				for (int i=start_at; i < subpoints.size(); i++)
+					res.add(subpoints.get(i));
+			}
+		}
 		return res;
+	}
+	
+	/**
+	 * Update database record for a Shape
+	 * @param shape The Shape to update in database
+	 * @throws SQLException
+	 */
+	public void update(Shape shape) throws SQLException{
+		if (shape.getClass() == Line.class)
+			_lines.update((Line) shape);
+		else if (shape.getClass() == Group.class)
+			_groups.update((Group) shape);
 	}
 	
 	/**

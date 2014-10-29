@@ -32,4 +32,8 @@ public class ShapeRecord {
 	public static void migrate(ConnectionSource database) throws SQLException {
 		TableUtils.createTableIfNotExists(database, ShapeRecord.class);
 	}
+
+	public void setGroup(Group group) {
+		_group = group;
+	}
 }

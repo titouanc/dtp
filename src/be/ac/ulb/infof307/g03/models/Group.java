@@ -26,10 +26,12 @@ public class Group extends Shape {
 
 	public void addShape(Shape shape) {
 		ShapeRecord record = shape.getRecord();
-		System.out.println(String.format("Add shape %d (UID %d)", shape.getId(), shape.getShapeId()));
-		System.out.println(record);
-		System.out.println(_shapes);
-		_shapes.add(record);
+		System.out.println(String.format("===== ADD SHAPE %d (UID %d)", shape.getId(), shape.getShapeId()));
+		if (record.getId() == 0)
+			_shapes.add(record);
+		else
+			record.setGroup(this);
+		System.out.println(String.format("=== ADDED SHAPE %d (UID %d)", shape.getId(), shape.getShapeId()));
 	}
 	
 	public Collection<ShapeRecord> getShapes(){

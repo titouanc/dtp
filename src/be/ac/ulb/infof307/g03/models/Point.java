@@ -4,7 +4,9 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
+
 import javax.vecmath.Vector3f;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableUtils;
