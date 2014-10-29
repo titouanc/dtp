@@ -29,15 +29,27 @@ public class Config {
 		
 	}
 	
+	/**
+	 * Create a new Config value object
+	 * @param key The configuration key
+	 * @param value The configuration value for this key
+	 */
 	public Config(String key, String value){
 		_key = key;
 		_value = value;
 	}
 	
+	/**
+	 * @return The value of the configuration object
+	 */
 	public String getValue(){
 		return _value;
 	}
 
+	/**
+	 * Set a new value for the configuration object
+	 * @param value The new value
+	 */
 	public void setValue(String value) {
 		_value = value;
 	}
