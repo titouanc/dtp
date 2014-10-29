@@ -24,7 +24,7 @@ import com.jme3.system.JmeCanvasContext;
 public class MainPane extends JPanel {
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
-	private JScrollPane _thirdDimensionPane;
+	private JPanel _thirdDimensionPane;
 	
 	public MainPane(){
 		super(new BorderLayout());
@@ -53,7 +53,7 @@ public class MainPane extends JPanel {
         canvas.startCanvas();
         
         
-        _thirdDimensionPane = new JScrollPane();
+        _thirdDimensionPane = new JPanel();
         _thirdDimensionPane.setMinimumSize(minimumSize);
         _thirdDimensionPane.add(context.getCanvas());
        
