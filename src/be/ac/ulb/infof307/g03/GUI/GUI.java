@@ -9,7 +9,7 @@ import java.awt.Dimension;
 import javax.swing.*;
 
 /**
- * @author julianschembri
+ * @author julianschembri, pierre
  *
  */
 public class GUI {
@@ -32,31 +32,31 @@ public class GUI {
         contentPane.add(toolsBar, BorderLayout.NORTH);
         
         // blank split plane 
-        String[] listShape = new String[] {"Rectangle", "Rectangle", "Rond", "Cercle"};
-        JList list = new JList(listShape);
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-         
-        JScrollPane listScrollPane = new JScrollPane(list);
-        JLabel blankJlabel = new JLabel();
-        blankJlabel.setHorizontalAlignment(JLabel.CENTER);
-        JScrollPane pictureScrollPane = new JScrollPane(blankJlabel);
-        //Create a split pane with the two scroll panes in it.
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,listScrollPane, pictureScrollPane);
-        splitPane.setOneTouchExpandable(true);
-        splitPane.setDividerLocation(150);
- 
-        //Provide minimum sizes for the two components in the split pane.
-        Dimension minimumSize = new Dimension(100, 50);
-        listScrollPane.setMinimumSize(minimumSize);
-        pictureScrollPane.setMinimumSize(minimumSize);
- 
-        //Provide a preferred size for the split pane.
-        splitPane.setPreferredSize(new Dimension(800, 400));
-        
+//        String[] listShape = new String[] {"Rectangle", "Rectangle", "Rond", "Cercle"};
+//        JList list = new JList(listShape);
+//        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//         
+//        JScrollPane listScrollPane = new JScrollPane(list);
+//        JLabel blankJlabel = new JLabel();
+//        blankJlabel.setHorizontalAlignment(JLabel.CENTER);
+//        JScrollPane pictureScrollPane = new JScrollPane(blankJlabel);
+//        //Create a split pane with the two scroll panes in it.
+//        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,listScrollPane, pictureScrollPane);
+//        splitPane.setOneTouchExpandable(true);
+//        splitPane.setDividerLocation(150);
+// 
+//        //Provide minimum sizes for the two components in the split pane.
+//        Dimension minimumSize = new Dimension(100, 50);
+//        listScrollPane.setMinimumSize(minimumSize);
+//        pictureScrollPane.setMinimumSize(minimumSize);
+// 
+//        //Provide a preferred size for the split pane.
+//        splitPane.setPreferredSize(new Dimension(800, 400));
+        MainPane workspace = new MainPane();
 
         
         //frame.setPreferredSize(new Dimension(900, 600));
-        contentPane.add(splitPane, BorderLayout.SOUTH);
+        contentPane.add(workspace, BorderLayout.SOUTH);
         
         // ajoute le panel principal au frame
         frame.setContentPane(contentPane);
