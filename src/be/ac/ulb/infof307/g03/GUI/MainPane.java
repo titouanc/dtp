@@ -21,7 +21,9 @@ import com.jme3.system.JmeCanvasContext;
  * @author pierre
  *
  */
-public class MainPane extends JPanel{
+public class MainPane extends JPanel {
+	private static final long serialVersionUID = 1L;
+	
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
 	private JPanel _thirdDimensionPane;
@@ -37,7 +39,6 @@ public class MainPane extends JPanel{
         
         _listScrollPane = new JScrollPane(list);
         _listScrollPane.setMinimumSize(minimumSize);
-
         
         AppSettings settings = new AppSettings(true);
         settings.setWidth(640);

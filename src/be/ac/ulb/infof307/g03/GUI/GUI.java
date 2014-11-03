@@ -12,58 +12,41 @@ import javax.swing.*;
  * @author julianschembri, pierre
  *
  */
-public class GUI {
+public class GUI extends JFrame {
 	/**
-	 * Creation of top level components
+	 * Constructor of GUI.
+	 * It put every frame needed at the right place on the main frame
+	 * Menu, toolsbar and the main workspace (splitpane)
 	 */
+	
+	private static final long serialVersionUID = 1L;
+	
 	public GUI() {
 		// Create and set up the window
-		JFrame frame = new JFrame("HomePlans");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		super("HomePlans");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Create the menuBar
-        MenuBar menuBar = new MenuBar();
-        frame.setJMenuBar(menuBar.createMenuBar());
+        this.setJMenuBar(new MenuBar());
         
-        // Creation du main panel
+        // Create the main panel
         // http://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html
         JPanel contentPane = new JPanel(new BorderLayout());
         
+        // creation of toolbar
         ToolsBar toolsBar = new ToolsBar();
         contentPane.add(toolsBar, BorderLayout.NORTH);
-        
-        // blank split plane 
-//        String[] listShape = new String[] {"Rectangle", "Rectangle", "Rond", "Cercle"};
-//        JList list = new JList(listShape);
-//        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//         
-//        JScrollPane listScrollPane = new JScrollPane(list);
-//        JLabel blankJlabel = new JLabel();
-//        blankJlabel.setHorizontalAlignment(JLabel.CENTER);
-//        JScrollPane pictureScrollPane = new JScrollPane(blankJlabel);
-//        //Create a split pane with the two scroll panes in it.
-//        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,listScrollPane, pictureScrollPane);
-//        splitPane.setOneTouchExpandable(true);
-//        splitPane.setDividerLocation(150);
-// 
-//        //Provide minimum sizes for the two components in the split pane.
-//        Dimension minimumSize = new Dimension(100, 50);
-//        listScrollPane.setMinimumSize(minimumSize);
-//        pictureScrollPane.setMinimumSize(minimumSize);
-// 
-//        //Provide a preferred size for the split pane.
-//        splitPane.setPreferredSize(new Dimension(800, 400));
+     
+        // Creation of the splitPane
+        // this pane contains Jmonkey
         MainPane workspace = new MainPane();
-
-        
-        //frame.setPreferredSize(new Dimension(900, 600));
         contentPane.add(workspace, BorderLayout.SOUTH);
         
-        // ajoute le panel principal au frame
-        frame.setContentPane(contentPane);
+        // add main panel to the frame
+        this.setContentPane(contentPane);
         
-        // Display the window.
-        frame.pack();
-        frame.setVisible(true);
+        // Display the window
+        this.pack();
+        this.setVisible(true);
 	}
 }
