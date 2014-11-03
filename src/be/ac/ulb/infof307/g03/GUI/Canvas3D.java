@@ -10,8 +10,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 
 /**
+ * This class is a jMonkey canvas that can be added in a Swing GUI.
  * @author fhennecker
- *
  */
 public class Canvas3D extends SimpleApplication {
 
