@@ -31,18 +31,22 @@ public class MainPane extends JPanel {
 	
 	public MainPane(){
 		super(new BorderLayout());
-		Dimension minimumSize = new Dimension(100, 50);
+		
+		// Left menu
+		Dimension size = new Dimension(100, 50);
 		
         String[] listShape = new String[] {"Rectangle", "Rectangle", "Rond", "Cercle"};
         JList list = new JList(listShape);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
         _listScrollPane = new JScrollPane(list);
-        _listScrollPane.setMinimumSize(minimumSize);
+
         
+        // jme3 
         AppSettings settings = new AppSettings(true);
         settings.setWidth(640);
         settings.setHeight(480);
+
         _canvas = new Canvas3D();
         _canvas.setSettings(settings);
         _canvas.createCanvas();
@@ -52,16 +56,15 @@ public class MainPane extends JPanel {
         context.getCanvas().setPreferredSize(dimension);
         _canvas.startCanvas();
         
-        _thirdDimensionPane = new JPanel();
-        _thirdDimensionPane.setMinimumSize(minimumSize);
-        _thirdDimensionPane.add(context.getCanvas());
+        add(context.getCanvas(),BorderLayout.EAST);
        
+        // Body
 		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane, _thirdDimensionPane);
 		_splitPane.setOneTouchExpandable(true);
 		_splitPane.setDividerLocation(150);
-		_splitPane.setPreferredSize(new Dimension(800, 400));
+		_splitPane.setPreferredSize(new Dimension(150, 480));
 		
-		add(_splitPane, BorderLayout.PAGE_START);
+		add(_splitPane);
 	}
 
 }

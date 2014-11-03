@@ -5,6 +5,8 @@ package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.*;
 
@@ -12,7 +14,7 @@ import javax.swing.*;
  * @author julianschembri, pierre
  *
  */
-public class GUI extends JFrame {
+public class GUI extends JFrame implements ComponentListener {
 	/**
 	 * Constructor of GUI.
 	 * It put every frame needed at the right place on the main frame
@@ -45,8 +47,36 @@ public class GUI extends JFrame {
         // add main panel to the frame
         this.setContentPane(contentPane);
         
+        // handle resize event
+        this.addComponentListener(this);
+        
         // Display the window
         this.pack();
         this.setVisible(true);
+        
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentResized(ComponentEvent arg0) {
+		System.out.println("plop");
+		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
