@@ -25,6 +25,9 @@ import java.awt.event.ActionListener;
  * It extend Jpanel
  */
 public class ToolsBar extends JPanel implements ActionListener  {
+	
+	private static final long serialVersionUID = 1L;
+	
 	// the toolbar is named in case it's dragged out of the main frame
 	private JToolBar _toolBar = new JToolBar("HomePlan Toolbox");
 	

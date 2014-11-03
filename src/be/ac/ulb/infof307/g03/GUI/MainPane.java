@@ -13,14 +13,23 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 
+import com.jme3.app.Application;
+import com.jme3.system.AppSettings;
+import com.jme3.system.JmeCanvasContext;
+
 /**
  * @author pierre
- *
+ * This class implements the main view of the application, namely a splitview.
+ * It contains a 3D view on the right.
  */
 public class MainPane extends JPanel {
+	private static final long serialVersionUID = 1L;
+	
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
-	private JScrollPane _thirdDimensionPane;
+	private JPanel _thirdDimensionPane;
+	private Canvas3D _canvas;
+	
 	public MainPane(){
 		super(new BorderLayout());
 		Dimension minimumSize = new Dimension(100, 50);
@@ -32,11 +41,7 @@ public class MainPane extends JPanel {
         _listScrollPane = new JScrollPane(list);
         _listScrollPane.setMinimumSize(minimumSize);
         
-        JLabel blankJlabel = new JLabel();
-        blankJlabel.setHorizontalAlignment(JLabel.CENTER);
-        
-        _thirdDimensionPane = new JScrollPane(blankJlabel);
-        _thirdDimensionPane.setMinimumSize(minimumSize);
+        addCanvas3D(minimumSize);
        
 		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane, _thirdDimensionPane);
 		_splitPane.setOneTouchExpandable(true);
@@ -44,6 +49,30 @@ public class MainPane extends JPanel {
 		_splitPane.setPreferredSize(new Dimension(800, 400));
 		
 		add(_splitPane, BorderLayout.PAGE_START);
+	}
+	
+	private void addCanvas3D(Dimension minimumSize){
+		
+		// App Settings
+		AppSettings settings = new AppSettings(true);
+        settings.setWidth(640);
+        settings.setHeight(480);
+        settings.setFrameRate(60);
+        
+        // Creating Canvas
+        _canvas = new Canvas3D();
+        _canvas.setSettings(settings);
+        _canvas.createCanvas();
+        JmeCanvasContext context = (JmeCanvasContext) _canvas.getContext();
+        context.setSystemListener(_canvas);
+        Dimension dimension = new Dimension(640, 480);
+        context.getCanvas().setPreferredSize(dimension);
+        _canvas.startCanvas();
+        
+        // Adding canvas to the rightmost split panel
+        _thirdDimensionPane = new JPanel();
+        _thirdDimensionPane.setMinimumSize(minimumSize);
+        _thirdDimensionPane.add(context.getCanvas());
 	}
 
 }
