@@ -16,15 +16,10 @@ import com.j256.ormlite.table.DatabaseTable;
 public abstract class Shape {
 	@DatabaseField(generatedId = true)
 	private int _id = 0;
-	@DatabaseField(canBeNull = false, foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
-	private ShapeRecord _shaperec;
 	
-	/**
-	 * @return Shape unique identifier
-	 */
-	public int getShapeId(){
-		return _shaperec.getId();
-	}
+	@DatabaseField(canBeNull = true, foreign = true, foreignAutoCreate = false, foreignAutoRefresh = true)
+	private Group _group;
+
 	
 	/**
 	 * @return The shape identifier for its category
@@ -33,17 +28,9 @@ public abstract class Shape {
 		return _id;
 	}
 	
-	public Shape(){
-		_shaperec = new ShapeRecord();
-	}
-	
-	public ShapeRecord getRecord(){
-		return _shaperec;
-	}
-	
 	public final Boolean equals(Shape other){
 		Boolean res = true;
-		if (getShapeId() != 0)
+		if (getId() != 0)
 			res = equalsById(other);
 		return res && equalsByContent(other);
 	}
@@ -51,6 +38,10 @@ public abstract class Shape {
 	public abstract Boolean equalsByContent(Shape other);
 	
 	public final Boolean equalsById(Shape other){
-		return getId() == other.getId() && getShapeId() == other.getShapeId();
+		return getId() == other.getId();
+	}
+	
+	public void addToGroup(Group grp){
+		_group = grp;
 	}
 }

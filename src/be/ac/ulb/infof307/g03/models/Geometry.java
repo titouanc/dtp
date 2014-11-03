@@ -23,9 +23,14 @@ import com.j256.ormlite.dao.DaoManager;
 public class Geometry {
 	private Dao<Line, Integer> _lines = null;
 	private Dao<Group, Integer> _groups = null;
+	private Dao<Point, Integer> _points = null;
 	
+	/**
+	 * Migrate all needed tables to a database
+	 * @param database The database connection
+	 * @throws SQLException
+	 */
 	public static void migrate(ConnectionSource database) throws SQLException{
-		ShapeRecord.migrate(database);
 		Line.migrate(database);
 		Point.migrate(database);
 		Group.migrate(database);
@@ -34,130 +39,74 @@ public class Geometry {
 	public Geometry(ConnectionSource database) throws SQLException{
 		_lines = DaoManager.createDao(database, Line.class);
 		_groups = DaoManager.createDao(database, Group.class);
+		_points = DaoManager.createDao(database, Point.class);
 	}
 	
 	/**
-	 * @return an iterator on all the Lines in the database
-	 */
-	public CloseableIterable<Line> getLines(){
-		return _lines;
-	}
-	
-	/**
-	 * Add a new Line to the database
-	 * @param newLine The line to add
-	 * @return the inserted line, its line ID is now set
+	 * Create a shape in the database
+	 * @param shape
+	 * @return
 	 * @throws SQLException
 	 */
-	public Line addLine(Line newLine) throws SQLException{
-		_lines.create(newLine);
-		return newLine;
+	public int create(Shape shape) throws SQLException{
+		if (shape.getClass() == Line.class)
+			return _lines.create((Line) shape);
+		else if (shape.getClass() == Group.class)
+			return _groups.create((Group) shape);
+		return 0;
 	}
 	
-	public Group createGroup() throws SQLException {
-		Group res = new Group();
-		_groups.create(res);
-		return _groups.queryForSameId(res);
+	public int update(Shape shape) throws SQLException {
+		if (shape.getClass() == Line.class)
+			return _lines.update((Line) shape);
+		else if (shape.getClass() == Group.class)
+			return _groups.update((Group) shape);
+		return 0;
 	}
 	
-	/**
-	 * Return all points constituing given ShapeRecord
-	 * @param shapeId The Shape unique ID
-	 * @return All points for this Shape
-	 */
-	public List<Point> getPointsForShape(int shapeId){
-		Shape shape = getShape(shapeId);
-		
+	public int delete(Shape shape) throws SQLException {
+		if (shape.getClass() == Line.class)
+			return _lines.delete((Line) shape);
+		else if (shape.getClass() == Group.class)
+			return _groups.delete((Group) shape);
+		return 0;
+	}
+	
+	public Line getLine(int line_id) throws SQLException{
+		return _lines.queryForId(line_id);
+	}
+	
+	public Group getGroup(int group_id) throws SQLException{
+		return _groups.queryForId(group_id);
+	}
+	
+	public List<Shape> getShapesForGroup(Group grp) throws SQLException{
+		List<Shape> res = new LinkedList<Shape>();
+		res.addAll(_lines.queryForEq("_group_id", grp.getId()));
+		res.addAll(_groups.queryForEq("_group_id", grp.getId()));
+		return res;
+	}
+	
+	public List<Point> getPointsForShape(Shape shape) throws SQLException{
 		if (shape.getClass() == Line.class){
 			Line l = (Line) shape;
 			return l.getPoints();
 		}
 		
 		List<Point> res = new LinkedList<Point>();
-		if (shape.getClass() == Group.class){
-			Group g = (Group) shape;
-			for (ShapeRecord subshape : g.getShapes()){
-				int start_at = 0;
-				List<Point> subpoints = getPointsForShape(subshape.getId());
-				while (res.size() > 0 && start_at < subpoints.size() && subpoints.get(start_at).equals(res.get(res.size()-1)))
-					start_at ++;
-				for (int i=start_at; i < subpoints.size(); i++)
-					res.add(subpoints.get(i));
-			}
-		}
+		if (shape.getClass() == Group.class)
+			for (Shape s : getShapesForGroup((Group) shape))
+				for (Point p : getPointsForShape(s))
+					if (res.isEmpty() || ! p.equals(res.get(res.size() - 1)))
+						res.add(p);
 		return res;
 	}
 	
-	/**
-	 * Update database record for a Shape
-	 * @param shape The Shape to update in database
-	 * @throws SQLException
-	 */
-	public void update(Shape shape) throws SQLException{
-		if (shape.getClass() == Line.class)
-			_lines.update((Line) shape);
-		else if (shape.getClass() == Group.class)
-			_groups.update((Group) shape);
-	}
-	
-	/**
-	 * Return a Shape, or null if not in database.
-	 * @param shape_id The shape unique ID
-	 * @return An initialized subclass of Shape
-	 */
-	public Shape getShape(int shape_id){
-		try {
-			return _getShapeAsLine(shape_id);
-		} catch (SQLException e) {}
-		
-		try {
-			return _getShapeAsGroup(shape_id);
-		} catch (SQLException e) {}
-		
-		return null;
-	}
-	
-	/**
-	 * Attempt to retrieve a Shape as a Line
-	 * @param shape_id The Shape unique ID
-	 * @return an initialized Line
-	 * @throws SQLException
-	 */
-	private Line _getShapeAsLine(int shape_id) throws SQLException{
-		QueryBuilder<Line, Integer> queryBuilder = _lines.queryBuilder();
-		
-		Where<Line, Integer> where = queryBuilder.where();
-		SelectArg selectArg = new SelectArg();
-		
-		where.eq("_shaperec_id", shape_id);
-		PreparedQuery<Line> preparedQuery = queryBuilder.prepare();
-		
-		selectArg.setValue(shape_id);
-		List<Line> lines = _lines.query(preparedQuery);
-		if (! lines.isEmpty())
-			return lines.get(0);
-		throw new SQLException();
-	}
-	
-	/**
-	 * Attempt to retrieve Shape as a group
-	 * @param shape_id The Shape unique ID
-	 * @return an initialized Group
-	 * @throws SQLException
-	 */
-	private Group _getShapeAsGroup(int shape_id) throws SQLException {
-		QueryBuilder<Group, Integer> queryBuilder = _groups.queryBuilder();
-		
-		Where<Group, Integer> where = queryBuilder.where();
-		SelectArg selectArg = new SelectArg();
-		
-		where.eq("_shaperec_id", shape_id);
-		PreparedQuery<Group> preparedQuery = queryBuilder.prepare();
-		
-		selectArg.setValue(shape_id);
-		List<Group> groups = _groups.query(preparedQuery);
-		if (! groups.isEmpty())
-			return groups.get(0);
-		throw new SQLException();
+	public void addShapeToGroup(Group grp, Shape shape) throws SQLException{
+		shape.addToGroup(grp);
+		if (shape.getId() != 0)
+			update(shape);
+		else
+			create(shape);
 	}
 }

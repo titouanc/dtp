@@ -35,7 +35,6 @@ public class Line extends Shape {
 	 */
 	public static void migrate(ConnectionSource database) throws SQLException {
 		TableUtils.createTableIfNotExists(database, Line.class);
-		ShapeRecord.migrate(database);
 		Point.migrate(database);
 	}
 

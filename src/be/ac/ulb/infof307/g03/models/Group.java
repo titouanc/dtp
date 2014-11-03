@@ -16,35 +16,14 @@ import com.j256.ormlite.table.TableUtils;
  * @brief A group is a shape constituted of multiple shapes
  */
 public class Group extends Shape {
-	@ForeignCollectionField
-	private ForeignCollection<ShapeRecord> _shapes;
-
 	public static void migrate(ConnectionSource database) throws SQLException {
 		TableUtils.createTableIfNotExists(database, Group.class);
-		ShapeRecord.migrate(database);
-	}
-
-	public void addShape(Shape shape) {
-		ShapeRecord record = shape.getRecord();
-		System.out.println(String.format("===== ADD SHAPE %d (UID %d)", shape.getId(), shape.getShapeId()));
-		if (record.getId() == 0)
-			_shapes.add(record);
-		else
-			record.setGroup(this);
-		System.out.println(String.format("=== ADDED SHAPE %d (UID %d)", shape.getId(), shape.getShapeId()));
-	}
-	
-	public Collection<ShapeRecord> getShapes(){
-		return _shapes;
 	}
 
 	@Override
 	public Boolean equalsByContent(Shape other) {
+		if (other.getClass() != Group.class)
+			return false;
 		return true;
-		// TODO implement real comparison
-	}
-	
-	public Group(){
-		super();
 	}
 }

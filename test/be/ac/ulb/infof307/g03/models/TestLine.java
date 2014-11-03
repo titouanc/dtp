@@ -62,9 +62,10 @@ public class TestLine {
 		
 		_dao.create(l);
 		int lineId = l.getId();
+		assertEquals(1, lineId);
+		
 		Line copy = _dao.queryForId(lineId);
 		assertEquals(5, copy.length(), 0);
-		assertEquals(l.getShapeId(), copy.getShapeId());
 		
 		assertTrue(l.equalsById(copy));
 		assertTrue(l.equalsByContent(copy));
