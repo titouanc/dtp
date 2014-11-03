@@ -15,7 +15,7 @@ import com.jme3.scene.shape.Box;
  */
 public class Canvas3D extends SimpleApplication {
 
-	/* (non-Javadoc)
+	/**
 	 * @see com.jme3.app.SimpleApplication#simpleInitApp()
 	 */
 	@Override
