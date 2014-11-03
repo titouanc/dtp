@@ -50,8 +50,6 @@ public class ToolsBar extends JToolBar implements ActionListener  {
         // add buttons
         _addButons();
         //Lay out the main panel.
-        
-        this.setBackground(Color.RED);
     }
     
     /**
