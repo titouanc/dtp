@@ -18,8 +18,9 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 
 /**
- * This class implements the main view of the application, namely a splitview.
  * @author pierre
+ * This class implements the main view of the application, namely a splitview.
+ * It contains a 3D view on the right.
  */
 public class MainPane extends JPanel {
 	private static final long serialVersionUID = 1L;
