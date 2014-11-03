@@ -40,10 +40,25 @@ public class MainPane extends JPanel {
         _listScrollPane = new JScrollPane(list);
         _listScrollPane.setMinimumSize(minimumSize);
         
-        AppSettings settings = new AppSettings(true);
+        addCanvas3D(minimumSize);
+       
+		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane, _thirdDimensionPane);
+		_splitPane.setOneTouchExpandable(true);
+		_splitPane.setDividerLocation(150);
+		_splitPane.setPreferredSize(new Dimension(800, 400));
+		
+		add(_splitPane, BorderLayout.PAGE_START);
+	}
+	
+	private void addCanvas3D(Dimension minimumSize){
+		
+		// App Settings
+		AppSettings settings = new AppSettings(true);
         settings.setWidth(640);
         settings.setHeight(480);
         settings.setFrameRate(60);
+        
+        // Creating Canvas
         _canvas = new Canvas3D();
         _canvas.setSettings(settings);
         _canvas.createCanvas();
@@ -53,16 +68,10 @@ public class MainPane extends JPanel {
         context.getCanvas().setPreferredSize(dimension);
         _canvas.startCanvas();
         
+        // Adding canvas to the rightmost split panel
         _thirdDimensionPane = new JPanel();
         _thirdDimensionPane.setMinimumSize(minimumSize);
         _thirdDimensionPane.add(context.getCanvas());
-       
-		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane, _thirdDimensionPane);
-		_splitPane.setOneTouchExpandable(true);
-		_splitPane.setDividerLocation(150);
-		_splitPane.setPreferredSize(new Dimension(800, 400));
-		
-		add(_splitPane, BorderLayout.PAGE_START);
 	}
 
 }
