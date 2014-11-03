@@ -19,7 +19,8 @@ import com.jme3.system.JmeCanvasContext;
 
 /**
  * @author pierre
- *
+ * This class implements the main view of the application, namely a splitview.
+ * It contains a 3D view on the right.
  */
 public class MainPane extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -32,21 +33,20 @@ public class MainPane extends JPanel {
 	public MainPane(){
 		super(new BorderLayout());
 		
-		// Left menu
-		Dimension size = new Dimension(100, 50);
-		
+		// Left menu		
         String[] listShape = new String[] {"Rectangle", "Rectangle", "Rond", "Cercle"};
         JList list = new JList(listShape);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
         _listScrollPane = new JScrollPane(list);
 
-        
         // jme3 
         AppSettings settings = new AppSettings(true);
         settings.setWidth(640);
         settings.setHeight(480);
-
+        settings.setFrameRate(60);
+        
+        // Creating Canvas
         _canvas = new Canvas3D();
         _canvas.setSettings(settings);
         _canvas.createCanvas();
@@ -56,6 +56,7 @@ public class MainPane extends JPanel {
         context.getCanvas().setPreferredSize(dimension);
         _canvas.startCanvas();
         
+
         add(context.getCanvas(),BorderLayout.EAST);
        
         // Body
@@ -65,6 +66,7 @@ public class MainPane extends JPanel {
 		_splitPane.setPreferredSize(new Dimension(150, 480));
 		
 		add(_splitPane);
+
 	}
 
 }
