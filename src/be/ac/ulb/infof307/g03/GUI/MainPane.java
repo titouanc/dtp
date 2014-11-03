@@ -4,6 +4,7 @@
 package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JLabel;
@@ -27,46 +28,47 @@ public class MainPane extends JPanel {
 	
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
-	private JPanel _thirdDimensionPane;
 	private Canvas3D _canvas;
 	
 	public MainPane(){
 		super(new BorderLayout());
 		
-		// Left menu		
+		// !!! temporary !!!
         String[] listShape = new String[] {"Rectangle", "Rectangle", "Rond", "Cercle"};
         JList list = new JList(listShape);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
-        _listScrollPane = new JScrollPane(list);
+        // Create left menu
+        _listScrollPane = new JScrollPane(list); 
+        // Set up resize behavior
+        Dimension listScrollPaneDimension = new Dimension(100,480);
+        _listScrollPane.setMinimumSize(listScrollPaneDimension);
+        _listScrollPane.setPreferredSize(listScrollPaneDimension);
 
-        // jme3 
+        // Set up jme3 canvas' settings
         AppSettings settings = new AppSettings(true);
-        settings.setWidth(640);
-        settings.setHeight(480);
         settings.setFrameRate(60);
-        
-        // Creating Canvas
+        // Create jme3 canvas
         _canvas = new Canvas3D();
         _canvas.setSettings(settings);
         _canvas.createCanvas();
+        // Set up event listener
         JmeCanvasContext context = (JmeCanvasContext) _canvas.getContext();
         context.setSystemListener(_canvas);
-        Dimension dimension = new Dimension(640, 480);
-        context.getCanvas().setPreferredSize(dimension);
+        // Set up resize behavior
+        Dimension jme3Dimension = new Dimension(640, 480);
+        context.getCanvas().setMinimumSize(jme3Dimension);
+        context.getCanvas().setPreferredSize(jme3Dimension);
+        // Start jme3 canvas
         _canvas.startCanvas();
-        
-
-        add(context.getCanvas(),BorderLayout.EAST);
        
-        // Body
-		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane, _thirdDimensionPane);
+        // Create split pane
+		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane,context.getCanvas());
+		// Set up split pane
 		_splitPane.setOneTouchExpandable(true);
-		_splitPane.setDividerLocation(150);
-		_splitPane.setPreferredSize(new Dimension(150, 480));
+		_splitPane.setDividerLocation(100);
 		
-		add(_splitPane);
-
+		this.add(_splitPane);
 	}
 
 }

@@ -14,7 +14,7 @@ import javax.swing.*;
  * @author julianschembri, pierre
  *
  */
-public class GUI extends JFrame implements ComponentListener {
+public class GUI extends JFrame {
 	/**
 	 * Constructor of GUI.
 	 * It put every frame needed at the right place on the main frame
@@ -35,20 +35,22 @@ public class GUI extends JFrame implements ComponentListener {
         // http://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html
         JPanel contentPane = new JPanel(new BorderLayout());
         
-        // creation of toolbar
+        // Create the toolbar
         ToolsBar toolsBar = new ToolsBar();
-        contentPane.add(toolsBar, BorderLayout.NORTH);
+        contentPane.add(toolsBar, BorderLayout.PAGE_START);
      
-        // Creation of the splitPane
-        // this pane contains Jmonkey
+        // Create the workspace
+        // this one contains Jmonkey canvas and the left menu
         MainPane workspace = new MainPane();
-        contentPane.add(workspace, BorderLayout.SOUTH);
+        contentPane.add(workspace, BorderLayout.CENTER);
         
-        // add main panel to the frame
+        // Add the workspace to the frame
         this.setContentPane(contentPane);
         
-        // handle resize event
-        this.addComponentListener(this);
+        // Set up resize behavior
+        Dimension windowDimension = new Dimension(640, 480);
+        this.setMinimumSize(windowDimension);
+        this.setPreferredSize(windowDimension);
         
         // Display the window
         this.pack();
@@ -56,27 +58,4 @@ public class GUI extends JFrame implements ComponentListener {
         
 	}
 
-	@Override
-	public void componentHidden(ComponentEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void componentMoved(ComponentEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void componentResized(ComponentEvent arg0) {
-		System.out.println("plop");
-		
-	}
-
-	@Override
-	public void componentShown(ComponentEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 }
