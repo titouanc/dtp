@@ -232,6 +232,7 @@ public class ToolsBar extends JPanel implements ActionListener  {
         }
         else if (_3D.equals(cmd)) {
         	_clicked3d();
+        	
         }
 		
 	}
