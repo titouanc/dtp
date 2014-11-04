@@ -5,8 +5,6 @@ package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 
 import javax.swing.*;
 

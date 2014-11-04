@@ -3,7 +3,6 @@ package be.ac.ulb.infof307.g03.models;
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.After;

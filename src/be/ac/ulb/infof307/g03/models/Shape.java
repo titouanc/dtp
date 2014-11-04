@@ -3,8 +3,6 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
-import java.util.List;
-
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 

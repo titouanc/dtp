@@ -26,7 +26,6 @@ import com.jme3.util.BufferUtils;
 public class Geometry {
 	private Dao<Line, Integer> _lines = null;
 	private Dao<Group, Integer> _groups = null;
-	private Dao<Point, Integer> _points = null;
 	
 	/**
 	 * Migrate all needed tables to a database
@@ -42,7 +41,6 @@ public class Geometry {
 	public Geometry(ConnectionSource database) throws SQLException{
 		_lines = DaoManager.createDao(database, Line.class);
 		_groups = DaoManager.createDao(database, Group.class);
-		_points = DaoManager.createDao(database, Point.class);
 	}
 	
 	/**

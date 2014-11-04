@@ -4,11 +4,8 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
-import java.util.Collection;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
