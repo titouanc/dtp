@@ -107,9 +107,10 @@ public class Canvas3D extends SimpleApplication {
     inputManager.addMapping("2D",     new KeyTrigger(KeyInput.KEY_M));
     inputManager.addMapping("Right",  new KeyTrigger(KeyInput.KEY_K));
     inputManager.addMapping("Rotate", new KeyTrigger(KeyInput.KEY_N));
+    inputManager.addMapping("3D",	  new KeyTrigger(KeyInput.KEY_B));
                                       //new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
     // Add the names to the action listener.
-    inputManager.addListener(actionListener,"Pause","2D");
+    inputManager.addListener(actionListener,"Pause","2D","3D");
     inputManager.addListener(analogListener,"Left", "Right","Rotate", "New");
  
   }
@@ -120,21 +121,16 @@ public class Canvas3D extends SimpleApplication {
         isRunning = !isRunning;
       }
       if(name.equals("2D") && keyPressed){
-    	  flyCam.setEnabled(false);
     	  is3D = false;
+      	  flyCam.setEnabled(true);
     	  Quaternion pitch90 = new Quaternion();
     	  pitch90.fromAngleAxis(FastMath.PI/2, new Vector3f(0,0,1));
-    	  /* Apply the rotation to the object */
     	  meshes.setLocalRotation(pitch90);
     	  ground.setLocalRotation(pitch90);
-	      /*
-    	  System.out.println("Parallel");
-    	  cam.setParallelProjection(!cam.isParallelProjection());
-    	  if(cam.isParallelProjection()){
-    		  cam.setFrustum(0, 10, 5, 5, 5, 5);
-    		  cam.setFrustumPerspective(45, (float)settings.getWidth() / settings.getHeight(), 1, 1000);
-    	  }
-    	  */
+	      
+      }
+      if (name.equals("3D") && keyPressed){
+    	  is3D=true;
       }
     }
   };
