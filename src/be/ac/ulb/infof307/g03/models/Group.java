@@ -17,7 +17,7 @@ import com.j256.ormlite.table.TableUtils;
  * @brief A group is a shape constituted of multiple shapes
  */
 public class Group extends Shape {
-	@DatabaseField(canBeNull = true)
+	@DatabaseField(canBeNull = true, unique = true)
 	private String _name;
 	
 	public static void migrate(ConnectionSource database) throws SQLException {

@@ -80,7 +80,7 @@ public class TestGeometry {
 		copy.setName("PaKeBot");
 		geo.update(copy);
 		
-		grp = geo.getGroup(grp.getId());
+		grp = geo.getGroup(copy.getName());
 		assertEquals("PaKeBot", grp.getName());
 		
 		assertEquals(1, geo.getRootNodes().size());

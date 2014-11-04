@@ -108,6 +108,18 @@ public class Geometry {
 	}
 	
 	/**
+	 * Get a group object from the database
+	 * @param name The group name
+	 * @return The group
+	 * @throws SQLException
+	 */
+	public Group getGroup(String name) throws SQLException {
+		return _groups.queryForFirst(
+			_groups.queryBuilder().where().eq("_name", name).prepare()
+		);
+	}
+	
+	/**
 	 * Recursively get all shapes contained in given group
 	 * @param grp A group of shapes (possibly containing subgroups)
 	 * @return All atomic shapes
