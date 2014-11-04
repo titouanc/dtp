@@ -38,7 +38,7 @@ public class MainPane extends JPanel {
         JList list = new JList(listShape);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
-        _objectTree = new ObjectTree();
+        _objectTree = new ObjectTree(project);
         
         // Create left menu
         _listScrollPane = new JScrollPane(_objectTree); 

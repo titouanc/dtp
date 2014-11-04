@@ -72,4 +72,9 @@ public class Line extends Shape {
 		List<Point> pOther = ((Line) other).getPoints();
 		return _p1.equals(pOther.get(0)) && _p2.equals(pOther.get(1));
 	}
+	
+	@Override
+	public String toString(){
+		return String.format("line %d", getId());
+	}
 }

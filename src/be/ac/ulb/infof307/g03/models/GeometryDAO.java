@@ -118,9 +118,9 @@ public class GeometryDAO {
 	}
 	
 	/**
-	 * Recursively get all shapes contained in given group
-	 * @param grp A group of shapes (possibly containing subgroups)
-	 * @return All atomic shapes
+	 * Get all shapes contained in given group
+	 * @param grp A group of shapes
+	 * @return All toplevel shapes of grp
 	 * @throws SQLException
 	 */
 	public List<Shape> getShapesForGroup(Group grp) throws SQLException{
