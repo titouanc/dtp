@@ -19,19 +19,24 @@ public class Main {
 	        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
 			
 			// Call GUI
-			new GUI();
+			new GUI(createDemoProject());
 		} catch (Exception err){}
 	}
 	
+	/**
+	 * Create a basic irregular 4-sided polygon in a demo project (not saved on disk)
+	 * @return The created project
+	 * @throws SQLException
+	 */
 	public static Project createDemoProject() throws SQLException{
 		Project proj = new Project();
 		proj.create(":memory:");
 		
 		Geometry geo = proj.getGeometry();
-		Point o = new Point(0, 0, 0), x = new Point(1, 0, 0), y = new Point(0, 1, 0);
-		Point xy = new Point(1, 1, 0);
+		Point o = new Point(0, 0, 0), x = new Point(3, 0, 0), y = new Point(0, 12, 0);
+		Point xy = new Point(7, 8, 0);
 		
-		Group room = new Group();
+		Group room = new Group("Irregular room");
 		geo.create(room);
 		
 		geo.addShapeToGroup(room, new Line(o, x));

@@ -14,6 +14,7 @@ import javax.swing.ListSelectionModel;
 
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
+import be.ac.ulb.infof307.g03.models.Project;
 
 /**
  * @author pierre
@@ -28,7 +29,7 @@ public class MainPane extends JPanel {
 	private Canvas3D _canvas;
 	private ObjectTree _objectTree;
 	
-	public MainPane(){
+	public MainPane(Project project){
 		super(new BorderLayout());
 		
 		// !!! temporary !!!
@@ -49,7 +50,7 @@ public class MainPane extends JPanel {
         AppSettings settings = new AppSettings(true);
         settings.setFrameRate(60);
         // Create jme3 canvas
-        _canvas = new Canvas3D();
+        _canvas = new Canvas3D(project);
         _canvas.setSettings(settings);
         _canvas.createCanvas();
         // Set up event listener
