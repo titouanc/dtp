@@ -5,6 +5,8 @@ package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.*;
 
@@ -33,20 +35,27 @@ public class GUI extends JFrame {
         // http://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html
         JPanel contentPane = new JPanel(new BorderLayout());
         
-        // creation of toolbar
+        // Create the toolbar
         ToolsBar toolsBar = new ToolsBar();
-        contentPane.add(toolsBar, BorderLayout.NORTH);
+        contentPane.add(toolsBar, BorderLayout.PAGE_START);
      
-        // Creation of the splitPane
-        // this pane contains Jmonkey
+        // Create the workspace
+        // this one contains Jmonkey canvas and the left menu
         MainPane workspace = new MainPane();
-        contentPane.add(workspace, BorderLayout.SOUTH);
+        contentPane.add(workspace, BorderLayout.CENTER);
         
-        // add main panel to the frame
+        // Add the workspace to the frame
         this.setContentPane(contentPane);
+        
+        // Set up resize behavior
+        Dimension windowDimension = new Dimension(640, 480);
+        this.setMinimumSize(windowDimension);
+        this.setPreferredSize(windowDimension);
         
         // Display the window
         this.pack();
         this.setVisible(true);
+        
 	}
+
 }

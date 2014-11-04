@@ -13,23 +13,19 @@ import javax.swing.ButtonGroup;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
-import javax.swing.JPanel;
 
-import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
 /**
  * This class implement a toolbar for the HomePlan GUI
- * It extend Jpanel
+ * It extend JToolBar
  */
-public class ToolsBar extends JPanel implements ActionListener  {
+public class ToolsBar extends JToolBar implements ActionListener  {
 	
 	private static final long serialVersionUID = 1L;
-	
-	// the toolbar is named in case it's dragged out of the main frame
-	private JToolBar _toolBar = new JToolBar("HomePlan Toolbox");
 	
 	// buttons actions
 	static final private String _UNDO = "Undo";
@@ -48,27 +44,26 @@ public class ToolsBar extends JPanel implements ActionListener  {
      * It add property to the bar: Buttons, not flotable, lay out
      */
     public ToolsBar() {
-    	super(new BorderLayout());
+    	super("HomePlan Toolbox");
     	// define if toolsbar can move
-        _toolBar.setFloatable(false); 
+        this.setFloatable(false); 
         // add buttons
         _addButons();
         //Lay out the main panel.
-        add(_toolBar, BorderLayout.PAGE_START);
     }
     
     /**
      * The private method is called when the button undo
-     * is clicked. It will commmunicate with the controller
+     * is clicked. It will communicate with the controller
      */
     private void _clickedUndo(){
     	System.out.println("undo");
-    	
+        
     }
     
     /**
      * The private method is called when the button redo
-     * is clicked. It will commmunicate with the controller
+     * is clicked. It will communicate with the controller
      */ 
     private void _clickedRedo(){
     	System.out.println("redo");
@@ -76,7 +71,7 @@ public class ToolsBar extends JPanel implements ActionListener  {
     }
     /**
      * The private method is called when the button with a shape //TODO
-     * is clicked. It will commmunicate with the controller
+     * is clicked. It will communicate with the controller
      */
     private void _clickedShape(){
     	// TODO define how shape will be implemented
@@ -85,7 +80,7 @@ public class ToolsBar extends JPanel implements ActionListener  {
     
     /**
      * The private method is called when the button floor up
-     * is clicked. It will commmunicate with the controller
+     * is clicked. It will communicate with the controller
      */
     private void _clickedFloorUp(){
     	System.out.println("floorUp");	
@@ -93,7 +88,7 @@ public class ToolsBar extends JPanel implements ActionListener  {
     
     /**
      * The private method is called when the button floor down
-     * is clicked. It will commmunicate with the controller
+     * is clicked. It will communicate with the controller
      */
     private void _clickedFloorDown(){
     	System.out.println("floor down");
@@ -101,7 +96,7 @@ public class ToolsBar extends JPanel implements ActionListener  {
     
     /**
      * The private method is called when the button 2D
-     * is clicked. It will commmunicate with the controller
+     * is clicked. It will communicate with the controller
      */
     private void _clicked2d(){
     	System.out.println("go2D");
@@ -109,7 +104,7 @@ public class ToolsBar extends JPanel implements ActionListener  {
     
     /**
      * The private method is called when the button 3D
-     * is clicked. It will commmunicate with the controller
+     * is clicked. It will communicate with the controller
      */
     private void _clicked3d(){
     	System.out.println("go3D");
@@ -138,9 +133,9 @@ public class ToolsBar extends JPanel implements ActionListener  {
             button.setActionCommand(buttonName);
             button.setToolTipText(buttonName+" last action");
             button.addActionListener(this);
-            _toolBar.add(button);
+            this.add(button);
     	}
-        _toolBar.addSeparator();
+       this.addSeparator();
     }
     
     /**
@@ -152,12 +147,12 @@ public class ToolsBar extends JPanel implements ActionListener  {
     	JButton circle = new JButton("Circle");
     	JButton line = new JButton("Line");
 
-        _toolBar.add(rectangle);
-        _toolBar.add(circle);
-        _toolBar.add(line);
+        this.add(rectangle);
+        this.add(circle);
+        this.add(line);
         
 
-        _toolBar.addSeparator();
+        this.addSeparator();
     }
 
     /**
@@ -170,16 +165,16 @@ public class ToolsBar extends JPanel implements ActionListener  {
         buttonUp.setActionCommand(_FLOOR_UP);
         buttonUp.setToolTipText("This will increase the floor seen");
         buttonUp.addActionListener(this);
-        _toolBar.add(buttonUp);
+        this.add(buttonUp);
         
         // button - floor
         JButton buttonDown = new JButton("-");
         buttonDown.setActionCommand(_FLOOR_DOWN);
         buttonDown.setToolTipText("This will decrease the floor seen");
         buttonDown.addActionListener(this);
-        _toolBar.add(buttonDown);
+        this.add(buttonDown);
 
-        _toolBar.addSeparator();
+        this.addSeparator();
     }
     
     /**
@@ -202,10 +197,10 @@ public class ToolsBar extends JPanel implements ActionListener  {
         thirdDimension.setToolTipText("Switch to 3D view");
         thirdDimension.addActionListener(this);
 
-        _toolBar.add(secondDimension);
-        _toolBar.add(thirdDimension);
+        this.add(secondDimension);
+        this.add(thirdDimension);
 
-        _toolBar.addSeparator();
+        this.addSeparator();
     }
 
     /**
