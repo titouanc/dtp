@@ -3,7 +3,10 @@ package be.ac.ulb.infof307.g03.GUI;
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.math.ColorRGBA;
@@ -14,12 +17,13 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.util.BufferUtils;
  
 /** Sample 5 - how to map keys and mousebuttons to actions */
 public class Canvas3D extends SimpleApplication {
  
-  protected Geometry player;
+  protected Geometry meshes;
   protected Geometry ground;
 
   Boolean isRunning=true;
@@ -29,7 +33,7 @@ public class Canvas3D extends SimpleApplication {
   @Override
   public void simpleInitApp() {
 	  
-  	
+  	flyCam.setDragToRotate(true);
   	Vector3f [] vertices = new Vector3f[8];
   	vertices[0] = new Vector3f(0,0,0);
   	vertices[1] = new Vector3f(-1,1,0);
@@ -71,12 +75,12 @@ public class Canvas3D extends SimpleApplication {
   	groundMesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(groundOrder));
   	
   	
-    player = new Geometry("Mesh",mesh);
+    meshes = new Geometry("Mesh",mesh);
     Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
     mat.setColor("Color", ColorRGBA.Blue);
-    player.setMaterial(mat);
-    rootNode.attachChild(player);
+    meshes.setMaterial(mat);
+    rootNode.attachChild(meshes);
     
     ground = new Geometry("Groundmesh",groundMesh);
     Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -102,11 +106,11 @@ public class Canvas3D extends SimpleApplication {
     inputManager.addMapping("New",    new KeyTrigger(KeyInput.KEY_F));
     inputManager.addMapping("2D",     new KeyTrigger(KeyInput.KEY_M));
     inputManager.addMapping("Right",  new KeyTrigger(KeyInput.KEY_K));
-    inputManager.addMapping("Rotate", new KeyTrigger(KeyInput.KEY_SPACE),
-                                      new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+    inputManager.addMapping("Rotate", new KeyTrigger(KeyInput.KEY_N));
+                                      //new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
     // Add the names to the action listener.
     inputManager.addListener(actionListener,"Pause","2D");
-    inputManager.addListener(analogListener,"Left", "Right", "Rotate", "New");
+    inputManager.addListener(analogListener,"Left", "Right","Rotate", "New");
  
   }
  
@@ -116,12 +120,21 @@ public class Canvas3D extends SimpleApplication {
         isRunning = !isRunning;
       }
       if(name.equals("2D") && keyPressed){
+    	  flyCam.setEnabled(false);
+    	  is3D = false;
+    	  Quaternion pitch90 = new Quaternion();
+    	  pitch90.fromAngleAxis(FastMath.PI/2, new Vector3f(0,0,1));
+    	  /* Apply the rotation to the object */
+    	  meshes.setLocalRotation(pitch90);
+    	  ground.setLocalRotation(pitch90);
+	      /*
     	  System.out.println("Parallel");
     	  cam.setParallelProjection(!cam.isParallelProjection());
     	  if(cam.isParallelProjection()){
     		  cam.setFrustum(0, 10, 5, 5, 5, 5);
     		  cam.setFrustumPerspective(45, (float)settings.getWidth() / settings.getHeight(), 1, 1000);
     	  }
+    	  */
       }
     }
   };
@@ -130,19 +143,23 @@ public class Canvas3D extends SimpleApplication {
     public void onAnalog(String name, float value, float tpf) {
       if (isRunning) {
         if (name.equals("Rotate")) {
-          player.rotate(0, value*speed, 0);
-          ground.rotate(0, value*speed, 0);
+        	if(is3D){
+        		meshes.rotate(0, value*speed, 0);
+        		ground.rotate(0, value*speed, 0);
+        	}
         }
         if (name.equals("Right")) {
-          Vector3f v = player.getLocalTranslation();
-          player.setLocalTranslation(v.x + value*speed, v.y, v.z);
+          Vector3f v = meshes.getLocalTranslation();
+          meshes.setLocalTranslation(v.x + value*speed, v.y, v.z);
+          ground.setLocalTranslation(v.x + value*speed, v.y, v.z);
         }
         if (name.equals("Left")) {
-          Vector3f v = player.getLocalTranslation();
-          player.setLocalTranslation(v.x - value*speed, v.y, v.z);
+          Vector3f v = meshes.getLocalTranslation();
+          meshes.setLocalTranslation(v.x - value*speed, v.y, v.z);
+          ground.setLocalTranslation(v.x - value*speed, v.y, v.z);
         }
         if(name.equals("New")){
-        	rootNode.detachChild(player);
+        	rootNode.detachChild(meshes);
         }
       } else {
         System.out.println("Press P to unpause.");
