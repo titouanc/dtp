@@ -5,7 +5,7 @@ package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
 
-import javax.vecmath.Vector3f;
+import com.jme3.math.Vector3f;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -98,5 +98,9 @@ public class Point {
 		if (getId() != 0 && other.getId() != 0)
 			by_id = other.getId() == getId();
 		return by_id && other.getX() == getX() && other.getY() == getY() && other.getZ() == getZ();
+	}
+	
+	public Vector3f toVector3f(){
+		return new Vector3f((float) _x, (float) _y, (float) _z);
 	}
 }

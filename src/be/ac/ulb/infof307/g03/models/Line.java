@@ -17,12 +17,12 @@ import com.j256.ormlite.table.TableUtils;
  */
 public class Line extends Shape {
 	/**
-	 * @brief First point of the line
+	 * First point of the line
 	 */
 	@DatabaseField(canBeNull = false, foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
 	private Point _p1;
 	/**
-	 * @brief second point of the line
+	 * Second point of the line
 	 */
 	@DatabaseField(canBeNull = false, foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
 	private Point _p2;
@@ -64,7 +64,7 @@ public class Line extends Shape {
 		res.add(_p2);
 		return res;
 	}
-
+	
 	@Override
 	public Boolean equalsByContent(Shape other) {
 		if (other.getClass() != Line.class)

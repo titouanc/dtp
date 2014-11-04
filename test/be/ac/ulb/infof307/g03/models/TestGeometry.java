@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
+import com.jme3.scene.Mesh;
 
 public class TestGeometry {
 	private ConnectionSource _db;
@@ -34,7 +35,8 @@ public class TestGeometry {
 	@Test
 	public void test_geometry_empty() throws SQLException {
 		Geometry geo = new Geometry(_db);
-		assertNull(geo.getLine(1));
+		List<Shape> shapes = geo.getRootNodes();
+		assertTrue(shapes.isEmpty());
 	}
 	
 	@Test
@@ -47,6 +49,10 @@ public class TestGeometry {
 		
 		List<Point> points = geo.getPointsForShape(l);
 		assertEquals(2, points.size());
+		
+		assertEquals(1, geo.getRootNodes().size());
+		geo.delete(l);
+		assertEquals(0, geo.getRootNodes().size());
 	}
 	
 	@Test
@@ -64,25 +70,66 @@ public class TestGeometry {
 	}
 	
 	@Test
+	public void test_group_name() throws SQLException{
+		Geometry geo = new Geometry(_db);
+		Group grp = new Group();
+		geo.create(grp);
+		
+		assertTrue(grp.getId() != 0);
+		Group copy = geo.getGroup(grp.getId());
+		copy.setName("PaKeBot");
+		geo.update(copy);
+		
+		grp = geo.getGroup(grp.getId());
+		assertEquals("PaKeBot", grp.getName());
+		
+		assertEquals(1, geo.getRootNodes().size());
+		geo.delete(grp);
+		assertEquals(0, geo.getRootNodes().size());
+	}
+	
+	@Test
 	public void test_get_points_from_group() throws SQLException {
 		Geometry geo = new Geometry(_db);
 		Point x = new Point(1, 0, 0), y = new Point(0, 1, 0), z = new Point(0, 0, 1);
 		
 		Group grp = new Group();
 		geo.create(grp);
+		assertTrue(grp.equals(geo.getGroup(grp.getId())));
 		
-		Line l1 = new Line(x, y);
-		l1.addToGroup(grp);
-		geo.create(l1);
+		Line l = new Line(x, y);
+		l.addToGroup(grp);
+		geo.create(l);
+		geo.addShapeToGroup(grp, new Line(y, z));
 		
-		Line l2 = new Line(y, z);
-		l2.addToGroup(grp);
-		geo.create(l2);
+		assertEquals(1, geo.getRootNodes().size());
 		
 		List<Point> points = geo.getPointsForShape(grp);
 		assertEquals(3, points.size());
 		assertTrue(x.equals(points.get(0)));
 		assertTrue(y.equals(points.get(1)));
 		assertTrue(z.equals(points.get(2)));
+	}
+	
+	@Test
+	public void test_get_roots() throws SQLException {
+		Geometry geo = new Geometry(_db);
+		Line l = new Line(new Point(0, 0, 0), new Point(1, 2, 3));
+		geo.create(l);
+		
+		List<Shape> roots = geo.getRootNodes();
+		assertEquals(1, roots.size());
+		assertTrue(l.equals(roots.get(0)));
+	}
+	
+	@Test
+	public void test_as_mesh() throws SQLException{
+		Geometry geo = new Geometry(_db);
+		Line l = new Line(new Point(0, 0, 0), new Point(1, 1, 0));
+		geo.create(l);
+		
+		Mesh mesh = geo.getShapeAsMesh(l, 1);
+		// Line + height -> rectangle -> 4 vertex
+		assertEquals(4, mesh.getVertexCount());
 	}
 }
