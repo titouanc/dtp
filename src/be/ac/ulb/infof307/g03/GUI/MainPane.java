@@ -29,6 +29,7 @@ public class MainPane extends JPanel {
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
 	private Canvas3D _canvas;
+	private ObjectTree _objectTree;
 	
 	public MainPane(){
 		super(new BorderLayout());
@@ -38,8 +39,10 @@ public class MainPane extends JPanel {
         JList list = new JList(listShape);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
+        _objectTree = new ObjectTree();
+        
         // Create left menu
-        _listScrollPane = new JScrollPane(list); 
+        _listScrollPane = new JScrollPane(_objectTree); 
         // Set up resize behavior
         Dimension listScrollPaneDimension = new Dimension(100,480);
         _listScrollPane.setMinimumSize(listScrollPaneDimension);
