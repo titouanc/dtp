@@ -23,7 +23,7 @@ import com.jme3.util.BufferUtils;
  * The geometry class is a DAO for all geometry related models.
  * Handle CRUD operations, and the associations logic
  */
-public class Geometry {
+public class GeometryDAO {
 	private Dao<Line, Integer> _lines = null;
 	private Dao<Group, Integer> _groups = null;
 	
@@ -38,7 +38,7 @@ public class Geometry {
 		Group.migrate(database);
 	}
 	
-	public Geometry(ConnectionSource database) throws SQLException{
+	public GeometryDAO(ConnectionSource database) throws SQLException{
 		_lines = DaoManager.createDao(database, Line.class);
 		_groups = DaoManager.createDao(database, Group.class);
 	}

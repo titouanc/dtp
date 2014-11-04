@@ -31,7 +31,7 @@ public class Project {
 	public void create(String filename) throws SQLException {
 		load(filename);
 		Config.migrate(_db);
-		Geometry.migrate(_db);
+		GeometryDAO.migrate(_db);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class Project {
 		return entry.getValue();
 	}
 	
-	public Geometry getGeometry() throws SQLException {
-		return new Geometry(_db);
+	public GeometryDAO getGeometryDAO() throws SQLException {
+		return new GeometryDAO(_db);
 	}
 }

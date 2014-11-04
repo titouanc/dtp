@@ -32,7 +32,10 @@ public class Main {
 		Project proj = new Project();
 		proj.create(":memory:");
 		
-		Geometry geo = proj.getGeometry();
+		proj.config("canvas.width", "1024");
+		proj.config("canvas.height", "768");
+		
+		GeometryDAO geo = proj.getGeometryDAO();
 		Point o = new Point(0, 0, 0), x = new Point(3, 0, 0), y = new Point(0, 12, 0);
 		Point xy = new Point(7, 8, 0);
 		

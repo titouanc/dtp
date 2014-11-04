@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.sql.SQLException;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -56,13 +57,30 @@ public class MainPane extends JPanel {
         // Set up event listener
         JmeCanvasContext context = (JmeCanvasContext) _canvas.getContext();
         context.setSystemListener(_canvas);
+        
+        Integer width=640, height=480;
+        try {
+			if (project.config("canvas.width") != "")
+				width = new Integer(project.config("canvas.width"));
+			if (project.config("canvas.height") != "")
+				height = new Integer(project.config("canvas.height"));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         // Set up resize behavior
-        Dimension jme3Dimension = new Dimension(640, 480);
+        Dimension jme3Dimension = new Dimension(width, height);
         context.getCanvas().setMinimumSize(jme3Dimension);
         context.getCanvas().setPreferredSize(jme3Dimension);
         // Start jme3 canvas
         _canvas.startCanvas();
-       
+        
+        System.out.println(String.format("Starting canvas %dx%d", width, height));
+        
         // Create split pane
 		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane,context.getCanvas());
 		// Set up split pane
