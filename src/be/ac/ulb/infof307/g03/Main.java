@@ -36,17 +36,29 @@ public class Main {
 		proj.config("canvas.height", "768");
 		
 		GeometryDAO geo = proj.getGeometryDAO();
-		Point o = new Point(0, 0, 0), x = new Point(3, 0, 0), y = new Point(0, 12, 0);
-		Point xy = new Point(7, 8, 0);
+		Point a = new Point(0, 0, 0),
+			  b = new Point(3, 0, 0),
+			  c = new Point(7, 8, 0),
+			  d = new Point(0, 12, 0),
+			  e = new Point(-5, -1, 0);
 		
-		Group room = new Group("Irregular room");
-		geo.create(room);
-		
-		geo.addShapeToGroup(room, new Line(o, x));
-		geo.addShapeToGroup(room, new Line(x, xy));
-		geo.addShapeToGroup(room, new Line(xy, y));
-		geo.addShapeToGroup(room, new Line(y, o));
-		
+		createRoom(geo, "Irregular room", a, b, c, d);
+		createRoom(geo, "Triangular room", a, e, d);
 		return proj;
+	}
+	
+	/**
+	 * Create a room in a project
+	 * @param dao A geometric Data Acces Object
+	 * @param name The name of this room
+	 * @param points Contour of this room, in order
+	 * @throws SQLException
+	 */
+	public static void createRoom(GeometryDAO dao, String name, Point...points) throws SQLException{
+		Group room = new Group(name);
+		dao.create(room);
+		
+		for (int i=0; i<points.length; i++)
+			dao.addShapeToGroup(room, new Line(points[i], points[(i+1)%points.length]));
 	}
 }

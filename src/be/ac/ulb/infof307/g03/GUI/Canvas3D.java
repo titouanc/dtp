@@ -39,19 +39,16 @@ public class Canvas3D extends SimpleApplication {
 			//Obtain a Data Access Object on geometric models
 			GeometryDAO dao = _project.getGeometryDAO();
 			
-			//Retrieve a shape from the model
-			Shape firstTopLevelShape = dao.getRootNodes().get(0);
-			
-			//Convert into mesg
-			Mesh mesh = dao.getShapeAsMesh(firstTopLevelShape, 5);
-			
-			//Set material an insert into canvas
-			Geometry walls = new Geometry("Walls", mesh);
 			Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 			mat.setColor("Color", ColorRGBA.Blue);
 			mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-			walls.setMaterial(mat);
-			rootNode.attachChild(walls);
+			
+			for (Shape shape : dao.getRootNodes()){
+				Mesh mesh = dao.getShapeAsMesh(shape, 5);
+				Geometry walls = new Geometry(shape.toString(), mesh);
+				walls.setMaterial(mat);
+				rootNode.attachChild(walls);
+			}
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
