@@ -30,7 +30,8 @@ public class ToolsBar extends JToolBar implements ActionListener  {
 	static final private String _UNDO = "Undo";
 	static final private String _REDO = "Redo";
 	
-	// TODO action shapes
+	static final private String _LINE = "Line";
+	static final private String _GROUP = "Group";
 	
 	static final private String _FLOOR_UP = "FloorUp";
 	static final private String _FLOOR_DOWN = "FloorDown";
@@ -56,7 +57,7 @@ public class ToolsBar extends JToolBar implements ActionListener  {
      * is clicked. It will communicate with the controller
      */
     private void _clickedUndo(){
-    	System.out.println("undo");
+    	System.out.println("[DEBUG] User clicked on : undo");
         
     }
     
@@ -65,16 +66,25 @@ public class ToolsBar extends JToolBar implements ActionListener  {
      * is clicked. It will communicate with the controller
      */ 
     private void _clickedRedo(){
-    	System.out.println("redo");
+    	System.out.println("[DEBUG] User clicked on : redo");
     	
     }
     /**
-     * The private method is called when the button with a shape //TODO
+     * The private method is called when the button line
      * is clicked. It will communicate with the controller
      */
-    private void _clickedShape(){
+    private void _clickedLine(){
     	// TODO define how shape will be implemented
-    	System.out.println("shape");
+    	System.out.println("[DEBUG] User clicked on : line");
+    }
+    
+    /**
+     * The private method is called when the button group
+     * is clicked. It will communicate with the controller
+     */
+    private void _clickedGroup(){
+    	// TODO define how shape will be implemented
+    	System.out.println("[DEBUG] User clicked on : group");
     }
     
     /**
@@ -82,7 +92,7 @@ public class ToolsBar extends JToolBar implements ActionListener  {
      * is clicked. It will communicate with the controller
      */
     private void _clickedFloorUp(){
-    	System.out.println("floorUp");	
+    	System.out.println("[DEBUG] User clicked on : floorUp");	
     }
     
     /**
@@ -90,7 +100,7 @@ public class ToolsBar extends JToolBar implements ActionListener  {
      * is clicked. It will communicate with the controller
      */
     private void _clickedFloorDown(){
-    	System.out.println("floor down");
+    	System.out.println("[DEBUG] User clicked on : floor down");
     }
     
     /**
@@ -98,7 +108,7 @@ public class ToolsBar extends JToolBar implements ActionListener  {
      * is clicked. It will communicate with the controller
      */
     private void _clicked2d(){
-    	System.out.println("go2D");
+    	System.out.println("[DEBUG] User clicked on : go2D");
     }
     
     /**
@@ -106,7 +116,7 @@ public class ToolsBar extends JToolBar implements ActionListener  {
      * is clicked. It will communicate with the controller
      */
     private void _clicked3d(){
-    	System.out.println("go3D");
+    	System.out.println("[DEBUG] User clicked on : go3D");
     }
     
     /**
@@ -142,13 +152,19 @@ public class ToolsBar extends JToolBar implements ActionListener  {
      * possible to add on the project
      */
     private void _addForms() {
-    	JButton rectangle = new JButton("Rectangle");
-    	JButton circle = new JButton("Circle");
-    	JButton line = new JButton("Line");
-
-        this.add(rectangle);
-        this.add(circle);
-        this.add(line);
+    	// button line
+    	JButton lineButton = new JButton(_LINE);
+    	lineButton.setActionCommand(_LINE);
+    	lineButton.setToolTipText("Create a line");
+    	lineButton.addActionListener(this);
+        this.add(lineButton);
+        
+        //button group
+    	JButton groupButton = new JButton(_GROUP);
+    	groupButton.setActionCommand(_GROUP);
+    	groupButton.setToolTipText("Create a group");
+    	groupButton.addActionListener(this);
+        this.add(groupButton);
         
 
         this.addSeparator();
@@ -159,14 +175,14 @@ public class ToolsBar extends JToolBar implements ActionListener  {
      * from one floor to another
      */
     private void _addButtonsFloor() {
-    	// button + floor
+    	// button floor up
         JButton buttonUp = new JButton("+");
         buttonUp.setActionCommand(_FLOOR_UP);
         buttonUp.setToolTipText("This will increase the floor seen");
         buttonUp.addActionListener(this);
         this.add(buttonUp);
         
-        // button - floor
+        // button floor down
         JButton buttonDown = new JButton("-");
         buttonDown.setActionCommand(_FLOOR_DOWN);
         buttonDown.setToolTipText("This will decrease the floor seen");
@@ -184,6 +200,7 @@ public class ToolsBar extends JToolBar implements ActionListener  {
     	JToggleButton secondDimension = new JToggleButton("2D");
     	secondDimension.setSelected(true);
     	JToggleButton thirdDimension = new JToggleButton("3D");
+    	// ButtonGroup make the mutually exclusive 
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(secondDimension);
         buttonGroup.add(thirdDimension);
@@ -213,7 +230,12 @@ public class ToolsBar extends JToolBar implements ActionListener  {
 		else if (_REDO.equals(cmd)) {
         	_clickedRedo();
         }
-		// TODO action listening on shapes 
+        else if (_LINE.equals(cmd)) {
+        	_clickedLine() ;
+        }
+        else if (_GROUP.equals(cmd)) {
+        	_clickedGroup();
+        } 
 		
         else if (_FLOOR_DOWN.equals(cmd)) {
         	_clickedFloorDown() ;
@@ -226,10 +248,6 @@ public class ToolsBar extends JToolBar implements ActionListener  {
         }
         else if (_3D.equals(cmd)) {
         	_clicked3d();
-        }
-		
+        }	
 	}
-
-
-
 }
