@@ -12,8 +12,6 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		try {
-			Project p = createDemoProject();
-			
 			// Mac Os X : Menu name configuration
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 	        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");

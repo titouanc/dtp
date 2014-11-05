@@ -18,6 +18,7 @@ import com.j256.ormlite.support.ConnectionSource;
 public class Project {
 	private ConnectionSource _db = null;
 	private Dao<Config, String> _config = null;
+	private GeometryDAO _geo = null;
 
 	public Project() {
 
@@ -80,7 +81,14 @@ public class Project {
 		return entry.getValue();
 	}
 	
+	/**
+	 * @note The object returned by this method is a singleton.
+	 * @return A Data Access Object on all geometric models.
+	 * @throws SQLException
+	 */
 	public GeometryDAO getGeometryDAO() throws SQLException {
-		return new GeometryDAO(_db);
+		if (_geo == null)
+			_geo = new GeometryDAO(_db);
+		return _geo;
 	}
 }
