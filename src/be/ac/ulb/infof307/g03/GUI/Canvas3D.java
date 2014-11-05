@@ -28,6 +28,11 @@ public class Canvas3D extends SimpleApplication {
 	private boolean _freeCam = false;
 	Camera2D _cam2D;
 	
+	public Canvas3D() {
+		super();
+		this.setDisplayStatView(false);
+	}
+	
 	/**
 	 * @see com.jme3.app.SimpleApplication#simpleInitApp()
 	 */
