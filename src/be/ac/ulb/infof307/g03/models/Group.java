@@ -43,4 +43,9 @@ public class Group extends Shape {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString(){
+		return String.format("<%s>", getName());
+	}
 }

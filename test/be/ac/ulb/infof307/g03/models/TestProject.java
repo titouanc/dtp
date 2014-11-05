@@ -42,4 +42,11 @@ public class TestProject {
 	public void test_auto_create() throws SQLException {
 		assertEquals("", proj.config("inexistant_key"));
 	}
+	
+	@Test
+	public void test_geoDAO_is_singleton() throws SQLException {
+		GeometryDAO geo = proj.getGeometryDAO();
+		GeometryDAO geo2 = proj.getGeometryDAO();
+		assertEquals(geo, geo2);
+	}
 }

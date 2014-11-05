@@ -12,33 +12,51 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		try {
-			Project p = createDemoProject();
-			
 			// Mac Os X : Menu name configuration
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 	        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
 			
 			// Call GUI
-			new GUI();
+			new GUI(createDemoProject());
 		} catch (Exception err){}
 	}
 	
+	/**
+	 * Create a basic irregular 4-sided polygon in a demo project (not saved on disk)
+	 * @return The created project
+	 * @throws SQLException
+	 */
 	public static Project createDemoProject() throws SQLException{
 		Project proj = new Project();
 		proj.create(":memory:");
 		
-		Geometry geo = proj.getGeometry();
-		Point o = new Point(0, 0, 0), x = new Point(1, 0, 0), y = new Point(0, 1, 0);
-		Point xy = new Point(1, 1, 0);
+		proj.config("canvas.width", "1024");
+		proj.config("canvas.height", "768");
 		
-		Group room = new Group();
-		geo.create(room);
+		GeometryDAO geo = proj.getGeometryDAO();
+		Point a = new Point(0, 0, 0),
+			  b = new Point(3, 0, 0),
+			  c = new Point(7, 8, 0),
+			  d = new Point(0, 12, 0),
+			  e = new Point(-5, -1, 0);
 		
-		geo.addShapeToGroup(room, new Line(o, x));
-		geo.addShapeToGroup(room, new Line(x, xy));
-		geo.addShapeToGroup(room, new Line(xy, y));
-		geo.addShapeToGroup(room, new Line(y, o));
-		
+		createRoom(geo, "Irregular room", a, b, c, d);
+		createRoom(geo, "Triangular room", a, e, d);
 		return proj;
+	}
+	
+	/**
+	 * Create a room in a project
+	 * @param dao A geometric Data Acces Object
+	 * @param name The name of this room
+	 * @param points Contour of this room, in order
+	 * @throws SQLException
+	 */
+	public static void createRoom(GeometryDAO dao, String name, Point...points) throws SQLException{
+		Group room = new Group(name);
+		dao.create(room);
+		
+		for (int i=0; i<points.length; i++)
+			dao.addShapeToGroup(room, new Line(points[i], points[(i+1)%points.length]));
 	}
 }

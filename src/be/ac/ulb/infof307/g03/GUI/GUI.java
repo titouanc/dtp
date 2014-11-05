@@ -7,21 +7,21 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import javax.swing.*;
+import be.ac.ulb.infof307.g03.models.Project;
 
 /**
  * @author julianschembri, pierre
  *
  */
 public class GUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+	
 	/**
 	 * Constructor of GUI.
 	 * It put every frame needed at the right place on the main frame
 	 * Menu, toolsbar and the main workspace (splitpane)
 	 */
-	
-	private static final long serialVersionUID = 1L;
-	
-	public GUI() {
+	public GUI(Project project) {
 		// Create and set up the window
 		super("HomePlans");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,7 +39,7 @@ public class GUI extends JFrame {
      
         // Create the workspace
         // this one contains Jmonkey canvas and the left menu
-        MainPane workspace = new MainPane();
+        MainPane workspace = new MainPane(project);
         contentPane.add(workspace, BorderLayout.CENTER);
         
         // Add the workspace to the frame

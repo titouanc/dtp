@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.sql.SQLException;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -12,6 +13,7 @@ import javax.swing.JSplitPane;
 
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
+import be.ac.ulb.infof307.g03.models.Project;
 
 /**
  * @author pierre
@@ -26,16 +28,15 @@ public class MainPane extends JPanel {
 	private Canvas3D _canvas;
 	private ObjectTree _objectTree;
 	
-	
 	/**
 	 * Constructor of MainPane. It create a splitpane with a tree on
 	 * the left and jMonkey 3D integration on the right
 	 */
-	public MainPane(){
+	public MainPane(Project project){
 		super(new BorderLayout());
 		
         // Create an object tree
-        _objectTree = new ObjectTree();
+        _objectTree = new ObjectTree(project);
         
         // Create left menu
         _listScrollPane = new JScrollPane(_objectTree); 
@@ -61,7 +62,7 @@ public class MainPane extends JPanel {
         context.getCanvas().setPreferredSize(jme3Dimension);
         // Start jme3 canvas
         _canvas.startCanvas();
-       
+        
         // Create split pane
 		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane,context.getCanvas());
 		// Set up split pane

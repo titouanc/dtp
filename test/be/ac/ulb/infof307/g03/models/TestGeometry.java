@@ -19,7 +19,7 @@ public class TestGeometry {
 	@Before
 	public void setUp() throws Exception {
 		_db = new JdbcConnectionSource("jdbc:sqlite::memory:");
-		Geometry.migrate(_db);
+		GeometryDAO.migrate(_db);
 	}
 
 	@After
@@ -28,19 +28,19 @@ public class TestGeometry {
 	}
 
 	/**
-	 * Geometry on empty database: could not get any shape
+	 * GeometryDAO on empty database: could not get any shape
 	 * @throws SQLException
 	 */
 	@Test
 	public void test_geometry_empty() throws SQLException {
-		Geometry geo = new Geometry(_db);
+		GeometryDAO geo = new GeometryDAO(_db);
 		List<Shape> shapes = geo.getRootNodes();
 		assertTrue(shapes.isEmpty());
 	}
 	
 	@Test
 	public void test_geometry_line() throws SQLException{
-		Geometry geo = new Geometry(_db);
+		GeometryDAO geo = new GeometryDAO(_db);
 		Line l = new Line(new Point(0, 0, 0), new Point(3, 4, 0));
 		geo.create(l);
 		assertTrue(l.getId() != 0);
@@ -56,7 +56,7 @@ public class TestGeometry {
 	
 	@Test
 	public void test_get_points_from_line() throws SQLException {
-		Geometry geo = new Geometry(_db);
+		GeometryDAO geo = new GeometryDAO(_db);
 		Point x = new Point(1, 0, 0), y = new Point(0, 1, 0);
 		
 		Line l = new Line(x, y);
@@ -70,7 +70,7 @@ public class TestGeometry {
 	
 	@Test
 	public void test_group_name() throws SQLException{
-		Geometry geo = new Geometry(_db);
+		GeometryDAO geo = new GeometryDAO(_db);
 		Group grp = new Group();
 		geo.create(grp);
 		
@@ -89,7 +89,7 @@ public class TestGeometry {
 	
 	@Test
 	public void test_get_points_from_group() throws SQLException {
-		Geometry geo = new Geometry(_db);
+		GeometryDAO geo = new GeometryDAO(_db);
 		Point x = new Point(1, 0, 0), y = new Point(0, 1, 0), z = new Point(0, 0, 1);
 		
 		Group grp = new Group();
@@ -112,7 +112,7 @@ public class TestGeometry {
 	
 	@Test
 	public void test_get_roots() throws SQLException {
-		Geometry geo = new Geometry(_db);
+		GeometryDAO geo = new GeometryDAO(_db);
 		Line l = new Line(new Point(0, 0, 0), new Point(1, 2, 3));
 		geo.create(l);
 		
@@ -123,7 +123,7 @@ public class TestGeometry {
 	
 	@Test
 	public void test_as_mesh() throws SQLException{
-		Geometry geo = new Geometry(_db);
+		GeometryDAO geo = new GeometryDAO(_db);
 		Line l = new Line(new Point(0, 0, 0), new Point(1, 1, 0));
 		geo.create(l);
 		

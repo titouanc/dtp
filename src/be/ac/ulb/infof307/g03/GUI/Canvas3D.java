@@ -27,7 +27,7 @@ public class Canvas3D extends SimpleApplication {
 	
 	private boolean _freeCam = false;
 	Camera2D _cam2D;
-	
+
 	/**
 	 * @see com.jme3.app.SimpleApplication#simpleInitApp()
 	 */
@@ -93,7 +93,6 @@ public class Canvas3D extends SimpleApplication {
 		ground.setMaterial(mat2);
 		shapes.add(ground);
 		rootNode.attachChild(ground);
-		
 	}
 
 }
