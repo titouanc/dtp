@@ -131,9 +131,9 @@ public class Camera2D implements AnalogListener, ActionListener {
             return;
 
 		if (name.equals("StrafeRight")) {
-			this.moveCamera(-value,false);
-		} else if (name.equals("StrafeLeft")) {
 			this.moveCamera(value,false);
+		} else if (name.equals("StrafeLeft")) {
+			this.moveCamera(-value,false);
 		} else if (name.equals("Forward")) {
 			this.moveCamera(value,true);
 		} else if (name.equals("Backward")) {
