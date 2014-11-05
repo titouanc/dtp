@@ -1,23 +1,21 @@
 package be.ac.ulb.infof307.g03.GUI;
  
+import java.util.Vector;
+
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.CameraNode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.math.ColorRGBA;
 import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.util.BufferUtils;
  
 /** Sample 5 - how to map keys and mousebuttons to actions */
@@ -25,6 +23,7 @@ public class Canvas3D extends SimpleApplication {
  
   protected Geometry meshes;
   protected Geometry ground;
+  protected Vector<Geometry> shapes = new Vector<Geometry>();
 
   Boolean isRunning=true;
   Boolean is3D=true;
@@ -74,12 +73,13 @@ public class Canvas3D extends SimpleApplication {
   	groundMesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
   	groundMesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(groundOrder));
   	
-  	
+  	System.out.println("ICI");
     meshes = new Geometry("Mesh",mesh);
     Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
     mat.setColor("Color", ColorRGBA.Blue);
     meshes.setMaterial(mat);
+    shapes.add(meshes);
     rootNode.attachChild(meshes);
     
     ground = new Geometry("Groundmesh",groundMesh);
@@ -87,8 +87,8 @@ public class Canvas3D extends SimpleApplication {
     mat2.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
     mat2.setColor("Color", ColorRGBA.Red);
     ground.setMaterial(mat2);
+    shapes.add(ground);
     rootNode.attachChild(ground);
-    
     
     
     
@@ -125,8 +125,9 @@ public class Canvas3D extends SimpleApplication {
       	  flyCam.setEnabled(true);
     	  Quaternion pitch90 = new Quaternion();
     	  pitch90.fromAngleAxis(FastMath.PI/2, new Vector3f(0,0,1));
-    	  meshes.setLocalRotation(pitch90);
-    	  ground.setLocalRotation(pitch90);
+    	  for(int i =0; i< shapes.size();++i){
+    		  shapes.elementAt(i).setLocalRotation(pitch90);
+    	  }
 	      
       }
       if (name.equals("3D") && keyPressed){
@@ -140,19 +141,22 @@ public class Canvas3D extends SimpleApplication {
       if (isRunning) {
         if (name.equals("Rotate")) {
         	if(is3D){
-        		meshes.rotate(0, value*speed, 0);
-        		ground.rotate(0, value*speed, 0);
+          	  for(int i =0; i< shapes.size();++i){
+          		shapes.elementAt(i).rotate(0, value*speed, 0);
+        	  }
         	}
         }
         if (name.equals("Right")) {
           Vector3f v = meshes.getLocalTranslation();
-          meshes.setLocalTranslation(v.x + value*speed, v.y, v.z);
-          ground.setLocalTranslation(v.x + value*speed, v.y, v.z);
+      	  for(int i =0; i< shapes.size();++i){
+          	shapes.elementAt(i).setLocalTranslation(v.x + value*speed, v.y, v.z);
+    	  }
         }
         if (name.equals("Left")) {
           Vector3f v = meshes.getLocalTranslation();
-          meshes.setLocalTranslation(v.x - value*speed, v.y, v.z);
-          ground.setLocalTranslation(v.x - value*speed, v.y, v.z);
+      	  for(int i =0; i< shapes.size();++i){
+    		  shapes.elementAt(i).setLocalTranslation(v.x - value*speed, v.y, v.z);
+    	  }
         }
         if(name.equals("New")){
         	rootNode.detachChild(meshes);
