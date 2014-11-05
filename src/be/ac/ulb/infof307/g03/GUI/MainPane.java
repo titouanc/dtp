@@ -6,11 +6,9 @@ package be.ac.ulb.infof307.g03.GUI;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.ListSelectionModel;
 
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
