@@ -42,6 +42,9 @@ public class GUI extends JFrame {
         MainPane workspace = new MainPane();
         contentPane.add(workspace, BorderLayout.CENTER);
         
+        // Link the camera controller with the toolbar
+        toolsBar.setCameraController(workspace.getCanvas3D().getCameraController());
+        
         // Add the workspace to the frame
         this.setContentPane(contentPane);
         

@@ -24,6 +24,8 @@ import java.awt.event.ActionListener;
  */
 public class ToolsBar extends JToolBar implements ActionListener  {
 	
+	private CameraController _camController;
+	
 	private static final long serialVersionUID = 1L;
 	
 	// buttons actions
@@ -50,6 +52,11 @@ public class ToolsBar extends JToolBar implements ActionListener  {
         _addButons();
         //Lay out the main panel.
     }
+    
+    public void setCameraController(CameraController camController){
+    	_camController = camController;
+    }
+    
     
     /**
      * The private method is called when the button undo
@@ -99,6 +106,7 @@ public class ToolsBar extends JToolBar implements ActionListener  {
      */
     private void _clicked2d(){
     	System.out.println("go2D");
+    	//_camController.changeMode(CameraController.VIEW2D);
     }
     
     /**
@@ -107,6 +115,7 @@ public class ToolsBar extends JToolBar implements ActionListener  {
      */
     private void _clicked3d(){
     	System.out.println("go3D");
+    	//_camController.changeMode(CameraController.VIEW3D);
     }
     
     /**

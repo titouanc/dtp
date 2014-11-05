@@ -70,5 +70,7 @@ public class MainPane extends JPanel {
 		
 		this.add(_splitPane);
 	}
+	
+	public Canvas3D getCanvas3D(){return _canvas;}
 
 }

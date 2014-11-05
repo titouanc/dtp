@@ -27,6 +27,7 @@ public class Canvas3D extends SimpleApplication {
 	
 	private boolean _freeCam = false;
 	Camera2D _cam2D;
+	private CameraController _cameraController;// = new CameraController(_cam2D);
 	
 	public Canvas3D() {
 		super();
@@ -38,9 +39,8 @@ public class Canvas3D extends SimpleApplication {
 	 */
 	@Override
 	public void simpleInitApp() {
-		flyCam.setEnabled(false);
 		_cam2D = new Camera2D(cam, this.getInputManager());
-		_cam2D.setEnabled(true);
+		flyCam.setEnabled(false);
 		
 		Vector3f [] vertices = new Vector3f[8];
 		vertices[0] = new Vector3f(0,0,0);
@@ -100,5 +100,7 @@ public class Canvas3D extends SimpleApplication {
 		rootNode.attachChild(ground);
 		
 	}
+	
+	public CameraController getCameraController(){return _cameraController;}
 
 }
