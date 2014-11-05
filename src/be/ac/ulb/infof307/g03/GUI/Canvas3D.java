@@ -18,7 +18,6 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
  
-/** Sample 5 - how to map keys and mousebuttons to actions */
 public class Canvas3D extends SimpleApplication {
  
   protected Geometry meshes;
@@ -73,7 +72,6 @@ public class Canvas3D extends SimpleApplication {
   	groundMesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
   	groundMesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(groundOrder));
   	
-  	System.out.println("ICI");
     meshes = new Geometry("Mesh",mesh);
     Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
     mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
@@ -94,9 +92,33 @@ public class Canvas3D extends SimpleApplication {
     
     
     initKeys(); // load my custom keybinding
+    camHeight(shapes);
   }
   
-  
+  public void camHeight(Vector <Geometry> shape){
+	  float minX = 0,minY = 0,maxX = 0,maxY = 0,X = 0, Y= 0,Z = 0;
+	  int offset=17;
+	  Vector3f center;
+	  for(int i =0; i< shape.size();++i){
+		  center=shape.elementAt(i).getModelBound().getCenter();
+		  if (center.x<minX){
+			  minX=center.x;
+		  }
+		  if (center.y<minY){
+			  minY=center.y;
+		  }
+		  if (center.x>maxX){
+			  maxX=center.x;
+		  }
+		  if (center.y>maxY){
+			  maxY=center.y;
+		  }
+		  Z+=center.z;
+	  }
+	  X=(minX+maxX)/2;
+	  Y=(minY+maxY)/2;
+	  cam.setLocation(new Vector3f(X,Y,Z+offset));	  
+  }
  
   /** Custom Keybinding: Map named actions to inputs. */
   private void initKeys() {
@@ -128,7 +150,7 @@ public class Canvas3D extends SimpleApplication {
     	  for(int i =0; i< shapes.size();++i){
     		  shapes.elementAt(i).setLocalRotation(pitch90);
     	  }
-	      
+
       }
       if (name.equals("3D") && keyPressed){
     	  is3D=true;
