@@ -19,10 +19,8 @@ public class CameraController {
 		if(mode != _currentMode){
 			if(mode == VIEW3D){
 				_cam2D.setEnabled(false);
-			}
-			else{
+			} else{
 				_cam2D.setEnabled(true);
-				
 			}
 			_currentMode = !_currentMode;
 		}

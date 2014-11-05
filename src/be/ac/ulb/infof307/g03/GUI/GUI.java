@@ -56,7 +56,6 @@ public class GUI extends JFrame {
         // Display the window
         this.pack();
         this.setVisible(true);
-        
 	}
 
 }

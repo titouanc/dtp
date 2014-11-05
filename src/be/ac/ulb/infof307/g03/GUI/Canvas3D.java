@@ -26,12 +26,14 @@ public class Canvas3D extends SimpleApplication {
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	
 	private boolean _freeCam = false;
-	Camera2D _cam2D;
-	private CameraController _cameraController;// = new CameraController(_cam2D);
+	private Camera2D _cam2D;
+	private CameraController _cameraController;
 	
 	public Canvas3D() {
 		super();
 		this.setDisplayStatView(false);
+		_cam2D = new Camera2D();
+		_cameraController = new CameraController(_cam2D);
 	}
 	
 	/**
@@ -39,8 +41,9 @@ public class Canvas3D extends SimpleApplication {
 	 */
 	@Override
 	public void simpleInitApp() {
-		_cam2D = new Camera2D(cam, this.getInputManager());
 		flyCam.setEnabled(false);
+		_cam2D.setCam(cam);
+		_cam2D.setInputManager(inputManager);
 		
 		Vector3f [] vertices = new Vector3f[8];
 		vertices[0] = new Vector3f(0,0,0);
@@ -82,7 +85,6 @@ public class Canvas3D extends SimpleApplication {
 		groundMesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
 		groundMesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(groundOrder));
 
-		System.out.println("ICI");
 		meshes = new Geometry("Mesh",mesh);
 		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
@@ -101,6 +103,8 @@ public class Canvas3D extends SimpleApplication {
 		
 	}
 	
-	public CameraController getCameraController(){return _cameraController;}
+	public CameraController getCameraController(){
+		return _cameraController;
+	}
 
 }

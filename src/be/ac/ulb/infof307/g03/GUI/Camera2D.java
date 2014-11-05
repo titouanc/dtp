@@ -1,5 +1,7 @@
 package be.ac.ulb.infof307.g03.GUI;
 
+import java.util.Vector;
+
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -12,9 +14,11 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Geometry;
 
-/*
+/**
  * Camera2D is the controller of the camera when the view is switched on 2D
+ * @author schembrijulian, brochape, wmoulart
  */
 public class Camera2D implements AnalogListener, ActionListener {
 	
@@ -25,10 +29,7 @@ public class Camera2D implements AnalogListener, ActionListener {
     private boolean _enabled = true;
     private InputManager _inputManager;
 
-    public Camera2D(Camera cam, InputManager inputManager) {
-    	_inputManager = inputManager;
-		_cam = cam;
-		inputSetUp();
+    public Camera2D() {
 	}
 	
 	public boolean isEnabled() {
@@ -38,6 +39,16 @@ public class Camera2D implements AnalogListener, ActionListener {
 	public void setEnabled(boolean enable) {
 		_enabled = enable;
 	}
+	
+	public void setCam(Camera cam) {
+		_cam = cam;
+	}
+	
+	public void setInputManager(InputManager inputManager) {
+		_inputManager = inputManager;
+		inputSetUp();
+	}
+
 	
 	public void moveCamera(float value, boolean sideways) {
 		Vector3f pos = _cam.getLocation().clone();
@@ -53,6 +64,31 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_cam.setLocation(pos);
 	}
 	
+	public void camHeight(Vector <Geometry> shape){
+		  float minX = 0,minY = 0,maxX = 0,maxY = 0,X = 0, Y= 0,Z = 0;
+		  int offset=17;
+		  Vector3f center;
+		  for(int i =0; i< shape.size();++i){
+			  center=shape.elementAt(i).getModelBound().getCenter();
+			  if (center.x<minX){
+				  minX=center.x;
+			  }
+			  if (center.y<minY){
+				  minY=center.y;
+			  }
+			  if (center.x>maxX){
+				  maxX=center.x;
+			  }
+			  if (center.y>maxY){
+				  maxY=center.y;
+			  }
+			  Z+=center.z;
+		  }
+		  X=(minX+maxX)/2;
+		  Y=(minY+maxY)/2;
+		  _cam.setLocation(new Vector3f(X,Y,Z+offset));	  
+	  }
+	
 	private void zoomCamera(float value){
 		Vector3f pos = _cam.getLocation().clone();
 		pos.setZ(pos.getZ() + (value*_moveSpeed));
@@ -60,12 +96,13 @@ public class Camera2D implements AnalogListener, ActionListener {
     }
 
 	public void inputSetUp() {
-		
+
 		// Key event mapping
 		_inputManager.addMapping("StrafeLeft",		new KeyTrigger(KeyInput.KEY_LEFT));
 		_inputManager.addMapping("StrafeRight",		new KeyTrigger(KeyInput.KEY_RIGHT));
 		_inputManager.addMapping("Forward",   		new KeyTrigger(KeyInput.KEY_UP));
 		_inputManager.addMapping("Backward",		new KeyTrigger(KeyInput.KEY_DOWN));
+		_inputManager.addMapping("K",		new KeyTrigger(KeyInput.KEY_K));
 		
 		// Mouse event mapping
 		_inputManager.addMapping("RotateDrag", 		new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
