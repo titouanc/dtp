@@ -6,6 +6,7 @@ package be.ac.ulb.infof307.g03.models;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
 
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -23,7 +24,7 @@ import com.jme3.util.BufferUtils;
  * The geometry class is a DAO for all geometry related models.
  * Handle CRUD operations, and the associations logic
  */
-public class GeometryDAO {
+public class GeometryDAO extends Observable {
 	private Dao<Line, Integer> _lines = null;
 	private Dao<Group, Integer> _groups = null;
 	
@@ -50,11 +51,14 @@ public class GeometryDAO {
 	 * @throws SQLException
 	 */
 	public int create(Shape shape) throws SQLException{
+		int res = 0;
 		if (shape.getClass() == Line.class)
-			return _lines.create((Line) shape);
+			res = _lines.create((Line) shape);
 		else if (shape.getClass() == Group.class)
-			return _groups.create((Group) shape);
-		return 0;
+			res = _groups.create((Group) shape);
+		if (res != 0)
+			setChanged();
+		return res;
 	}
 	
 	/**
@@ -64,11 +68,14 @@ public class GeometryDAO {
 	 * @throws SQLException
 	 */
 	public int update(Shape shape) throws SQLException {
+		int res = 0;
 		if (shape.getClass() == Line.class)
-			return _lines.update((Line) shape);
+			res = _lines.update((Line) shape);
 		else if (shape.getClass() == Group.class)
-			return _groups.update((Group) shape);
-		return 0;
+			res = _groups.update((Group) shape);
+		if (res != 0)
+			setChanged();
+		return res;
 	}
 	
 	/**
@@ -78,11 +85,14 @@ public class GeometryDAO {
 	 * @throws SQLException
 	 */
 	public int delete(Shape shape) throws SQLException {
+		int res = 0;
 		if (shape.getClass() == Line.class)
-			return _lines.delete((Line) shape);
+			res = _lines.delete((Line) shape);
 		else if (shape.getClass() == Group.class)
-			return _groups.delete((Group) shape);
-		return 0;
+			res = _groups.delete((Group) shape);
+		if (res != 0)
+			setChanged();
+		return res;
 	}
 	
 	/**
@@ -163,6 +173,7 @@ public class GeometryDAO {
 			update(shape);
 		else
 			create(shape);
+		setChanged();
 	}
 
 	/**
