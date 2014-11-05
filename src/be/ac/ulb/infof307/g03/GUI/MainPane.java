@@ -17,8 +17,8 @@ import com.jme3.system.JmeCanvasContext;
 
 /**
  * @author pierre
- * This class implements the main view of the application, namely a splitview.
- * It contains a 3D view on the right.
+ * This class implements the main view of the application, a splitpane
+ * It contains a 3D view on the right. A tree on the left
  */
 public class MainPane extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -28,14 +28,15 @@ public class MainPane extends JPanel {
 	private Canvas3D _canvas;
 	private ObjectTree _objectTree;
 	
+	
+	/**
+	 * Constructor of MainPane. It create a splitpane with a tree on
+	 * the left and jMonkey 3D integration on the right
+	 */
 	public MainPane(){
 		super(new BorderLayout());
 		
-		// !!! temporary !!!
-        String[] listShape = new String[] {"Rectangle", "Rectangle", "Rond", "Cercle"};
-        JList list = new JList(listShape);
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+        // Create an object tree
         _objectTree = new ObjectTree();
         
         // Create left menu
@@ -55,6 +56,7 @@ public class MainPane extends JPanel {
         // Set up event listener
         JmeCanvasContext context = (JmeCanvasContext) _canvas.getContext();
         context.setSystemListener(_canvas);
+        
         // Set up resize behavior
         Dimension jme3Dimension = new Dimension(640, 480);
         context.getCanvas().setMinimumSize(jme3Dimension);
