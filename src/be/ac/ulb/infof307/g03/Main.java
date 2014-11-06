@@ -9,19 +9,23 @@ public class Main {
 
 	/**
 	 * @brief Main entry point of the program
+	 * @see http://hub.jmonkeyengine.org/wiki/doku.php/jme3:advanced:swing_canvas
 	 */
 	public static void main(String[] args) {
-		try {
-			// Mac Os X : Menu name configuration
-			System.setProperty("apple.laf.useScreenMenuBar", "true");
-	        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
-			
-			// Call GUI
-			new GUI(createDemoProject());
-		} catch (Exception err){
-			System.out.println("[DEBUG] Exception catched while creating GUI");
-			System.out.println("[DEBUG] Error is : "+ err);
-		}
+		// Call GUI
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run(){
+				System.setProperty("apple.laf.useScreenMenuBar", "true");
+				System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
+				try {
+					new GUI(createDemoProject());
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
 	}
 	
 	/**

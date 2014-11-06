@@ -16,8 +16,8 @@ public class ToolsBarController {
 		_view = new ToolsBarView(this);
 	}
 	
-	/*
-	 * Get the view of the toolbar.
+	/**
+	 * @return The controller view 
 	 */
 	public ToolsBarView getView(){
 		return _view;
@@ -45,7 +45,6 @@ public class ToolsBarController {
      * is clicked. It will communicate with the controller
      */
     public void onLine(){
-    	// TODO define how shape will be implemented
     	System.out.println("[DEBUG] User clicked on : line");
     }
     
@@ -54,7 +53,6 @@ public class ToolsBarController {
      * is clicked. It will communicate with the controller
      */
     public void onGroup(){
-    	// TODO define how shape will be implemented
     	System.out.println("[DEBUG] User clicked on : group");
     }
     

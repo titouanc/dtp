@@ -21,10 +21,11 @@ import com.jme3.util.BufferUtils;
  * @brief Control the world (3D/2D canvas)
  */
 public class WorldController {
+	
 	private WorldView _view;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	
-	/*
+	/**
 	 * Constructor of WorldController.
 	 * It creates the controller view.
 	 */
@@ -34,30 +35,31 @@ public class WorldController {
 		_view.createCanvas();
 	}
 	
-	/*
-	 * Get the world view.
+	/**
+	 * @return the world view.
 	 */
 	public WorldView getView(){
 		return _view;
 	}
 	
-	/*
-	 * Get the view context.
+	/**
+	 * @return The view context.
 	 */
 	public JmeContext getViewContext(){
 		return _view.getContext();
 	}
 	
-	/*
+	/**
 	 * Start the view canvas.
 	 */
 	public void startViewCanvas(){
 		_view.startCanvas();
 	}
 	
-	/*
+	
+	// TODO add more doc
+	/**
 	 * Create a world demo
-	 * TODO add more doc
 	 */
 	public void createDemoGeometry(){
 		
