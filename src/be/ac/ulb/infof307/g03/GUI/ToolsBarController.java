@@ -5,17 +5,21 @@ package be.ac.ulb.infof307.g03.GUI;
  * 
  */
 public class ToolsBarController {
-	public ToolsBarView view;
+	private ToolsBarView _view;
 	
-	ToolsBarController(){
-		view = new ToolsBarView(this);
+	public ToolsBarController(){
+		_view = new ToolsBarView(this);
+	}
+	
+	public ToolsBarView getView(){
+		return _view;
 	}
 	
 	/**
      * The private method is called when the button undo
      * is clicked. It will communicate with the controller
      */
-    void onUndo(){
+    public void onUndo(){
     	System.out.println("[DEBUG] User clicked on : undo");
         
     }
@@ -24,7 +28,7 @@ public class ToolsBarController {
      * The private method is called when the button redo
      * is clicked. It will communicate with the controller
      */ 
-    void onRedo(){
+    public void onRedo(){
     	System.out.println("[DEBUG] User clicked on : redo");
     	
     }
@@ -32,7 +36,7 @@ public class ToolsBarController {
      * The private method is called when the button line
      * is clicked. It will communicate with the controller
      */
-    void onLine(){
+    public void onLine(){
     	// TODO define how shape will be implemented
     	System.out.println("[DEBUG] User clicked on : line");
     }
@@ -41,7 +45,7 @@ public class ToolsBarController {
      * The private method is called when the button group
      * is clicked. It will communicate with the controller
      */
-    void onGroup(){
+    public void onGroup(){
     	// TODO define how shape will be implemented
     	System.out.println("[DEBUG] User clicked on : group");
     }
@@ -50,7 +54,7 @@ public class ToolsBarController {
      * The private method is called when the button floor up
      * is clicked. It will communicate with the controller
      */
-    void onFloorUp(){
+    public void onFloorUp(){
     	System.out.println("[DEBUG] User clicked on : floorUp");	
     }
     
@@ -58,7 +62,7 @@ public class ToolsBarController {
      * The private method is called when the button floor down
      * is clicked. It will communicate with the controller
      */
-    void onFloorDown(){
+    public void onFloorDown(){
     	System.out.println("[DEBUG] User clicked on : floor down");
     }
     
@@ -74,7 +78,7 @@ public class ToolsBarController {
      * The private method is called when the button 3D
      * is clicked. It will communicate with the controller
      */
-    void on3d(){
+    public void on3d(){
     	System.out.println("[DEBUG] User clicked on : go3D");
     }
 

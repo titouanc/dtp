@@ -36,7 +36,7 @@ public class GUI extends JFrame {
         
         // Create the toolbar
         ToolsBarController toolsBar = new ToolsBarController();
-        contentPane.add(toolsBar.view, BorderLayout.PAGE_START);
+        contentPane.add(toolsBar.getView(), BorderLayout.PAGE_START);
      
         // Create the workspace
         // this one contains Jmonkey canvas and the left menu
