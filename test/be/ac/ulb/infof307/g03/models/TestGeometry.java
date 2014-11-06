@@ -131,4 +131,51 @@ public class TestGeometry {
 		// Line + height -> rectangle -> 4 vertex
 		assertEquals(4, mesh.getVertexCount());
 	}
+	
+	@Test
+	public void test_wall() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Wall wall = new Wall();
+		assertEquals(1, geo.create(wall));
+		
+		assertEquals(1, wall.getId());
+		assertEquals(1, wall.getGroup().getId());
+		assertEquals(1, geo.getWalls().size());
+	}
+	
+	@Test
+	public void test_ground() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Ground ground = new Ground();
+		assertEquals(1, geo.create(ground));
+		
+		assertEquals(1, ground.getId());
+		assertEquals(1, ground.getGroup().getId());
+		assertEquals(1, geo.getGrounds().size());
+	}
+
+	@Test
+	public void test_room() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Group room = new Group("room");
+		geo.create(room);
+		
+		geo.create(new Wall(room, 2.35));
+		geo.create(new Ground(room));
+		
+		Point o = new Point(0, 0, 0),
+			  x = new Point(1, 0, 0),
+			  y = new Point(0, 1, 0),
+			  xy = new Point(1, 1, 0);
+		geo.addShapeToGroup(room, new Line(o, x));
+		geo.addShapeToGroup(room, new Line(x, xy));
+		geo.addShapeToGroup(room, new Line(xy, y));
+		geo.addShapeToGroup(room, new Line(y, o));
+		
+		Wall wall = geo.getWall(1);
+		assertNotNull(wall);
+		
+		Mesh mesh = geo.getWallAsMesh(wall);
+		assertEquals(8, mesh.getVertexCount());
+	}
 }

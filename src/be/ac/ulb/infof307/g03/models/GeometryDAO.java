@@ -275,23 +275,36 @@ public class GeometryDAO extends Observable {
 		int shape_n_points = all_points.size();
 		int volume_n_points = 2 * all_points.size(); //floor && ceil
 		
+		/* 0) Closed polygon ? -> we don't need to store both first && last */
+		Point firstPoint = all_points.get(0);
+		Point lastPoint = all_points.get(shape_n_points - 1);
+		if (firstPoint.equals(lastPoint)){
+			shape_n_points--;
+			volume_n_points -= 2;
+		}
+		
+		/* 1) Build an array of all points */
 		Vector3f vertices[] = new Vector3f[volume_n_points];
-		for (int i=0; i<all_points.size(); i++){
+		for (int i=0; i<shape_n_points; i++){
 			vertices[i] = all_points.get(i).toVector3f(); // floor
 			vertices[i + shape_n_points] = all_points.get(i).toVector3f().add(height); //ceil
 		}
 		
-		int n_triangles = 6 * (shape_n_points - 1);
+		/* 2) Build an array of indexes on vertices.
+		 *    3 points forms a triangle, 2 triangle per line + elevation. 
+		 *    In case of closed polygon, overflow index to get first point. */
+		int n_triangles = 6 * (all_points.size() - 1);
 		int edges[] = new int[n_triangles];
 		for (int i=0; i<shape_n_points-1; i++){
 			edges[6*i] = i;
-			edges[6*i+1] = i + shape_n_points + 1;
-			edges[6*i+2] = i + shape_n_points;
+			edges[6*i+1] = (i + shape_n_points + 1) % shape_n_points;
+			edges[6*i+2] = (i + shape_n_points) % shape_n_points;
 			edges[6*i+3] = i;
-			edges[6*i+4] = i+1;
-			edges[6*i+5] = i + shape_n_points + 1;
+			edges[6*i+4] = (i+1) % shape_n_points;
+			edges[6*i+5] = (i + shape_n_points + 1) % shape_n_points;
 		}
 		
+		/* 3) Pack everything in a Mesh object */
 		Mesh mesh = new Mesh();
 	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
 	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
