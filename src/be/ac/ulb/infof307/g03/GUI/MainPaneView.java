@@ -4,6 +4,7 @@
 package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Dimension;
 import java.sql.SQLException;
 
@@ -13,6 +14,7 @@ import javax.swing.JSplitPane;
 
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
+
 import be.ac.ulb.infof307.g03.models.Project;
 
 /**
@@ -25,14 +27,14 @@ public class MainPaneView extends JPanel {
 	
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
-	private WorldController _world;
+	
 	private ObjectTree _objectTree;
 	
 	/**
 	 * Constructor of MainPane. It create a splitpane with a tree on
 	 * the left and jMonkey 3D integration on the right
 	 */
-	public MainPaneView(Project project){
+	public MainPaneView(Project project, Canvas canvas){
 		super(new BorderLayout());
 		
         // Create an object tree
@@ -44,27 +46,9 @@ public class MainPaneView extends JPanel {
         Dimension listScrollPaneDimension = new Dimension(100,480);
         _listScrollPane.setMinimumSize(listScrollPaneDimension);
         _listScrollPane.setPreferredSize(listScrollPaneDimension);
-
-        // Set up jme3 canvas' settings
-        AppSettings settings = new AppSettings(true);
-        settings.setFrameRate(60);
-        // Create jme3 canvas
-        _world = new WorldController();
-        _world.view.setSettings(settings);
-        _world.view.createCanvas();
-        // Set up event listener
-        JmeCanvasContext context = (JmeCanvasContext) _world.view.getContext();
-        context.setSystemListener(_world.view);
-        
-        // Set up resize behavior
-        Dimension jme3Dimension = new Dimension(640, 480);
-        context.getCanvas().setMinimumSize(jme3Dimension);
-        context.getCanvas().setPreferredSize(jme3Dimension);
-        // Start jme3 canvas
-        _world.view.startCanvas();
         
         // Create split pane
-		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane,context.getCanvas());
+		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane,canvas);
 		// Set up split pane
 		_splitPane.setOneTouchExpandable(true);
 		_splitPane.setDividerLocation(100);
