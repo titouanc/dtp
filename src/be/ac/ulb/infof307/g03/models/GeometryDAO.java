@@ -261,15 +261,14 @@ public class GeometryDAO extends Observable {
 	}
 	
 	/**
-	 * Transform a shape (2D) into a Mesh (3D object usable in jMonkey)
-	 * @param shape The shape to transform
-	 * @param elevation Height of the shape (constant for all the shape)
-	 * @return The Mesh object
+	 * Transform a Wall object into a Mesh (3D object usable in jMonkey)
+	 * @param wall The wall to transform
+	 * @return The Mesh
 	 * @throws SQLException
 	 */
-	public Mesh getShapeAsMesh(Shape shape, float elevation) throws SQLException{
-		List<Point> all_points = getPointsForShape(shape);
-		Vector3f height = new Vector3f(0, 0, elevation);
+	public Mesh getWallAsMesh(Wall wall) throws SQLException{
+		List<Point> all_points = getPointsForShape(wall.getGroup());
+		Vector3f height = new Vector3f(0, 0, (float) wall.getHeight());
 		
 		int shape_n_points = all_points.size();
 		int volume_n_points = 2 * all_points.size(); //floor && ceil
@@ -289,7 +288,7 @@ public class GeometryDAO extends Observable {
 			vertices[i + shape_n_points] = all_points.get(i).toVector3f().add(height); //ceil
 		}
 		
-		/* 2) Build an array of indexes on vertices.
+		/* 2) Build an array of indexes on vertices (triangle edges).
 		 *    3 points forms a triangle, 2 triangle per line + elevation. 
 		 *    In case of closed polygon, overflow index to get first point. */
 		int n_triangles = 6 * (all_points.size() - 1);
@@ -310,15 +309,5 @@ public class GeometryDAO extends Observable {
 	  	mesh.updateBound();
 	  	
 	  	return mesh;
-	}
-
-	/**
-	 * Transform a Wall object into a Mesh (3D object usable in jMonkey)
-	 * @param wall The wall to transform
-	 * @return The Mesh
-	 * @throws SQLException
-	 */
-	public Mesh getWallAsMesh(Wall wall) throws SQLException{
-		return getShapeAsMesh((Shape) (wall.getGroup()), (float) wall.getHeight());
 	}
 }

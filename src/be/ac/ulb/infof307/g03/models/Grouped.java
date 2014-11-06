@@ -11,18 +11,18 @@ import com.j256.ormlite.table.DatabaseTable;
  * @author Titouan Christophe
  */
 @DatabaseTable
-public abstract class Groupable implements Geometric {
+public abstract class Grouped implements Geometric {
 	@DatabaseField(generatedId = true)
 	private int _id = 0;
 	
-	@DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true, canBeNull = false)
+	@DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
 	private Group _group = null;
 	
-	public Groupable() {
+	public Grouped() {
 		_group = new Group();
 	}
 	
-	public Groupable(Group group){
+	public Grouped(Group group){
 		setGroup(group);
 	}
 

@@ -8,7 +8,7 @@ import com.j256.ormlite.field.DatabaseField;
 /**
  * @author Titouan Christophe
  */
-public class Wall extends Groupable {
+public class Wall extends Grouped {
 	@DatabaseField
 	private double _height = 0;
 	
