@@ -12,26 +12,53 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.system.AppSettings;
+import com.jme3.system.JmeContext;
 import com.jme3.util.BufferUtils;
 
 /**
- * @author fhennecker
- *
+ * @author fhennecker,pierre
+ * @brief Control the world (3D/2D canvas)
  */
 public class WorldController {
-	
 	private WorldView _view;
-	
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	
-	WorldController(){
+	/*
+	 * Constructor of WorldController.
+	 * It creates the controller view.
+	 */
+	public WorldController(AppSettings settings){
 		_view = new WorldView(this);
+		_view.setSettings(settings);
+		_view.createCanvas();
 	}
 	
+	/*
+	 * Get the world view.
+	 */
 	public WorldView getView(){
 		return _view;
 	}
 	
+	/*
+	 * Get the view context.
+	 */
+	public JmeContext getViewContext(){
+		return _view.getContext();
+	}
+	
+	/*
+	 * Start the view canvas.
+	 */
+	public void startViewCanvas(){
+		_view.startCanvas();
+	}
+	
+	/*
+	 * Create a world demo
+	 * TODO add more doc
+	 */
 	public void createDemoGeometry(){
 		
 		Vector3f [] vertices = new Vector3f[8];

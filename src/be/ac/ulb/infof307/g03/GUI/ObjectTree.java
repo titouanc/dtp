@@ -28,7 +28,7 @@ import javax.swing.tree.TreeSelectionModel;
 import be.ac.ulb.infof307.g03.models.*;
 
 /**
- * @author pierre
+ * @author pierre, titou
  * 
  */
 public class ObjectTree extends JPanel implements TreeSelectionListener {
@@ -133,7 +133,7 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTree _tree;
-	ShapeTreeModel _model;
+	private ShapeTreeModel _model;
 
 	public ObjectTree(Project project) {
 		super(new GridLayout(1, 0));

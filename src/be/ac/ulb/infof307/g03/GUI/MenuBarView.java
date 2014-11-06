@@ -16,7 +16,7 @@ import javax.swing.KeyStroke;
 
 public class MenuBarView extends JMenuBar implements ActionListener {
 	
-	MenuBarController controller;
+	private MenuBarController _controller;
 
 	private static final long serialVersionUID = 1L;
 	
@@ -30,11 +30,12 @@ public class MenuBarView extends JMenuBar implements ActionListener {
 	/**
 	 * Constructor of the class MenuBar
 	 * Build all the menu and the menu items
+	 * @param The controller of the view.
 	 */
-    public MenuBarView(MenuBarController c) {
+    public MenuBarView(MenuBarController newController) {
     	super();
     	
-    	controller = c;
+    	_controller = newController;
     	
         JMenu menu;
         
@@ -81,17 +82,17 @@ public class MenuBarView extends JMenuBar implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if (cmd.equals(_NEW)) {
-			controller.onNew();
+			_controller.onNew();
 		} else if (cmd.equals(_OPEN)) {
-			controller.onOpen();
+			_controller.onOpen();
 		} else if (cmd.equals(_SAVE)) {
-			controller.onSave();
+			_controller.onSave();
 		} else if (cmd.equals(_QUIT)) {
-			controller.onQuit();
+			_controller.onQuit();
 		} else if (cmd.equals(_UNDO)) {
-			controller.onUndo();
+			_controller.onUndo();
 		} else if (cmd.equals(_REDO)) {
-			controller.onRedo();
+			_controller.onRedo();
 		}
 	}    
 	

@@ -21,6 +21,7 @@ import be.ac.ulb.infof307.g03.models.Project;
  * @author pierre
  * This class implements the main view of the application, a splitpane
  * It contains a 3D view on the right. A tree on the left
+ * @brief Main part of the Window
  */
 public class MainPaneView extends JPanel {
 	private static final long serialVersionUID = 1L;

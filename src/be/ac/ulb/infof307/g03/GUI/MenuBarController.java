@@ -4,16 +4,23 @@
 package be.ac.ulb.infof307.g03.GUI;
 
 /**
- * @author fhennecker
- *
+ * @author fhennecker, julian, pierre
+ * @brief Controller of the MenuBar
  */
 public class MenuBarController {
 	private MenuBarView _view;
 	
+	/**
+	 * Constructor of MenuBarController.
+	 * It creates the view associated with the controller.
+	 */
 	public MenuBarController(){
 		_view = new MenuBarView(this);
 	}
 	
+	/**
+	 * @return the controller's view
+	 */
 	public MenuBarView getView(){
 		return _view;
 	}

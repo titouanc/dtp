@@ -1,16 +1,24 @@
 package be.ac.ulb.infof307.g03.GUI;
 
 /**
- * @author fhennecker
+ * @author fhennecker, pierre
  * 
  */
 public class ToolsBarController {
 	private ToolsBarView _view;
 	
+	
+	/*
+	 * Constructor of ToolsBarController.
+	 * It creates the ToolsBar view
+	 */
 	public ToolsBarController(){
 		_view = new ToolsBarView(this);
 	}
 	
+	/*
+	 * Get the view of the toolbar.
+	 */
 	public ToolsBarView getView(){
 		return _view;
 	}

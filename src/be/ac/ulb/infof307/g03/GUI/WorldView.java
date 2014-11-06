@@ -15,6 +15,9 @@ public class WorldView extends SimpleApplication {
 	private boolean _freeCam = false;
 	private Camera2D _cam2D;
 
+	/*
+	 * Constructor of WorldView
+	 */
 	WorldView(WorldController newController){
 		super();
 		_controller = newController;

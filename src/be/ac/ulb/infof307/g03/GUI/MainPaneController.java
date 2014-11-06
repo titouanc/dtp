@@ -11,24 +11,25 @@ import com.jme3.system.JmeCanvasContext;
 import be.ac.ulb.infof307.g03.models.Project;
 
 /**
- * @author fhennecker
- *
+ * @author fhennecker, pierre
+ * @brief Controller of the MainPane
  */
 public class MainPaneController {
 	private MainPaneView _view;
-	
 	private WorldController _world;
 	
-	MainPaneController(Project project){
+	/**
+	 * Constructor of MainPaneController.
+	 * @param The project to be display on the MainPane
+	 */
+	public MainPaneController(Project project){
 		// Set up jme3 canvas' settings
         AppSettings settings = new AppSettings(true);
         settings.setFrameRate(60);
         // Create jme3 canvas
-        _world = new WorldController();
-        _world.getView().setSettings(settings);
-        _world.getView().createCanvas();
+        _world = new WorldController(settings);
         // Set up event listener
-        JmeCanvasContext context = (JmeCanvasContext) _world.getView().getContext();
+        JmeCanvasContext context = (JmeCanvasContext) _world.getViewContext();
         context.setSystemListener(_world.getView());
         
         // Set up resize behavior
@@ -36,19 +37,25 @@ public class MainPaneController {
         context.getCanvas().setMinimumSize(jme3Dimension);
         context.getCanvas().setPreferredSize(jme3Dimension);
         // Start jme3 canvas
-        _world.getView().startCanvas();
+        _world.startViewCanvas();
         
         // Creating the MainPaneView, with the jMonkey Canvas we just created
 		_view = new MainPaneView(project, context.getCanvas());
 		
 	}
 	
+	/**
+	 * @return The controller's view
+	 */
 	public MainPaneView getView(){
 		return _view;
 		
 	}
 	
-	public void onApplicationStarted(){
+	/**
+	 * TODO rename this method ?
+	 */
+	public void onApplicationStarted(){ 
 		_world.createDemoGeometry();
 	}
 }
