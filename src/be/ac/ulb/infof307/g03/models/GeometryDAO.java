@@ -310,4 +310,42 @@ public class GeometryDAO extends Observable {
 	  	
 	  	return mesh;
 	}
+	
+	/**
+	 * Transform a Ground into a Mesh
+	 * @param ground The ground to transform
+	 * @return The mesh
+	 * @throws SQLException 
+	 */
+	public Mesh getGroundAsMesh(Ground ground) throws SQLException, AssertionError {
+		List<Point> all_points = getPointsForShape(ground.getGroup());
+		int shape_n_points = all_points.size();
+		assert(shape_n_points > 2);
+		
+		/* 0) Closed polygon ? -> we don't need to store both first && last */
+		Point firstPoint = all_points.get(0);
+		Point lastPoint = all_points.get(shape_n_points - 1);
+		if (firstPoint.equals(lastPoint))
+			shape_n_points--;
+		
+		/* 1) Build an array of all points */
+		Vector3f vertices[] = new Vector3f[shape_n_points];
+		for (int i=0; i<shape_n_points; i++)
+			vertices[i] = all_points.get(i).toVector3f();
+		
+		/* 2) Polygon triangulation to make a surface */
+		int n_triangles = shape_n_points - 2;
+		int edges[] = new int[3 * n_triangles];
+		for (int i=0; i<n_triangles; i++){
+			edges[3 * i] = 0;
+			edges[3 * i + 1] = i+1;
+			edges[3 * i + 2] = i+2;
+		}
+		
+		Mesh mesh = new Mesh();
+	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
+	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
+	  	mesh.updateBound();
+		return mesh;
+	}
 }

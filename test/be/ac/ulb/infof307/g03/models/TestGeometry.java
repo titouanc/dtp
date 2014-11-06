@@ -124,10 +124,10 @@ public class TestGeometry {
 	@Test
 	public void test_wall() throws SQLException{
 		GeometryDAO geo = new GeometryDAO(_db);
-		Wall wall = new Wall();
+		Wall wall = new Wall(1);
 		assertEquals(1, geo.create(wall));
 		
-		assertEquals(0, wall.getHeight(), 0);
+		assertEquals(1.0, wall.getHeight(), 0);
 		wall.setHeight(42.27);
 		geo.update(wall);
 		assertEquals(42.27, geo.getWall(wall.getId()).getHeight(), 0);
@@ -186,5 +186,17 @@ public class TestGeometry {
 		Wall wall = geo.getWall(1);
 		Mesh mesh = geo.getWallAsMesh(wall);
 		assertEquals(8, mesh.getVertexCount());
+		assertEquals(8, mesh.getTriangleCount());
+	}
+	
+	@Test
+	public void test_ground_as_mesh() throws SQLException {
+		GeometryDAO geo = new GeometryDAO(_db);
+		create_a_room(geo);
+		Ground gnd = geo.getGround(1);
+		Mesh mesh = geo.getGroundAsMesh(gnd);
+		assertEquals(4, mesh.getVertexCount());
+		assertEquals(2, mesh.getTriangleCount());
 	}
 }
+
