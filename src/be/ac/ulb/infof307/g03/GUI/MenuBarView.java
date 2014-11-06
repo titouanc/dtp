@@ -15,6 +15,8 @@ import javax.swing.KeyStroke;
 
 
 public class MenuBarView extends JMenuBar implements ActionListener {
+	
+	MenuBarController controller;
 
 	private static final long serialVersionUID = 1L;
 	
@@ -29,8 +31,10 @@ public class MenuBarView extends JMenuBar implements ActionListener {
 	 * Constructor of the class MenuBar
 	 * Build all the menu and the menu items
 	 */
-    public MenuBarView() {
+    public MenuBarView(MenuBarController c) {
     	super();
+    	
+    	controller = c;
     	
         JMenu menu;
         
@@ -77,17 +81,17 @@ public class MenuBarView extends JMenuBar implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if (cmd.equals(_NEW)) {
-			_clickedNew();
+			controller.onNew();
 		} else if (cmd.equals(_OPEN)) {
-			_clickedOpen();
+			controller.onOpen();
 		} else if (cmd.equals(_SAVE)) {
-			_clickedSave();
+			controller.onSave();
 		} else if (cmd.equals(_QUIT)) {
-			_clickedQuit();
+			controller.onQuit();
 		} else if (cmd.equals(_UNDO)) {
-			_clickedUndo();
+			controller.onUndo();
 		} else if (cmd.equals(_REDO)) {
-			_clickedRedo();
+			controller.onRedo();
 		}
 	}    
 	
@@ -108,42 +112,4 @@ public class MenuBarView extends JMenuBar implements ActionListener {
         menuItem.setActionCommand(cmd);
     	return menuItem;
     }
-	
-	/**
-	 * Handler launched when menu item "New" is clicked
-	 */
-	private void _clickedNew() {
-		System.out.println("new");
-	}
-	/**
-	 * Handler launched when menu item "Open" is clicked
-	 */
-	private void _clickedOpen() {
-		System.out.println("open");
-	}
-	/**
-	 * Handler launched when menu item "Save" clicked
-	 */
-	private void _clickedSave() {
-		System.out.println("save");
-	}
-	/**
-	 * Handler launched when menu item "Quit" clicked
-	 */
-	private void _clickedQuit() {
-		System.exit(0);
-	}
-	/**
-	 * Handler launched when menu item "Undo" clicked
-	 */
-	private void _clickedUndo() {
-		System.out.println("undo");
-	}
-	/**
-	 * Handler launched when menu item "Redo" clicked
-	 */
-	private void _clickedRedo() {
-		System.out.println("redo");
-	}
-
 }
