@@ -12,6 +12,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.jme3.math.Vector3f;
@@ -27,6 +28,8 @@ import com.jme3.util.BufferUtils;
 public class GeometryDAO extends Observable {
 	private Dao<Line, Integer> _lines = null;
 	private Dao<Group, Integer> _groups = null;
+	private Dao<Wall, Integer> _walls = null;
+	private Dao<Ground, Integer> _grounds = null;
 	
 	/**
 	 * Migrate all needed tables to a database
@@ -34,28 +37,51 @@ public class GeometryDAO extends Observable {
 	 * @throws SQLException
 	 */
 	public static void migrate(ConnectionSource database) throws SQLException{
-		Line.migrate(database);
-		Point.migrate(database);
-		Group.migrate(database);
+		TableUtils.createTableIfNotExists(database, Point.class);
+		TableUtils.createTableIfNotExists(database, Line.class);
+		TableUtils.createTableIfNotExists(database, Group.class);
+		TableUtils.createTableIfNotExists(database, Ground.class);
+		TableUtils.createTableIfNotExists(database, Wall.class);
 	}
 	
 	public GeometryDAO(ConnectionSource database) throws SQLException{
 		_lines = DaoManager.createDao(database, Line.class);
 		_groups = DaoManager.createDao(database, Group.class);
+		_grounds = DaoManager.createDao(database, Ground.class);
+		_walls = DaoManager.createDao(database, Wall.class);
 	}
 	
 	/**
-	 * Create a shape in the database
-	 * @param shape
-	 * @return
+	 * Create a new item in the database
+	 * @param object The object to create in database
+	 * @return The number of modified rows
 	 * @throws SQLException
 	 */
-	public int create(Shape shape) throws SQLException{
+	public int create(Geometric object) throws SQLException{
 		int res = 0;
-		if (shape.getClass() == Line.class)
-			res = _lines.create((Line) shape);
-		else if (shape.getClass() == Group.class)
-			res = _groups.create((Group) shape);
+		if (object.getClass() == Line.class)
+			res = _lines.create((Line) object);
+		else if (object.getClass() == Group.class)
+			res = _groups.create((Group) object);
+		else if (object.getClass() == Ground.class)
+			res = _grounds.create((Ground) object);
+		else if (object.getClass() == Wall.class)
+			res = _walls.create((Wall) object);
+		if (res != 0)
+			setChanged();
+		return res;
+	}
+	
+	public int refresh(Geometric object) throws SQLException{
+		int res = 0;
+		if (object.getClass() == Line.class)
+			res = _lines.refresh((Line) object);
+		else if (object.getClass() == Group.class)
+			res = _groups.refresh((Group) object);
+		else if (object.getClass() == Ground.class)
+			res = _grounds.refresh((Ground) object);
+		else if (object.getClass() == Wall.class)
+			res = _walls.refresh((Wall) object);
 		if (res != 0)
 			setChanged();
 		return res;
@@ -67,12 +93,16 @@ public class GeometryDAO extends Observable {
 	 * @return The number of rows updated in the database
 	 * @throws SQLException
 	 */
-	public int update(Shape shape) throws SQLException {
+	public int update(Geometric object) throws SQLException{
 		int res = 0;
-		if (shape.getClass() == Line.class)
-			res = _lines.update((Line) shape);
-		else if (shape.getClass() == Group.class)
-			res = _groups.update((Group) shape);
+		if (object.getClass() == Line.class)
+			res = _lines.update((Line) object);
+		else if (object.getClass() == Group.class)
+			res = _groups.update((Group) object);
+		else if (object.getClass() == Ground.class)
+			res = _grounds.update((Ground) object);
+		else if (object.getClass() == Wall.class)
+			res = _walls.update((Wall) object);
 		if (res != 0)
 			setChanged();
 		return res;
@@ -84,12 +114,16 @@ public class GeometryDAO extends Observable {
 	 * @return The number of rows that have been modified
 	 * @throws SQLException
 	 */
-	public int delete(Shape shape) throws SQLException {
+	public int delete(Geometric object) throws SQLException{
 		int res = 0;
-		if (shape.getClass() == Line.class)
-			res = _lines.delete((Line) shape);
-		else if (shape.getClass() == Group.class)
-			res = _groups.delete((Group) shape);
+		if (object.getClass() == Line.class)
+			res = _lines.delete((Line) object);
+		else if (object.getClass() == Group.class)
+			res = _groups.delete((Group) object);
+		else if (object.getClass() == Ground.class)
+			res = _grounds.delete((Ground) object);
+		else if (object.getClass() == Wall.class)
+			res = _walls.delete((Wall) object);
 		if (res != 0)
 			setChanged();
 		return res;
@@ -125,6 +159,26 @@ public class GeometryDAO extends Observable {
 		return _groups.queryForFirst(
 			_groups.queryBuilder().where().eq("_name", name).prepare()
 		);
+	}
+	
+	/**
+	 * Get a Floor object from the database
+	 * @param floor_id The Floor identifier
+	 * @return The floor
+	 * @throws SQLException
+	 */
+	public Ground getGround(int ground_id) throws SQLException{
+		return _grounds.queryForId(ground_id);
+	}
+	
+	/**
+	 * Get a Wall object from the database
+	 * @param wall_id The Wall identifier
+	 * @return a Wall object
+	 * @throws SQLException
+	 */
+	public Wall getWall(int wall_id) throws SQLException{
+		return _walls.queryForId(wall_id);
 	}
 	
 	/**
@@ -176,6 +230,14 @@ public class GeometryDAO extends Observable {
 		setChanged();
 	}
 
+	public List<Wall> getWalls() throws SQLException{
+		return _walls.queryForAll();
+	}
+	
+	public List<Ground> getGrounds() throws SQLException{
+		return _grounds.queryForAll();
+	}
+	
 	/**
 	 * Get all orphan shapes from the database
 	 * @return All Shapes in project that are not in a group
@@ -236,5 +298,15 @@ public class GeometryDAO extends Observable {
 	  	mesh.updateBound();
 	  	
 	  	return mesh;
+	}
+
+	/**
+	 * Transform a Wall object into a Mesh (3D object usable in jMonkey)
+	 * @param wall The wall to transform
+	 * @return The Mesh
+	 * @throws SQLException
+	 */
+	public Mesh getWallAsMesh(Wall wall) throws SQLException{
+		return getShapeAsMesh((Shape) (wall.getGroup()), (float) wall.getHeight());
 	}
 }

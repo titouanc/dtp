@@ -11,7 +11,7 @@ import com.j256.ormlite.table.DatabaseTable;
  *
  */
 @DatabaseTable
-public abstract class Shape {
+public abstract class Shape implements Geometric {
 	@DatabaseField(generatedId = true)
 	private int _id = 0;
 	
