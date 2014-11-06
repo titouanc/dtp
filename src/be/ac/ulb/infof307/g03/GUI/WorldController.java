@@ -36,14 +36,14 @@ public class WorldController {
 	}
 	
 	/*
-	 * Get the world view.
+	 * @return the world view.
 	 */
 	public WorldView getView(){
 		return _view;
 	}
 	
 	/*
-	 * Get the view context.
+	 * @return The view context.
 	 */
 	public JmeContext getViewContext(){
 		return _view.getContext();

@@ -30,6 +30,8 @@ public class MainPaneView extends JPanel {
 	/**
 	 * Constructor of MainPane. It create a splitpane with a tree on
 	 * the left and jMonkey 3D integration on the right
+	 * @param The projet to be display on the MainPane
+	 * @param The canvas containing the 3D/2D view
 	 */
 	public MainPaneView(Project project, Canvas canvas){
 		super(new BorderLayout());

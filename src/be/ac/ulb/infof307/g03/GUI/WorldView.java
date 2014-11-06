@@ -17,6 +17,7 @@ public class WorldView extends SimpleApplication {
 
 	/*
 	 * Constructor of WorldView
+	 * @param The view's controller
 	 */
 	WorldView(WorldController newController){
 		super();

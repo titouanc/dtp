@@ -76,6 +76,7 @@ public class MenuBarView extends JMenuBar implements ActionListener {
     
     /**
      * Inherited method from interface ActionListener
+     * @param ActionEvent, a mouse click
      */ 
     @Override
 	public void actionPerformed(ActionEvent e) {

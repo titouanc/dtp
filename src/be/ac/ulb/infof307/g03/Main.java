@@ -20,7 +20,7 @@ public class Main {
 			new GUI(createDemoProject());
 		} catch (Exception err){
 			System.out.println("[DEBUG] Exception catched while creating GUI");
-			System.out.println("[DEBUG] Error is : "+ err);
+			err.printStackTrace();
 		}
 	}
 	
