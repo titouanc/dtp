@@ -15,7 +15,7 @@ import be.ac.ulb.infof307.g03.models.Project;
  *
  */
 public class MainPaneController {
-	public MainPaneView view;
+	private MainPaneView _view;
 	
 	private WorldController _world;
 	
@@ -25,19 +25,24 @@ public class MainPaneController {
         settings.setFrameRate(60);
         // Create jme3 canvas
         _world = new WorldController();
-        _world.view.setSettings(settings);
-        _world.view.createCanvas();
+        _world.getView().setSettings(settings);
+        _world.getView().createCanvas();
         // Set up event listener
-        JmeCanvasContext context = (JmeCanvasContext) _world.view.getContext();
-        context.setSystemListener(_world.view);
+        JmeCanvasContext context = (JmeCanvasContext) _world.getView().getContext();
+        context.setSystemListener(_world.getView());
         
         // Set up resize behavior
         Dimension jme3Dimension = new Dimension(640, 480);
         context.getCanvas().setMinimumSize(jme3Dimension);
         context.getCanvas().setPreferredSize(jme3Dimension);
         // Start jme3 canvas
-        _world.view.startCanvas();
-		view = new MainPaneView(project, context.getCanvas());
+        _world.getView().startCanvas();
+		_view = new MainPaneView(project, context.getCanvas());
+		
+	}
+	
+	public MainPaneView getView(){
+		return _view;
 		
 	}
 	
