@@ -43,7 +43,7 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
     /**
      * Constructor of the class ToolsBar.
      * It add property to the bar: Buttons, not flotable, lay out
-     * @param The view's controller
+     * @param newControler The view's controller
      */
     public ToolsBarView(ToolsBarController newControler) {
     	super("HomePlan Toolbox");
@@ -159,7 +159,7 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
 
     /**
      * Inherited method from ActionListener abstract class
-     * @param ActionEvent, a mouse click
+     * @param action A mouse click
      */ @Override
 	public void actionPerformed(ActionEvent action) {
 		String cmd = action.getActionCommand();

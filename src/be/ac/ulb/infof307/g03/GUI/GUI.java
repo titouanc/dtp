@@ -20,7 +20,7 @@ public class GUI extends JFrame {
 	 * Constructor of GUI.
 	 * It put every frame needed at the right place on the main frame
 	 * Menu, toolsbar and the main workspace (splitpane)
-	 * @param The project to be display on the GUI
+	 * @param project The project to be display on the GUI.
 	 */
 	public GUI(Project project) {
 		// Create and set up the window

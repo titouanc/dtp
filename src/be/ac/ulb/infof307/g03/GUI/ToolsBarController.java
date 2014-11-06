@@ -16,7 +16,7 @@ public class ToolsBarController {
 		_view = new ToolsBarView(this);
 	}
 	
-	/*
+	/**
 	 * @return The controller view 
 	 */
 	public ToolsBarView getView(){

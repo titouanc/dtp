@@ -12,7 +12,7 @@ import be.ac.ulb.infof307.g03.models.Project;
 
 /**
  * @author fhennecker, pierre
- * @brief Controller of the MainPane
+ * @brief Controller of the MainPane.
  */
 public class MainPaneController {
 	private MainPaneView _view;
