@@ -24,7 +24,6 @@ public class MainPaneView extends JPanel {
 	
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
-	
 	private ObjectTree _objectTree;
 	
 	/**
@@ -50,6 +49,8 @@ public class MainPaneView extends JPanel {
 		_splitPane.setOneTouchExpandable(true);
 		_splitPane.setDividerLocation(150);
 		
+		
+		// add the splitpane to the inherited Jpanel
 		this.add(_splitPane);
 	}
 

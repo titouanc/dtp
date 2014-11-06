@@ -15,10 +15,9 @@ import javax.swing.KeyStroke;
 
 
 public class MenuBarView extends JMenuBar implements ActionListener {
+	private static final long serialVersionUID = 1L;
 	
 	private MenuBarController _controller;
-
-	private static final long serialVersionUID = 1L;
 	
 	static private final String _NEW  = "new" ;
 	static private final String _OPEN = "open";
