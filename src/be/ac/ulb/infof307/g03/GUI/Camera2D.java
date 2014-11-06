@@ -28,11 +28,21 @@ public class Camera2D implements AnalogListener, ActionListener {
     private boolean _canRotate = false;
     private boolean _enabled = true;
     private InputManager _inputManager;
-
+    
+    static private final String _STRAFELEFT 	= "CAM2D_StrafeLeft";
+	static private final String _STRAFERIGHT	= "CAM2D_StrafeRight"; 
+	static private final String _FORWARD 		= "CAM2D_Forward";
+	static private final String _BACKWARD		= "CAM2D_Backward"; 
+	static private final String _ROTATEDRAG		= "CAM2D_RotateDrag";
+	// !!! <temporary> !!!
+	static private final String _LEFT 			= "CAM2D_Left";
+	static private final String _RIGHT			= "CAM2D_Right";
+	// !!! </temporary> !!!
+	static private final String _ZOOMIN			= "CAM2D_ZoomIn";
+	static private final String _ZOOMOUT		= "CAM2D_ZoomOut";
+    
 	/**
 	 * Constructor of the 2D camera
-	 * Needs the main camera
-	 * Needs an inputManager so keys can be bound 
 	 */
     public Camera2D() {
 	}
@@ -61,7 +71,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	}
 
 	/**
-	 * Reset the direction toward witch the camera looks
+	 * Reset the direction toward which the camera looks
 	 */
 	public void resetDirection() {
 		Quaternion q = new Quaternion();
@@ -163,34 +173,34 @@ public class Camera2D implements AnalogListener, ActionListener {
 	public void inputSetUp() {
 
 		// Key event mapping
-		_inputManager.addMapping("CAM2D_StrafeLeft",		new KeyTrigger(KeyInput.KEY_LEFT));
-		_inputManager.addMapping("CAM2D_StrafeRight",		new KeyTrigger(KeyInput.KEY_RIGHT));
-		_inputManager.addMapping("CAM2D_Forward",   		new KeyTrigger(KeyInput.KEY_UP));
-		_inputManager.addMapping("CAM2D_Backward",		new KeyTrigger(KeyInput.KEY_DOWN));
+		_inputManager.addMapping(_STRAFELEFT,		new KeyTrigger(KeyInput.KEY_LEFT));
+		_inputManager.addMapping(_STRAFERIGHT,		new KeyTrigger(KeyInput.KEY_RIGHT));
+		_inputManager.addMapping(_FORWARD,   		new KeyTrigger(KeyInput.KEY_UP));
+		_inputManager.addMapping(_BACKWARD,		new KeyTrigger(KeyInput.KEY_DOWN));
 		
 		// Mouse event mapping
-		_inputManager.addMapping("CAM2D_RotateDrag", 		new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-		//_inputManager.addMapping("Up", 			new MouseAxisTrigger(1, false));
-		//_inputManager.addMapping("Down", 			new MouseAxisTrigger(1, true));
-		_inputManager.addMapping("CAM2D_Left",			new MouseAxisTrigger(0, true));
-		_inputManager.addMapping("CAM2D_Right",			new MouseAxisTrigger(0, false));
-		_inputManager.addMapping("CAM2D_ZoomIn", new MouseAxisTrigger(2, false));
-        _inputManager.addMapping("CAM2D_ZoomOut", new MouseAxisTrigger(2, true));
+		_inputManager.addMapping(_ROTATEDRAG, 		new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+		// !!! <temporary> !!!
+		_inputManager.addMapping(_LEFT,			new MouseAxisTrigger(0, true)); 
+		_inputManager.addMapping(_RIGHT,			new MouseAxisTrigger(0, false));
+		// !!! </temporary> !!!
+		_inputManager.addMapping(_ZOOMIN, new MouseAxisTrigger(2, false));
+        _inputManager.addMapping(_ZOOMOUT, new MouseAxisTrigger(2, true));
 
 
 		// Add the names to the action listener
 		_inputManager.addListener(	this, 
-									"CAM2D_StrafeLeft", 
-									"CAM2D_StrafeRight", 
-									"CAM2D_Forward", 
-									"CAM2D_Backward", 
-									"CAM2D_RotateDrag", 
-								  /*"CAM2D_Up", 
-									"CAM2D_Down",*/ 
-									"CAM2D_Left", 
-									"CAM2D_Right", 
-									"CAM2D_ZoomIn", 
-									"CAM2D_ZoomOut"
+									_STRAFELEFT, 
+									_STRAFERIGHT, 
+									_FORWARD, 
+									_BACKWARD, 
+									_ROTATEDRAG, 
+									// !!! <temporary> !!!
+									_LEFT, 
+									_RIGHT, 
+									// !!! </temporary> !!!
+									_ZOOMIN, 
+									_ZOOMOUT
 		);
 	}
 	
@@ -202,7 +212,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	public void onAction(String name, boolean value, float tpf) {
 		if (!_enabled)
             return;
-        if (name.equals("CAM2D_RotateDrag")){
+        if (name.equals(_ROTATEDRAG)){
             _canRotate = value;
         }	
 	}
@@ -216,25 +226,25 @@ public class Camera2D implements AnalogListener, ActionListener {
 		if (!_enabled)
             return;
 
-		if (name.equals("CAM2D_StrafeRight")) {
+		if (name.equals(_STRAFERIGHT)) {
 			this.moveCamera(-value,false);
-		} else if (name.equals("CAM2D_StrafeLeft")) {
+		} else if (name.equals(_STRAFELEFT)) {
 			this.moveCamera(value,false);
-		} else if (name.equals("CAM2D_Forward")) {
+		} else if (name.equals(_FORWARD)) {
 			this.moveCamera(value,true);
-		} else if (name.equals("CAM2D_Backward")) {
+		} else if (name.equals(_BACKWARD)) {
 			this.moveCamera(-value,true);
-		} else if (name.equals("CAM2D_Left")) {
+		} else 
+		// !!! <temporary> !!!
+		if (name.equals(_LEFT)) {
 			rotateCamera(value, false);
-		} else if (name.equals("CAM2D_Right")) {
+		} else if (name.equals(_RIGHT)) {
 			rotateCamera(-value, true);
-		} /*else if (name.equals("CAM2D_Up")) {
-            rotateCamera(-value, true);
-		} else if (name.equals("CAM2D_Down")) {
-            rotateCamera(value, false);
-		}*/ else if (name.equals("CAM2D_ZoomIn")) {
+		} else 
+		// !!! </temporary> !!!
+		if (name.equals(_ZOOMIN)) {
 			zoomCamera(value);
-		} else if (name.equals("CAM2D_ZoomOut")) {
+		} else if (name.equals(_ZOOMOUT)) {
 			zoomCamera(-value);
 		}	
 	}
