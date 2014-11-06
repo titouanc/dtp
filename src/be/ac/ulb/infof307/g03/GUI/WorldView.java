@@ -12,7 +12,6 @@ import com.jme3.app.SimpleApplication;
 public class WorldView extends SimpleApplication {	
 	
 	private WorldController _controller; 
-	private Camera2D _cam2D;
 
 	/**
 	 * Constructor of WorldView
@@ -21,6 +20,7 @@ public class WorldView extends SimpleApplication {
 	WorldView(WorldController newController){
 		super();
 		_controller = newController;
+		this.setDisplayStatView(false);
 	}
 	
 	/**
@@ -29,8 +29,8 @@ public class WorldView extends SimpleApplication {
 	@Override
 	public void simpleInitApp() {
 		flyCam.setEnabled(false);
-		_cam2D = new Camera2D(cam, this.getInputManager());
-		_cam2D.setEnabled(true);	
+		_controller.getCameraModeController().setCamera(cam);
+		_controller.getCameraModeController().setInputManager(inputManager);
 	}
 
 }

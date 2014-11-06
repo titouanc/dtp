@@ -24,6 +24,7 @@ public class WorldController {
 	
 	private WorldView _view;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
+	CameraModeController _cameraModeController = new CameraModeController();
 	
 	/**
 	 * Constructor of WorldController.
@@ -47,6 +48,13 @@ public class WorldController {
 	 */
 	public JmeContext getViewContext(){
 		return _view.getContext();
+	}
+	
+	/** 
+	 * @return The camera mode controller.
+	 */
+	public CameraModeController getCameraModeController() {
+		return _cameraModeController;
 	}
 	
 	/**

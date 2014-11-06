@@ -1,5 +1,7 @@
 package be.ac.ulb.infof307.g03.GUI;
 
+import java.util.Vector;
+
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -12,42 +14,63 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Geometry;
 
-/*
+/**
  * Camera2D is the controller of the camera when the view is switched on 2D
+ * @author schembrijulian, brochape, wmoulart
  */
 public class Camera2D implements AnalogListener, ActionListener {
 	
 	private Camera _cam;
-	private float _rotationSpeed = 1f;
+	private float _rotationSpeed = 3f;
     private float _moveSpeed = 3f;
     private boolean _canRotate = false;
     private boolean _enabled = true;
     private InputManager _inputManager;
 
-	/*
+	/**
 	 * Constructor of the 2D camera
 	 * Needs the main camera
 	 * Needs an inputManager so keys can be bound 
 	 */
-    public Camera2D(Camera cam, InputManager inputManager) {
-    	_inputManager = inputManager;
-		_cam = cam;
-		inputSetUp();
+    public Camera2D() {
 	}
-	/*
+    
+	/**
 	 * @return true if the 2D is currently used
 	 */
 	public boolean isEnabled() {
 		return _enabled;
 	}
-	/*
+	
+	/**
 	 * Method used to declare that the 2D camera is being used (or not)
 	 */
 	public void setEnabled(boolean enable) {
 		_enabled = enable;
 	}
-	/*
+	
+	public void setCam(Camera cam) {
+		_cam = cam;
+	}
+	
+	public void setInputManager(InputManager inputManager) {
+		_inputManager = inputManager;
+		inputSetUp();
+	}
+
+	/**
+	 * Reset the direction toward witch the camera looks
+	 */
+	public void resetDirection() {
+		Quaternion q = new Quaternion();
+        q.fromAxes(_cam.getLeft(), _cam.getUp(), new Vector3f(0,0,-1));
+        q.normalizeLocal();
+        _cam.setAxes(q);
+	}
+	
+	/**
 	 * Method to use to move the camera
 	 * float value : value of movement
 	 * boolean sideways : direction (up/down or left/right)
@@ -66,7 +89,32 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_cam.setLocation(pos);
 	}
 	
-	/*
+	public void camHeight(Vector <Geometry> shape){
+		  float minX = 0,minY = 0,maxX = 0,maxY = 0,X = 0, Y= 0,Z = 0;
+		  int offset=17;
+		  Vector3f center;
+		  for(int i =0; i< shape.size();++i){
+			  center=shape.elementAt(i).getModelBound().getCenter();
+			  if (center.x<minX){
+				  minX=center.x;
+			  }
+			  if (center.y<minY){
+				  minY=center.y;
+			  }
+			  if (center.x>maxX){
+				  maxX=center.x;
+			  }
+			  if (center.y>maxY){
+				  maxY=center.y;
+			  }
+			  Z+=center.z;
+		  }
+		  X=(minX+maxX)/2;
+		  Y=(minY+maxY)/2;
+		  _cam.setLocation(new Vector3f(X,Y,Z+offset));	  
+	  }
+	
+	/**
 	 * Method used to zoom in or out in 2D mode
 	 * float value : value of zoom
 	 */
@@ -76,11 +124,44 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_cam.setLocation(pos);
     }
 	
-	/*
+	/**
+	 * Methode used to rotate the camera
+	 * float value : the value of the rotation
+	 * boolean trigoRotate : direction of the rotation
+	 */
+	private void rotateCamera(float value, boolean trigoRotate) {
+        if (!_canRotate){
+            return;
+        }
+        float cos1deg = 0.99939f;
+        float sin1deg = 0.03489f;
+        if (trigoRotate) {
+        	sin1deg *= -1;
+        }
+        
+        Matrix3f mat = new Matrix3f();
+        mat.fromAngleNormalAxis(_rotationSpeed * value, _cam.getUp());
+
+        Vector3f up = _cam.getUp();
+        Vector3f left = _cam.getLeft();
+        Vector3f dir = _cam.getDirection();
+
+        Vector3f nup = new Vector3f( (cos1deg*up.getX())+(sin1deg*up.getY()), (-sin1deg*up.getX())+(cos1deg*up.getY()), up.getZ() );
+        Vector3f nleft = new Vector3f( (cos1deg*left.getX())+(sin1deg*left.getY()), (-sin1deg*left.getX())+(cos1deg*left.getY()), left.getZ());
+
+        Quaternion q = new Quaternion();
+        q.fromAxes(nleft, nup, dir);
+        q.normalizeLocal();
+
+        _cam.setAxes(q);
+		
+	}
+
+	/**
 	 * Method that binds the keys to their actions
 	 */
 	public void inputSetUp() {
-		
+
 		// Key event mapping
 		_inputManager.addMapping("StrafeLeft",		new KeyTrigger(KeyInput.KEY_LEFT));
 		_inputManager.addMapping("StrafeRight",		new KeyTrigger(KeyInput.KEY_RIGHT));
@@ -113,33 +194,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 		);
 	}
 	
-	/*
-	 * Method that sets up the "Drag to rotate" functionnality
-	 */
-	public void rotateDrag(float value, Vector3f axis) {
-        if (!_canRotate){
-            return;
-        }
-
-		Matrix3f mat = new Matrix3f();
-        mat.fromAngleNormalAxis(_rotationSpeed * value, axis);
-
-        Vector3f up = _cam.getUp();
-        Vector3f left = _cam.getLeft();
-        Vector3f dir = _cam.getDirection();
-
-        mat.mult(up, up);
-        mat.mult(left, left);
-        mat.mult(dir, dir);
-
-        Quaternion q = new Quaternion();
-        q.fromAxes(left, up, dir);
-        q.normalizeLocal();
-
-        _cam.setAxes(q);
-	}
-	
-	/*
+	/**
 	 * (non-Javadoc)
 	 * @see com.jme3.input.controls.ActionListener#onAction(java.lang.String, boolean, float)
 	 */
@@ -152,7 +207,7 @@ public class Camera2D implements AnalogListener, ActionListener {
         }	
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * @see com.jme3.input.controls.AnalogListener#onAnalog(java.lang.String, float, float)
 	 */
@@ -182,40 +237,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 			zoomCamera(value);
 		} else if (name.equals("ZoomOut")) {
 			zoomCamera(-value);
-		}
-		
-	}
-	
-	/*
-	 * Methode used to rotate the camera
-	 * float value : the value of the rotation
-	 * boolean trigoRotate : direction of the rotation
-	 */
-	private void rotateCamera(float value, boolean trigoRotate) {
-        if (!_canRotate){
-            return;
-        }
-        float cos1deg = 0.99939f;
-        float sin1deg = 0.03489f;
-        if (trigoRotate) {
-        	sin1deg *= -1;
-        }
-        
-        Matrix3f mat = new Matrix3f();
-        mat.fromAngleNormalAxis(_rotationSpeed * value, _cam.getUp());
-
-        Vector3f up = _cam.getUp();
-        Vector3f left = _cam.getLeft();
-        Vector3f dir = _cam.getDirection();
-
-        Vector3f nup = new Vector3f( (cos1deg*up.getX())+(sin1deg*up.getY()), (-sin1deg*up.getX())+(cos1deg*up.getY()), up.getZ() );
-        Vector3f nleft = new Vector3f( (cos1deg*left.getX())+(sin1deg*left.getY()), (-sin1deg*left.getX())+(cos1deg*left.getY()), left.getZ());
-
-        Quaternion q = new Quaternion();
-        q.fromAxes(nleft, nup, dir);
-        q.normalizeLocal();
-
-        _cam.setAxes(q);
-		
+		}	
 	}
 }
