@@ -134,36 +134,36 @@ public class Camera3D implements AnalogListener, ActionListener {
 	public void inputSetUp() {
 
 		// Key event mapping
-		_inputManager.addMapping("StrafeLeft",	new KeyTrigger(KeyInput.KEY_LEFT));
-		_inputManager.addMapping("StrafeRight",	new KeyTrigger(KeyInput.KEY_RIGHT));
-		_inputManager.addMapping("Forward",   	new KeyTrigger(KeyInput.KEY_UP));
-		_inputManager.addMapping("Backward",	new KeyTrigger(KeyInput.KEY_DOWN));
-		_inputManager.addMapping("Loop", 		new KeyTrigger(KeyInput.KEY_L));
+		_inputManager.addMapping("CAM3D_StrafeLeft",	new KeyTrigger(KeyInput.KEY_LEFT));
+		_inputManager.addMapping("CAM3D_StrafeRight",	new KeyTrigger(KeyInput.KEY_RIGHT));
+		_inputManager.addMapping("CAM3D_Forward",   	new KeyTrigger(KeyInput.KEY_UP));
+		_inputManager.addMapping("CAM3D_Backward",		new KeyTrigger(KeyInput.KEY_DOWN));
+		_inputManager.addMapping("CAM3D_Loop", 			new KeyTrigger(KeyInput.KEY_L));
 
 		// Mouse event mapping
-		_inputManager.addMapping("RotateDrag", 	new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-		_inputManager.addMapping("Up", 			new MouseAxisTrigger(1, false));
-		_inputManager.addMapping("Down", 		new MouseAxisTrigger(1, true));
-		_inputManager.addMapping("Left",		new MouseAxisTrigger(0, true));
-		_inputManager.addMapping("Right",		new MouseAxisTrigger(0, false));
-		_inputManager.addMapping("ZoomIn", 		new MouseAxisTrigger(2, false));
-		_inputManager.addMapping("ZoomOut", 	new MouseAxisTrigger(2, true));
+		_inputManager.addMapping("CAM3D_RotateDrag", 	new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+		_inputManager.addMapping("CAM3D_Up", 			new MouseAxisTrigger(1, false));
+		_inputManager.addMapping("CAM3D_Down", 			new MouseAxisTrigger(1, true));
+		_inputManager.addMapping("CAM3D_Left",			new MouseAxisTrigger(0, true));
+		_inputManager.addMapping("CAM3D_Right",			new MouseAxisTrigger(0, false));
+		_inputManager.addMapping("CAM3D_ZoomIn", 		new MouseAxisTrigger(2, false));
+		_inputManager.addMapping("CAM3D_ZoomOut", 		new MouseAxisTrigger(2, true));
 
 
 		// Add the names to the action listener
 		_inputManager.addListener(	this, 
-				"StrafeLeft", 
-				"StrafeRight", 
-				"Forward", 
-				"Backward", 
-				"RotateDrag", 
-				"Up", 
-				"Down",
-				"Left", 
-				"Right", 
-				"ZoomIn", 
-				"ZoomOut",
-				"Loop"
+				"CAM3D_StrafeLeft", 
+				"CAM3D_StrafeRight", 
+				"CAM3D_Forward", 
+				"CAM3D_Backward", 
+				"CAM3D_RotateDrag", 
+				"CAM3D_Up", 
+				"CAM3D_Down",
+				"CAM3D_Left", 
+				"CAM3D_Right", 
+				"CAM3D_ZoomIn", 
+				"CAM3D_ZoomOut",
+				"CAM3D_Loop"
 				);
 	}
 	
@@ -171,9 +171,9 @@ public class Camera3D implements AnalogListener, ActionListener {
 	public void onAction(String name, boolean value, float tpf) {
 		if (!_enabled)
 			return;
-		if (name.equals("RotateDrag")){
+		if (name.equals("CAM3D_RotateDrag")){
 			_canRotate = value;
-		} else if (name.equals("Loop")) {
+		} else if (name.equals("CAM3D_Loop")) {
 			_loop = value;
 		}
 	}
@@ -183,25 +183,25 @@ public class Camera3D implements AnalogListener, ActionListener {
 		if (!_enabled)
 			return;
 
-		if (name.equals("StrafeRight")) {
+		if (name.equals("CAM3D_StrafeRight")) {
 			this.moveCamera(-value,false);
-		} else if (name.equals("StrafeLeft")) {
+		} else if (name.equals("CAM3D_StrafeLeft")) {
 			this.moveCamera(value,false);
-		} else if (name.equals("Forward")) {
+		} else if (name.equals("CAM3D_Forward")) {
 			this.moveCamera(value,true);
-		} else if (name.equals("Backward")) {
+		} else if (name.equals("CAM3D_Backward")) {
 			this.moveCamera(-value,true);
-		} else if (name.equals("Left")) {
+		} else if (name.equals("CAM3D_Left")) {
 			rotateCamera(-value, _cam.getUp());
-		} else if (name.equals("Right")) {
+		} else if (name.equals("CAM3D_Right")) {
 			rotateCamera(value, _cam.getUp());
-		} else if (name.equals("Up")) {
+		} else if (name.equals("CAM3D_Up")) {
 			rotateCamera(value, _cam.getLeft());
-		} else if (name.equals("Down")) {
+		} else if (name.equals("CAM3D_Down")) {
 			rotateCamera(-value, _cam.getLeft());
-		} else if (name.equals("ZoomIn")) {
+		} else if (name.equals("CAM3D_ZoomIn")) {
 			zoomCamera(value);
-		} else if (name.equals("ZoomOut")) {
+		} else if (name.equals("CAM3D_ZoomOut")) {
 			zoomCamera(-value);
 		}
 

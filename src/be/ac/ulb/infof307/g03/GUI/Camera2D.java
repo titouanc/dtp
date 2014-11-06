@@ -163,34 +163,34 @@ public class Camera2D implements AnalogListener, ActionListener {
 	public void inputSetUp() {
 
 		// Key event mapping
-		_inputManager.addMapping("StrafeLeft",		new KeyTrigger(KeyInput.KEY_LEFT));
-		_inputManager.addMapping("StrafeRight",		new KeyTrigger(KeyInput.KEY_RIGHT));
-		_inputManager.addMapping("Forward",   		new KeyTrigger(KeyInput.KEY_UP));
-		_inputManager.addMapping("Backward",		new KeyTrigger(KeyInput.KEY_DOWN));
+		_inputManager.addMapping("CAM2D_StrafeLeft",		new KeyTrigger(KeyInput.KEY_LEFT));
+		_inputManager.addMapping("CAM2D_StrafeRight",		new KeyTrigger(KeyInput.KEY_RIGHT));
+		_inputManager.addMapping("CAM2D_Forward",   		new KeyTrigger(KeyInput.KEY_UP));
+		_inputManager.addMapping("CAM2D_Backward",		new KeyTrigger(KeyInput.KEY_DOWN));
 		
 		// Mouse event mapping
-		_inputManager.addMapping("RotateDrag", 		new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+		_inputManager.addMapping("CAM2D_RotateDrag", 		new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		//_inputManager.addMapping("Up", 			new MouseAxisTrigger(1, false));
 		//_inputManager.addMapping("Down", 			new MouseAxisTrigger(1, true));
-		_inputManager.addMapping("Left",			new MouseAxisTrigger(0, true));
-		_inputManager.addMapping("Right",			new MouseAxisTrigger(0, false));
-		_inputManager.addMapping("ZoomIn", new MouseAxisTrigger(2, false));
-        _inputManager.addMapping("ZoomOut", new MouseAxisTrigger(2, true));
+		_inputManager.addMapping("CAM2D_Left",			new MouseAxisTrigger(0, true));
+		_inputManager.addMapping("CAM2D_Right",			new MouseAxisTrigger(0, false));
+		_inputManager.addMapping("CAM2D_ZoomIn", new MouseAxisTrigger(2, false));
+        _inputManager.addMapping("CAM2D_ZoomOut", new MouseAxisTrigger(2, true));
 
 
 		// Add the names to the action listener
 		_inputManager.addListener(	this, 
-									"StrafeLeft", 
-									"StrafeRight", 
-									"Forward", 
-									"Backward", 
-									"RotateDrag", 
-								  /*"Up", 
-									"Down",*/ 
-									"Left", 
-									"Right", 
-									"ZoomIn", 
-									"ZoomOut"
+									"CAM2D_StrafeLeft", 
+									"CAM2D_StrafeRight", 
+									"CAM2D_Forward", 
+									"CAM2D_Backward", 
+									"CAM2D_RotateDrag", 
+								  /*"CAM2D_Up", 
+									"CAM2D_Down",*/ 
+									"CAM2D_Left", 
+									"CAM2D_Right", 
+									"CAM2D_ZoomIn", 
+									"CAM2D_ZoomOut"
 		);
 	}
 	
@@ -202,7 +202,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	public void onAction(String name, boolean value, float tpf) {
 		if (!_enabled)
             return;
-        if (name.equals("RotateDrag")){
+        if (name.equals("CAM2D_RotateDrag")){
             _canRotate = value;
         }	
 	}
@@ -216,26 +216,25 @@ public class Camera2D implements AnalogListener, ActionListener {
 		if (!_enabled)
             return;
 
-		if (name.equals("StrafeRight")) {
+		if (name.equals("CAM2D_StrafeRight")) {
 			this.moveCamera(-value,false);
-		} else if (name.equals("StrafeLeft")) {
+		} else if (name.equals("CAM2D_StrafeLeft")) {
 			this.moveCamera(value,false);
-		} else if (name.equals("Forward")) {
+		} else if (name.equals("CAM2D_Forward")) {
 			this.moveCamera(value,true);
-		} else if (name.equals("Backward")) {
+		} else if (name.equals("CAM2D_Backward")) {
 			this.moveCamera(-value,true);
-		} else if (name.equals("Left")) {
+		} else if (name.equals("CAM2D_Left")) {
 			rotateCamera(value, false);
-		} else if (name.equals("Right")) {
+		} else if (name.equals("CAM2D_Right")) {
 			rotateCamera(-value, true);
-		} /*else if (name.equals("Up")) {
+		} /*else if (name.equals("CAM2D_Up")) {
             rotateCamera(-value, true);
-		} else if (name.equals("Down")) {
+		} else if (name.equals("CAM2D_Down")) {
             rotateCamera(value, false);
-		}*/
-		else if (name.equals("ZoomIn")) {
+		}*/ else if (name.equals("CAM2D_ZoomIn")) {
 			zoomCamera(value);
-		} else if (name.equals("ZoomOut")) {
+		} else if (name.equals("CAM2D_ZoomOut")) {
 			zoomCamera(-value);
 		}	
 	}
