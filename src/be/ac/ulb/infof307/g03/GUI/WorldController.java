@@ -20,12 +20,16 @@ import com.jme3.util.BufferUtils;
  */
 public class WorldController {
 	
-	WorldView view;
+	private WorldView _view;
 	
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	
 	WorldController(){
-		view = new WorldView(this);
+		_view = new WorldView(this);
+	}
+	
+	public WorldView getView(){
+		return _view;
 	}
 	
 	public void createDemoGeometry(){
@@ -72,19 +76,19 @@ public class WorldController {
 
 		System.out.println("ICI");
 		Geometry walls = new Geometry("Walls",wallsMesh);
-		Material mat = new Material(view.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+		Material mat = new Material(_view.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		mat.setColor("Color", ColorRGBA.Blue);
 		walls.setMaterial(mat);
-		view.getRootNode().attachChild(walls);
+		_view.getRootNode().attachChild(walls);
 		
 		Geometry ground = new Geometry("Groundmesh",groundMesh);
-		Material mat2 = new Material(view.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+		Material mat2 = new Material(_view.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 		mat2.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		mat2.setColor("Color", ColorRGBA.Red);
 		ground.setMaterial(mat2);
 		shapes.add(ground);
-		view.getRootNode().attachChild(ground);
+		_view.getRootNode().attachChild(ground);
 		
 	}
 }
