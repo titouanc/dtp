@@ -2,7 +2,7 @@ package be.ac.ulb.infof307.g03.GUI;
 
 /**
  * @author fhennecker, pierre
- * 
+ * @brief Controller of the ToolsBar at the top of the application.
  */
 public class ToolsBarController {
 	private ToolsBarView _view;

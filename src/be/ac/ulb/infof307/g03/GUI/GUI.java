@@ -11,7 +11,7 @@ import be.ac.ulb.infof307.g03.models.Project;
 
 /**
  * @author julianschembri, pierre
- *
+ * @brief The graphical application launched in the HomePlans Main.
  */
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 1L;

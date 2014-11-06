@@ -12,7 +12,8 @@ import be.ac.ulb.infof307.g03.models.Project;
 
 /**
  * @author fhennecker, pierre
- * @brief Controller of the MainPane.
+ * @brief Controller of the MainPane containing the tree view on the left 
+ * and the jMonkey Canvas on the right.
  */
 public class MainPaneController {
 	private MainPaneView _view;

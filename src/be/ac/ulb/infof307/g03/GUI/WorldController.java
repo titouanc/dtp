@@ -18,7 +18,7 @@ import com.jme3.util.BufferUtils;
 
 /**
  * @author fhennecker,pierre
- * @brief Control the world (3D/2D canvas)
+ * @brief Controller of the jMonkeyEngine canvas. It handles both the 3D and 2D view.
  */
 public class WorldController {
 	

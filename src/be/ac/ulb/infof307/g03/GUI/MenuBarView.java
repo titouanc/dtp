@@ -1,9 +1,3 @@
-/**
- * @author julianschembri
- * based on Oracle examples
- * 
- * This class implement the menu bar for the HomePlan GUI
- */
 package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.event.*;
@@ -13,7 +7,12 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-
+/**
+ * @author julianschembri
+ * based on Oracle examples
+ * 
+ * This class implement the menu bar for the HomePlans GUI
+ */
 public class MenuBarView extends JMenuBar implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	
