@@ -8,10 +8,14 @@ package be.ac.ulb.infof307.g03.GUI;
  *
  */
 public class MenuBarController {
-	public MenuBarView view;
+	private MenuBarView _view;
 	
-	MenuBarController(){
-		view = new MenuBarView(this);
+	public MenuBarController(){
+		_view = new MenuBarView(this);
+	}
+	
+	public MenuBarView getView(){
+		return _view;
 	}
 	
 	/**

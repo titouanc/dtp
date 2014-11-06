@@ -28,7 +28,7 @@ public class GUI extends JFrame {
         
         // Create the menuBar
         MenuBarController menuBar = new MenuBarController();
-        this.setJMenuBar(menuBar.view);
+        this.setJMenuBar(menuBar.getView());
         
         // Create the main panel
         // http://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html
