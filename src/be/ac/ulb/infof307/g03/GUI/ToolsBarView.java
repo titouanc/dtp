@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
  */
 public class ToolsBarView extends JToolBar implements ActionListener  {
 	
-	ToolsBarController controller;
+	private ToolsBarController _controller;
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -45,10 +45,10 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      * Constructor of the class ToolsBar.
      * It add property to the bar: Buttons, not flotable, lay out
      */
-    public ToolsBarView(ToolsBarController c) {
+    public ToolsBarView(ToolsBarController newControler) {
     	super("HomePlan Toolbox");
     	
-    	controller = c;
+    	_controller = newControler;
     	
     	// define if toolsbar can move
         this.setFloatable(false); 
@@ -163,29 +163,29 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
 	public void actionPerformed(ActionEvent action) {
 		String cmd = action.getActionCommand();
 		if (_UNDO.equals(cmd)) { 
-			controller.onUndo();
+			_controller.onUndo();
         } 
 		else if (_REDO.equals(cmd)) {
-        	controller.onRedo();
+        	_controller.onRedo();
         }
         else if (_LINE.equals(cmd)) {
-        	controller.onLine() ;
+        	_controller.onLine() ;
         }
         else if (_GROUP.equals(cmd)) {
-        	controller.onGroup();
+        	_controller.onGroup();
         } 
 		
         else if (_FLOOR_DOWN.equals(cmd)) {
-        	controller.onFloorDown() ;
+        	_controller.onFloorDown() ;
         }
         else if (_FLOOR_UP.equals(cmd)) {
-        	controller.onFloorUp();
+        	_controller.onFloorUp();
         }
         else if (_2D.equals(cmd)) {
-        	controller.on2d() ;
+        	_controller.on2d() ;
         }
         else if (_3D.equals(cmd)) {
-        	controller.on3d();
+        	_controller.on3d();
         }	
 	}
 }
