@@ -6,14 +6,10 @@ package be.ac.ulb.infof307.g03.GUI;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
-import java.sql.SQLException;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-
-import com.jme3.system.AppSettings;
-import com.jme3.system.JmeCanvasContext;
 
 import be.ac.ulb.infof307.g03.models.Project;
 
