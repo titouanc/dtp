@@ -148,6 +148,15 @@ public class TestGeometry {
 		assertEquals(1, geo.getGrounds().size());
 	}
 	
+	/**
+	 * Create a new Group named "room" maid of 4 lines with 4 points 
+	 * (in this order): 00 10 11 01.
+	 * Create a Wall and a Ground object using the group.
+	 * Insert everything in database
+	 * @param geo The data access object
+	 * @return The newly created Group
+	 * @throws SQLException
+	 */
 	private Group create_a_room(GeometryDAO geo) throws SQLException{
 		Group room = new Group("room");
 		geo.create(room);
