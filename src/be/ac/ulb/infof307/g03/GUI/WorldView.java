@@ -11,14 +11,14 @@ import com.jme3.app.SimpleApplication;
  */
 public class WorldView extends SimpleApplication {	
 	
-	WorldController controller; 
+	private WorldController _controller; 
 	
 	private boolean _freeCam = false;
 	Camera2D _cam2D;
 
-	WorldView(WorldController c){
+	WorldView(WorldController newController){
 		super();
-		controller = c;
+		_controller = newController;
 	}
 	
 	/**
