@@ -37,6 +37,8 @@ public class MainPaneController {
         context.getCanvas().setPreferredSize(jme3Dimension);
         // Start jme3 canvas
         _world.getView().startCanvas();
+        
+        // Creating the MainPaneView, with the jMonkey Canvas we just created
 		_view = new MainPaneView(project, context.getCanvas());
 		
 	}
