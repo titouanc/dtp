@@ -25,20 +25,33 @@ public class Camera2D implements AnalogListener, ActionListener {
     private boolean _enabled = true;
     private InputManager _inputManager;
 
+	/*
+	 * Constructor of the 2D camera
+	 * Needs the main camera
+	 * Needs an inputManager so keys can be bound 
+	 */
     public Camera2D(Camera cam, InputManager inputManager) {
     	_inputManager = inputManager;
 		_cam = cam;
 		inputSetUp();
 	}
-	
+	/*
+	 * @return true if the 2D is currently used
+	 */
 	public boolean isEnabled() {
 		return _enabled;
 	}
-	
+	/*
+	 * Method used to declare that the 2D camera is being used (or not)
+	 */
 	public void setEnabled(boolean enable) {
 		_enabled = enable;
 	}
-	
+	/*
+	 * Method to use to move the camera
+	 * float value : value of movement
+	 * boolean sideways : direction (up/down or left/right)
+	 */
 	public void moveCamera(float value, boolean sideways) {
 		Vector3f pos = _cam.getLocation().clone();
 		Vector3f vel = new Vector3f();
@@ -53,12 +66,19 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_cam.setLocation(pos);
 	}
 	
+	/*
+	 * Method used to zoom in or out in 2D mode
+	 * float value : value of zoom
+	 */
 	private void zoomCamera(float value){
 		Vector3f pos = _cam.getLocation().clone();
 		pos.setZ(pos.getZ() + (value*_moveSpeed));
 		_cam.setLocation(pos);
     }
-
+	
+	/*
+	 * Method that binds the keys to their actions
+	 */
 	public void inputSetUp() {
 		
 		// Key event mapping
@@ -93,6 +113,9 @@ public class Camera2D implements AnalogListener, ActionListener {
 		);
 	}
 	
+	/*
+	 * Method that sets up the "Drag to rotate" functionnality
+	 */
 	public void rotateDrag(float value, Vector3f axis) {
         if (!_canRotate){
             return;
@@ -115,7 +138,11 @@ public class Camera2D implements AnalogListener, ActionListener {
 
         _cam.setAxes(q);
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.jme3.input.controls.ActionListener#onAction(java.lang.String, boolean, float)
+	 */
 	@Override
 	public void onAction(String name, boolean value, float tpf) {
 		if (!_enabled)
@@ -125,6 +152,10 @@ public class Camera2D implements AnalogListener, ActionListener {
         }	
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.jme3.input.controls.AnalogListener#onAnalog(java.lang.String, float, float)
+	 */
 	@Override
 	public void onAnalog(String name, float value, float tpf) {
 		if (!_enabled)
@@ -154,7 +185,12 @@ public class Camera2D implements AnalogListener, ActionListener {
 		}
 		
 	}
-
+	
+	/*
+	 * Methode used to rotate the camera
+	 * float value : the value of the rotation
+	 * boolean trigoRotate : direction of the rotation
+	 */
 	private void rotateCamera(float value, boolean trigoRotate) {
         if (!_canRotate){
             return;
