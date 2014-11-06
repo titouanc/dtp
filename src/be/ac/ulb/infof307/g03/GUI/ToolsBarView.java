@@ -24,6 +24,8 @@ import java.awt.event.ActionListener;
  */
 public class ToolsBarView extends JToolBar implements ActionListener  {
 	
+	ToolsBarController controller;
+	
 	private static final long serialVersionUID = 1L;
 	
 	// buttons actions
@@ -43,80 +45,16 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      * Constructor of the class ToolsBar.
      * It add property to the bar: Buttons, not flotable, lay out
      */
-    public ToolsBarView() {
+    public ToolsBarView(ToolsBarController c) {
     	super("HomePlan Toolbox");
+    	
+    	controller = c;
+    	
     	// define if toolsbar can move
         this.setFloatable(false); 
         // add buttons
         _addButons();
         //Lay out the main panel.
-    }
-    
-    /**
-     * The private method is called when the button undo
-     * is clicked. It will communicate with the controller
-     */
-    private void _clickedUndo(){
-    	System.out.println("[DEBUG] User clicked on : undo");
-        
-    }
-    
-    /**
-     * The private method is called when the button redo
-     * is clicked. It will communicate with the controller
-     */ 
-    private void _clickedRedo(){
-    	System.out.println("[DEBUG] User clicked on : redo");
-    	
-    }
-    /**
-     * The private method is called when the button line
-     * is clicked. It will communicate with the controller
-     */
-    private void _clickedLine(){
-    	// TODO define how shape will be implemented
-    	System.out.println("[DEBUG] User clicked on : line");
-    }
-    
-    /**
-     * The private method is called when the button group
-     * is clicked. It will communicate with the controller
-     */
-    private void _clickedGroup(){
-    	// TODO define how shape will be implemented
-    	System.out.println("[DEBUG] User clicked on : group");
-    }
-    
-    /**
-     * The private method is called when the button floor up
-     * is clicked. It will communicate with the controller
-     */
-    private void _clickedFloorUp(){
-    	System.out.println("[DEBUG] User clicked on : floorUp");	
-    }
-    
-    /**
-     * The private method is called when the button floor down
-     * is clicked. It will communicate with the controller
-     */
-    private void _clickedFloorDown(){
-    	System.out.println("[DEBUG] User clicked on : floor down");
-    }
-    
-    /**
-     * The private method is called when the button 2D
-     * is clicked. It will communicate with the controller
-     */
-    private void _clicked2d(){
-    	System.out.println("[DEBUG] User clicked on : go2D");
-    }
-    
-    /**
-     * The private method is called when the button 3D
-     * is clicked. It will communicate with the controller
-     */
-    private void _clicked3d(){
-    	System.out.println("[DEBUG] User clicked on : go3D");
     }
     
     /**
@@ -225,29 +163,29 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
 	public void actionPerformed(ActionEvent action) {
 		String cmd = action.getActionCommand();
 		if (_UNDO.equals(cmd)) { 
-			_clickedUndo();
+			controller.onUndo();
         } 
 		else if (_REDO.equals(cmd)) {
-        	_clickedRedo();
+        	controller.onRedo();
         }
         else if (_LINE.equals(cmd)) {
-        	_clickedLine() ;
+        	controller.onLine() ;
         }
         else if (_GROUP.equals(cmd)) {
-        	_clickedGroup();
+        	controller.onGroup();
         } 
 		
         else if (_FLOOR_DOWN.equals(cmd)) {
-        	_clickedFloorDown() ;
+        	controller.onFloorDown() ;
         }
         else if (_FLOOR_UP.equals(cmd)) {
-        	_clickedFloorUp();
+        	controller.onFloorUp();
         }
         else if (_2D.equals(cmd)) {
-        	_clicked2d() ;
+        	controller.on2d() ;
         }
         else if (_3D.equals(cmd)) {
-        	_clicked3d();
+        	controller.on3d();
         }	
 	}
 }
