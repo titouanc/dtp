@@ -16,6 +16,10 @@ import be.ac.ulb.infof307.g03.models.Project;
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
+	private MenuBarController _menuBar;
+	private ToolsBarController _toolsBar;
+	private MainPaneController _workspace;
+	
 	/**
 	 * Constructor of GUI.
 	 * It put every frame needed at the right place on the main frame
@@ -28,21 +32,21 @@ public class GUI extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Create the menuBar
-        MenuBarController menuBar = new MenuBarController();
-        this.setJMenuBar(menuBar.getView());
+        _menuBar = new MenuBarController();
+        this.setJMenuBar(_menuBar.getView());
         
         // Create the main panel
         // http://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html
         JPanel contentPane = new JPanel(new BorderLayout());
         
         // Create the toolbar
-        ToolsBarController toolsBar = new ToolsBarController();
-        contentPane.add(toolsBar.getView(), BorderLayout.PAGE_START);
+        _toolsBar = new ToolsBarController();
+        contentPane.add(_toolsBar.getView(), BorderLayout.PAGE_START);
      
         // Create the workspace
         // this one contains Jmonkey canvas and the left menu
-        MainPaneController workspace = new MainPaneController(project);
-        contentPane.add(workspace.getView(), BorderLayout.CENTER);
+        _workspace = new MainPaneController(project);
+        contentPane.add(_workspace.getView(), BorderLayout.CENTER);
         
         // Add the workspace to the frame
         this.setContentPane(contentPane);
@@ -57,7 +61,7 @@ public class GUI extends JFrame {
         this.setVisible(true);
         
         // Create a demo on the workspace
-        workspace.createDemo();
+        _workspace.createDemo();
 	}
 
 }
