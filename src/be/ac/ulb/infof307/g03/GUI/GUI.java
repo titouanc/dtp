@@ -27,7 +27,8 @@ public class GUI extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Create the menuBar
-        this.setJMenuBar(new MenuBarView());
+        MenuBarController menuBar = new MenuBarController();
+        this.setJMenuBar(menuBar.view);
         
         // Create the main panel
         // http://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html
