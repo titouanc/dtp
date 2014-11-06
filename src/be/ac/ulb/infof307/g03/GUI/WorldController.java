@@ -4,38 +4,32 @@
 package be.ac.ulb.infof307.g03.GUI;
 
 import java.util.Vector;
- 
-import com.jme3.app.SimpleApplication;
+
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
-import com.jme3.math.ColorRGBA;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
 
 /**
- * This class is a jMonkey canvas that can be added in a Swing GUI.
- * @author fhennecker, julianschembri, brochape
+ * @author fhennecker
+ *
  */
-public class Canvas3D extends SimpleApplication {	
+public class WorldController {
 	
-	protected Geometry meshes;
-	protected Geometry ground;
+	WorldView view;
+	
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	
-	private boolean _freeCam = false;
-	Camera2D _cam2D;
-
-	/**
-	 * @see com.jme3.app.SimpleApplication#simpleInitApp()
-	 */
-	@Override
-	public void simpleInitApp() {
-		flyCam.setEnabled(false);
-		_cam2D = new Camera2D(cam, this.getInputManager());
-		_cam2D.setEnabled(true);
+	WorldController(){
+		view = new WorldView(this);
+		createDemoGeometry();
+	}
+	
+	public void createDemoGeometry(){
 		
 		Vector3f [] vertices = new Vector3f[8];
 		vertices[0] = new Vector3f(0,0,0);
@@ -60,10 +54,10 @@ public class Canvas3D extends SimpleApplication {
 			order[6*i+5] = i+n;
 		}
 
-		Mesh mesh = new Mesh();
-		mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
-		mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(order));
-		mesh.updateBound();
+		Mesh wallsMesh = new Mesh();
+		wallsMesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
+		wallsMesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(order));
+		wallsMesh.updateBound();
 
 		int[] groundOrder = new int[(n-2)*3];
 
@@ -78,21 +72,20 @@ public class Canvas3D extends SimpleApplication {
 		groundMesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(groundOrder));
 
 		System.out.println("ICI");
-		meshes = new Geometry("Mesh",mesh);
-		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		Geometry walls = new Geometry("Walls",wallsMesh);
+		Material mat = new Material(view.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		mat.setColor("Color", ColorRGBA.Blue);
-		meshes.setMaterial(mat);
-		shapes.add(meshes);
-		rootNode.attachChild(meshes);
-
-		ground = new Geometry("Groundmesh",groundMesh);
-		Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		walls.setMaterial(mat);
+		shapes.add(walls);
+		view.getRootNode().attachChild(walls);
+		
+		Geometry ground = new Geometry("Groundmesh",groundMesh);
+		Material mat2 = new Material(view.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 		mat2.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		mat2.setColor("Color", ColorRGBA.Red);
 		ground.setMaterial(mat2);
 		shapes.add(ground);
-		rootNode.attachChild(ground);
+		view.getRootNode().attachChild(ground);
 	}
-
 }

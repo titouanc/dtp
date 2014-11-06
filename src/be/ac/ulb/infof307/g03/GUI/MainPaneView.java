@@ -25,7 +25,7 @@ public class MainPaneView extends JPanel {
 	
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
-	private Canvas3D _canvas;
+	private WorldController _world;
 	private ObjectTree _objectTree;
 	
 	/**
@@ -49,19 +49,19 @@ public class MainPaneView extends JPanel {
         AppSettings settings = new AppSettings(true);
         settings.setFrameRate(60);
         // Create jme3 canvas
-        _canvas = new Canvas3D();
-        _canvas.setSettings(settings);
-        _canvas.createCanvas();
+        _world = new WorldController();
+        _world.view.setSettings(settings);
+        _world.view.createCanvas();
         // Set up event listener
-        JmeCanvasContext context = (JmeCanvasContext) _canvas.getContext();
-        context.setSystemListener(_canvas);
+        JmeCanvasContext context = (JmeCanvasContext) _world.view.getContext();
+        context.setSystemListener(_world.view);
         
         // Set up resize behavior
         Dimension jme3Dimension = new Dimension(640, 480);
         context.getCanvas().setMinimumSize(jme3Dimension);
         context.getCanvas().setPreferredSize(jme3Dimension);
         // Start jme3 canvas
-        _canvas.startCanvas();
+        _world.view.startCanvas();
         
         // Create split pane
 		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane,context.getCanvas());
