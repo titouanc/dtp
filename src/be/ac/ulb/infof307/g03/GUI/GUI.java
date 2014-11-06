@@ -40,7 +40,7 @@ public class GUI extends JFrame {
         // Create the workspace
         // this one contains Jmonkey canvas and the left menu
         MainPaneController workspace = new MainPaneController(project);
-        contentPane.add(workspace.view(), BorderLayout.CENTER);
+        contentPane.add(workspace.view, BorderLayout.CENTER);
         
         // Add the workspace to the frame
         this.setContentPane(contentPane);

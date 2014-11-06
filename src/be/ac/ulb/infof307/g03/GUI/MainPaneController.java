@@ -10,13 +10,9 @@ import be.ac.ulb.infof307.g03.models.Project;
  *
  */
 public class MainPaneController {
-	private MainPaneView _view;
+	public MainPaneView view;
 	
 	MainPaneController(Project project){
-		_view = new MainPaneView(project);
-	}
-
-	public MainPaneView view(){
-		return _view;
+		view = new MainPaneView(project);
 	}
 }
