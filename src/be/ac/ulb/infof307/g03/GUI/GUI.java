@@ -47,7 +47,7 @@ public class GUI extends JFrame {
         this.setContentPane(contentPane);
         
         // Set up resize behavior
-        Dimension windowDimension = new Dimension(640, 480);
+        Dimension windowDimension = new Dimension(860, 480);
         this.setMinimumSize(windowDimension);
         this.setPreferredSize(windowDimension);
         

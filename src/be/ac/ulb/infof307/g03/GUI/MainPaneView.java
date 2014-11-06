@@ -43,7 +43,7 @@ public class MainPaneView extends JPanel {
         // Create left menu
         _listScrollPane = new JScrollPane(_objectTree); 
         // Set up resize behavior
-        Dimension listScrollPaneDimension = new Dimension(100,480);
+        Dimension listScrollPaneDimension = new Dimension(150,480);
         _listScrollPane.setMinimumSize(listScrollPaneDimension);
         _listScrollPane.setPreferredSize(listScrollPaneDimension);
         
@@ -51,7 +51,7 @@ public class MainPaneView extends JPanel {
 		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane,canvas);
 		// Set up split pane
 		_splitPane.setOneTouchExpandable(true);
-		_splitPane.setDividerLocation(100);
+		_splitPane.setDividerLocation(150);
 		
 		this.add(_splitPane);
 	}
