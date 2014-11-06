@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
-
 import be.ac.ulb.infof307.g03.models.Project;
 
 /**
