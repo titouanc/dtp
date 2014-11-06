@@ -21,6 +21,7 @@ import com.jme3.util.BufferUtils;
  * @brief Control the world (3D/2D canvas)
  */
 public class WorldController {
+	
 	private WorldView _view;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	

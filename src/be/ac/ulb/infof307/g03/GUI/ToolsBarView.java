@@ -23,10 +23,9 @@ import java.awt.event.ActionListener;
  * It extend JToolBar
  */
 public class ToolsBarView extends JToolBar implements ActionListener  {
+	private static final long serialVersionUID = 1L;
 	
 	private ToolsBarController _controller;
-	
-	private static final long serialVersionUID = 1L;
 	
 	// buttons actions
 	static final private String _UNDO = "Undo";

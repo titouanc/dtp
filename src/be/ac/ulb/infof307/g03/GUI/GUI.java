@@ -55,7 +55,8 @@ public class GUI extends JFrame {
         this.pack();
         this.setVisible(true);
         
-        workspace.onApplicationStarted();
+        // Create a demo on the workspace
+        workspace.createDemo();
 	}
 
 }

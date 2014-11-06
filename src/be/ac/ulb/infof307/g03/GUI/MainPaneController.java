@@ -53,9 +53,9 @@ public class MainPaneController {
 	}
 	
 	/**
-	 * TODO rename this method ?
+	 * Create a demo on the MainPane
 	 */
-	public void onApplicationStarted(){ 
+	public void createDemo(){ 
 		_world.createDemoGeometry();
 	}
 }
