@@ -260,7 +260,6 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
-	
 	/**
 	 * Transform a shape (2D) into a Mesh (3D object usable in jMonkey)
 	 * @param shape The shape to transform
