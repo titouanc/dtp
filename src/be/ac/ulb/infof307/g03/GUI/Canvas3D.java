@@ -26,14 +26,13 @@ public class Canvas3D extends SimpleApplication {
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	
 	private boolean _freeCam = false;
-	private Camera2D _cam2D;
-	private CameraController _cameraController;
+	private Camera2D _cam2D = new Camera2D();
+	private Camera3D _cam3D = new Camera3D();
+	private CameraController _cameraController = new CameraController(_cam2D,_cam3D);;
 	
 	public Canvas3D() {
 		super();
 		this.setDisplayStatView(false);
-		_cam2D = new Camera2D();
-		_cameraController = new CameraController(_cam2D);
 	}
 	
 	/**
@@ -43,7 +42,9 @@ public class Canvas3D extends SimpleApplication {
 	public void simpleInitApp() {
 		flyCam.setEnabled(false);
 		_cam2D.setCam(cam);
+		_cam3D.setCam(cam);
 		_cam2D.setInputManager(inputManager);
+		_cam3D.setInputManager(inputManager);
 		
 		Vector3f [] vertices = new Vector3f[8];
 		vertices[0] = new Vector3f(0,0,0);

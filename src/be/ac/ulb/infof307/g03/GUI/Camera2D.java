@@ -23,7 +23,7 @@ import com.jme3.scene.Geometry;
 public class Camera2D implements AnalogListener, ActionListener {
 	
 	private Camera _cam;
-	private float _rotationSpeed = 1f;
+	private float _rotationSpeed = 3f;
     private float _moveSpeed = 3f;
     private boolean _canRotate = false;
     private boolean _enabled = true;
@@ -49,6 +49,12 @@ public class Camera2D implements AnalogListener, ActionListener {
 		inputSetUp();
 	}
 
+	public void resetDirection() {
+		Quaternion q = new Quaternion();
+        q.fromAxes(_cam.getLeft(), _cam.getUp(), new Vector3f(0,0,-1));
+        q.normalizeLocal();
+        _cam.setAxes(q);
+	}
 	
 	public void moveCamera(float value, boolean sideways) {
 		Vector3f pos = _cam.getLocation().clone();
@@ -94,104 +100,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 		pos.setZ(pos.getZ() + (value*_moveSpeed));
 		_cam.setLocation(pos);
     }
-
-	public void inputSetUp() {
-
-		// Key event mapping
-		_inputManager.addMapping("StrafeLeft",		new KeyTrigger(KeyInput.KEY_LEFT));
-		_inputManager.addMapping("StrafeRight",		new KeyTrigger(KeyInput.KEY_RIGHT));
-		_inputManager.addMapping("Forward",   		new KeyTrigger(KeyInput.KEY_UP));
-		_inputManager.addMapping("Backward",		new KeyTrigger(KeyInput.KEY_DOWN));
-		_inputManager.addMapping("K",		new KeyTrigger(KeyInput.KEY_K));
-		
-		// Mouse event mapping
-		_inputManager.addMapping("RotateDrag", 		new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-		//_inputManager.addMapping("Up", 			new MouseAxisTrigger(1, false));
-		//_inputManager.addMapping("Down", 			new MouseAxisTrigger(1, true));
-		_inputManager.addMapping("Left",			new MouseAxisTrigger(0, true));
-		_inputManager.addMapping("Right",			new MouseAxisTrigger(0, false));
-		_inputManager.addMapping("ZoomIn", new MouseAxisTrigger(2, false));
-        _inputManager.addMapping("ZoomOut", new MouseAxisTrigger(2, true));
-
-
-		// Add the names to the action listener
-		_inputManager.addListener(	this, 
-									"StrafeLeft", 
-									"StrafeRight", 
-									"Forward", 
-									"Backward", 
-									"RotateDrag", 
-								  /*"Up", 
-									"Down",*/ 
-									"Left", 
-									"Right", 
-									"ZoomIn", 
-									"ZoomOut"
-		);
-	}
 	
-	public void rotateDrag(float value, Vector3f axis) {
-        if (!_canRotate){
-            return;
-        }
-
-		Matrix3f mat = new Matrix3f();
-        mat.fromAngleNormalAxis(_rotationSpeed * value, axis);
-
-        Vector3f up = _cam.getUp();
-        Vector3f left = _cam.getLeft();
-        Vector3f dir = _cam.getDirection();
-
-        mat.mult(up, up);
-        mat.mult(left, left);
-        mat.mult(dir, dir);
-
-        Quaternion q = new Quaternion();
-        q.fromAxes(left, up, dir);
-        q.normalizeLocal();
-
-        _cam.setAxes(q);
-	}
-
-	@Override
-	public void onAction(String name, boolean value, float tpf) {
-		if (!_enabled)
-            return;
-        if (name.equals("RotateDrag")){
-            _canRotate = value;
-        }	
-	}
-
-	@Override
-	public void onAnalog(String name, float value, float tpf) {
-		if (!_enabled)
-            return;
-
-		if (name.equals("StrafeRight")) {
-			this.moveCamera(value,false);
-		} else if (name.equals("StrafeLeft")) {
-			this.moveCamera(-value,false);
-		} else if (name.equals("Forward")) {
-			this.moveCamera(value,true);
-		} else if (name.equals("Backward")) {
-			this.moveCamera(-value,true);
-		} else if (name.equals("Left")) {
-			rotateCamera(value, false);
-		} else if (name.equals("Right")) {
-			rotateCamera(-value, true);
-		} /*else if (name.equals("Up")) {
-            rotateCamera(-value, true);
-		} else if (name.equals("Down")) {
-            rotateCamera(value, false);
-		}*/
-		else if (name.equals("ZoomIn")) {
-			zoomCamera(value);
-		} else if (name.equals("ZoomOut")) {
-			zoomCamera(-value);
-		}
-		
-	}
-
 	private void rotateCamera(float value, boolean trigoRotate) {
         if (!_canRotate){
             return;
@@ -219,4 +128,79 @@ public class Camera2D implements AnalogListener, ActionListener {
         _cam.setAxes(q);
 		
 	}
+
+	public void inputSetUp() {
+
+		// Key event mapping
+		_inputManager.addMapping("StrafeLeft",		new KeyTrigger(KeyInput.KEY_LEFT));
+		_inputManager.addMapping("StrafeRight",		new KeyTrigger(KeyInput.KEY_RIGHT));
+		_inputManager.addMapping("Forward",   		new KeyTrigger(KeyInput.KEY_UP));
+		_inputManager.addMapping("Backward",		new KeyTrigger(KeyInput.KEY_DOWN));
+		_inputManager.addMapping("K",				new KeyTrigger(KeyInput.KEY_K));
+		
+		// Mouse event mapping
+		_inputManager.addMapping("RotateDrag", 		new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+		//_inputManager.addMapping("Up", 			new MouseAxisTrigger(1, false));
+		//_inputManager.addMapping("Down", 			new MouseAxisTrigger(1, true));
+		_inputManager.addMapping("Left",			new MouseAxisTrigger(0, true));
+		_inputManager.addMapping("Right",			new MouseAxisTrigger(0, false));
+		_inputManager.addMapping("ZoomIn", new MouseAxisTrigger(2, false));
+        _inputManager.addMapping("ZoomOut", new MouseAxisTrigger(2, true));
+
+
+		// Add the names to the action listener
+		_inputManager.addListener(	this, 
+									"StrafeLeft", 
+									"StrafeRight", 
+									"Forward", 
+									"Backward", 
+									"RotateDrag", 
+								  /*"Up", 
+									"Down",*/ 
+									"Left", 
+									"Right", 
+									"ZoomIn", 
+									"ZoomOut"
+		);
+	}
+
+	@Override
+	public void onAction(String name, boolean value, float tpf) {
+		if (!_enabled)
+            return;
+        if (name.equals("RotateDrag")){
+            _canRotate = value;
+        }	
+	}
+
+	@Override
+	public void onAnalog(String name, float value, float tpf) {
+		if (!_enabled)
+            return;
+
+		if (name.equals("StrafeRight")) {
+			this.moveCamera(-value,false);
+		} else if (name.equals("StrafeLeft")) {
+			this.moveCamera(value,false);
+		} else if (name.equals("Forward")) {
+			this.moveCamera(value,true);
+		} else if (name.equals("Backward")) {
+			this.moveCamera(-value,true);
+		} else if (name.equals("Left")) {
+			rotateCamera(value, false);
+		} else if (name.equals("Right")) {
+			rotateCamera(-value, true);
+		} /*else if (name.equals("Up")) {
+            rotateCamera(-value, true);
+		} else if (name.equals("Down")) {
+            rotateCamera(value, false);
+		}*/
+		else if (name.equals("ZoomIn")) {
+			zoomCamera(value);
+		} else if (name.equals("ZoomOut")) {
+			zoomCamera(-value);
+		}
+		
+	}
+
 }
