@@ -41,11 +41,7 @@ public class Point {
 	 */
 	@DatabaseField(uniqueCombo = true)
 	private double _z = 0;
-	
-	public static void migrate(ConnectionSource database) throws SQLException {
-		TableUtils.createTableIfNotExists(database, Point.class);
-	}
-	
+		
 	public Point() {
 	}
 
