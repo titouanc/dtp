@@ -28,7 +28,7 @@ public class GUI extends JFrame {
         
         // Create the menuBar
         MenuBarController menuBar = new MenuBarController();
-        this.setJMenuBar(menuBar.view);
+        this.setJMenuBar(menuBar.getView());
         
         // Create the main panel
         // http://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html
@@ -36,7 +36,7 @@ public class GUI extends JFrame {
         
         // Create the toolbar
         ToolsBarController toolsBar = new ToolsBarController();
-        contentPane.add(toolsBar.view, BorderLayout.PAGE_START);
+        contentPane.add(toolsBar.getView(), BorderLayout.PAGE_START);
      
         // Create the workspace
         // this one contains Jmonkey canvas and the left menu
