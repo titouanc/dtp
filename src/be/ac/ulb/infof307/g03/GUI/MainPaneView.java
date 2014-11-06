@@ -20,6 +20,9 @@ import be.ac.ulb.infof307.g03.models.Project;
  * @brief Main part of the Window
  */
 public class MainPaneView extends JPanel {
+	
+	private MainPaneController _controller;
+	
 	private static final long serialVersionUID = 1L;
 	
 	private JSplitPane _splitPane;
@@ -29,11 +32,14 @@ public class MainPaneView extends JPanel {
 	/**
 	 * Constructor of MainPane. It create a splitpane with a tree on
 	 * the left and jMonkey 3D integration on the right
+	 * @param newController This view's controller
 	 * @param project The projet to be display on the MainPane
 	 * @param canvas The canvas containing the 3D/2D view
 	 */
-	public MainPaneView(Project project, Canvas canvas){
+	public MainPaneView(MainPaneController newController, Project project, Canvas canvas){
 		super(new BorderLayout());
+		
+		_controller = newController;
 		
         // Create an object tree
         _objectTree = new ObjectTree(project);

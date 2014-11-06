@@ -41,7 +41,7 @@ public class MainPaneController {
         _world.startViewCanvas();
         
         // Creating the MainPaneView, with the jMonkey Canvas we just created
-		_view = new MainPaneView(project, context.getCanvas());
+		_view = new MainPaneView(this, project, context.getCanvas());
 		
 	}
 	
