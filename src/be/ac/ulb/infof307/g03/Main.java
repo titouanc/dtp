@@ -18,7 +18,10 @@ public class Main {
 			
 			// Call GUI
 			new GUI(createDemoProject());
-		} catch (Exception err){}
+		} catch (Exception err){
+			System.out.println("[DEBUG] Exception catched while creating GUI");
+			System.out.println("[DEBUG] Error is : "+ err);
+		}
 	}
 	
 	/**
