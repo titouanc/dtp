@@ -62,6 +62,7 @@ public class MainPaneView extends JPanel {
         context.getCanvas().setPreferredSize(jme3Dimension);
         // Start jme3 canvas
         _world.view.startCanvas();
+        _world.createDemoGeometry();
         
         // Create split pane
 		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane,context.getCanvas());

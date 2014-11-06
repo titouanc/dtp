@@ -4,7 +4,7 @@
 package be.ac.ulb.infof307.g03.GUI;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.scene.Geometry;
+
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -13,9 +13,6 @@ import com.jme3.scene.Geometry;
 public class WorldView extends SimpleApplication {	
 	
 	WorldController controller; 
-	
-	protected Geometry meshes;
-	protected Geometry ground;
 	
 	private boolean _freeCam = false;
 	Camera2D _cam2D;

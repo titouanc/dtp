@@ -26,7 +26,6 @@ public class WorldController {
 	
 	WorldController(){
 		view = new WorldView(this);
-		createDemoGeometry();
 	}
 	
 	public void createDemoGeometry(){
@@ -77,7 +76,6 @@ public class WorldController {
 		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		mat.setColor("Color", ColorRGBA.Blue);
 		walls.setMaterial(mat);
-		shapes.add(walls);
 		view.getRootNode().attachChild(walls);
 		
 		Geometry ground = new Geometry("Groundmesh",groundMesh);
@@ -87,5 +85,6 @@ public class WorldController {
 		ground.setMaterial(mat2);
 		shapes.add(ground);
 		view.getRootNode().attachChild(ground);
+		
 	}
 }
