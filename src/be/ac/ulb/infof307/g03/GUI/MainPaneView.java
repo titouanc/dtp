@@ -20,7 +20,7 @@ import be.ac.ulb.infof307.g03.models.Project;
  * This class implements the main view of the application, a splitpane
  * It contains a 3D view on the right. A tree on the left
  */
-public class MainPane extends JPanel {
+public class MainPaneView extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	private JSplitPane _splitPane;
@@ -32,7 +32,7 @@ public class MainPane extends JPanel {
 	 * Constructor of MainPane. It create a splitpane with a tree on
 	 * the left and jMonkey 3D integration on the right
 	 */
-	public MainPane(Project project){
+	public MainPaneView(Project project){
 		super(new BorderLayout());
 		
         // Create an object tree

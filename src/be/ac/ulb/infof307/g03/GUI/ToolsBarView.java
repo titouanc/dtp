@@ -22,7 +22,7 @@ import java.awt.event.ActionListener;
  * This class implement a toolbar for the HomePlan GUI
  * It extend JToolBar
  */
-public class ToolsBar extends JToolBar implements ActionListener  {
+public class ToolsBarView extends JToolBar implements ActionListener  {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -43,7 +43,7 @@ public class ToolsBar extends JToolBar implements ActionListener  {
      * Constructor of the class ToolsBar.
      * It add property to the bar: Buttons, not flotable, lay out
      */
-    public ToolsBar() {
+    public ToolsBarView() {
     	super("HomePlan Toolbox");
     	// define if toolsbar can move
         this.setFloatable(false); 

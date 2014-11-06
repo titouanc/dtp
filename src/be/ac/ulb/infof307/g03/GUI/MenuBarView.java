@@ -14,7 +14,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 
-public class MenuBar extends JMenuBar implements ActionListener {
+public class MenuBarView extends JMenuBar implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -29,7 +29,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
 	 * Constructor of the class MenuBar
 	 * Build all the menu and the menu items
 	 */
-    public MenuBar() {
+    public MenuBarView() {
     	super();
     	
         JMenu menu;
