@@ -3,7 +3,9 @@
  */
 package be.ac.ulb.infof307.g03.GUI;
 
+import java.io.IOException;
 import java.util.Vector;
+
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
@@ -44,7 +46,7 @@ public class WorldView extends SimpleApplication {
 		_controller.getCameraModeController().setInputManager(inputManager);
 		
 		createDemoGeometry();
-		
+		viewPort.setBackgroundColor(ColorRGBA.White);
 		// Notify our controller that initialisation is done
 		_controller.onViewCreated();
 	}
@@ -52,7 +54,7 @@ public class WorldView extends SimpleApplication {
 	/**
 	 * Create a world demo
 	 */
-	public void createDemoGeometry(){
+	public void createDemoGeometry() {
 		
 		Vector3f [] vertices = new Vector3f[8];
 		vertices[0] = new Vector3f(0,0,0);
@@ -98,17 +100,20 @@ public class WorldView extends SimpleApplication {
 		Geometry walls = new Geometry("Walls",wallsMesh);
 		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-		mat.setColor("Color", ColorRGBA.Blue);
+		mat.setColor("Color", ColorRGBA.Gray);
 		walls.setMaterial(mat);
 		rootNode.attachChild(walls);
 		
 		Geometry ground = new Geometry("Groundmesh",groundMesh);
 		Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		mat2.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-		mat2.setColor("Color", ColorRGBA.Red);
+		mat2.setColor("Color", ColorRGBA.LightGray);
 		ground.setMaterial(mat2);
 		shapes.add(ground);
 		rootNode.attachChild(ground);
+		
+		
+
 		
 	}
 
