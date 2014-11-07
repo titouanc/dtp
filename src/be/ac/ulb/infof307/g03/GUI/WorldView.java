@@ -6,15 +6,17 @@ package be.ac.ulb.infof307.g03.GUI;
 import java.io.IOException;
 import java.util.Vector;
 
-
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.debug.Grid;
 import com.jme3.util.BufferUtils;
 
 /**
@@ -111,6 +113,15 @@ public class WorldView extends SimpleApplication {
 		ground.setMaterial(mat2);
 		shapes.add(ground);
 		rootNode.attachChild(ground);
+		
+		Grid grid = new Grid(1000,1000,1);
+		Geometry gridGeo = new Geometry("Grid", grid);
+		gridGeo.setMaterial(mat2);
+		Quaternion roll90 = new Quaternion(); 
+		roll90.fromAngleAxis( FastMath.PI/2 , new Vector3f(1,0,0));
+		gridGeo.rotate(roll90);
+		gridGeo.center().move(new Vector3f(0,-50,0));
+		rootNode.attachChild(gridGeo);
 		
 		
 
