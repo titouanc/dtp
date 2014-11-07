@@ -3,14 +3,9 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
-import java.sql.SQLException;
-
 import com.jme3.math.Vector3f;
-
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.j256.ormlite.table.TableUtils;
-import com.j256.ormlite.support.ConnectionSource;
 
 /**
  * @author Titouan Christophe

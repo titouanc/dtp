@@ -3,11 +3,7 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
-import java.sql.SQLException;
-
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 
 /**
  * @author Titouan Christophe
