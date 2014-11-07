@@ -52,11 +52,4 @@ public class MainPaneController {
 		return _view;
 		
 	}
-	
-	/**
-	 * Create a demo on the MainPane
-	 */
-	public void createDemo(){ 
-		_world.createDemoGeometry();
-	}
 }
