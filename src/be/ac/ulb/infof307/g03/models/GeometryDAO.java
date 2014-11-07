@@ -45,6 +45,11 @@ public class GeometryDAO extends Observable {
 		TableUtils.createTableIfNotExists(database, Wall.class);
 	}
 	
+	/**
+	 * Create a new geometric data acess object that relies on given database
+	 * @param database A valid connection for ORMLite
+	 * @throws SQLException
+	 */
 	public GeometryDAO(ConnectionSource database) throws SQLException{
 		_lines = DaoManager.createDao(database, Line.class);
 		_groups = DaoManager.createDao(database, Group.class);
@@ -86,6 +91,12 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
+	/**
+	 * Refresh an in-memory object from database
+	 * @param object The geometric object to refresh
+	 * @return The number of affected rows
+	 * @throws SQLException
+	 */
 	public int refresh(Geometric object) throws SQLException{
 		int res = 0;
 		if (object.getClass() == Point.class)
@@ -105,7 +116,7 @@ public class GeometryDAO extends Observable {
 	
 	/**
 	 * Update a shape in database (permanently save in-memory modifications)
-	 * @param shape The shape to save
+	 * @param object The geometric object to update
 	 * @return The number of rows updated in the database
 	 * @throws SQLException
 	 */
@@ -128,7 +139,7 @@ public class GeometryDAO extends Observable {
 	
 	/**
 	 * Delete a shape from the database
-	 * @param shape The shape to remove
+	 * @param object The geometric object to remove
 	 * @return The number of rows that have been modified
 	 * @throws SQLException
 	 */
@@ -183,7 +194,7 @@ public class GeometryDAO extends Observable {
 	
 	/**
 	 * Get a Floor object from the database
-	 * @param floor_id The Floor identifier
+	 * @param ground_id The Floor identifier
 	 * @return The floor
 	 * @throws SQLException
 	 */
@@ -201,10 +212,24 @@ public class GeometryDAO extends Observable {
 		return _walls.queryForId(wall_id);
 	}
 	
+	/**
+	 * Retrieve a point from the database, given its identifier
+	 * @param point_id The point identifier
+	 * @return an in-memory Point object
+	 * @throws SQLException
+	 */
 	public Point getPoint(int point_id) throws SQLException{
 		return _points.queryForId(point_id);
 	}
 	
+	/**
+	 * Retrieve a point from the database, given its coordinates
+	 * @param x coordinate
+	 * @param y coordinate
+	 * @param z coordinate
+	 * @return A Point object
+	 * @throws SQLException
+	 */
 	public Point getPoint(double x, double y, double z) throws SQLException{
 		return _points.queryForFirst(
 			_points.queryBuilder().where().eq("_x", x).and().eq("_y", y).and().eq("_z", z).prepare()
@@ -260,10 +285,20 @@ public class GeometryDAO extends Observable {
 		setChanged();
 	}
 
+	/**
+	 * Retrieve all Walls from database
+	 * @return A list of all project's walls
+	 * @throws SQLException
+	 */
 	public List<Wall> getWalls() throws SQLException{
 		return _walls.queryForAll();
 	}
 	
+	/**
+	 * Retrieve all Grounds from database
+	 * @return A list of all project's grounds
+	 * @throws SQLException
+	 */
 	public List<Ground> getGrounds() throws SQLException{
 		return _grounds.queryForAll();
 	}
@@ -345,7 +380,8 @@ public class GeometryDAO extends Observable {
 	 * Transform a Ground into a Mesh
 	 * @param ground The ground to transform
 	 * @return The mesh
-	 * @throws SQLException 
+	 * @throws SQLException
+	 * @throws AssertionError If the number of points is less than 3
 	 */
 	public Mesh getGroundAsMesh(Ground ground) throws SQLException, AssertionError {
 		List<Point> all_points = getPointsForShape(ground.getGroup());
