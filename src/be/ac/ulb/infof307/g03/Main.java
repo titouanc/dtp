@@ -13,10 +13,10 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		// Call GUI
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){
-				System.setProperty("apple.laf.useScreenMenuBar", "true");
-				System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
 				try {
 					new GUI(createDemoProject());
 				} catch (SQLException e) {
