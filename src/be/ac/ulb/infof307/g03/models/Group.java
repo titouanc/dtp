@@ -28,10 +28,17 @@ public class Group extends Shape {
 		_name = name;
 	}
 
+	/**
+	 * @return The name of this group
+	 */
 	public String getName(){
 		return _name;
 	}
 	
+	/**
+	 * Set the name for this group
+	 * @param name The new name for this group
+	 */
 	public void setName(String name){
 		_name = name;
 	}

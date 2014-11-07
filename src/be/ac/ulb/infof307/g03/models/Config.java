@@ -13,10 +13,13 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class Config {
 	@DatabaseField(id = true)
-	private String _key;
+	private String _key = "";
 	@DatabaseField
-	private String _value;
+	private String _value = "";
 	
+	/**
+	 * Create a new empty key:value pair
+	 */
 	public Config(){
 		
 	}
