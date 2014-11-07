@@ -18,9 +18,6 @@ public abstract class Shape implements Geometric {
 	@DatabaseField(canBeNull = true, foreign = true, foreignAutoCreate = false, foreignAutoRefresh = true)
 	private Group _group;
 
-	@DatabaseField
-	private Boolean _visible = true;
-	
 	/**
 	 * @return The shape identifier for its category
 	 */
@@ -43,27 +40,5 @@ public abstract class Shape implements Geometric {
 	
 	public void addToGroup(Group grp){
 		_group = grp;
-	}
-	
-	/**
-	 * Set visibility to false;
-	 */
-	public void hide(){
-		_visible = false;
-	}
-	
-	/**
-	 * Set visibility to true;
-	 */
-	public void show(){
-		_visible = true;
-	}
-	
-	/**
-	 * Status of visibility
-	 * @return True if the Shape is visible
-	 */
-	public Boolean isVisible(){
-		return _visible;
 	}
 }

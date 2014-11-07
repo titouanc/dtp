@@ -125,12 +125,22 @@ public class TestGeometry {
 	public void test_wall() throws SQLException{
 		GeometryDAO geo = new GeometryDAO(_db);
 		Wall wall = new Wall(1);
-		assertEquals(1, geo.create(wall));
 		
+		assertEquals(1, geo.create(wall));
+		assertTrue(wall.isVisible());
 		assertEquals(1.0, wall.getHeight(), 0);
+		
 		wall.setHeight(42.27);
+		wall.hide();
 		geo.update(wall);
+		wall = geo.getWall(1);
 		assertEquals(42.27, geo.getWall(wall.getId()).getHeight(), 0);
+		assertFalse(wall.isVisible());
+		
+		wall.show();
+		geo.update(wall);
+		wall = geo.getWall(1);
+		assertTrue(wall.isVisible());
 		
 		assertEquals(1, wall.getId());
 		assertEquals(1, wall.getGroup().getId());
@@ -182,9 +192,10 @@ public class TestGeometry {
 		
 		Wall wall = geo.getWall(1);
 		assertEquals(room.getId(), wall.getGroup().getId());
+		assertEquals("Wall<room>", wall.toString());
+		
 		Ground gnd = geo.getGround(1);
 		assertEquals(room.getId(), gnd.getGroup().getId());
-		assertEquals("Wall<room>", wall.toString());
 		assertEquals("Ground<room>", gnd.toString());
 	}
 	
