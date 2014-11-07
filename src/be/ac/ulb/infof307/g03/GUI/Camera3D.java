@@ -1,7 +1,5 @@
 package be.ac.ulb.infof307.g03.GUI;
 
-import java.util.Vector;
-
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -14,7 +12,6 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
-import com.jme3.scene.Geometry;
 
 /**
  * Camera2D is the controller of the camera when the view is switched on 2D

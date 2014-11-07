@@ -1,6 +1,6 @@
 package be.ac.ulb.infof307.g03;
 
-import static org.junit.Assert.*;
+//import static org.junit.Assert.*;
 
 import org.junit.Test;
 
