@@ -3,7 +3,12 @@
  */
 package be.ac.ulb.infof307.g03.GUI;
 
+import java.sql.SQLException;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
+
+import be.ac.ulb.infof307.g03.models.*;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
@@ -19,8 +24,9 @@ import com.jme3.util.BufferUtils;
  * This class is a jMonkey canvas that can be added in a Swing GUI.
  * @author fhennecker, julianschembri, brochape
  */
-public class WorldView extends SimpleApplication {	
+public class WorldView extends SimpleApplication implements Observer {	
 	
+	private GeometryDAO _model = null;
 	private WorldController _controller; 
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 
@@ -28,9 +34,11 @@ public class WorldView extends SimpleApplication {
 	 * Constructor of WorldView
 	 * @param newController The view's controller
 	 */
-	WorldView(WorldController newController){
+	WorldView(WorldController newController, GeometryDAO model){
 		super();
 		_controller = newController;
+		_model = model;
+		_model.addObserver(this);
 		this.setDisplayStatView(false);
 	}
 	
@@ -43,7 +51,7 @@ public class WorldView extends SimpleApplication {
 		_controller.getCameraModeController().setCamera(cam);
 		_controller.getCameraModeController().setInputManager(inputManager);
 		
-		createDemoGeometry();
+		_makeScene();
 		
 		// Notify our controller that initialisation is done
 		_controller.onViewCreated();
@@ -110,6 +118,44 @@ public class WorldView extends SimpleApplication {
 		shapes.add(ground);
 		rootNode.attachChild(ground);
 		
+	}
+
+	/**
+	 * Redraw the 3D scene (first shot, still to be optimized)
+	 */
+	private void _makeScene(){
+		try {
+			for (Wall wall : _model.getWalls()){
+				Mesh mesh = _model.getWallAsMesh(wall);
+				Geometry node = new Geometry(wall.toString(), mesh);
+				Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+				mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+				mat.setColor("Color", ColorRGBA.Blue);
+				node.setMaterial(mat);
+				rootNode.attachChild(node);
+				System.out.println("Rendering " + wall.toString());
+			}
+			for (Ground gnd : _model.getGrounds()){
+				Mesh mesh = _model.getGroundAsMesh(gnd);
+				Geometry node = new Geometry(gnd.toString(), mesh);
+				Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+				mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+				mat.setColor("Color", ColorRGBA.Red);
+				node.setMaterial(mat);
+				rootNode.attachChild(node);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Called when the model fires a change notification
+	 */
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		_makeScene();
 	}
 
 }
