@@ -11,12 +11,19 @@ import com.j256.ormlite.field.DatabaseField;
  */
 public class Group extends Shape {
 	@DatabaseField(canBeNull = true, unique = true)
-	private String _name;
+	private String _name = null;
 	
+	/**
+	 * Create a new group project with an empty name;
+	 */
 	public Group(){
-		_name = "";
+
 	}
 	
+	/**
+	 * Create a new named group
+	 * @param name
+	 */
 	public Group(String name){
 		_name = name;
 	}
@@ -38,6 +45,8 @@ public class Group extends Shape {
 	
 	@Override
 	public String toString(){
+		if (_name == null)
+			return "<>";
 		return String.format("<%s>", getName());
 	}
 }
