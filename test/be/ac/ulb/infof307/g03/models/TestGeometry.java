@@ -237,5 +237,18 @@ public class TestGeometry {
 		assertNotEquals(p1.get(1).getId(), p2.get(1).getId());
 		assertFalse(p1.get(1).equals(p2.get(1)));
 	}
+	
+	@Test
+	public void test_multiple_unnamed_groups () throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Group g1 = new Group();
+		Group g2 = new Group();
+		geo.create(g1);
+		geo.create(g2);
+		
+		assertEquals(1, g1.getId());
+		assertEquals(2, g2.getId());
+		assertEquals("<>", g1.toString());
+	}
 }
 

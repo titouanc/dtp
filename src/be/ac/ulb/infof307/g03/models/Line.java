@@ -3,13 +3,9 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 
 /**
  * @author Titouan Christophe
@@ -20,17 +16,25 @@ public class Line extends Shape {
 	 * First point of the line
 	 */
 	@DatabaseField(canBeNull = false, foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
-	private Point _p1;
+	private Point _p1 = new Point();
 	/**
 	 * Second point of the line
 	 */
 	@DatabaseField(canBeNull = false, foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
-	private Point _p2;
+	private Point _p2 = new Point();
 
+	/**
+	 * Create a new Line with (0,0,0) points
+	 */
 	public Line() {
 		super();
 	}
-
+	
+	/**
+	 * Create a new Line with 2 points
+	 * @param p1 The first point
+	 * @param p2 The second point
+	 */
 	public Line(Point p1, Point p2) {
 		super();
 		_p1 = p1;
@@ -47,6 +51,9 @@ public class Line extends Shape {
 		return Math.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
+	/**
+	 * @return A list of the 2 points constituting the line
+	 */
 	public List<Point> getPoints() {
 		List<Point> res = new ArrayList<Point>(2);
 		res.add(_p1);

@@ -3,12 +3,8 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
-import java.sql.SQLException;
-
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
-import com.j256.ormlite.table.TableUtils;
 
 /**
  * @author Titouan Christophe
@@ -17,10 +13,13 @@ import com.j256.ormlite.table.TableUtils;
 @DatabaseTable
 public class Config {
 	@DatabaseField(id = true)
-	private String _key;
+	private String _key = "";
 	@DatabaseField
-	private String _value;
+	private String _value = "";
 	
+	/**
+	 * Create a new empty key:value pair
+	 */
 	public Config(){
 		
 	}

@@ -3,11 +3,7 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
-import java.sql.SQLException;
-
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 
 /**
  * @author Titouan Christophe
@@ -15,20 +11,34 @@ import com.j256.ormlite.table.TableUtils;
  */
 public class Group extends Shape {
 	@DatabaseField(canBeNull = true, unique = true)
-	private String _name;
+	private String _name = null;
 	
+	/**
+	 * Create a new group project with an empty name;
+	 */
 	public Group(){
-		_name = "";
+
 	}
 	
+	/**
+	 * Create a new named group
+	 * @param name
+	 */
 	public Group(String name){
 		_name = name;
 	}
 
+	/**
+	 * @return The name of this group
+	 */
 	public String getName(){
 		return _name;
 	}
 	
+	/**
+	 * Set the name for this group
+	 * @param name The new name for this group
+	 */
 	public void setName(String name){
 		_name = name;
 	}
@@ -42,6 +52,8 @@ public class Group extends Shape {
 	
 	@Override
 	public String toString(){
+		if (_name == null)
+			return "<>";
 		return String.format("<%s>", getName());
 	}
 }
