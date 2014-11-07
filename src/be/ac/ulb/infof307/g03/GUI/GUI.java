@@ -59,9 +59,6 @@ public class GUI extends JFrame {
         // Display the window
         this.pack();
         this.setVisible(true);
-        
-        // Create a demo on the workspace
-        _workspace.createDemo();
 	}
 
 }

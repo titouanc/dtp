@@ -23,6 +23,7 @@ import com.jme3.util.BufferUtils;
 public class WorldController {
 	
 	private WorldView _view;
+	private boolean _isViewCreated = false;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	CameraModeController _cameraModeController = new CameraModeController();
 	
@@ -62,6 +63,14 @@ public class WorldController {
 	 */
 	public void startViewCanvas(){
 		_view.startCanvas();
+	}
+	
+	/**
+	 * Gets called when the view is initialized.
+	 */
+	public void onViewCreated(){
+		_isViewCreated = true;
+		createDemoGeometry();
 	}
 	
 	

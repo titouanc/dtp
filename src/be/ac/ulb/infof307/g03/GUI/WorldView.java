@@ -31,6 +31,9 @@ public class WorldView extends SimpleApplication {
 		flyCam.setEnabled(false);
 		_controller.getCameraModeController().setCamera(cam);
 		_controller.getCameraModeController().setInputManager(inputManager);
+		
+		// Notify our controller that initialisation is done
+		_controller.onViewCreated();
 	}
 
 }
