@@ -17,7 +17,7 @@ import com.j256.ormlite.support.ConnectionSource;
  * @brief Primitive saveable object for 3D building
  */
 @DatabaseTable
-public class Point {
+public class Point implements Geometric {
 	/**
 	 * @brief Point id
 	 */
@@ -41,11 +41,7 @@ public class Point {
 	 */
 	@DatabaseField(uniqueCombo = true)
 	private double _z = 0;
-	
-	public static void migrate(ConnectionSource database) throws SQLException {
-		TableUtils.createTableIfNotExists(database, Point.class);
-	}
-	
+		
 	public Point() {
 	}
 
@@ -75,6 +71,13 @@ public class Point {
 
 	double getZ() {
 		return this._z;
+	}
+	
+	void copyFrom(Point other){
+		this._id = other.getId();
+		setX(other.getX());
+		setY(other.getY());
+		setZ(other.getZ());
 	}
 
 	void setX(double x) {

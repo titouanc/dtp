@@ -20,10 +20,6 @@ public class Config {
 	private String _key;
 	@DatabaseField
 	private String _value;
-
-	public static void migrate(ConnectionSource database) throws SQLException {
-		TableUtils.createTableIfNotExists(database, Config.class);
-	}
 	
 	public Config(){
 		

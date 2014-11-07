@@ -12,6 +12,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 
 public class TestPoint {
 	private ConnectionSource _db;
@@ -20,7 +21,7 @@ public class TestPoint {
 	@Before
 	public void setUp() throws Exception {
 		_db = new JdbcConnectionSource("jdbc:sqlite::memory:");
-		Point.migrate(_db);
+		TableUtils.createTableIfNotExists(_db, Point.class);
 		_dao = DaoManager.createDao(_db, Point.class);
 	}
 

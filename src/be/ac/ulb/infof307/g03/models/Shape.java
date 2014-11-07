@@ -11,14 +11,13 @@ import com.j256.ormlite.table.DatabaseTable;
  *
  */
 @DatabaseTable
-public abstract class Shape {
+public abstract class Shape implements Geometric {
 	@DatabaseField(generatedId = true)
 	private int _id = 0;
 	
 	@DatabaseField(canBeNull = true, foreign = true, foreignAutoCreate = false, foreignAutoRefresh = true)
 	private Group _group;
 
-	
 	/**
 	 * @return The shape identifier for its category
 	 */

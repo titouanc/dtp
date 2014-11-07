@@ -12,6 +12,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.jme3.math.Vector3f;
@@ -27,6 +28,9 @@ import com.jme3.util.BufferUtils;
 public class GeometryDAO extends Observable {
 	private Dao<Line, Integer> _lines = null;
 	private Dao<Group, Integer> _groups = null;
+	private Dao<Wall, Integer> _walls = null;
+	private Dao<Ground, Integer> _grounds = null;
+	private Dao<Point, Integer> _points = null;
 	
 	/**
 	 * Migrate all needed tables to a database
@@ -34,28 +38,66 @@ public class GeometryDAO extends Observable {
 	 * @throws SQLException
 	 */
 	public static void migrate(ConnectionSource database) throws SQLException{
-		Line.migrate(database);
-		Point.migrate(database);
-		Group.migrate(database);
+		TableUtils.createTableIfNotExists(database, Point.class);
+		TableUtils.createTableIfNotExists(database, Line.class);
+		TableUtils.createTableIfNotExists(database, Group.class);
+		TableUtils.createTableIfNotExists(database, Ground.class);
+		TableUtils.createTableIfNotExists(database, Wall.class);
 	}
 	
 	public GeometryDAO(ConnectionSource database) throws SQLException{
 		_lines = DaoManager.createDao(database, Line.class);
 		_groups = DaoManager.createDao(database, Group.class);
+		_grounds = DaoManager.createDao(database, Ground.class);
+		_walls = DaoManager.createDao(database, Wall.class);
+		_points = DaoManager.createDao(database, Point.class);
 	}
 	
 	/**
-	 * Create a shape in the database
-	 * @param shape
-	 * @return
+	 * Create a new item in the database
+	 * @param object The object to create in database
+	 * @return The number of modified rows
 	 * @throws SQLException
 	 */
-	public int create(Shape shape) throws SQLException{
+	public int create(Geometric object) throws SQLException{
 		int res = 0;
-		if (shape.getClass() == Line.class)
-			res = _lines.create((Line) shape);
-		else if (shape.getClass() == Group.class)
-			res = _groups.create((Group) shape);
+		if (object.getClass() == Point.class){
+			Point p = (Point) object;
+			try {_points.create(p);}
+			catch (SQLException err){
+				// Not unique: find existing point and copy its data
+				p.copyFrom(getPoint(p.getX(), p.getY(), p.getZ()));
+			}
+		}
+		else if (object.getClass() == Line.class){
+			Line line = (Line) object;
+			for (Point p : line.getPoints())
+				create(p);
+			res = _lines.create(line);
+		}
+		else if (object.getClass() == Group.class)
+			res = _groups.create((Group) object);
+		else if (object.getClass() == Ground.class)
+			res = _grounds.create((Ground) object);
+		else if (object.getClass() == Wall.class)
+			res = _walls.create((Wall) object);
+		if (res != 0)
+			setChanged();
+		return res;
+	}
+	
+	public int refresh(Geometric object) throws SQLException{
+		int res = 0;
+		if (object.getClass() == Point.class)
+			res = _points.refresh((Point) object);
+		else if (object.getClass() == Line.class)
+			res = _lines.refresh((Line) object);
+		else if (object.getClass() == Group.class)
+			res = _groups.refresh((Group) object);
+		else if (object.getClass() == Ground.class)
+			res = _grounds.refresh((Ground) object);
+		else if (object.getClass() == Wall.class)
+			res = _walls.refresh((Wall) object);
 		if (res != 0)
 			setChanged();
 		return res;
@@ -67,12 +109,18 @@ public class GeometryDAO extends Observable {
 	 * @return The number of rows updated in the database
 	 * @throws SQLException
 	 */
-	public int update(Shape shape) throws SQLException {
+	public int update(Geometric object) throws SQLException{
 		int res = 0;
-		if (shape.getClass() == Line.class)
-			res = _lines.update((Line) shape);
-		else if (shape.getClass() == Group.class)
-			res = _groups.update((Group) shape);
+		if (object.getClass() == Point.class)
+			res = _points.update((Point) object);
+		else if (object.getClass() == Line.class)
+			res = _lines.update((Line) object);
+		else if (object.getClass() == Group.class)
+			res = _groups.update((Group) object);
+		else if (object.getClass() == Ground.class)
+			res = _grounds.update((Ground) object);
+		else if (object.getClass() == Wall.class)
+			res = _walls.update((Wall) object);
 		if (res != 0)
 			setChanged();
 		return res;
@@ -84,12 +132,18 @@ public class GeometryDAO extends Observable {
 	 * @return The number of rows that have been modified
 	 * @throws SQLException
 	 */
-	public int delete(Shape shape) throws SQLException {
+	public int delete(Geometric object) throws SQLException{
 		int res = 0;
-		if (shape.getClass() == Line.class)
-			res = _lines.delete((Line) shape);
-		else if (shape.getClass() == Group.class)
-			res = _groups.delete((Group) shape);
+		if (object.getClass() == Point.class)
+			res = _points.delete((Point) object);
+		else if (object.getClass() == Line.class)
+			res = _lines.delete((Line) object);
+		else if (object.getClass() == Group.class)
+			res = _groups.delete((Group) object);
+		else if (object.getClass() == Ground.class)
+			res = _grounds.delete((Ground) object);
+		else if (object.getClass() == Wall.class)
+			res = _walls.delete((Wall) object);
 		if (res != 0)
 			setChanged();
 		return res;
@@ -124,6 +178,36 @@ public class GeometryDAO extends Observable {
 	public Group getGroup(String name) throws SQLException {
 		return _groups.queryForFirst(
 			_groups.queryBuilder().where().eq("_name", name).prepare()
+		);
+	}
+	
+	/**
+	 * Get a Floor object from the database
+	 * @param floor_id The Floor identifier
+	 * @return The floor
+	 * @throws SQLException
+	 */
+	public Ground getGround(int ground_id) throws SQLException{
+		return _grounds.queryForId(ground_id);
+	}
+	
+	/**
+	 * Get a Wall object from the database
+	 * @param wall_id The Wall identifier
+	 * @return a Wall object
+	 * @throws SQLException
+	 */
+	public Wall getWall(int wall_id) throws SQLException{
+		return _walls.queryForId(wall_id);
+	}
+	
+	public Point getPoint(int point_id) throws SQLException{
+		return _points.queryForId(point_id);
+	}
+	
+	public Point getPoint(double x, double y, double z) throws SQLException{
+		return _points.queryForFirst(
+			_points.queryBuilder().where().eq("_x", x).and().eq("_y", y).and().eq("_z", z).prepare()
 		);
 	}
 	
@@ -176,6 +260,14 @@ public class GeometryDAO extends Observable {
 		setChanged();
 	}
 
+	public List<Wall> getWalls() throws SQLException{
+		return _walls.queryForAll();
+	}
+	
+	public List<Ground> getGrounds() throws SQLException{
+		return _grounds.queryForAll();
+	}
+	
 	/**
 	 * Get all orphan shapes from the database
 	 * @return All Shapes in project that are not in a group
@@ -198,43 +290,92 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
-	
 	/**
-	 * Transform a shape (2D) into a Mesh (3D object usable in jMonkey)
-	 * @param shape The shape to transform
-	 * @param elevation Height of the shape (constant for all the shape)
-	 * @return The Mesh object
+	 * Transform a Wall object into a Mesh (3D object usable in jMonkey)
+	 * @param wall The wall to transform
+	 * @return The Mesh
 	 * @throws SQLException
 	 */
-	public Mesh getShapeAsMesh(Shape shape, float elevation) throws SQLException{
-		List<Point> all_points = getPointsForShape(shape);
-		Vector3f height = new Vector3f(0, 0, elevation);
+	public Mesh getWallAsMesh(Wall wall) throws SQLException{
+		List<Point> all_points = getPointsForShape(wall.getGroup());
+		Vector3f height = new Vector3f(0, 0, (float) wall.getHeight());
 		
 		int shape_n_points = all_points.size();
 		int volume_n_points = 2 * all_points.size(); //floor && ceil
 		
+		/* 0) Closed polygon ? -> we don't need to store both first && last */
+		Point firstPoint = all_points.get(0);
+		Point lastPoint = all_points.get(shape_n_points - 1);
+		if (firstPoint.equals(lastPoint)){
+			shape_n_points--;
+			volume_n_points -= 2;
+		}
+		
+		/* 1) Build an array of all points */
 		Vector3f vertices[] = new Vector3f[volume_n_points];
-		for (int i=0; i<all_points.size(); i++){
+		for (int i=0; i<shape_n_points; i++){
 			vertices[i] = all_points.get(i).toVector3f(); // floor
 			vertices[i + shape_n_points] = all_points.get(i).toVector3f().add(height); //ceil
 		}
 		
-		int n_triangles = 6 * (shape_n_points - 1);
+		/* 2) Build an array of indexes on vertices (triangle edges).
+		 *    3 points forms a triangle, 2 triangle per line + elevation. 
+		 *    In case of closed polygon, overflow index to get first point. */
+		int n_triangles = 6 * (all_points.size() - 1);
 		int edges[] = new int[n_triangles];
 		for (int i=0; i<shape_n_points-1; i++){
 			edges[6*i] = i;
-			edges[6*i+1] = i + shape_n_points + 1;
-			edges[6*i+2] = i + shape_n_points;
+			edges[6*i+1] = (i + shape_n_points + 1) % shape_n_points;
+			edges[6*i+2] = (i + shape_n_points) % shape_n_points;
 			edges[6*i+3] = i;
-			edges[6*i+4] = i+1;
-			edges[6*i+5] = i + shape_n_points + 1;
+			edges[6*i+4] = (i+1) % shape_n_points;
+			edges[6*i+5] = (i + shape_n_points + 1) % shape_n_points;
 		}
 		
+		/* 3) Pack everything in a Mesh object */
 		Mesh mesh = new Mesh();
 	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
 	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
 	  	mesh.updateBound();
 	  	
 	  	return mesh;
+	}
+	
+	/**
+	 * Transform a Ground into a Mesh
+	 * @param ground The ground to transform
+	 * @return The mesh
+	 * @throws SQLException 
+	 */
+	public Mesh getGroundAsMesh(Ground ground) throws SQLException, AssertionError {
+		List<Point> all_points = getPointsForShape(ground.getGroup());
+		int shape_n_points = all_points.size();
+		assert(shape_n_points > 2);
+		
+		/* 0) Closed polygon ? -> we don't need to store both first && last */
+		Point firstPoint = all_points.get(0);
+		Point lastPoint = all_points.get(shape_n_points - 1);
+		if (firstPoint.equals(lastPoint))
+			shape_n_points--;
+		
+		/* 1) Build an array of all points */
+		Vector3f vertices[] = new Vector3f[shape_n_points];
+		for (int i=0; i<shape_n_points; i++)
+			vertices[i] = all_points.get(i).toVector3f();
+		
+		/* 2) Polygon triangulation to make a surface */
+		int n_triangles = shape_n_points - 2;
+		int edges[] = new int[3 * n_triangles];
+		for (int i=0; i<n_triangles; i++){
+			edges[3 * i] = 0;
+			edges[3 * i + 1] = i+1;
+			edges[3 * i + 2] = i+2;
+		}
+		
+		Mesh mesh = new Mesh();
+	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
+	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
+	  	mesh.updateBound();
+		return mesh;
 	}
 }
