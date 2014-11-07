@@ -75,4 +75,9 @@ public abstract class Grouped implements Geometric {
 	}
 	
 	public abstract String toString();
+
+	@Override
+	public Boolean isLeaf(){
+		return false;
+	}
 }
