@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 
 public class TestGeometry {
@@ -217,6 +218,24 @@ public class TestGeometry {
 		Mesh mesh = geo.getGroundAsMesh(gnd);
 		assertEquals(4, mesh.getVertexCount());
 		assertEquals(2, mesh.getTriangleCount());
+	}
+	
+	@Test
+	public void test_line_with_new_same_points() throws SQLException {
+		GeometryDAO geo = new GeometryDAO(_db);
+		Line l1 = new Line(new Point(0, 0, 0), new Point(1, 1, 1));
+		Line l2 = new Line(new Point(new Vector3f(0, 0, 0)), new Point(-1, 1, 1));
+		geo.create(l1);
+		geo.create(l2);
+		
+		List<Point> p1 = l1.getPoints();
+		List<Point> p2 = l2.getPoints();
+		
+		assertEquals(p1.get(0).getId(), p2.get(0).getId());
+		assertTrue(p1.get(0).equals(p2.get(0)));
+		
+		assertNotEquals(p1.get(1).getId(), p2.get(1).getId());
+		assertFalse(p1.get(1).equals(p2.get(1)));
 	}
 }
 

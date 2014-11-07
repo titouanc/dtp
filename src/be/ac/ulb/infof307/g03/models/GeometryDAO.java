@@ -30,6 +30,7 @@ public class GeometryDAO extends Observable {
 	private Dao<Group, Integer> _groups = null;
 	private Dao<Wall, Integer> _walls = null;
 	private Dao<Ground, Integer> _grounds = null;
+	private Dao<Point, Integer> _points = null;
 	
 	/**
 	 * Migrate all needed tables to a database
@@ -49,6 +50,7 @@ public class GeometryDAO extends Observable {
 		_groups = DaoManager.createDao(database, Group.class);
 		_grounds = DaoManager.createDao(database, Ground.class);
 		_walls = DaoManager.createDao(database, Wall.class);
+		_points = DaoManager.createDao(database, Point.class);
 	}
 	
 	/**
@@ -59,8 +61,20 @@ public class GeometryDAO extends Observable {
 	 */
 	public int create(Geometric object) throws SQLException{
 		int res = 0;
-		if (object.getClass() == Line.class)
-			res = _lines.create((Line) object);
+		if (object.getClass() == Point.class){
+			Point p = (Point) object;
+			try {_points.create(p);}
+			catch (SQLException err){
+				// Not unique: find existing point and copy its data
+				p.copyFrom(getPoint(p.getX(), p.getY(), p.getZ()));
+			}
+		}
+		else if (object.getClass() == Line.class){
+			Line line = (Line) object;
+			for (Point p : line.getPoints())
+				create(p);
+			res = _lines.create(line);
+		}
 		else if (object.getClass() == Group.class)
 			res = _groups.create((Group) object);
 		else if (object.getClass() == Ground.class)
@@ -74,7 +88,9 @@ public class GeometryDAO extends Observable {
 	
 	public int refresh(Geometric object) throws SQLException{
 		int res = 0;
-		if (object.getClass() == Line.class)
+		if (object.getClass() == Point.class)
+			res = _points.refresh((Point) object);
+		else if (object.getClass() == Line.class)
 			res = _lines.refresh((Line) object);
 		else if (object.getClass() == Group.class)
 			res = _groups.refresh((Group) object);
@@ -95,7 +111,9 @@ public class GeometryDAO extends Observable {
 	 */
 	public int update(Geometric object) throws SQLException{
 		int res = 0;
-		if (object.getClass() == Line.class)
+		if (object.getClass() == Point.class)
+			res = _points.update((Point) object);
+		else if (object.getClass() == Line.class)
 			res = _lines.update((Line) object);
 		else if (object.getClass() == Group.class)
 			res = _groups.update((Group) object);
@@ -116,7 +134,9 @@ public class GeometryDAO extends Observable {
 	 */
 	public int delete(Geometric object) throws SQLException{
 		int res = 0;
-		if (object.getClass() == Line.class)
+		if (object.getClass() == Point.class)
+			res = _points.delete((Point) object);
+		else if (object.getClass() == Line.class)
 			res = _lines.delete((Line) object);
 		else if (object.getClass() == Group.class)
 			res = _groups.delete((Group) object);
@@ -179,6 +199,16 @@ public class GeometryDAO extends Observable {
 	 */
 	public Wall getWall(int wall_id) throws SQLException{
 		return _walls.queryForId(wall_id);
+	}
+	
+	public Point getPoint(int point_id) throws SQLException{
+		return _points.queryForId(point_id);
+	}
+	
+	public Point getPoint(double x, double y, double z) throws SQLException{
+		return _points.queryForFirst(
+			_points.queryBuilder().where().eq("_x", x).and().eq("_y", y).and().eq("_z", z).prepare()
+		);
 	}
 	
 	/**
