@@ -27,17 +27,6 @@ public class Line extends Shape {
 	@DatabaseField(canBeNull = false, foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
 	private Point _p2;
 
-	/**
-	 * @brief Create the required tables for this model
-	 * @param database
-	 *            A databse connection
-	 * @throws SQLException
-	 */
-	public static void migrate(ConnectionSource database) throws SQLException {
-		TableUtils.createTableIfNotExists(database, Line.class);
-		Point.migrate(database);
-	}
-
 	public Line() {
 		super();
 	}

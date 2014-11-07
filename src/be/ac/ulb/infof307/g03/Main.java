@@ -62,6 +62,8 @@ public class Main {
 	public static void createRoom(GeometryDAO dao, String name, Point...points) throws SQLException{
 		Group room = new Group(name);
 		dao.create(room);
+		dao.create(new Wall(room, 7));
+		dao.create(new Ground(room));
 		
 		for (int i=0; i<points.length; i++)
 			dao.addShapeToGroup(room, new Line(points[i], points[(i+1)%points.length]));

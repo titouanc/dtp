@@ -17,10 +17,6 @@ public class Group extends Shape {
 	@DatabaseField(canBeNull = true, unique = true)
 	private String _name;
 	
-	public static void migrate(ConnectionSource database) throws SQLException {
-		TableUtils.createTableIfNotExists(database, Group.class);
-	}
-
 	public Group(){
 		_name = "";
 	}

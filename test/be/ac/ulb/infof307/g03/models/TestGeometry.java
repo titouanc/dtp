@@ -120,15 +120,103 @@ public class TestGeometry {
 		assertEquals(1, roots.size());
 		assertTrue(l.equals(roots.get(0)));
 	}
+		
+	@Test
+	public void test_wall() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Wall wall = new Wall(1);
+		
+		assertEquals(1, geo.create(wall));
+		assertTrue(wall.isVisible());
+		assertEquals(1.0, wall.getHeight(), 0);
+		
+		wall.setHeight(42.27);
+		wall.hide();
+		geo.update(wall);
+		wall = geo.getWall(1);
+		assertEquals(42.27, geo.getWall(wall.getId()).getHeight(), 0);
+		assertFalse(wall.isVisible());
+		
+		wall.show();
+		geo.update(wall);
+		wall = geo.getWall(1);
+		assertTrue(wall.isVisible());
+		
+		assertEquals(1, wall.getId());
+		assertEquals(1, wall.getGroup().getId());
+		assertEquals(1, geo.getWalls().size());
+	}
 	
 	@Test
-	public void test_as_mesh() throws SQLException{
+	public void test_ground() throws SQLException{
 		GeometryDAO geo = new GeometryDAO(_db);
-		Line l = new Line(new Point(0, 0, 0), new Point(1, 1, 0));
-		geo.create(l);
+		Ground ground = new Ground();
+		assertEquals(1, geo.create(ground));
 		
-		Mesh mesh = geo.getShapeAsMesh(l, 1);
-		// Line + height -> rectangle -> 4 vertex
+		assertEquals(1, ground.getId());
+		assertEquals(1, ground.getGroup().getId());
+		assertEquals(1, geo.getGrounds().size());
+	}
+	
+	/**
+	 * Create a new Group named "room" maid of 4 lines with 4 points 
+	 * (in this order): 00 10 11 01.
+	 * Create a Wall and a Ground object using the group.
+	 * Insert everything in database
+	 * @param geo The data access object
+	 * @return The newly created Group
+	 * @throws SQLException
+	 */
+	private Group create_a_room(GeometryDAO geo) throws SQLException{
+		Group room = new Group("room");
+		geo.create(room);
+		geo.create(new Wall(room, 2.35));
+		geo.create(new Ground(room));
+		
+		Point o = new Point(0, 0, 0),
+			  x = new Point(1, 0, 0),
+			  y = new Point(0, 1, 0),
+			  xy = new Point(1, 1, 0);
+		geo.addShapeToGroup(room, new Line(o, x));
+		geo.addShapeToGroup(room, new Line(x, xy));
+		geo.addShapeToGroup(room, new Line(xy, y));
+		geo.addShapeToGroup(room, new Line(y, o));
+		return room;
+	}
+
+	@Test
+	public void test_room() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Group room = create_a_room(geo);
+		assertEquals(1, room.getId());
+		
+		Wall wall = geo.getWall(1);
+		assertEquals(room.getId(), wall.getGroup().getId());
+		assertEquals("Wall<room>", wall.toString());
+		
+		Ground gnd = geo.getGround(1);
+		assertEquals(room.getId(), gnd.getGroup().getId());
+		assertEquals("Ground<room>", gnd.toString());
+	}
+	
+	@Test
+	public void test_wall_as_mesh() throws SQLException {
+		GeometryDAO geo = new GeometryDAO(_db);
+		create_a_room(geo);
+		Wall wall = geo.getWall(1);
+		Mesh mesh = geo.getWallAsMesh(wall);
+		assertEquals(8, mesh.getVertexCount());
+		assertEquals(8, mesh.getTriangleCount());
+	}
+	
+	@Test
+	public void test_ground_as_mesh() throws SQLException {
+		GeometryDAO geo = new GeometryDAO(_db);
+		create_a_room(geo);
+		Ground gnd = geo.getGround(1);
+		Mesh mesh = geo.getGroundAsMesh(gnd);
 		assertEquals(4, mesh.getVertexCount());
+		assertEquals(2, mesh.getTriangleCount());
 	}
 }
+
