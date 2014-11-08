@@ -27,4 +27,9 @@ public class Ground extends Grouped {
 	public final String toString() {
 		return "Ground" + getGroup().toString();
 	}
+
+	@Override
+	public String getUID() {
+		return String.format("gnd-%d", getId());
+	}
 }
