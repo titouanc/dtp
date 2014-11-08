@@ -4,6 +4,7 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
+import java.util.Observable;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -16,11 +17,14 @@ import com.j256.ormlite.table.TableUtils;
  * @brief Homeplan Project data structure
  */
 
-public class Project {
+public class Project extends Observable {
 	private ConnectionSource _db = null;
 	private Dao<Config, String> _config = null;
 	private GeometryDAO _geo = null;
 
+	/**
+	 * Create a new Project object (needs to be initialized with load() or create())
+	 */
 	public Project() {
 
 	}
@@ -79,6 +83,9 @@ public class Project {
 			entry = new Config(name, value);
 			_config.create(entry);
 		}
+
+		setChanged();
+		notifyObservers();
 		return entry.getValue();
 	}
 	
