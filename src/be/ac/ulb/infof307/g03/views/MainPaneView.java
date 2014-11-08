@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import be.ac.ulb.infof307.g03.controllers.MainPaneController;
+import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.Project;
 
 /**
@@ -28,7 +29,7 @@ public class MainPaneView extends JPanel {
 	
 	private JSplitPane _splitPane;
 	private JScrollPane _listScrollPane;
-	private ObjectTree _objectTree;
+	private ObjectTreeController _objectTree;
 	
 	/**
 	 * Constructor of MainPane. It create a splitpane with a tree on
@@ -43,10 +44,10 @@ public class MainPaneView extends JPanel {
 		_controller = newController;
 		
         // Create an object tree
-        _objectTree = new ObjectTree(project);
+        _objectTree = new ObjectTreeController(project);
         
         // Create left menu
-        _listScrollPane = new JScrollPane(_objectTree); 
+        _listScrollPane = new JScrollPane(_objectTree.getView()); 
         // Set up resize behavior
         Dimension listScrollPaneDimension = new Dimension(150,480);
         _listScrollPane.setMinimumSize(listScrollPaneDimension);
