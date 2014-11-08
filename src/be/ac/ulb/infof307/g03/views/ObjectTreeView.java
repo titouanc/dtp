@@ -165,11 +165,10 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 			if (cmd.equals(_RENAME)) {
 				System.out.println("[DEBUG] User clicked on rename");
 				// the selected shape is _tree.getLastSelectedPathComponent()
-				// TODO apply operation
+				_controller.renameNode(_tree.getLastSelectedPathComponent(), "New Name");
 			} else if (cmd.equals(_DELETE)) {
 				System.out.println("[DEBUG] User clicked on delete");
 				_controller.deleteNode(_tree.getLastSelectedPathComponent());
-				// TODO apply operation
 			
 			}
 		}

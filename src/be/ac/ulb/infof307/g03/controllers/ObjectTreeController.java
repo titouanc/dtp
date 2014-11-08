@@ -10,6 +10,7 @@ import com.jme3.scene.Geometry;
 
 import be.ac.ulb.infof307.g03.models.Geometric;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
+import be.ac.ulb.infof307.g03.models.Group;
 import be.ac.ulb.infof307.g03.models.Grouped;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.models.Shape;
@@ -50,16 +51,22 @@ public class ObjectTreeController {
 	
 	/**
 	 * @param object 
+	 * @param name 
 	 * 
 	 */
-	public void deleteNode(Object object){
-		try {
-			_dao.delete((Geometric) object);
-			//_dao.notifyObservers(object); // TODO correct notification what should i pass as arg if shape is deleted ?
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void renameNode(Object object, String name){
+		if (object instanceof Group) {
+			Group toDelete = (Group) object;
+			toDelete.setName(name);
+			//Group selectedGroup = (Group) _tree.getLastSelectedPathComponent();
 		}
+		_dao.notifyObservers(object);
+		
+	}
+	
+	public void deleteNode(Object object){
+		//_dao.delete((Geometric) object);
+		_dao.notifyObservers(object); // TODO correct notification what should i pass as arg if shape is deleted ?
 	}
 
 }
