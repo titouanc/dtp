@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.GUI;
+package be.ac.ulb.infof307.g03.views;
 
 import java.sql.SQLException;
 import java.util.Observable;
@@ -9,6 +9,7 @@ import java.util.Observer;
 import java.io.IOException;
 import java.util.Vector;
 
+import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 
 import com.jme3.app.SimpleApplication;
@@ -39,7 +40,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * Constructor of WorldView
 	 * @param newController The view's controller
 	 */
-	WorldView(WorldController newController, GeometryDAO model){
+	public WorldView(WorldController newController, GeometryDAO model){
 		super();
 		_controller = newController;
 		_model = model;

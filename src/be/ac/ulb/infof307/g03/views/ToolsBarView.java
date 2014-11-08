@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.GUI;
+package be.ac.ulb.infof307.g03.views;
 
 /**
  * @author pierre
@@ -13,6 +13,8 @@ import javax.swing.ButtonGroup;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
+
+import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

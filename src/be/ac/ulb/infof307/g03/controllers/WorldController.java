@@ -1,11 +1,12 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.GUI;
+package be.ac.ulb.infof307.g03.controllers;
 
 import java.sql.SQLException;
 
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
