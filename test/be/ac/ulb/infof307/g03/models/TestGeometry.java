@@ -146,6 +146,11 @@ public class TestGeometry {
 		assertEquals(1, wall.getId());
 		assertEquals(1, wall.getGroup().getId());
 		assertEquals(1, geo.getWalls().size());
+		
+		wall.select();
+		assertTrue(wall.isSelected());
+		wall.deselect();
+		assertFalse(wall.isSelected());
 	}
 	
 	@Test
