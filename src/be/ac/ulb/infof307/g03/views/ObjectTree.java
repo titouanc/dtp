@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.GUI;
+package be.ac.ulb.infof307.g03.views;
 
 import java.awt.GridLayout;
 import java.sql.SQLException;

@@ -1,4 +1,4 @@
-package be.ac.ulb.infof307.g03.GUI;
+package be.ac.ulb.infof307.g03.views;
 
 import java.awt.event.*;
 
@@ -6,6 +6,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+
+import be.ac.ulb.infof307.g03.controllers.MenuBarController;
 
 /**
  * @author julianschembri

@@ -1,4 +1,6 @@
-package be.ac.ulb.infof307.g03.GUI;
+package be.ac.ulb.infof307.g03.controllers;
+
+import be.ac.ulb.infof307.g03.views.ToolsBarView;
 
 /**
  * @author fhennecker, pierre, wmoulart
@@ -76,7 +78,7 @@ public class ToolsBarController {
      * The private method is called when the button 2D
      * is clicked. It will communicate with the controller
      */
-    void on2d(){
+    public void on2d(){
     	System.out.println("[DEBUG] User clicked on : go2D");
     }
     

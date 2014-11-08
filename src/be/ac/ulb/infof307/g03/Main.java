@@ -3,7 +3,7 @@ package be.ac.ulb.infof307.g03;
 import java.sql.SQLException;
 
 import be.ac.ulb.infof307.g03.models.*;
-import be.ac.ulb.infof307.g03.GUI.*;
+import be.ac.ulb.infof307.g03.views.*;
 
 public class Main {
 
