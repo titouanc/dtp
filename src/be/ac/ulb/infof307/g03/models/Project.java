@@ -4,6 +4,7 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
+import java.util.Observable;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -22,6 +23,9 @@ public class Project extends Observable {
 	private Dao<Config, String> _config = null;
 	private GeometryDAO _geo = null;
 
+	/**
+	 * Create a new Project object (needs to be initialized with load() or create())
+	 */
 	public Project() {
 
 	}

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.GUI;
+package be.ac.ulb.infof307.g03.views;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
+import be.ac.ulb.infof307.g03.controllers.MainPaneController;
 import be.ac.ulb.infof307.g03.models.Project;
 
 /**

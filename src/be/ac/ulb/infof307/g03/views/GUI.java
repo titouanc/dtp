@@ -1,13 +1,17 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.GUI;
+package be.ac.ulb.infof307.g03.views;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.sql.SQLException;
 
 import javax.swing.*;
+
+import be.ac.ulb.infof307.g03.controllers.MainPaneController;
+import be.ac.ulb.infof307.g03.controllers.MenuBarController;
+import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
 import be.ac.ulb.infof307.g03.models.Project;
 
 /**

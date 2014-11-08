@@ -1,4 +1,5 @@
-package be.ac.ulb.infof307.g03.GUI;
+package be.ac.ulb.infof307.g03.controllers;
+
 
 import be.ac.ulb.infof307.g03.models.Project;
 

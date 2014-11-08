@@ -1,4 +1,4 @@
-package be.ac.ulb.infof307.g03.GUI;
+package be.ac.ulb.infof307.g03.controllers;
 
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
