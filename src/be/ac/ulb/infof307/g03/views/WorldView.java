@@ -137,7 +137,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		}
 		
 	}
-	
+
 	/**
 	 * Method used to generate the XYZ Axes
 	 */

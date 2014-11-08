@@ -118,6 +118,22 @@ public class ToolsBarController implements Observer {
     	System.out.println("[DEBUG] User clicked on : rotate");
     }
 
+    /**
+     * The private method is called when the cursor button 
+     * is clicked. It will communicate with the controller
+     */ 
+    public void dragCursor(){
+    	System.out.println("[DEBUG] User clicked on : cursor");
+    }
+    
+    /**
+     * The private method is called when the hand button 
+     * is clicked. It will communicate with the controller
+     */ 
+    public void dragHand(){
+    	System.out.println("[DEBUG] User clicked on : hand");
+    }
+    
 	@Override
 	public void update(Observable o, Object arg) {
 		
