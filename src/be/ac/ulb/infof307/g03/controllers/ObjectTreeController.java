@@ -3,11 +3,16 @@
  */
 package be.ac.ulb.infof307.g03.controllers;
 
+import java.awt.Component;
 import java.sql.SQLException;
+
+import com.jme3.scene.Geometry;
 
 import be.ac.ulb.infof307.g03.models.Geometric;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
+import be.ac.ulb.infof307.g03.models.Grouped;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.models.Shape;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 
 
@@ -19,6 +24,7 @@ import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 public class ObjectTreeController {
 	private ObjectTreeView _view;
 	private GeometryDAO _dao;
+	private Project _project;
 	
 	/**
 	 * @param project Project object from model
@@ -26,6 +32,7 @@ public class ObjectTreeController {
 	 */
 	public ObjectTreeController(Project project) {
 		_view = new ObjectTreeView(this, project);
+		_project = project;
 		try {
 			_dao = project.getGeometryDAO();
 		} catch (SQLException e) {
@@ -48,6 +55,7 @@ public class ObjectTreeController {
 	public void deleteNode(Object object){
 		try {
 			_dao.delete((Geometric) object);
+			//_dao.notifyObservers(object); // TODO correct notification what should i pass as arg if shape is deleted ?
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

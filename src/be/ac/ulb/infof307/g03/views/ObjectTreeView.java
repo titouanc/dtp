@@ -157,7 +157,7 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 
 		/**
 		 * This method is called when user click on a menu
-		 * @param event; click on menu
+		 * @param event click on menu
 		 */
 		@Override
 		public void actionPerformed(ActionEvent event) {
