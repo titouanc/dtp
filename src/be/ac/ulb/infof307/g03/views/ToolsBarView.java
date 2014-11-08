@@ -10,6 +10,7 @@ package be.ac.ulb.infof307.g03.views;
 
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
@@ -41,6 +42,11 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
 	static final private String _3D = "3D";
 	
 	static final private String _rotate  = "\u2941";
+	
+	static final private String _hand = "hand";  
+	static final private String _cursor="cursor";
+	
+	//private final ImageIcon _cursor;
 
 
     /**
@@ -168,15 +174,28 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      */  
     private void _addButtonRotation() {
     	JToggleButton rotate = new JToggleButton(_rotate);
+    	JToggleButton hand   = new JToggleButton(_hand);
+    	JToggleButton cursor = new JToggleButton(_cursor);
 
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(rotate);
+        buttonGroup.add(hand);
+        buttonGroup.add(cursor);
         
         rotate.setActionCommand(_rotate);
         rotate.setToolTipText("Rotate the screen");
         rotate.addActionListener(this);
+        hand.setActionCommand(_hand);
+        hand.setToolTipText("Move screen");
+        hand.addActionListener(this);
+        cursor.setActionCommand(_cursor);
+        cursor.setToolTipText("Move screen");
+        cursor.addActionListener(this);
 
         this.add(rotate);
+        this.add(hand);
+        this.add(cursor);
+        this.addSeparator();
     }
      
     /**
@@ -211,6 +230,12 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         }
         else if (_rotate.equals(cmd)){
         	_controller.rotate();
+        }
+        else if (_hand.equals(cmd)){
+        	_controller.dragHand();
+        }
+        else if (_cursor.equals(cmd)){
+        	_controller.dragCursor();
         }
 
 	}
