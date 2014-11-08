@@ -73,4 +73,9 @@ public class Line extends Shape {
 	public String toString(){
 		return String.format("line %d", getId());
 	}
+	
+	@Override
+	public Boolean isLeaf(){
+		return true;
+	}
 }

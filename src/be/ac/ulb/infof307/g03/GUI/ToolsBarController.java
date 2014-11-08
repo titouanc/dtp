@@ -1,14 +1,14 @@
 package be.ac.ulb.infof307.g03.GUI;
 
 /**
- * @author fhennecker, pierre
+ * @author fhennecker, pierre, wmoulart
  * @brief Controller of the ToolsBar at the top of the application.
  */
 public class ToolsBarController {
 	private ToolsBarView _view;
 	
 	
-	/*
+	/**
 	 * Constructor of ToolsBarController.
 	 * It creates the ToolsBar view
 	 */
@@ -86,6 +86,14 @@ public class ToolsBarController {
      */
     public void on3d(){
     	System.out.println("[DEBUG] User clicked on : go3D");
+    }
+    
+    /**
+     * The private method is called when the rotation button 
+     * is clicked. It will communicate with the controller
+     */ 
+    public void rotate(){
+    	System.out.println("[DEBUG] User clicked on : rotate");
     }
 
 }

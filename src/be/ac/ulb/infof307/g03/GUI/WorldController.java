@@ -3,6 +3,10 @@
  */
 package be.ac.ulb.infof307.g03.GUI;
 
+import java.sql.SQLException;
+
+import be.ac.ulb.infof307.g03.models.Project;
+
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
@@ -26,9 +30,10 @@ public class WorldController {
 	 * Constructor of WorldController.
 	 * It creates the controller view.
 	 * @param settings The jMonkey application settings
+	 * @throws SQLException 
 	 */
-	public WorldController(AppSettings settings){
-		_view = new WorldView(this);
+	public WorldController(AppSettings settings, Project project) throws SQLException{
+		_view = new WorldView(this, project.getGeometryDAO());
 		_view.setSettings(settings);
 		_view.createCanvas();
 	}

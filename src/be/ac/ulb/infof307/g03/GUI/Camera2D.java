@@ -99,6 +99,10 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_cam.setLocation(pos);
 	}
 	
+	/**
+	 * Place the shapes at the center
+	 * of the user's screen
+	 */
 	public void camHeight(Vector <Geometry> shape){
 		  float minX = 0,minY = 0,maxX = 0,maxY = 0,X = 0, Y= 0,Z = 0;
 		  int offset=17;
@@ -140,9 +144,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 * boolean trigoRotate : direction of the rotation
 	 */
 	private void rotateCamera(float value, boolean trigoRotate) {
-        if (!_canRotate){
-            return;
-        }
+        
         float cos1deg = 0.99939f;
         float sin1deg = 0.03489f;
         if (trigoRotate) {
@@ -176,13 +178,14 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_inputManager.addMapping(_STRAFELEFT,		new KeyTrigger(KeyInput.KEY_LEFT));
 		_inputManager.addMapping(_STRAFERIGHT,		new KeyTrigger(KeyInput.KEY_RIGHT));
 		_inputManager.addMapping(_FORWARD,   		new KeyTrigger(KeyInput.KEY_UP));
-		_inputManager.addMapping(_BACKWARD,		new KeyTrigger(KeyInput.KEY_DOWN));
+		_inputManager.addMapping(_BACKWARD,			new KeyTrigger(KeyInput.KEY_DOWN));
+		
 		
 		// Mouse event mapping
 		_inputManager.addMapping(_ROTATEDRAG, 		new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		// !!! <temporary> !!!
-		_inputManager.addMapping(_LEFT,			new MouseAxisTrigger(0, true)); 
-		_inputManager.addMapping(_RIGHT,			new MouseAxisTrigger(0, false));
+		_inputManager.addMapping(_LEFT,			new KeyTrigger(KeyInput.KEY_L)); 
+		_inputManager.addMapping(_RIGHT,		new KeyTrigger(KeyInput.KEY_R));
 		// !!! </temporary> !!!
 		_inputManager.addMapping(_ZOOMIN, new MouseAxisTrigger(2, false));
         _inputManager.addMapping(_ZOOMOUT, new MouseAxisTrigger(2, true));
@@ -243,9 +246,9 @@ public class Camera2D implements AnalogListener, ActionListener {
 		} else 
 		// !!! </temporary> !!!
 		if (name.equals(_ZOOMIN)) {
-			zoomCamera(value);
-		} else if (name.equals(_ZOOMOUT)) {
 			zoomCamera(-value);
+		} else if (name.equals(_ZOOMOUT)) {
+			zoomCamera(value);
 		}	
 	}
 }
