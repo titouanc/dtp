@@ -142,12 +142,16 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 				node.setMaterial(_makeBasicMaterial(ColorRGBA.Gray));
 				rootNode.attachChild(node);
 				System.out.println("Rendering " + wall.toString());
+				node.setUserData("type", "wall");
+				node.setUserData("id", wall.getId());
 			}
 			for (Ground gnd : _model.getGrounds()){
 				Mesh mesh = _model.getGroundAsMesh(gnd);
 				Geometry node = new Geometry(gnd.toString(), mesh);
 				node.setMaterial(_makeBasicMaterial(ColorRGBA.LightGray));
 				rootNode.attachChild(node);
+				node.setUserData("type", "ground");
+				node.setUserData("id", gnd.getId());
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
