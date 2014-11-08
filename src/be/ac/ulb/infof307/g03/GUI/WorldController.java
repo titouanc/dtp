@@ -4,9 +4,11 @@
 package be.ac.ulb.infof307.g03.GUI;
 
 import com.jme3.collision.CollisionResults;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 
@@ -67,6 +69,7 @@ public class WorldController {
 	
 	/**
 	 * Method used to select an object when the user right-clicked on the canvas
+	 * @param cursorPosition The position of the click on the canvas
 	 */
 	public void selectObject(Vector2f cursorPosition){
 		float mouseX = cursorPosition.getX();
@@ -78,8 +81,10 @@ public class WorldController {
 		
 		CollisionResults results = new CollisionResults();
 		_view.getRootNode().collideWith(ray, results);
-		for (int i = 0; i < results.size(); i++){
-			System.out.println("ACH COLLIZION");
+		
+		if (results.size() > 0){
+			Geometry selected = results.getClosestCollision().getGeometry();
+			selected.getMaterial().setColor("Color", ColorRGBA.randomColor());
 		}
 	}
 
