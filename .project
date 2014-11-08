@@ -14,4 +14,16 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/be/ac/ulb/infof307/g03/views/cursor.png</name>
+			<type>1</type>
+			<location>/home/walter/Downloads/cursor.png</location>
+		</link>
+		<link>
+			<name>src/be/ac/ulb/infof307/g03/views/hand.png</name>
+			<type>1</type>
+			<location>/home/walter/Documents/hand.png</location>
+		</link>
+	</linkedResources>
 </projectDescription>
