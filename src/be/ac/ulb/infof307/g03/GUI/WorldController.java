@@ -18,7 +18,7 @@ public class WorldController {
 	
 	private WorldView _view;
 	private boolean _isViewCreated = false;
-	CameraModeController _cameraModeController = new CameraModeController();
+	CameraModeController _cameraModeController;
 	
 	/**
 	 * Constructor of WorldController.
@@ -27,6 +27,7 @@ public class WorldController {
 	 */
 	public WorldController(AppSettings settings, Project project) throws SQLException{
 		_view = new WorldView(this, project.getGeometryDAO());
+		_cameraModeController = new CameraModeController(project);
 		_view.setSettings(settings);
 		_view.createCanvas();
 	}

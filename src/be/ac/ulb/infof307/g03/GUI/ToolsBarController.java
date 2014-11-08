@@ -1,19 +1,28 @@
 package be.ac.ulb.infof307.g03.GUI;
 
+import be.ac.ulb.infof307.g03.models.Project;
+
+import java.sql.SQLException;
+import java.util.Observable;
+import java.util.Observer;
+
 /**
  * @author fhennecker, pierre
  * @brief Controller of the ToolsBar at the top of the application.
  */
-public class ToolsBarController {
+public class ToolsBarController implements Observer {
 	private ToolsBarView _view;
+	private Project _project;
 	
-	
-	/*
+	/**
 	 * Constructor of ToolsBarController.
 	 * It creates the ToolsBar view
+	 * @param aProject A project object
 	 */
-	public ToolsBarController(){
+	public ToolsBarController(Project aProject){
 		_view = new ToolsBarView(this);
+		_project = aProject;
+		_project.addObserver(this);
 	}
 	
 	/**
@@ -76,16 +85,32 @@ public class ToolsBarController {
      * The private method is called when the button 2D
      * is clicked. It will communicate with the controller
      */
-    void on2d(){
+    void on2d() {
     	System.out.println("[DEBUG] User clicked on : go2D");
+    	try {
+    		_project.config("world.mode", "2D");
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    	}
+  
     }
     
     /**
      * The private method is called when the button 3D
      * is clicked. It will communicate with the controller
      */
-    public void on3d(){
+    public void on3d() {
     	System.out.println("[DEBUG] User clicked on : go3D");
+    	try {
+    		_project.config("world.mode", "3D");
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    	}
     }
+
+	@Override
+	public void update(Observable o, Object arg) {
+		
+	}
 
 }

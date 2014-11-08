@@ -10,13 +10,14 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import java.util.Observable;
 
 /**
  * @author Titouan Christophe
  * @brief Homeplan Project data structure
  */
 
-public class Project {
+public class Project extends Observable {
 	private ConnectionSource _db = null;
 	private Dao<Config, String> _config = null;
 	private GeometryDAO _geo = null;
@@ -79,6 +80,8 @@ public class Project {
 			entry = new Config(name, value);
 			_config.create(entry);
 		}
+		setChanged();
+		notifyObservers();
 		return entry.getValue();
 	}
 	
