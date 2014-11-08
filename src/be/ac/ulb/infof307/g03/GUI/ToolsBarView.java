@@ -4,7 +4,7 @@
 package be.ac.ulb.infof307.g03.GUI;
 
 /**
- * @author pierre
+ * @author pierre,walter
  * @brief GUI's toolbar View
  */
 
@@ -13,7 +13,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -31,14 +30,17 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
 	static final private String _UNDO = "Undo";
 	static final private String _REDO = "Redo";
 	
-	static final private String _LINE = "Line";
+	static final private String _LINE  = "Line";
 	static final private String _GROUP = "Group";
 	
-	static final private String _FLOOR_UP = "FloorUp";
+	static final private String _FLOOR_UP   = "FloorUp";
 	static final private String _FLOOR_DOWN = "FloorDown";
 	
 	static final private String _2D = "2D";
 	static final private String _3D = "3D";
+	
+	static final private String _rotate  = "\u2941";
+
 
     /**
      * Constructor of the class ToolsBar.
@@ -65,6 +67,8 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         _addForms();
         _addButtonsFloor();
         _addButtonsDimension();
+        _addButtonRotation();
+ 
     }
     
     /**
@@ -135,9 +139,9 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      * between 2D and 3D. Those buttons are mutually exclusive
      */  
     private void _addButtonsDimension() {
-    	JToggleButton secondDimension = new JToggleButton("2D");
+    	JToggleButton secondDimension = new JToggleButton(_2D);
     	secondDimension.setSelected(true);
-    	JToggleButton thirdDimension = new JToggleButton("3D");
+    	JToggleButton thirdDimension = new JToggleButton(_3D);
     	// ButtonGroup make the mutually exclusive 
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(secondDimension);
@@ -158,6 +162,23 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
     }
 
     /**
+     * The private method used for creating rotation buttons.
+     * Those buttons are mutually exclusive
+     */  
+    private void _addButtonRotation() {
+    	JToggleButton rotate = new JToggleButton(_rotate);
+
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(rotate);
+        
+        rotate.setActionCommand(_rotate);
+        rotate.setToolTipText("Rotate the screen");
+        rotate.addActionListener(this);
+
+        this.add(rotate);
+    }
+     
+    /**
      * Inherited method from ActionListener abstract class
      * @param action A mouse click
      */ @Override
@@ -174,8 +195,7 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         }
         else if (_GROUP.equals(cmd)) {
         	_controller.onGroup();
-        } 
-		
+        } 		
         else if (_FLOOR_DOWN.equals(cmd)) {
         	_controller.onFloorDown() ;
         }
@@ -187,6 +207,11 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         }
         else if (_3D.equals(cmd)) {
         	_controller.on3d();
-        }	
+        }
+        else if (_rotate.equals(cmd)){
+        	_controller.rotate();
+        }
+
 	}
+
 }
