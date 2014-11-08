@@ -15,8 +15,12 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
+import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.debug.Arrow;
 import com.jme3.scene.debug.Grid;
+import com.jme3.scene.shape.Line;
 import com.jme3.util.BufferUtils;
 
 /**
@@ -27,6 +31,7 @@ public class WorldView extends SimpleApplication {
 	
 	private WorldController _controller; 
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
+	private Node axesNode;
 
 	/**
 	 * Constructor of WorldView
@@ -46,12 +51,23 @@ public class WorldView extends SimpleApplication {
 		flyCam.setEnabled(false);
 		_controller.getCameraModeController().setCamera(cam);
 		_controller.getCameraModeController().setInputManager(inputManager);
+
+		//Generates the grid
+		attachGrid();
 		
+		//Generate the axes
+		attachAxes();
+		
+		//Sets up the demo project
 		createDemoGeometry();
+		
+		//Change the default background
 		viewPort.setBackgroundColor(ColorRGBA.White);
+		
 		// Notify our controller that initialisation is done
 		_controller.onViewCreated();
 	}
+
 	
 	/**
 	 * Create a world demo
@@ -114,18 +130,65 @@ public class WorldView extends SimpleApplication {
 		shapes.add(ground);
 		rootNode.attachChild(ground);
 		
-		Grid grid = new Grid(1000,1000,1);
+		
+	}
+	
+	private void attachGrid(){
+		
+		//Grid size
+		int gridLength = 1000;
+		int gridWidth = 1000;
+		int squareSpace = 1;
+		
+		//Sets a material to the grid (needed by jme)
+		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		mat.setColor("Color", ColorRGBA.Gray);
+		Grid grid = new Grid(gridLength,gridWidth,squareSpace);
 		Geometry gridGeo = new Geometry("Grid", grid);
-		gridGeo.setMaterial(mat2);
+		gridGeo.setMaterial(mat);
+		
+		//The quaternion defines the rotation
 		Quaternion roll90 = new Quaternion(); 
 		roll90.fromAngleAxis( FastMath.PI/2 , new Vector3f(1,0,0));
 		gridGeo.rotate(roll90);
+		
+		//Moves the center of the grid 
 		gridGeo.center().move(new Vector3f(0,-50,0));
 		rootNode.attachChild(gridGeo);
+	}
+	
+	/**
+	 * Method used to generate the XYZ Axes
+	 */
+	private void attachAxes(){
+		Vector3f origin = new Vector3f(0,0,0);
+		Vector3f xAxis = new Vector3f(50,0,0);
+		Vector3f yAxis = new Vector3f(0,50,0);
+		Vector3f zAxis = new Vector3f(0,0,50);
 		
-		
-
+		attachAxis(origin, xAxis,ColorRGBA.Red);
+		attachAxis(origin, yAxis,ColorRGBA.Green);
+		attachAxis(origin, zAxis,ColorRGBA.Blue);
+	}
+	
+	/**
+	 * Method used to generate one axe from start to end in a certain color
+	 * @param start Start of the vector
+	 * @param end End of the vector
+	 * @param color Color of the vector
+	 */
+	private void attachAxis(Vector3f start, Vector3f end,ColorRGBA color){		
+		Line axis = new Line(start,end);
+		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		Geometry axisGeo = new Geometry("Axis", axis);
+		axisGeo.setMaterial(mat);
+		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		mat.setColor("Color", color);
+		rootNode.attachChild(axisGeo);
 		
 	}
+
+	
 
 }
