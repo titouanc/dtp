@@ -6,6 +6,7 @@ package be.ac.ulb.infof307.g03.GUI;
 import java.util.Vector;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.input.InputManager;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
@@ -47,6 +48,10 @@ public class WorldView extends SimpleApplication {
 		
 		// Notify our controller that initialisation is done
 		_controller.onViewCreated();
+	}
+	
+	public InputManager getInputManager(){
+		return inputManager;
 	}
 	
 	/**
