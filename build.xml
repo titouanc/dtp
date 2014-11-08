@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="all" name="HomePlans">
+    <property environment="env"/>
+    <property name="src" value="src/"/>
+    <property name="tests" value="test/"/>
+    <property name="build" value="bin/"/>
+    <property name="documentation" value="doc/"/>
+
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+
+    <path id="JUnit4.libraryclasspath">
+        <pathelement location="lib/junit-4.11.jar"/>
+        <pathelement location="lib/hamcrest-core-1.3.jar"/>
+    </path>
+
+    <path id="HomePlans.classpath">
+        <pathelement location="${build}"/>
+        <path refid="JUnit4.libraryclasspath"/>
+        <fileset dir="lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="all" depends="dist,tests-reports" description="Build final JAR and run tests" />
+
+    <target name="init" description="Create build structure">
+        <mkdir dir="${build}"/>
+        <mkdir dir="${junit.output.dir}"/>
+    </target>
+
+    <target depends="init" name="build" description="Build project classes">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="${src}"/>
+            <classpath refid="HomePlans.classpath"/>
+        </javac>
+    </target>
+
+    <target depends="init" name="build-tests" description="Build project tests">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="${tests}"/>
+            <classpath refid="HomePlans.classpath"/>
+        </javac>
+    </target>
+
+    <target depends="build-tests" name="tests" description="Run tests">
+        <junit printsummary="yes" haltonfailure="yes">
+            <classpath>
+                <path refid="HomePlans.classpath"/>
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="${junit.output.dir}">
+                <fileset dir="${tests}">
+                  <include name="**/*Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="tests-reports" depends="tests" description="Make tests reporting">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}/html"/>
+        </junitreport>
+    </target>
+
+    <target depends="build" name="dist" description="Create final JAR">
+        <jar destfile="dist/HomePlans.jar" basedir="${build}" excludes="Test**.class">
+            <manifest>
+                <attribute name="Main-class" value="be.ac.ulb.infof307.g03.Main"/>
+                <attribute name="Class-path" value="*.jar"/>
+            </manifest>
+            <fileset dir="lib/" includes="**/*.jar"/>
+        </jar>
+    </target>
+
+    <target name="doc">
+        <javadoc destdir="${documentation}" author="true" version="true" use="true" windowtitle="HomePlans">
+
+            <fileset dir="${src}" defaultexcludes="yes">
+                <exclude name="**/*Test*.java"/>
+            </fileset>
+
+            <doctitle><![CDATA[<h1>HomePlan's documentation</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &#169; 2014 Group 03. All Rights Reserved.</i>]]></bottom>
+            <tag name="todo" scope="all" description="To do:"/>
+            <group title="Models" packages="be.ac.ulb.infof307.g03.models.*"/>
+            <group title="Main" packages="be.ac.ulb.infof307.g03.*"/>
+        </javadoc>
+    </target>
+
+    <!-- Clean -->
+    <target name="clean">
+      <delete dir="${build}"/>
+      <delete dir="${junit.output.dir}"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+</project>
