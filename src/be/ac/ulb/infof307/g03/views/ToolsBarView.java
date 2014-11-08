@@ -14,6 +14,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
+import javax.swing.UIManager;
+
+import com.jme3.texture.Image;
+
 import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,13 +45,12 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
 	static final private String _2D = "2D";
 	static final private String _3D = "3D";
 	
-	static final private String _rotate  = "\u2941";
+	static final private String _rotate  = "\u2941";	
+	static final private String _hand = "";  
+	static final private String _cursor=" ";
 	
-	static final private String _hand = "hand";  
-	static final private String _cursor="cursor";
-	
-	//private final ImageIcon _cursor;
-
+	private ImageIcon _cursorImage = new ImageIcon(getClass().getResource("cursor.png"));
+	private ImageIcon _handImage =   new ImageIcon(getClass().getResource("hand.png"));
 
     /**
      * Constructor of the class ToolsBar.
@@ -173,6 +176,8 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      * Those buttons are mutually exclusive
      */  
     private void _addButtonRotation() {
+    	  	
+
     	JToggleButton rotate = new JToggleButton(_rotate);
     	JToggleButton hand   = new JToggleButton(_hand);
     	JToggleButton cursor = new JToggleButton(_cursor);
@@ -185,12 +190,17 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         rotate.setActionCommand(_rotate);
         rotate.setToolTipText("Rotate the screen");
         rotate.addActionListener(this);
+        
         hand.setActionCommand(_hand);
         hand.setToolTipText("Move screen");
         hand.addActionListener(this);
+        
         cursor.setActionCommand(_cursor);
         cursor.setToolTipText("Move screen");
         cursor.addActionListener(this);
+        
+        cursor.setIcon(_cursorImage);
+        hand.setIcon(_handImage);
 
         this.add(rotate);
         this.add(hand);
