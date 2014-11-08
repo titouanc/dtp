@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.sql.SQLException;
 
 import javax.swing.*;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -25,8 +26,9 @@ public class GUI extends JFrame {
 	 * It put every frame needed at the right place on the main frame
 	 * Menu, toolsbar and the main workspace (splitpane)
 	 * @param project The project to be display on the GUI.
+	 * @throws SQLException 
 	 */
-	public GUI(Project project) {
+	public GUI(Project project) throws SQLException {
 		// Create and set up the window
 		super("HomePlans");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

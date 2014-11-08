@@ -40,26 +40,33 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 	class ShapeTreeModel implements TreeModel, Observer {
 		private GeometryDAO _dao;
 		private Set<TreeModelListener> _listeners;
-		private Map<Object, List<Shape>> _cache;
+		private Map<Object, List<Geometric>> _cache;
 		
 		public ShapeTreeModel(GeometryDAO geometry) {
 			_dao = geometry;
 			_dao.addObserver(this);
 			
 			_listeners = new HashSet<TreeModelListener>();
-			_cache = new Hashtable<Object, List<Shape>>();
+			_cache = new Hashtable<Object, List<Geometric>>();
 		}
 
-		private List<Shape> getNodes(Object parent) {
+		private List<Geometric> getNodes(Object parent) {
 			if (_cache.containsKey(parent))
 				return _cache.get(parent);
 			
-			List<Shape> res = new ArrayList<Shape>();
+			List<Geometric> res = new ArrayList<Geometric>();
+			Class<? extends Object> type = parent.getClass();
 			try {
-				if (parent.getClass() == String.class)
-					res = _dao.getRootNodes();
-				else if (parent.getClass() == Group.class)
-					res = _dao.getShapesForGroup((Group) parent);
+				if (type == String.class){
+					res.addAll(_dao.getWalls());
+					res.addAll(_dao.getGrounds());
+				}
+				else if (type == Group.class)
+					res.addAll(_dao.getShapesForGroup((Group) parent));
+				else if (type == Wall.class || type == Ground.class){
+					Grouped item = (Grouped) parent;
+					res.add(item.getGroup());
+				}
 			} catch (SQLException err) {}
 			
 			if (res.size() > 0)
@@ -75,7 +82,7 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 
 		@Override
 		public Object getChild(Object parent, int index) {
-			List<Shape> children = getNodes(parent);
+			List<Geometric> children = getNodes(parent);
 			return children.get(index);
 		}
 
@@ -86,7 +93,7 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 
 		@Override
 		public int getIndexOfChild(Object parent, Object child) {
-			List<Shape> children = getNodes(parent);
+			List<Geometric> children = getNodes(parent);
 			for (int i = 0; i < children.size(); i++)
 				if (child.equals(children.get(i)))
 					return i;
@@ -101,7 +108,10 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 		@Override
 		public boolean isLeaf(Object node) {
 			Class<? extends Object> type = node.getClass();
-			return type != Group.class && type != String.class;
+			if (type == String.class)
+				return false;
+			Geometric geo = (Geometric) node;
+			return geo.isLeaf();
 		}
 
 		@Override
@@ -114,8 +124,8 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 
 		/**
 		 * When DAO notifies data changes:
-		 * - notify all listeners
 		 * - invalidate cache
+		 * - notify all listeners
 		 */
 		@Override
 		public void update(Observable o, Object arg) {
