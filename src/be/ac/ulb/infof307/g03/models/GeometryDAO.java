@@ -358,13 +358,13 @@ public class GeometryDAO extends Observable {
 		 *    In case of closed polygon, overflow index to get first point. */
 		int n_triangles = 6 * (all_points.size() - 1);
 		int edges[] = new int[n_triangles];
-		for (int i=0; i<shape_n_points-1; i++){
+		for (int i=0; i<all_points.size()-1; i++){
 			edges[6*i] = i;
-			edges[6*i+1] = (i + shape_n_points + 1) % volume_n_points;
-			edges[6*i+2] = (i + shape_n_points) % volume_n_points;
-			edges[6*i+3] = i;
-			edges[6*i+4] = (i+1) % volume_n_points;
-			edges[6*i+5] = (i + shape_n_points + 1) % volume_n_points;
+			edges[6*i+1] = (i + 1) % shape_n_points;
+			edges[6*i+2] = i % shape_n_points + shape_n_points;
+			edges[6*i+3] = (i+1) % shape_n_points;
+			edges[6*i+4] = (i+1) % shape_n_points + shape_n_points;
+			edges[6*i+5] = i % shape_n_points + shape_n_points;
 		}
 		
 		/* 3) Pack everything in a Mesh object */
