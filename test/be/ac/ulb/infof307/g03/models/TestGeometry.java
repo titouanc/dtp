@@ -162,6 +162,12 @@ public class TestGeometry {
 		assertEquals(1, ground.getId());
 		assertEquals(1, ground.getGroup().getId());
 		assertEquals(1, geo.getGrounds().size());
+		
+		assertFalse(ground.isSelected());
+		ground.toggleSelect();
+		assertTrue(ground.isSelected());
+		ground.toggleSelect();
+		assertFalse(ground.isSelected());
 	}
 	
 	/**

@@ -84,6 +84,14 @@ public abstract class Grouped implements Geometric {
 	}
 	
 	/**
+	 * Selects object if it is deselected
+	 * Deselects object if it is selected
+	 */
+	public void toggleSelect(){
+		_selected = !_selected;
+	}
+	
+	/**
 	 * Status of visibility
 	 * @return True if the Shape is visible
 	 */
