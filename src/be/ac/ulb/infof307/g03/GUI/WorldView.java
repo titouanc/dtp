@@ -14,6 +14,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
+import com.jme3.util.SkyFactory;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -94,7 +95,6 @@ public class WorldView extends SimpleApplication {
 		groundMesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
 		groundMesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(groundOrder));
 
-		System.out.println("ICI");
 		Geometry walls = new Geometry("Walls",wallsMesh);
 		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
@@ -109,6 +109,7 @@ public class WorldView extends SimpleApplication {
 		ground.setMaterial(mat2);
 		shapes.add(ground);
 		rootNode.attachChild(ground);
+		
 		
 	}
 
