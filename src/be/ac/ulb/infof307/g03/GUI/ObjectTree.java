@@ -138,8 +138,16 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 		}
 	}
 	
+	/**
+	 * This class implements a ActionListener to be 
+	 * used with a popup menu
+	 */
 	class PopupListener implements ActionListener {
 
+		/**
+		 * This method is called when user click on a menu
+		 * @param event; click on menu
+		 */
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			String cmd = event.getActionCommand();
@@ -170,7 +178,9 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 	static private final String _DELETE = "Delete";
 	
 	
-
+	/**
+	 * Constructor of the main class ObjectTree
+	 */
 	public ObjectTree(Project project) {
 		super(new GridLayout(1, 0));
 		try {
@@ -186,9 +196,10 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
         _tree.setCellRenderer(renderer);
 		
-		// Listen for when the selection changes. TODO
+		// Listen for when the selection changes
 		_tree.addTreeSelectionListener(this);
 		
+		// Add a menu popup to the tree
 		_popupMenu = new JPopupMenu();
 	    JMenuItem menuItem = new JMenuItem(_RENAME);
 	    menuItem.addActionListener(new PopupListener());
@@ -199,16 +210,22 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 	    menuItem.setActionCommand(_DELETE);
 	    _popupMenu.add(menuItem);
 		
+	    // create a mouse listener
 		MouseListener ml = new MouseAdapter() {
 		     public void mousePressed(MouseEvent e) {
+		    	 // if right click
 		    	 if (SwingUtilities.isRightMouseButton(e)) {
+		    		 	// select the closest element near the click on the tree
 		    	        int row = _tree.getClosestRowForLocation(e.getX(), e.getY());
 		    	        _tree.setSelectionRow(row);
 		    	        _popupMenu.show(e.getComponent(), e.getX(), e.getY());
 		    	    }
 		     }
 		 };
+		 // add the mouse listener to the tree
 		 _tree.addMouseListener(ml);
+		 
+		 
 		// Add the tree pane to this panel.
 		add(_tree);
 	}
@@ -218,11 +235,11 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 		// TODO Auto-generated method stub
 		if (_tree.getLastSelectedPathComponent() instanceof Group) {
 			System.out.println("[DEBUG] Group selected");
-			Group selectedGroup = (Group) _tree.getLastSelectedPathComponent();
+			//Group selectedGroup = (Group) _tree.getLastSelectedPathComponent();
 		}
 		else if (_tree.getLastSelectedPathComponent() instanceof Line) {
 			System.out.println("[DEBUG] Line selected");
-			Line selectedLine = (Line) _tree.getLastSelectedPathComponent();
+			//Line selectedLine = (Line) _tree.getLastSelectedPathComponent();
 			}
 		else
 			return;
