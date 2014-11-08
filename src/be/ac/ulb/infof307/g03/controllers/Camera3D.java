@@ -36,6 +36,7 @@ public class Camera3D implements AnalogListener, ActionListener {
 	static private final String _DOWN			= "CAM3D_Down";
 	static private final String _LEFT			= "CAM3D_Left";
 	static private final String _RIGHT			= "CAM3D_Right";
+	
 	// !!! <temporary> !!!
 	static private final String _LOOP			= "CAM3D_Loop";
 	// !!! </temporary> !!!
@@ -61,11 +62,18 @@ public class Camera3D implements AnalogListener, ActionListener {
 		_enabled = enable;
 	}
 
-	
+	/**
+	 * Sets a camera
+	 * @param cam
+	 */
 	public void setCam(Camera cam) {
 		_cam = cam;
 	}
-
+	
+	/**
+	 * Sets an input manager
+	 * @param inputManager
+	 */
 	public void setInputManager(InputManager inputManager) {
 		_inputManager = inputManager;
 		inputSetUp();
@@ -146,7 +154,6 @@ public class Camera3D implements AnalogListener, ActionListener {
 			Quaternion q = new Quaternion();
 			q.fromAxes(left, up, dir);
 			q.normalizeLocal();
-
 			_cam.setAxes(q);
 		}
 	}

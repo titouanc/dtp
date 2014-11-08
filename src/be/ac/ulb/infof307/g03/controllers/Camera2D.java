@@ -24,8 +24,8 @@ public class Camera2D implements AnalogListener, ActionListener {
 	
 	private Camera _cam;
 	private float _rotationSpeed = 3f;
-    private float _moveSpeed = 3f;
-    private boolean _canRotate = false;
+    private float _moveSpeed = 10f;
+    private boolean _canMove = false;
     private boolean _enabled = true;
     private InputManager _inputManager;
     
@@ -33,13 +33,21 @@ public class Camera2D implements AnalogListener, ActionListener {
 	static private final String _STRAFERIGHT	= "CAM2D_StrafeRight"; 
 	static private final String _FORWARD 		= "CAM2D_Forward";
 	static private final String _BACKWARD		= "CAM2D_Backward"; 
-	static private final String _ROTATEDRAG		= "CAM2D_RotateDrag";
-	// !!! <temporary> !!!
+	static private final String _MOVEDRAG		= "CAM2D_MoveDrag";
+	
 	static private final String _LEFT 			= "CAM2D_Left";
 	static private final String _RIGHT			= "CAM2D_Right";
+	static private final String _UP				= "CAM2D_Up";
+	static private final String _DOWN			= "CAM2D_Down";
 	// !!! </temporary> !!!
 	static private final String _ZOOMIN			= "CAM2D_ZoomIn";
 	static private final String _ZOOMOUT		= "CAM2D_ZoomOut";
+
+	static private final String _ROTATELEFT 	= "CAM2D_RotateLeft";
+	static private final String _ROTATERIGHT	= "CAM2D_RotateRight";
+	
+	static private final boolean _KEYBOARD 		= true;
+	static private final boolean _MOUSE 		= false;
     
 	/**
 	 * Constructor of the 2D camera
@@ -85,18 +93,21 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 * float value : value of movement
 	 * boolean sideways : direction (up/down or left/right)
 	 */
-	public void moveCamera(float value, boolean sideways) {
-		Vector3f pos = _cam.getLocation().clone();
-		Vector3f vel = new Vector3f();
-		if (sideways) {
-			_cam.getUp(vel);
-		} else { 
-			_cam.getLeft(vel);
+	public void moveCamera(float value, boolean sideways, boolean fromKeyboard) {
+		if(fromKeyboard || _canMove){
+			Vector3f pos = _cam.getLocation().clone();
+			Vector3f vel = new Vector3f();
+			if (sideways) {
+				_cam.getUp(vel);
+			} else { 
+				_cam.getLeft(vel);
+			}
+			vel.multLocal(value*_moveSpeed);
+			pos.addLocal(vel);
+			
+			_cam.setLocation(pos);
 		}
-		vel.multLocal(value*_moveSpeed);
-		pos.addLocal(vel);
-		
-		_cam.setLocation(pos);
+			
 	}
 	
 	/**
@@ -182,10 +193,16 @@ public class Camera2D implements AnalogListener, ActionListener {
 		
 		
 		// Mouse event mapping
-		_inputManager.addMapping(_ROTATEDRAG, 		new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+		_inputManager.addMapping(_MOVEDRAG, 	new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+		
+		_inputManager.addMapping(_UP, 			new MouseAxisTrigger(1, false));
+		_inputManager.addMapping(_DOWN, 		new MouseAxisTrigger(1, true));
+		_inputManager.addMapping(_LEFT,			new MouseAxisTrigger(0, true));
+		_inputManager.addMapping(_RIGHT,		new MouseAxisTrigger(0, false));
 		// !!! <temporary> !!!
-		_inputManager.addMapping(_LEFT,			new KeyTrigger(KeyInput.KEY_L)); 
-		_inputManager.addMapping(_RIGHT,		new KeyTrigger(KeyInput.KEY_R));
+		
+		_inputManager.addMapping(_ROTATELEFT,			new KeyTrigger(KeyInput.KEY_L)); 
+		_inputManager.addMapping(_ROTATERIGHT,		new KeyTrigger(KeyInput.KEY_R));
 		// !!! </temporary> !!!
 		_inputManager.addMapping(_ZOOMIN, new MouseAxisTrigger(2, false));
         _inputManager.addMapping(_ZOOMOUT, new MouseAxisTrigger(2, true));
@@ -197,10 +214,15 @@ public class Camera2D implements AnalogListener, ActionListener {
 									_STRAFERIGHT, 
 									_FORWARD, 
 									_BACKWARD, 
-									_ROTATEDRAG, 
-									// !!! <temporary> !!!
+									_MOVEDRAG, 
+									
+									_UP,
+									_DOWN,
 									_LEFT, 
-									_RIGHT, 
+									_RIGHT,
+
+									_ROTATELEFT, 
+									_ROTATERIGHT,
 									// !!! </temporary> !!!
 									_ZOOMIN, 
 									_ZOOMOUT
@@ -215,8 +237,10 @@ public class Camera2D implements AnalogListener, ActionListener {
 	public void onAction(String name, boolean value, float tpf) {
 		if (!_enabled)
             return;
-        if (name.equals(_ROTATEDRAG)){
-            _canRotate = value;
+        if (name.equals(_MOVEDRAG)){
+        	if(value!=_canMove){
+        		_canMove = value;
+        	}
         }	
 	}
 
@@ -230,18 +254,26 @@ public class Camera2D implements AnalogListener, ActionListener {
             return;
 
 		if (name.equals(_STRAFERIGHT)) {
-			this.moveCamera(-value,false);
+			this.moveCamera(-value,false,_KEYBOARD);
 		} else if (name.equals(_STRAFELEFT)) {
-			this.moveCamera(value,false);
+			this.moveCamera(value,false,_KEYBOARD);
 		} else if (name.equals(_FORWARD)) {
-			this.moveCamera(value,true);
+			this.moveCamera(value,true,_KEYBOARD);
 		} else if (name.equals(_BACKWARD)) {
-			this.moveCamera(-value,true);
-		} else 
+			this.moveCamera(-value,true,_KEYBOARD);
+		} else if(name.equals(_UP)){
+			this.moveCamera(value,true,_MOUSE);
+		} else if(name.equals(_DOWN)){
+			this.moveCamera(-value,true,_MOUSE);
+		} else if(name.equals(_LEFT)){
+			this.moveCamera(value,false,_MOUSE);
+		}else if(name.equals(_RIGHT)){
+			this.moveCamera(-value,false,_MOUSE);
+		}
 		// !!! <temporary> !!!
-		if (name.equals(_LEFT)) {
+		if (name.equals(_ROTATELEFT)) {
 			rotateCamera(value, false);
-		} else if (name.equals(_RIGHT)) {
+		} else if (name.equals(_ROTATERIGHT)) {
 			rotateCamera(-value, true);
 		} else 
 		// !!! </temporary> !!!
