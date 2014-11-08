@@ -3,8 +3,13 @@
  */
 package be.ac.ulb.infof307.g03.GUI;
 
+import java.sql.SQLException;
+import java.util.Observable;
+import java.util.Observer;
 import java.io.IOException;
 import java.util.Vector;
+
+import be.ac.ulb.infof307.g03.models.*;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
@@ -16,30 +21,31 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
-import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.scene.debug.Arrow;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.util.BufferUtils;
+import com.jme3.util.SkyFactory;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
  * @author fhennecker, julianschembri, brochape
  */
-public class WorldView extends SimpleApplication {	
+public class WorldView extends SimpleApplication implements Observer {	
 	
+	private GeometryDAO _model = null;
 	private WorldController _controller; 
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
-	private Node axesNode;
 
 	/**
 	 * Constructor of WorldView
 	 * @param newController The view's controller
 	 */
-	WorldView(WorldController newController){
+	WorldView(WorldController newController, GeometryDAO model){
 		super();
 		_controller = newController;
+		_model = model;
+		_model.addObserver(this);
 		this.setDisplayStatView(false);
 	}
 	
@@ -63,14 +69,14 @@ public class WorldView extends SimpleApplication {
 		
 		//Change the default background
 		viewPort.setBackgroundColor(ColorRGBA.White);
-		
+		_makeScene();
 		// Notify our controller that initialisation is done
 		_controller.onViewCreated();
 	}
 
 	
 	/**
-	 * Create a world demo
+	 * Creates a world demo
 	 */
 	public void createDemoGeometry() {
 		
@@ -114,7 +120,6 @@ public class WorldView extends SimpleApplication {
 		groundMesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
 		groundMesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(groundOrder));
 
-		System.out.println("ICI");
 		Geometry walls = new Geometry("Walls",wallsMesh);
 		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
@@ -132,7 +137,9 @@ public class WorldView extends SimpleApplication {
 		
 		
 	}
-	
+	/**
+	 * This methods created the grid and adds it to the background
+	 */
 	private void attachGrid(){
 		
 		//Grid size
@@ -141,12 +148,9 @@ public class WorldView extends SimpleApplication {
 		int squareSpace = 1;
 		
 		//Sets a material to the grid (needed by jme)
-		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-		mat.setColor("Color", ColorRGBA.Gray);
 		Grid grid = new Grid(gridLength,gridWidth,squareSpace);
 		Geometry gridGeo = new Geometry("Grid", grid);
-		gridGeo.setMaterial(mat);
+		gridGeo.setMaterial(_makeBasicMaterial(ColorRGBA.LightGray));
 		
 		//The quaternion defines the rotation
 		Quaternion roll90 = new Quaternion(); 
@@ -156,6 +160,44 @@ public class WorldView extends SimpleApplication {
 		//Moves the center of the grid 
 		gridGeo.center().move(new Vector3f(0,-50,0));
 		rootNode.attachChild(gridGeo);
+	}
+	
+	/**
+	 * This method creates a correct material
+	 * @param color
+	 * @return The material created
+	 */
+	private Material _makeBasicMaterial(ColorRGBA color){
+		Material res = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		res.setColor("Color", color);
+		return res;
+	}
+
+	/**
+	 * Redraw the 3D scene (first shot, still to be optimized)
+	 */
+	private void _makeScene(){
+
+		try {
+			for (Wall wall : _model.getWalls()){
+				Mesh mesh = _model.getWallAsMesh(wall);
+				Geometry node = new Geometry(wall.toString(), mesh);
+				node.setMaterial(_makeBasicMaterial(ColorRGBA.Gray));
+				rootNode.attachChild(node);
+				System.out.println("Rendering " + wall.toString());
+			}
+			for (Ground gnd : _model.getGrounds()){
+				Mesh mesh = _model.getGroundAsMesh(gnd);
+				Geometry node = new Geometry(gnd.toString(), mesh);
+				node.setMaterial(_makeBasicMaterial(ColorRGBA.LightGray));
+				rootNode.attachChild(node);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	/**
@@ -186,7 +228,16 @@ public class WorldView extends SimpleApplication {
 		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		mat.setColor("Color", color);
 		rootNode.attachChild(axisGeo);
+	}
 		
+
+	
+	/**
+	 * Called when the model fires a change notification
+	 */
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		_makeScene();
 	}
 
 	

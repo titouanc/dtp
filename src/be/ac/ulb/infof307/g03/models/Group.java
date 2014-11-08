@@ -56,4 +56,9 @@ public class Group extends Shape {
 			return "<>";
 		return String.format("<%s>", getName());
 	}
+	
+	@Override
+	public Boolean isLeaf(){
+		return false;
+	}
 }

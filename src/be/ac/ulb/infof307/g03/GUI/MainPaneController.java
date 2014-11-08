@@ -4,6 +4,7 @@
 package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.Dimension;
+import java.sql.SQLException;
 
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
@@ -22,13 +23,14 @@ public class MainPaneController {
 	/**
 	 * Constructor of MainPaneController.
 	 * @param The project to be display on the MainPane
+	 * @throws SQLException 
 	 */
-	public MainPaneController(Project project){
+	public MainPaneController(Project project) throws SQLException{
 		// Set up jme3 canvas' settings
         AppSettings settings = new AppSettings(true);
         settings.setFrameRate(60);
         // Create jme3 canvas
-        _world = new WorldController(settings);
+        _world = new WorldController(settings, project);
         // Set up event listener
         JmeCanvasContext context = (JmeCanvasContext) _world.getViewContext();
         context.setSystemListener(_world.getView());

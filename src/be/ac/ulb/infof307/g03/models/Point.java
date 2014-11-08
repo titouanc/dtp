@@ -137,4 +137,8 @@ public class Point implements Geometric {
 	public Vector3f toVector3f(){
 		return new Vector3f((float) _x, (float) _y, (float) _z);
 	}
+	
+	public Boolean isLeaf() {
+		return true;
+	}
 }
