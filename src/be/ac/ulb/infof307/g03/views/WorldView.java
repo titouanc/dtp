@@ -134,24 +134,19 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 * Redraw the 3D scene (first shot, still to be optimized)
 	 */
 	private void _makeScene(){
-
 		try {
 			for (Wall wall : _model.getWalls()){
 				Mesh mesh = _model.getWallAsMesh(wall);
-				Geometry node = new Geometry(wall.toString(), mesh);
-				node.setMaterial(_makeBasicMaterial(ColorRGBA.Gray));
+				Geometry node = new Geometry(wall.getUID(), mesh);
+				node.setMaterial(_makeBasicMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
 				rootNode.attachChild(node);
 				System.out.println("Rendering " + wall.toString());
-				node.setUserData("type", "wall");
-				node.setUserData("id", wall.getId());
 			}
 			for (Ground gnd : _model.getGrounds()){
 				Mesh mesh = _model.getGroundAsMesh(gnd);
-				Geometry node = new Geometry(gnd.toString(), mesh);
-				node.setMaterial(_makeBasicMaterial(ColorRGBA.LightGray));
+				Geometry node = new Geometry(gnd.getUID(), mesh);
+				node.setMaterial(_makeBasicMaterial(gnd.isSelected() ? ColorRGBA.Green : ColorRGBA.LightGray));
 				rootNode.attachChild(node);
-				node.setUserData("type", "ground");
-				node.setUserData("id", gnd.getId());
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -197,7 +192,13 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		_makeScene();
+		System.out.println("=============================UPDATE 3D VIEW !!!================================");
+		Grouped grouped = (Grouped) arg1;
+		Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
+		if (grouped.getClass() == Wall.class)
+			toUpdate.getMaterial().setColor("Color", grouped.isSelected()? ColorRGBA.Green : ColorRGBA.Gray);
+		else
+			toUpdate.getMaterial().setColor("Color", grouped.isSelected()? ColorRGBA.Green : ColorRGBA.LightGray);
 	}
 
 	

@@ -79,18 +79,6 @@ public class WorldController {
 		_isViewCreated = true;
 	}	
 	
-	private Grouped getGrouped(Geometry geom) throws SQLException{
-		GeometryDAO dao = _project.getGeometryDAO();
-		if (geom.getUserDataKeys().contains("type")){
-			if (geom.getUserData("type").equals("wall")){
-				return dao.getWall((Integer) geom.getUserData("id"));
-			} else if (geom.getUserData("type").equals("ground")){
-				return dao.getGround((Integer) geom.getUserData("id"));
-			}
-		}
-		return null;
-	}
-	
 	/**
 	 * Method used to select an object when the user right-clicked on the canvas
 	 * @param cursorPosition The position of the click on the canvas 
@@ -98,6 +86,13 @@ public class WorldController {
 	public void selectObject(Vector2f cursorPosition) {
 		float mouseX = cursorPosition.getX();
 		float mouseY = cursorPosition.getY();
+		GeometryDAO dao = null;
+		try {
+			dao = _project.getGeometryDAO();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		Vector3f camPos = _view.getCamera().getWorldCoordinates(new Vector2f(mouseX, mouseY), 0f).clone();
 		Vector3f camDir = _view.getCamera().getWorldCoordinates(new Vector2f(mouseX, mouseY), 1f).subtractLocal(camPos);
@@ -108,31 +103,17 @@ public class WorldController {
 		
 		if (results.size() > 0){
 			Geometry selected = results.getClosestCollision().getGeometry();
-			Grouped grouped = null;
-			try {
-				grouped = getGrouped(selected);
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			Grouped grouped = (Grouped) dao.getByUID(selected.getName()); //TODO might not be a Grouped later
+			if (grouped != null){
+				grouped.toggleSelect();
+				try {
+					dao.update(grouped);
+					dao.notifyObservers(grouped);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			if (grouped == null)
-				return;
-			
-			if (grouped.isSelected()){
-				grouped.deselect();
-				selected.getMaterial().setColor("Color", ColorRGBA.Gray);
-			}
-			else {
-				grouped.select();
-				selected.getMaterial().setColor("Color", ColorRGBA.Green);
-			}
-			try {
-				_project.getGeometryDAO().update(grouped);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	
 		}
 	}
 
