@@ -2,6 +2,7 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import java.util.Vector;
 
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -12,6 +13,8 @@ import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
@@ -22,18 +25,18 @@ import com.jme3.scene.Geometry;
  */
 public class Camera2D implements AnalogListener, ActionListener {
 	
-	private Camera _cam;
+	static private final String _MODE_DRAGROTATE = "dragRotate";
+    static private final String _MODE_DRAGSELECT = "dragSelect";
+    static private final String _MODE_DRAGMOVE = "dragMove";
+    
+    private Camera _cam;
 	private float _rotationSpeed = 3f;
     private float _moveSpeed = 10f;
     private boolean _canMove = false;
     private boolean _enabled = true;
     private InputManager _inputManager;
-    private String _mouseMode;
-    
-    static private final String _MODE_DRAGROTATE = "dragRotate";
-    static private final String _MODE_DRAGSELECT = "dragSelect";
-    static private final String _MODE_DRAGMOVE = "dragMove";
-
+    private String _mouseMode = _MODE_DRAGSELECT;
+    private Vector3f _previousMousePosition;
     
     static private final String _STRAFELEFT 	= "CAM2D_StrafeLeft";
 	static private final String _STRAFERIGHT	= "CAM2D_StrafeRight"; 
@@ -100,25 +103,46 @@ public class Camera2D implements AnalogListener, ActionListener {
 	
 	/**
 	 * Method to use to move the camera
-	 * float value : value of movement
-	 * boolean sideways : direction (up/down or left/right)
+	 * @param value value of movement
+	 * @param sideways direction (up/down or left/right)
 	 */
-	public void moveCamera(float value, boolean sideways, boolean fromKeyboard) {
-		if(fromKeyboard || _canMove){
-			Vector3f pos = _cam.getLocation().clone();
-			Vector3f vel = new Vector3f();
-			if (sideways) {
-				_cam.getUp(vel);
-			} else { 
-				_cam.getLeft(vel);
-			}
-			vel.multLocal(value*_moveSpeed);
-			pos.addLocal(vel);
-			
-			_cam.setLocation(pos);
+	public void moveCamera(float value, boolean sideways) {
+		Vector3f pos = _cam.getLocation().clone();
+		Vector3f vel = new Vector3f();
+		if (sideways) {
+			_cam.getUp(vel);
+		} else { 
+			_cam.getLeft(vel);
 		}
-			
+		vel.multLocal(value*_moveSpeed);
+		pos.addLocal(vel);
+
+		_cam.setLocation(pos); 
 	}
+	
+	public void moveCameraGrab() {
+		if (_canMove) {
+			Vector3f currentMousePosition = clickedGroundCoords();
+			currentMousePosition.subtractLocal(_previousMousePosition);
+    		Vector3f pos = _cam.getLocation().clone();
+    		pos.subtractLocal(currentMousePosition);
+    		_cam.setLocation(pos);
+    		_previousMousePosition = clickedGroundCoords();
+		}
+	}
+	
+	/**
+	 * Calculate the position on the ground where the mouse is projected
+	 * @return The projected position of the mouse on the ground
+	 */
+	private Vector3f clickedGroundCoords() {
+		Vector2f click2d = _inputManager.getCursorPosition();
+		Vector3f click3d = _cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
+		Vector3f dir = _cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+		float mul = click3d.z / dir.z;
+		return new Vector3f(click3d.x - (mul*dir.x),click3d.y - (mul*dir.y),0);
+	}
+	
 	
 	/**
 	 * Place the shapes at the center
@@ -248,10 +272,13 @@ public class Camera2D implements AnalogListener, ActionListener {
 		if (!_enabled)
             return;
         if ((name.equals(_MOVEDRAG)) && _mouseMode.equals(_MODE_DRAGMOVE)){
-        	if(value!=_canMove){
+        	if (value!=_canMove) { // state change => on click or on release
+        		if (value) { // on click
+        			_previousMousePosition = clickedGroundCoords();
+        		}
         		_canMove = value;
         	}
-        }	
+        }
 	}
 
 	/**
@@ -264,21 +291,21 @@ public class Camera2D implements AnalogListener, ActionListener {
             return;
 
 		if (name.equals(_STRAFERIGHT)) {
-			this.moveCamera(-value,false,_KEYBOARD);
+			this.moveCamera(-value,false);
 		} else if (name.equals(_STRAFELEFT)) {
-			this.moveCamera(value,false,_KEYBOARD);
+			this.moveCamera(value,false);
 		} else if (name.equals(_FORWARD)) {
-			this.moveCamera(value,true,_KEYBOARD);
+			this.moveCamera(value,true);
 		} else if (name.equals(_BACKWARD)) {
-			this.moveCamera(-value,true,_KEYBOARD);
+			this.moveCamera(-value,true);
 		} else if(name.equals(_UP)){
-			this.moveCamera(value,true,_MOUSE);
+			this.moveCameraGrab();
 		} else if(name.equals(_DOWN)){
-			this.moveCamera(-value,true,_MOUSE);
+			this.moveCameraGrab();
 		} else if(name.equals(_LEFT)){
-			this.moveCamera(value,false,_MOUSE);
+			this.moveCameraGrab();
 		}else if(name.equals(_RIGHT)){
-			this.moveCamera(-value,false,_MOUSE);
+			this.moveCameraGrab();
 		}
 		// !!! <temporary> !!!
 		if (name.equals(_ROTATELEFT)) {
