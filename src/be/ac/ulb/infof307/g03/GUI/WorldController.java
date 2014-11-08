@@ -25,6 +25,7 @@ public class WorldController {
 	/**
 	 * Constructor of WorldController.
 	 * It creates the controller view.
+	 * @param settings The jMonkey application settings
 	 */
 	public WorldController(AppSettings settings){
 		_view = new WorldView(this);
