@@ -7,6 +7,9 @@ import java.util.Vector;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
+import com.jme3.input.MouseInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
@@ -20,10 +23,12 @@ import com.jme3.util.BufferUtils;
  * This class is a jMonkey canvas that can be added in a Swing GUI.
  * @author fhennecker, julianschembri, brochape
  */
-public class WorldView extends SimpleApplication {	
+public class WorldView extends SimpleApplication implements ActionListener {	
 	
 	private WorldController _controller; 
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
+	
+	static private final String _SELECTOBJECT 	= "SelectObject";
 
 	/**
 	 * Constructor of WorldView
@@ -45,6 +50,8 @@ public class WorldView extends SimpleApplication {
 		_controller.getCameraModeController().setInputManager(inputManager);
 		
 		createDemoGeometry();
+		
+		setInput();
 		
 		// Notify our controller that initialisation is done
 		_controller.onViewCreated();
@@ -115,6 +122,19 @@ public class WorldView extends SimpleApplication {
 		shapes.add(ground);
 		rootNode.attachChild(ground);
 		
+	}
+	
+	private void setInput(){
+		inputManager.addMapping(_SELECTOBJECT, new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+		inputManager.addListener(this, _SELECTOBJECT);
+	}
+
+
+	@Override
+	public void onAction(String arg0, boolean arg1, float arg2) {
+		if (arg0.equals(_SELECTOBJECT) && arg1){
+            _controller.selectObject(inputManager.getCursorPosition());
+        }	
 	}
 
 }
