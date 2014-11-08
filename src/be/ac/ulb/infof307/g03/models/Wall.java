@@ -37,4 +37,9 @@ public class Wall extends Grouped {
 	public String toString(){
 		return "Wall" + getGroup().toString();
 	}
+
+	@Override
+	public String getUID() {
+		return String.format("wal-%d", getId());
+	}
 }

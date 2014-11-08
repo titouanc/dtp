@@ -160,6 +160,30 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
+	public Geometric getByUID(String uid){
+		String[] parts = uid.split("-");
+		Geometric res = null;
+		try{
+			if (parts.length == 2){
+				Integer id = new Integer(parts[1]);
+				if (parts[0].equals("gnd"))
+					res = getGround(id);
+				else if (parts[0].equals("grp"))
+					res = getGroup(id);
+				else if (parts[0].equals("lin"))
+					res = getLine(id);
+				else if (parts[0].equals("pnt"))
+					res = getPoint(id);
+				else if (parts[0].equals("wal"))
+					res = getWall(id);
+			}
+		} catch (SQLException e){
+			e.printStackTrace();
+		}
+		return res;
+		
+	}
+	
 	/**
 	 * Get a line object from the database
 	 * @param line_id The line identifier

@@ -1,9 +1,7 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
-
 import be.ac.ulb.infof307.g03.models.Project;
-
 import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;

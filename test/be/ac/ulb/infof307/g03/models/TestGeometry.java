@@ -146,6 +146,11 @@ public class TestGeometry {
 		assertEquals(1, wall.getId());
 		assertEquals(1, wall.getGroup().getId());
 		assertEquals(1, geo.getWalls().size());
+		
+		wall.select();
+		assertTrue(wall.isSelected());
+		wall.deselect();
+		assertFalse(wall.isSelected());
 	}
 	
 	@Test
@@ -157,6 +162,12 @@ public class TestGeometry {
 		assertEquals(1, ground.getId());
 		assertEquals(1, ground.getGroup().getId());
 		assertEquals(1, geo.getGrounds().size());
+		
+		assertFalse(ground.isSelected());
+		ground.toggleSelect();
+		assertTrue(ground.isSelected());
+		ground.toggleSelect();
+		assertFalse(ground.isSelected());
 	}
 	
 	/**
@@ -249,6 +260,41 @@ public class TestGeometry {
 		assertEquals(1, g1.getId());
 		assertEquals(2, g2.getId());
 		assertEquals("<>", g1.toString());
+	}
+	
+	@Test
+	public void test_uids() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Group room = create_a_room(geo);
+		
+		Point p = (Point) geo.getByUID("pnt-1");
+		assertNotNull(p);
+		assertTrue(p.equals(new Point()));
+		
+		Line l = (Line) geo.getByUID("lin-1");
+		assertNotNull(l);
+		assertTrue(p.equals(l.getPoints().get(0)));
+		
+		Group g = (Group) geo.getByUID("grp-1");
+		assertNotNull(g);
+		assertTrue(g.equals(room));
+		
+		Wall w = (Wall) geo.getByUID("wal-1");
+		assertNotNull(w);
+		assertTrue(room.equals(w.getGroup()));
+		
+		Ground gnd = (Ground) geo.getByUID("gnd-1");
+		assertNotNull(gnd);
+		assertTrue(room.equals(gnd.getGroup()));
+		
+		Geometric nil = geo.getByUID("naim");
+		assertNull(nil);
+		
+		nil = geo.getByUID("gnd-1000");
+		assertNull(nil);
+		
+		nil = geo.getByUID("zzx-32");
+		assertNull(nil);
 	}
 }
 

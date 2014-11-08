@@ -11,4 +11,10 @@ public interface Geometric {
 	 * @return True if this node has no child
 	 */
 	public Boolean isLeaf();
+	
+	/**
+	 * Every Geometric object has a unique identifier.
+	 * @return
+	 */
+	public String getUID();
 }

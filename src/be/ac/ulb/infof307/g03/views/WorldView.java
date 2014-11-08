@@ -13,6 +13,10 @@ import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.input.InputManager;
+import com.jme3.input.MouseInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
@@ -32,11 +36,13 @@ import com.jme3.util.SkyFactory;
  * This class is a jMonkey canvas that can be added in a Swing GUI.
  * @author fhennecker, julianschembri, brochape, Titouan
  */
-public class WorldView extends SimpleApplication implements Observer {	
+public class WorldView extends SimpleApplication implements Observer, ActionListener {	
 	
 	private GeometryDAO _model = null;
 	private WorldController _controller; 
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
+	
+	static private final String _SELECTOBJECT 	= "SelectObject";
 
 	/**
 	 * Constructor of WorldView
@@ -70,11 +76,23 @@ public class WorldView extends SimpleApplication implements Observer {
 		
 		//render the scene
 		_makeScene();
+
+		// listen for clicks on the canvas
+		setInput();
 		
 		// Notify our controller that initialisation is done
 		_controller.onViewCreated();
 	}
-
+	
+	public InputManager getInputManager(){
+		return inputManager;
+	}
+	
+	private void setInput(){
+		inputManager.addMapping(_SELECTOBJECT, new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+		inputManager.addListener(this, _SELECTOBJECT);
+	}
+	
 	/**
 	 * This methods created the grid and adds it to the background
 	 */
@@ -116,19 +134,18 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * Redraw the 3D scene (first shot, still to be optimized)
 	 */
 	private void _makeScene(){
-
 		try {
 			for (Wall wall : _model.getWalls()){
 				Mesh mesh = _model.getWallAsMesh(wall);
-				Geometry node = new Geometry(wall.toString(), mesh);
-				node.setMaterial(_makeBasicMaterial(ColorRGBA.Gray));
+				Geometry node = new Geometry(wall.getUID(), mesh);
+				node.setMaterial(_makeBasicMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
 				rootNode.attachChild(node);
 				System.out.println("Rendering " + wall.toString());
 			}
 			for (Ground gnd : _model.getGrounds()){
 				Mesh mesh = _model.getGroundAsMesh(gnd);
-				Geometry node = new Geometry(gnd.toString(), mesh);
-				node.setMaterial(_makeBasicMaterial(ColorRGBA.LightGray));
+				Geometry node = new Geometry(gnd.getUID(), mesh);
+				node.setMaterial(_makeBasicMaterial(gnd.isSelected() ? ColorRGBA.Green : ColorRGBA.LightGray));
 				rootNode.attachChild(node);
 			}
 		} catch (SQLException e) {
@@ -175,9 +192,23 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		_makeScene();
+		System.out.println("=============================UPDATE 3D VIEW !!!================================");
+		Grouped grouped = (Grouped) arg1;
+		Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
+		if (grouped.getClass() == Wall.class)
+			toUpdate.getMaterial().setColor("Color", grouped.isSelected()? ColorRGBA.Green : ColorRGBA.Gray);
+		else
+			toUpdate.getMaterial().setColor("Color", grouped.isSelected()? ColorRGBA.Green : ColorRGBA.LightGray);
 	}
 
 	
+
+
+	@Override
+	public void onAction(String arg0, boolean arg1, float arg2) {
+		if (arg0.equals(_SELECTOBJECT) && arg1){
+            _controller.selectObject(inputManager.getCursorPosition());
+        }	
+	}
 
 }
