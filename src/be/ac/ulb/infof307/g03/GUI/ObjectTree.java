@@ -145,8 +145,12 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 			String cmd = event.getActionCommand();
 			if (cmd.equals(_RENAME)) {
 				System.out.println("[DEBUG] User clicked on rename");
+				// the selected shape is _tree.getLastSelectedPathComponent()
+				// TODO apply operation
 			} else if (cmd.equals(_DELETE)) {
 				System.out.println("[DEBUG] User clicked on delete");
+				// the selected shape is _tree.getLastSelectedPathComponent()
+				// TODO apply operation
 			
 			}
 		}
