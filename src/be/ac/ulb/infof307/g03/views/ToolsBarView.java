@@ -229,13 +229,13 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         	_controller.on3d();
         }
         else if (_rotate.equals(cmd)){
-        	_controller.rotate();
+        	_controller.onDragRotateMode();
         }
         else if (_hand.equals(cmd)){
-        	_controller.dragHand();
+        	_controller.onDragMoveMode();
         }
         else if (_cursor.equals(cmd)){
-        	_controller.dragCursor();
+        	_controller.onDragSelectMode();
         }
 
 	}

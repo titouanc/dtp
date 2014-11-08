@@ -78,10 +78,13 @@ public class CameraModeController implements Observer {
 		//if (arg.getClass()==_project.getClass()) {
 			try {				
 				changeMode(_project.config("world.mode"));
+				_cam2D.setMouseMode(_project.config("mouse.mode"));
+				_cam3D.setMouseMode(_project.config("mouse.mode"));
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		//}
 	}
 	

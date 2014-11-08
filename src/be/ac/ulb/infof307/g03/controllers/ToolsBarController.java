@@ -114,24 +114,42 @@ public class ToolsBarController implements Observer {
      * The private method is called when the rotation button 
      * is clicked. It will communicate with the controller
      */ 
-    public void rotate(){
+    public void onDragRotateMode(){
     	System.out.println("[DEBUG] User clicked on : rotate");
+    	try {
+			_project.config("mouse.mode", "dragRotate");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     /**
      * The private method is called when the cursor button 
      * is clicked. It will communicate with the controller
      */ 
-    public void dragCursor(){
+    public void onDragSelectMode(){
     	System.out.println("[DEBUG] User clicked on : cursor");
+    	try {
+			_project.config("mouse.mode", "dragSelect");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     /**
      * The private method is called when the hand button 
      * is clicked. It will communicate with the controller
      */ 
-    public void dragHand(){
+    public void onDragMoveMode(){
     	System.out.println("[DEBUG] User clicked on : hand");
+    	try {
+			_project.config("mouse.mode", "dragMove");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
 	@Override

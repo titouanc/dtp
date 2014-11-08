@@ -28,6 +28,12 @@ public class Camera2D implements AnalogListener, ActionListener {
     private boolean _canMove = false;
     private boolean _enabled = true;
     private InputManager _inputManager;
+    private String _mouseMode;
+    
+    static private final String _MODE_DRAGROTATE = "dragRotate";
+    static private final String _MODE_DRAGSELECT = "dragSelect";
+    static private final String _MODE_DRAGMOVE = "dragMove";
+
     
     static private final String _STRAFELEFT 	= "CAM2D_StrafeLeft";
 	static private final String _STRAFERIGHT	= "CAM2D_StrafeRight"; 
@@ -76,6 +82,10 @@ public class Camera2D implements AnalogListener, ActionListener {
 	public void setInputManager(InputManager inputManager) {
 		_inputManager = inputManager;
 		inputSetUp();
+	}
+	
+	public void setMouseMode(String mouseMode) {
+		_mouseMode = mouseMode;
 	}
 
 	/**
@@ -237,7 +247,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	public void onAction(String name, boolean value, float tpf) {
 		if (!_enabled)
             return;
-        if (name.equals(_MOVEDRAG)){
+        if ((name.equals(_MOVEDRAG)) && _mouseMode.equals(_MODE_DRAGMOVE)){
         	if(value!=_canMove){
         		_canMove = value;
         	}

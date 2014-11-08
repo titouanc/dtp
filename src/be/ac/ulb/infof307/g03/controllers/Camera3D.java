@@ -26,6 +26,11 @@ public class Camera3D implements AnalogListener, ActionListener {
 	private boolean _loop = false;
 	private boolean _enabled = true;
 	private InputManager _inputManager;
+	private String _mouseMode;
+	
+    static private final String _MODE_DRAGROTATE = "dragRotate";
+    static private final String _MODE_DRAGSELECT = "dragSelect";
+    static private final String _MODE_DRAGMOVE = "dragMove";
 	
 	static private final String _STRAFELEFT 	= "CAM3D_StrafeLeft";
 	static private final String _STRAFERIGHT	= "CAM3D_StrafeRight";
@@ -68,6 +73,10 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 */
 	public void setCam(Camera cam) {
 		_cam = cam;
+	}
+	
+	public void setMouseMode(String mouseMode) {
+		_mouseMode = mouseMode;
 	}
 	
 	/**
