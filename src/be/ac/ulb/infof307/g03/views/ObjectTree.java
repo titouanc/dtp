@@ -50,19 +50,26 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 	class ShapeTreeModel implements TreeModel, Observer {
 		private GeometryDAO _dao;
 		private Set<TreeModelListener> _listeners;
-		private Map<Object, List<Geometric>> _cache;
+		private Map<String, List<Geometric>> _cache;
+		private final static String _ROOT = "Geometry";
 		
 		public ShapeTreeModel(GeometryDAO geometry) {
 			_dao = geometry;
 			_dao.addObserver(this);
 			
 			_listeners = new HashSet<TreeModelListener>();
-			_cache = new Hashtable<Object, List<Geometric>>();
+			_cache = new Hashtable<String, List<Geometric>>();
 		}
 
 		private List<Geometric> getNodes(Object parent) {
-			if (_cache.containsKey(parent))
-				return _cache.get(parent);
+			String key = null;
+			if (parent.equals(_ROOT))
+				key = (String) parent;
+			else
+				key = ((Geometric) parent).getUID();
+			
+			if (_cache.containsKey(key))
+				return _cache.get(key);
 			
 			List<Geometric> res = new ArrayList<Geometric>();
 			Class<? extends Object> type = parent.getClass();
@@ -80,7 +87,7 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 			} catch (SQLException err) {}
 			
 			if (res.size() > 0)
-				_cache.put(parent, res);
+				_cache.put(key, res);
 
 			return res;
 		}
