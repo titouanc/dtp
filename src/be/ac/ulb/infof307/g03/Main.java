@@ -8,13 +8,16 @@ import be.ac.ulb.infof307.g03.views.*;
 public class Main {
 
 	/**
-	 * @brief Main entry point of the program
+	 * Main entry point of the program
+	 * @param args Command line parameters
 	 * @see http://hub.jmonkeyengine.org/wiki/doku.php/jme3:advanced:swing_canvas
 	 */
 	public static void main(String[] args) {
-		// Call GUI
+		// Mac OS X specific configuration
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
+		
+		// Enqueue a new GUI in main dispatcher
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){
 				try {
@@ -29,7 +32,9 @@ public class Main {
 	}
 	
 	/**
-	 * Create a basic irregular 4-sided polygon in a demo project (not saved on disk)
+	 * Create a basic irregular 4-sided polygon and a triangle,
+	 * build a wall and a ground on them,
+	 * in a demo project (not saved on disk)
 	 * @return The created project
 	 * @throws SQLException
 	 */
