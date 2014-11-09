@@ -35,13 +35,14 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.*;
 
 /**
  * @author pierre, titou
  * 
  */
-public class ObjectTree extends JPanel implements TreeSelectionListener {
+public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 	
 	/**
 	 * Tree Model backend (proxy on DAO) for tree view
@@ -163,7 +164,7 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 
 		/**
 		 * This method is called when user click on a menu
-		 * @param event; click on menu
+		 * @param event click on menu
 		 */
 		@Override
 		public void actionPerformed(ActionEvent event) {
@@ -171,11 +172,10 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 			if (cmd.equals(_RENAME)) {
 				System.out.println("[DEBUG] User clicked on rename");
 				// the selected shape is _tree.getLastSelectedPathComponent()
-				// TODO apply operation
+				_controller.renameNode(_tree.getLastSelectedPathComponent(), "New Name");
 			} else if (cmd.equals(_DELETE)) {
 				System.out.println("[DEBUG] User clicked on delete");
-				// the selected shape is _tree.getLastSelectedPathComponent()
-				// TODO apply operation
+				_controller.deleteNode(_tree.getLastSelectedPathComponent());
 			
 			}
 		}
@@ -188,6 +188,7 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 	private static final long serialVersionUID = 1L;
 	private JTree _tree;
 	private ShapeTreeModel _model;
+	private ObjectTreeController _controller;
 	
 	private JPopupMenu _popupMenu;
 	
@@ -198,8 +199,10 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 	/**
 	 * Constructor of the main class ObjectTree
 	 */
-	public ObjectTree(Project project) {
+	public ObjectTreeView(ObjectTreeController newController, Project project) {
 		super(new GridLayout(1, 0));
+		_controller = newController;
+		
 		try {
 			_model = new ShapeTreeModel(project.getGeometryDAO());
 		} catch (SQLException e) {
@@ -260,8 +263,6 @@ public class ObjectTree extends JPanel implements TreeSelectionListener {
 			}
 		else
 			return;
-		 //Object nodeInfo = node.getUserObject();
-		 //System.out.println(nodeInfo);
 
 	}
 
