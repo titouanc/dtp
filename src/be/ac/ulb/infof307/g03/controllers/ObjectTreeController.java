@@ -25,7 +25,6 @@ import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 public class ObjectTreeController {
 	private ObjectTreeView _view;
 	private GeometryDAO _dao;
-	private Project _project;
 	
 	/**
 	 * @param project Project object from model
@@ -33,7 +32,6 @@ public class ObjectTreeController {
 	 */
 	public ObjectTreeController(Project project) {
 		_view = new ObjectTreeView(this, project);
-		_project = project;
 		try {
 			_dao = project.getGeometryDAO();
 		} catch (SQLException e) {
@@ -56,17 +54,22 @@ public class ObjectTreeController {
 	 */
 	public void renameNode(Object object, String name){
 		if (object instanceof Group) {
-			Group toDelete = (Group) object;
-			toDelete.setName(name);
-			//Group selectedGroup = (Group) _tree.getLastSelectedPathComponent();
+			Group grp = (Group) object;
+			grp.setName(name);
+			_dao.notifyObservers(object);
 		}
-		_dao.notifyObservers(object);
-		
 	}
 	
 	public void deleteNode(Object object){
-		//_dao.delete((Geometric) object);
-		_dao.notifyObservers(object); // TODO correct notification what should i pass as arg if shape is deleted ?
+		if (object instanceof Geometric){
+			try {
+				_dao.delete((Geometric) object);
+				_dao.notifyObservers(object);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

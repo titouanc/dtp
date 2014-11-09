@@ -41,4 +41,8 @@ public abstract class Shape implements Geometric {
 	public void addToGroup(Group grp){
 		_group = grp;
 	}
+	
+	public Group getGroup(){
+		return _group;
+	}
 }

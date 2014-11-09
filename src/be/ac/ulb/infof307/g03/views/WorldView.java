@@ -191,14 +191,16 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 * Called when the model fires a change notification
 	 */
 	@Override
-	public void update(Observable arg0, Object arg1) {
+	public void update(Observable arg0, Object msg) {
 		System.out.println("=============================UPDATE 3D VIEW !!!================================");
-		Grouped grouped = (Grouped) arg1;
-		Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
-		if (grouped.getClass() == Wall.class)
-			toUpdate.getMaterial().setColor("Color", grouped.isSelected()? ColorRGBA.Green : ColorRGBA.Gray);
-		else
-			toUpdate.getMaterial().setColor("Color", grouped.isSelected()? ColorRGBA.Green : ColorRGBA.LightGray);
+		if (msg instanceof Grouped){
+			Grouped grouped = (Grouped) msg;
+			Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
+			if (grouped.getClass() == Wall.class)
+				toUpdate.getMaterial().setColor("Color", grouped.isSelected()? ColorRGBA.Green : ColorRGBA.Gray);
+			else
+				toUpdate.getMaterial().setColor("Color", grouped.isSelected()? ColorRGBA.Green : ColorRGBA.LightGray);
+		}
 	}
 
 	

@@ -7,6 +7,13 @@ package be.ac.ulb.infof307.g03.models;
 public interface Geometric {
 	/**
 	 * Every Geometric object is part of a tree. 
+	 * What's the parent of this one ?
+	 * @return The parent group, or null if it is a root
+	 */
+	public Group getGroup();
+	
+	/**
+	 * Every Geometric object is part of a tree. 
 	 * Does this one have children ?
 	 * @return True if this node has no child
 	 */

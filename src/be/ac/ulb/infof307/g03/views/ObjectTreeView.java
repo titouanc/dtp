@@ -3,6 +3,7 @@
  */
 package be.ac.ulb.infof307.g03.views;
 
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -29,6 +32,19 @@ import be.ac.ulb.infof307.g03.models.*;
  * 
  */
 public class ObjectTreeView extends JPanel implements TreeSelectionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JTree _tree;
+	private GeometricTree _model;
+	private ObjectTreeController _controller;
+	
+	private JPopupMenu _popupMenu;
+	
+	static private final String _RENAME  = "Rename" ;
+	static private final String _DELETE = "Delete";
+	
 	/**
 	 * This class implements a ActionListener to be 
 	 * used with a popup menu
@@ -55,19 +71,23 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 
 	}
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private JTree _tree;
-	private GeometricTree _model;
-	private ObjectTreeController _controller;
-	
-	private JPopupMenu _popupMenu;
-	
-	static private final String _RENAME  = "Rename" ;
-	static private final String _DELETE = "Delete";
-	
+	class GeometricRenderer extends DefaultTreeCellRenderer {
+		public Component getTreeCellRendererComponent(
+                JTree tree,
+                Object value,
+                boolean sel,
+                boolean expanded,
+                boolean leaf,
+                int row,
+                boolean hasFocus){
+			if (value instanceof Grouped){
+				Grouped item = (Grouped) value;
+				sel = item.isSelected();
+			}
+			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+			return this;
+		}
+	}
 	
 	/**
 	 * Constructor of the main class ObjectTree
@@ -85,12 +105,13 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 
 		// Create a tree that allows one selection at a time.
 		_tree = new JTree(_model);
-		_tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
-        _tree.setCellRenderer(renderer);
+		_tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+		_tree.setToggleClickCount(1);
+		_tree.setCellRenderer(new GeometricRenderer());
 		
 		// Listen for when the selection changes
 		_tree.addTreeSelectionListener(this);
+		_tree.setRootVisible(false);
 		
 		// Add a menu popup to the tree
 		_popupMenu = new JPopupMenu();
@@ -108,11 +129,11 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 		     public void mousePressed(MouseEvent e) {
 		    	 // if right click
 		    	 if (SwingUtilities.isRightMouseButton(e)) {
-		    		 	// select the closest element near the click on the tree
-		    	        int row = _tree.getClosestRowForLocation(e.getX(), e.getY());
-		    	        _tree.setSelectionRow(row);
-		    	        _popupMenu.show(e.getComponent(), e.getX(), e.getY());
-		    	    }
+	    		 	// select the closest element near the click on the tree
+	    	        int row = _tree.getClosestRowForLocation(e.getX(), e.getY());
+	    	        _tree.setSelectionRow(row);
+	    	        _popupMenu.show(e.getComponent(), e.getX(), e.getY());
+	    	    }
 		     }
 		 };
 		 // add the mouse listener to the tree
@@ -124,7 +145,7 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 	}
 	
 	@Override
-	public void valueChanged(TreeSelectionEvent arg0) {
+	public void valueChanged(TreeSelectionEvent event) {
 		// TODO Auto-generated method stub
 		if (_tree.getLastSelectedPathComponent() instanceof Group) {
 			System.out.println("[DEBUG] Group selected");
@@ -138,5 +159,4 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 			return;
 
 	}
-
 }

@@ -80,5 +80,9 @@ public class TestGeometricTree {
 		Object sub1 = treemodel.getChild(top, 0);
 		assertEquals(Group.class, sub1.getClass());
 		assertEquals(3, treemodel.getChildCount(sub1));
+		
+		Object obj = treemodel.getChild(sub1, 0);
+		assertEquals(Ground.class, obj.getClass());
+		assertTrue(treemodel.isLeaf(obj));
 	}
 }

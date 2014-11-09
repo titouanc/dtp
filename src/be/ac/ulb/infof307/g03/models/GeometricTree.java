@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -86,6 +87,23 @@ public class GeometricTree implements TreeModel, Observer {
 		return res;
 	}
 
+	private void invalidateCache(Object node){
+		String key = toKey(node);
+		if (_cache.containsKey(key))
+			_cache.remove(key);
+
+		// Invalidate parent (since its child list might have changed)
+		if (node instanceof Geometric){
+			Group parent = ((Geometric) node).getGroup();
+			if (parent != null){
+				key = toKey(parent);
+				if (_cache.containsKey(key)){
+					_cache.remove(key);
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void addTreeModelListener(TreeModelListener l) {
 		_listeners.add(l);
@@ -104,9 +122,14 @@ public class GeometricTree implements TreeModel, Observer {
 
 	@Override
 	public int getIndexOfChild(Object parent, Object child) {
+		if (child.equals(_ROOT))
+			return 0;
+		
+		String key = ((Geometric) child).getUID();
 		List<Geometric> children = getNodes(parent);
+		
 		for (int i = 0; i < children.size(); i++)
-			if (child.equals(children.get(i)))
+			if (key.equals(children.get(i).getUID()))
 				return i;
 		return -1;
 	}
@@ -139,11 +162,37 @@ public class GeometricTree implements TreeModel, Observer {
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		String key = toKey(arg);
-		if (_cache.containsKey(key))
-			_cache.remove(key);
+		Geometric anchor = null;
 		
-		TreeModelEvent e = new TreeModelEvent(this, new Object[] { arg });
+		// This node has changed
+		invalidateCache(arg);
+		
+		Object currentNode = arg;
+		LinkedList<Object> path = new LinkedList<Object>();
+		while (currentNode instanceof Geometric){
+			// Get parent node
+			Group parent = ((Geometric) currentNode).getGroup();
+			// If direct parent not yet found, it's this one
+			if (anchor == null)
+				anchor = parent;
+			// If no parent found, attach to root
+			if (parent == null){
+				path.addFirst(_ROOT);
+				break;
+			}
+			// Prepend this parent to the full path of arg
+			path.addFirst(parent);
+			// Then repeat for next parent
+			currentNode = parent;
+		}
+		
+		// Notify listeners
+		TreeModelEvent e = new TreeModelEvent(
+			this, 
+			path.toArray(), 
+			new int[] {getIndexOfChild(anchor, arg)},
+			new Object[] {arg}
+		);
 		for (TreeModelListener l : _listeners)
 			l.treeNodesChanged(e);
 	}
