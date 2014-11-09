@@ -4,6 +4,9 @@ import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,6 +67,25 @@ public class TestGeometricTree {
 		_dao.create(new Ground(sub1));
 	}
 
+	/**
+	 * Mock a Tree Model Listener, so that we store the last argument 
+	 * for each of the required methods, or null if it has not been called yet.
+	 * @author Titouan Christophe
+	 */
+	class MockTreeModelListener implements TreeModelListener {
+		public TreeModelEvent change = null, insert = null, remove = null, struct = null;
+		public void reset(){change = insert = remove = struct = null;}
+		@Override
+		public void treeNodesChanged(TreeModelEvent arg0) {change = arg0;}
+		@Override
+		public void treeNodesInserted(TreeModelEvent arg0) {insert = arg0;}
+		@Override
+		public void treeNodesRemoved(TreeModelEvent arg0) {remove = arg0;}
+		@Override
+		public void treeStructureChanged(TreeModelEvent arg0) {struct = arg0;}
+		
+	}
+	
 	@Test
 	public void test_tree_structure() throws SQLException {
 		create_basic_project();
@@ -72,6 +94,7 @@ public class TestGeometricTree {
 		Object root = treemodel.getRoot();
 		assertEquals("Geometry", root);
 		assertEquals(1, treemodel.getChildCount(root));
+		assertFalse(treemodel.isLeaf(root));
 		
 		Object top = treemodel.getChild(root, 0);
 		assertEquals(Group.class, top.getClass());
@@ -104,5 +127,27 @@ public class TestGeometricTree {
 		Object root = treemodel.getRoot();
 		Group top = _dao.getGroup("Toplevel");
 		assertEquals(0, treemodel.getIndexOfChild(root, top));
+	}
+
+	@Test
+	public void test_update() throws SQLException{
+		create_basic_project();
+		GeometricTree treemodel = new GeometricTree(_dao);
+		MockTreeModelListener mock = new MockTreeModelListener();
+		treemodel.addTreeModelListener(mock);
+		
+		// Simulate observable notifications, assert the listener get the right events
+		Group grp = (Group) _dao.getRootNodes().get(0);
+		treemodel.update(null, grp);
+		assertNotNull(mock.change);
+		
+		treemodel.update(null, null);
+		assertNotNull(mock.struct);
+		
+		// Detach the listener, it should not receive anything
+		mock.reset();
+		treemodel.removeTreeModelListener(mock);
+		treemodel.update(null, null);
+		assertNull(mock.struct);
 	}
 }

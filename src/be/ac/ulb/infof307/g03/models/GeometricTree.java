@@ -17,7 +17,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 /**
- * Tree Model backend (proxy on DAO) for tree views
+ * Tree Model backend (proxy on DAO)
  * @author Titouan Christophe
  */
 public class GeometricTree implements TreeModel, Observer {
@@ -51,6 +51,10 @@ public class GeometricTree implements TreeModel, Observer {
 		return o.toString();
 	}
 	
+	/**
+	 * @param o An object from the tree
+	 * @return True if it is the root
+	 */
 	private Boolean isRoot(Object o){
 		return o.equals(_ROOT);
 	}
@@ -87,6 +91,11 @@ public class GeometricTree implements TreeModel, Observer {
 		return res;
 	}
 
+	/**
+	 * Invalidate cache for given object.
+	 * @note If this object is in a group, its group cache is also flushed.
+	 * @param node The cache associated to this node will be flushed
+	 */
 	private void invalidateCache(Object node){
 		String key = toKey(node);
 		if (_cache.containsKey(key))

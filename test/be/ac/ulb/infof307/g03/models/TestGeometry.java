@@ -130,6 +130,7 @@ public class TestGeometry {
 		assertEquals(1, geo.create(wall));
 		assertTrue(wall.isVisible());
 		assertEquals(1.0, wall.getHeight(), 0);
+		assertEquals("wal-1", wall.getUID());
 		
 		wall.setHeight(42.27);
 		wall.hide();
@@ -295,6 +296,17 @@ public class TestGeometry {
 		
 		nil = geo.getByUID("zzx-32");
 		assertNull(nil);
+	}
+	
+	@Test
+	public void test_delete_group() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Group room = create_a_room(geo);
+		geo.delete(room);
+		
+		assertEquals(0, geo.getRootNodes().size());
+		assertTrue(geo.getWalls().isEmpty());
+		assertTrue(geo.getGrounds().isEmpty());
 	}
 }
 

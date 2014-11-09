@@ -72,6 +72,10 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 
 	}
 
+	/**
+	 * Node rendering in TreeView
+	 * @author titou
+	 */
 	class GeometricRenderer extends DefaultTreeCellRenderer {
 		public Component getTreeCellRendererComponent(
                 JTree tree,
