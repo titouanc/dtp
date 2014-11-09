@@ -13,6 +13,7 @@ import java.awt.event.MouseListener;
 import java.sql.SQLException;
 
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
@@ -60,9 +61,8 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 		public void actionPerformed(ActionEvent event) {
 			String cmd = event.getActionCommand();
 			if (cmd.equals(_RENAME)) {
-				System.out.println("[DEBUG] User clicked on rename");
-				// the selected shape is _tree.getLastSelectedPathComponent()
-				_controller.renameNode(_tree.getLastSelectedPathComponent(), "New Name");
+				String name = JOptionPane.showInputDialog("New name ?");
+				_controller.renameNode(_tree.getLastSelectedPathComponent(), name);
 			} else if (cmd.equals(_DELETE)) {
 				System.out.println("[DEBUG] User clicked on delete");
 				_controller.deleteNode(_tree.getLastSelectedPathComponent());
