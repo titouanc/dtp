@@ -137,6 +137,20 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
+	private int deleteGroup(Group grp) throws SQLException{
+		Ground gnd = getGround(grp);
+		if (gnd != null)
+			_grounds.delete(gnd);
+		
+		Wall wall = getWall(grp);
+		if (wall != null)
+			_walls.delete(wall);
+		
+		for (Shape shape : getShapesForGroup(grp))
+			delete(shape);
+		return _groups.delete(grp);
+	}
+	
 	/**
 	 * Delete a shape from the database
 	 * @param object The geometric object to remove
@@ -150,7 +164,7 @@ public class GeometryDAO extends Observable {
 		else if (object.getClass() == Line.class)
 			res = _lines.delete((Line) object);
 		else if (object.getClass() == Group.class)
-			res = _groups.delete((Group) object);
+			res = deleteGroup((Group) object);
 		else if (object.getClass() == Ground.class)
 			res = _grounds.delete((Ground) object);
 		else if (object.getClass() == Wall.class)

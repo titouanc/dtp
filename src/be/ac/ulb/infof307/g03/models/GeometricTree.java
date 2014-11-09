@@ -162,38 +162,46 @@ public class GeometricTree implements TreeModel, Observer {
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		Geometric anchor = null;
-		
-		// This node has changed
-		invalidateCache(arg);
-		
-		Object currentNode = arg;
-		LinkedList<Object> path = new LinkedList<Object>();
-		while (currentNode instanceof Geometric){
-			// Get parent node
-			Group parent = ((Geometric) currentNode).getGroup();
-			// If direct parent not yet found, it's this one
-			if (anchor == null)
-				anchor = parent;
-			// If no parent found, attach to root
-			if (parent == null){
-				path.addFirst(_ROOT);
-				break;
+		if (arg == null){
+			_cache.clear();
+			// Notify listeners
+			TreeModelEvent e = new TreeModelEvent(this, new Object[]{_ROOT});
+			for (TreeModelListener l : _listeners)
+				l.treeStructureChanged(e);
+		} else {
+			Geometric anchor = null;
+			
+			// This node has changed
+			invalidateCache(arg);
+			
+			Object currentNode = arg;
+			LinkedList<Object> path = new LinkedList<Object>();
+			while (currentNode instanceof Geometric){
+				// Get parent node
+				Group parent = ((Geometric) currentNode).getGroup();
+				// If direct parent not yet found, it's this one
+				if (anchor == null)
+					anchor = parent;
+				// If no parent found, attach to root
+				if (parent == null){
+					path.addFirst(_ROOT);
+					break;
+				}
+				// Prepend this parent to the full path of arg
+				path.addFirst(parent);
+				// Then repeat for next parent
+				currentNode = parent;
 			}
-			// Prepend this parent to the full path of arg
-			path.addFirst(parent);
-			// Then repeat for next parent
-			currentNode = parent;
+			
+			// Notify listeners
+			TreeModelEvent e = new TreeModelEvent(
+				this, 
+				path.toArray(), 
+				new int[] {getIndexOfChild(anchor, arg)},
+				new Object[] {arg}
+			);
+			for (TreeModelListener l : _listeners)
+				l.treeNodesChanged(e);
 		}
-		
-		// Notify listeners
-		TreeModelEvent e = new TreeModelEvent(
-			this, 
-			path.toArray(), 
-			new int[] {getIndexOfChild(anchor, arg)},
-			new Object[] {arg}
-		);
-		for (TreeModelListener l : _listeners)
-			l.treeNodesChanged(e);
 	}
 }

@@ -64,12 +64,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		flyCam.setEnabled(false);
 		_controller.getCameraModeController().setCamera(cam);
 		_controller.getCameraModeController().setInputManager(inputManager);
-
-		//Generates the grid
-		attachGrid();
-		
-		//Generate the axes
-		attachAxes();
 		
 		//Change the default background
 		viewPort.setBackgroundColor(ColorRGBA.White);
@@ -134,6 +128,12 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 * Redraw the 3D scene (first shot, still to be optimized)
 	 */
 	private void _makeScene(){
+		//Generates the grid
+		attachGrid();
+		
+		//Generate the axes
+		attachAxes();
+		
 		try {
 			for (Wall wall : _model.getWalls()){
 				Mesh mesh = _model.getWallAsMesh(wall);
@@ -192,8 +192,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 */
 	@Override
 	public void update(Observable arg0, Object msg) {
-		System.out.println("=============================UPDATE 3D VIEW !!!================================");
-		if (msg instanceof Grouped){
+		if (msg == null){
+			rootNode.detachAllChildren();
+			_makeScene();
+		} else if (msg instanceof Grouped){
 			Grouped grouped = (Grouped) msg;
 			Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
 			if (grouped.getClass() == Wall.class)

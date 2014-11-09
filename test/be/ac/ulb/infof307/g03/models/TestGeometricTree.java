@@ -85,4 +85,24 @@ public class TestGeometricTree {
 		assertEquals(Ground.class, obj.getClass());
 		assertTrue(treemodel.isLeaf(obj));
 	}
+	
+	@Test
+	public void test_tree_indexes() throws SQLException {
+		create_basic_project();
+		GeometricTree treemodel = new GeometricTree(_dao);
+		
+		Ground gnd = (Ground) _dao.getByUID("gnd-1");
+		assertNotNull(gnd);
+		
+		Group grp = (Group) _dao.getByUID("grp-2");
+		assertNotNull(grp);
+		assertEquals(0, treemodel.getIndexOfChild(grp, gnd));
+		
+		Group subgrp = (Group) _dao.getByUID("grp-3");
+		assertEquals(2, treemodel.getIndexOfChild(grp, subgrp));
+		
+		Object root = treemodel.getRoot();
+		Group top = _dao.getGroup("Toplevel");
+		assertEquals(0, treemodel.getIndexOfChild(root, top));
+	}
 }
