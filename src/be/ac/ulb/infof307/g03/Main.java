@@ -2,6 +2,8 @@ package be.ac.ulb.infof307.g03;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.logger.LocalLog;
+
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.*;
 
@@ -16,6 +18,7 @@ public class Main {
 		// Mac OS X specific configuration
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
+		System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "info");
 		
 		// Enqueue a new GUI in main dispatcher
 		java.awt.EventQueue.invokeLater(new Runnable() {
