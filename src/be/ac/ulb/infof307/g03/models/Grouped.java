@@ -111,6 +111,6 @@ public abstract class Grouped implements Geometric {
 
 	@Override
 	public Boolean isLeaf(){
-		return false;
+		return true;
 	}
 }
