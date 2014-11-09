@@ -160,6 +160,11 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
+	/**
+	 * Get a Geometric object from database
+	 * @param uid Unique object id
+	 * @return A Geometric object, or null if not found
+	 */
 	public Geometric getByUID(String uid){
 		String[] parts = uid.split("-");
 		Geometric res = null;
@@ -227,6 +232,18 @@ public class GeometryDAO extends Observable {
 	}
 	
 	/**
+	 * Get a Ground object associated with a Group from database
+	 * @param group The associated group
+	 * @return A Ground object, or null
+	 * @throws SQLException
+	 */
+	public Ground getGround(Group group) throws SQLException {
+		return _grounds.queryForFirst(
+			_grounds.queryBuilder().where().eq("_group_id", group.getId()).prepare()
+		);
+	}
+	
+	/**
 	 * Get a Wall object from the database
 	 * @param wall_id The Wall identifier
 	 * @return a Wall object
@@ -234,6 +251,18 @@ public class GeometryDAO extends Observable {
 	 */
 	public Wall getWall(int wall_id) throws SQLException{
 		return _walls.queryForId(wall_id);
+	}
+	
+	/**
+	 * Get a Wall object associated with a Group from database
+	 * @param group The associated group
+	 * @return A Wall object, or null
+	 * @throws SQLException
+	 */
+	public Wall getWall(Group group) throws SQLException {
+		return _walls.queryForFirst(
+			_walls.queryBuilder().where().eq("_group_id", group.getId()).prepare()
+		);
 	}
 	
 	/**
