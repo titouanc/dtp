@@ -169,10 +169,7 @@ public class GeometricTree implements TreeModel, Observer {
 			for (TreeModelListener l : _listeners)
 				l.treeStructureChanged(e);
 		} else {
-			Geometric anchor = null;
-			
-			// This node has changed
-			invalidateCache(arg);
+			Object anchor = null;
 			
 			Object currentNode = arg;
 			LinkedList<Object> path = new LinkedList<Object>();
@@ -193,6 +190,9 @@ public class GeometricTree implements TreeModel, Observer {
 				currentNode = parent;
 			}
 			
+			if (anchor == null)
+				anchor = _ROOT;
+			
 			// Notify listeners
 			TreeModelEvent e = new TreeModelEvent(
 				this, 
@@ -200,6 +200,8 @@ public class GeometricTree implements TreeModel, Observer {
 				new int[] {getIndexOfChild(anchor, arg)},
 				new Object[] {arg}
 			);
+			
+			invalidateCache(arg);
 			for (TreeModelListener l : _listeners)
 				l.treeNodesChanged(e);
 		}

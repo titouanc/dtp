@@ -3,17 +3,9 @@
  */
 package be.ac.ulb.infof307.g03.controllers;
 
-import java.awt.Component;
 import java.sql.SQLException;
 
-import com.jme3.scene.Geometry;
-
-import be.ac.ulb.infof307.g03.models.Geometric;
-import be.ac.ulb.infof307.g03.models.GeometryDAO;
-import be.ac.ulb.infof307.g03.models.Group;
-import be.ac.ulb.infof307.g03.models.Grouped;
-import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.models.Shape;
+import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 
 
@@ -56,10 +48,20 @@ public class ObjectTreeController {
 		if (object instanceof Group) {
 			Group grp = (Group) object;
 			grp.setName(name);
-			_dao.notifyObservers(object);
+			try {
+				_dao.update(grp);
+				_dao.notifyObservers(object);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
+	/**
+	 * Delete a Geometric node
+	 * @param object
+	 */
 	public void deleteNode(Object object){
 		if (object instanceof Geometric){
 			Geometric item = (Geometric) object;
@@ -73,4 +75,41 @@ public class ObjectTreeController {
 		}
 	}
 
+	/**
+	 * Unset the select flag of a Grouped element
+	 * @param element
+	 */
+	public void deselectElement(Object element) {
+		if (element instanceof Grouped){
+			Grouped grouped = (Grouped) element;
+			System.out.println("Unselect " + grouped.getUID());
+			grouped.deselect();
+			try {
+				_dao.update(grouped);
+				_dao.notifyObservers(grouped);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Set the select flag of a Grouped element
+	 * @param element
+	 */
+	public void selectElement(Object element) {
+		if (element instanceof Grouped){
+			Grouped grouped = (Grouped) element;
+			System.out.println("Select " + grouped.getUID());
+			grouped.select();
+			try {
+				_dao.update(grouped);
+				_dao.notifyObservers(grouped);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 }

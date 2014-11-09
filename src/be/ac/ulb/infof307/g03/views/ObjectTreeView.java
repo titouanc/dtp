@@ -22,6 +22,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
@@ -106,7 +107,6 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 		// Create a tree that allows one selection at a time.
 		_tree = new JTree(_model);
 		_tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-		_tree.setToggleClickCount(1);
 		_tree.setCellRenderer(new GeometricRenderer());
 		
 		// Listen for when the selection changes
@@ -146,17 +146,11 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 	
 	@Override
 	public void valueChanged(TreeSelectionEvent event) {
-		// TODO Auto-generated method stub
-		if (_tree.getLastSelectedPathComponent() instanceof Group) {
-			System.out.println("[DEBUG] Group selected");
-			//Group selectedGroup = (Group) _tree.getLastSelectedPathComponent();
-		}
-		else if (_tree.getLastSelectedPathComponent() instanceof Line) {
-			System.out.println("[DEBUG] Line selected");
-			//Line selectedLine = (Line) _tree.getLastSelectedPathComponent();
-			}
-		else
-			return;
-
+		TreePath path = event.getOldLeadSelectionPath();
+		if (path != null)
+			_controller.deselectElement(path.getLastPathComponent());
+		path = event.getNewLeadSelectionPath();
+		if (path != null)
+			_controller.selectElement(path.getLastPathComponent());
 	}
 }

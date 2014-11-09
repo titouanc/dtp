@@ -76,6 +76,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		
 		// Notify our controller that initialisation is done
 		_controller.onViewCreated();
+		this.setPauseOnLostFocus(false);
 	}
 	
 	public InputManager getInputManager(){
@@ -184,8 +185,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		mat.setColor("Color", color);
 		rootNode.attachChild(axisGeo);
 	}
-		
-
 	
 	/**
 	 * Called when the model fires a change notification
