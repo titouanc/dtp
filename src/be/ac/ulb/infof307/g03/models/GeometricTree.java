@@ -56,7 +56,7 @@ public class GeometricTree implements TreeModel, Observer {
 	 * @return True if it is the root
 	 */
 	private Boolean isRoot(Object o){
-		return o.equals(_ROOT);
+		return o == null || o.equals(_ROOT);
 	}
 	
 	/**
@@ -131,7 +131,7 @@ public class GeometricTree implements TreeModel, Observer {
 
 	@Override
 	public int getIndexOfChild(Object parent, Object child) {
-		if (child.equals(_ROOT))
+		if (isRoot(child))
 			return 0;
 		
 		String key = ((Geometric) child).getUID();
@@ -164,6 +164,54 @@ public class GeometricTree implements TreeModel, Observer {
 	@Override
 	public void valueForPathChanged(TreePath path, Object newValue) {}
 
+	private LinkedList<Object> getFullPath(Object o){
+		LinkedList<Object> res = isRoot(o) ? new LinkedList<Object>() : getFullPath(((Geometric) o).getGroup());
+		res.add(o);
+		return res;
+	}
+	
+	private void _createToListeners(Geometric creation){
+		Object[] path = getFullPath(creation).toArray();
+		// Notify listeners
+		TreeModelEvent e = new TreeModelEvent(
+			this, 
+			path, 
+			new int[] {getIndexOfChild(path[path.length-2], creation)},
+			new Object[] {creation}
+		);
+		
+		for (TreeModelListener l : _listeners)
+			l.treeNodesInserted(e);
+	}
+	
+	private void _updateToListeners(Geometric updated){
+		Object[] path = getFullPath(updated).toArray();
+		// Notify listeners
+		TreeModelEvent e = new TreeModelEvent(
+			this, 
+			path, 
+			new int[] {getIndexOfChild(path[path.length-2], updated)},
+			new Object[] {updated}
+		);
+		
+		for (TreeModelListener l : _listeners)
+			l.treeNodesChanged(e);
+	}
+	
+	private void _deleteToListeners(Geometric deletion){
+		Object[] path = getFullPath(deletion).toArray();
+		// Notify listeners
+		TreeModelEvent e = new TreeModelEvent(
+			this, 
+			path, 
+			new int[] {getIndexOfChild(path[path.length-2], deletion)},
+			new Object[] {deletion}
+		);
+		
+		for (TreeModelListener l : _listeners)
+			l.treeNodesRemoved(e);
+	}
+	
 	/**
 	 * When DAO notifies data changes:
 	 * - invalidate cache
@@ -171,48 +219,12 @@ public class GeometricTree implements TreeModel, Observer {
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		if (arg == null){
-			_cache.clear();
-			// Notify listeners
-			TreeModelEvent e = new TreeModelEvent(this, new Object[]{_ROOT});
-			for (TreeModelListener l : _listeners)
-				l.treeStructureChanged(e);
-		} else {
-			Object anchor = null;
-			
-			Object currentNode = arg;
-			LinkedList<Object> path = new LinkedList<Object>();
-			while (currentNode instanceof Geometric){
-				// Get parent node
-				Group parent = ((Geometric) currentNode).getGroup();
-				// If direct parent not yet found, it's this one
-				if (anchor == null)
-					anchor = parent;
-				// If no parent found, attach to root
-				if (parent == null){
-					path.addFirst(_ROOT);
-					break;
-				}
-				// Prepend this parent to the full path of arg
-				path.addFirst(parent);
-				// Then repeat for next parent
-				currentNode = parent;
-			}
-			
-			if (anchor == null)
-				anchor = _ROOT;
-			
-			// Notify listeners
-			TreeModelEvent e = new TreeModelEvent(
-				this, 
-				path.toArray(), 
-				new int[] {getIndexOfChild(anchor, arg)},
-				new Object[] {arg}
-			);
-			
-			invalidateCache(arg);
-			for (TreeModelListener l : _listeners)
-				l.treeNodesChanged(e);
-		}
+		ModelChange changes = (ModelChange) arg;
+		for (Geometric g : changes.getCreates())
+			_createToListeners(g);
+		for (Geometric g : changes.getUpdates())
+			_updateToListeners(g);
+		for (Geometric g : changes.getDeletes())
+			_deleteToListeners(g);
 	}
 }

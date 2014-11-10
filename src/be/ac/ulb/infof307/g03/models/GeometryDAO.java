@@ -31,6 +31,7 @@ public class GeometryDAO extends Observable {
 	private Dao<Wall, Integer> _walls = null;
 	private Dao<Ground, Integer> _grounds = null;
 	private Dao<Point, Integer> _points = null;
+	private ModelChange _changes = null;
 	
 	/**
 	 * Migrate all needed tables to a database
@@ -56,6 +57,7 @@ public class GeometryDAO extends Observable {
 		_grounds = DaoManager.createDao(database, Ground.class);
 		_walls = DaoManager.createDao(database, Wall.class);
 		_points = DaoManager.createDao(database, Point.class);
+		_changes = new ModelChange();
 	}
 	
 	/**
@@ -86,8 +88,10 @@ public class GeometryDAO extends Observable {
 			res = _grounds.create((Ground) object);
 		else if (object.getClass() == Wall.class)
 			res = _walls.create((Wall) object);
-		if (res != 0)
+		if (res != 0){
 			setChanged();
+			_changes.create(object);
+		}
 		return res;
 	}
 	
@@ -132,8 +136,10 @@ public class GeometryDAO extends Observable {
 			res = _grounds.update((Ground) object);
 		else if (object.getClass() == Wall.class)
 			res = _walls.update((Wall) object);
-		if (res != 0)
+		if (res != 0){
 			setChanged();
+			_changes.update(object);
+		}
 		return res;
 	}
 	
@@ -169,8 +175,10 @@ public class GeometryDAO extends Observable {
 			res = _grounds.delete((Ground) object);
 		else if (object.getClass() == Wall.class)
 			res = _walls.delete((Wall) object);
-		if (res != 0)
+		if (res != 0){
 			setChanged();
+			_changes.delete(object);
+		}
 		return res;
 	}
 	
@@ -390,6 +398,18 @@ public class GeometryDAO extends Observable {
 		res.addAll(_lines.query(lineQ));
 		res.addAll(_groups.query(groupQ));
 		return res;
+	}
+	
+	@Override
+	public void notifyObservers(){
+		ModelChange changes = _changes;
+		_changes = new ModelChange();
+		super.notifyObservers(changes);
+	}
+	
+	@Override
+	public void notifyObservers(Object arg){
+		notifyObservers();
 	}
 	
 	/**

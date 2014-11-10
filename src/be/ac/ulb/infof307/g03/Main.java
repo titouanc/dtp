@@ -24,7 +24,9 @@ public class Main {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){
 				try {
-					new GUI(createDemoProject());
+					Project proj = createDemoProject();
+					proj.notifyObservers();
+					new GUI(proj);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
