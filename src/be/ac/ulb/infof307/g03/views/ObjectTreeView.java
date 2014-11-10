@@ -42,7 +42,8 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 	private GeometricTree _model;
 	private ObjectTreeController _controller;
 	
-	private JPopupMenu _popupMenu;
+	private JPopupMenu _popupMenuRD;
+	private JPopupMenu _popupMenuD;
 	
 	static private final String _RENAME  = "Rename" ;
 	static private final String _DELETE = "Delete";
@@ -118,15 +119,24 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 		_tree.setRootVisible(false);
 		
 		// Add a menu popup to the tree
-		_popupMenu = new JPopupMenu();
+		_popupMenuRD = new JPopupMenu();
+		_popupMenuD = new JPopupMenu();
+		
 	    JMenuItem menuItem = new JMenuItem(_RENAME);
 	    menuItem.addActionListener(new PopupListener());
 	    menuItem.setActionCommand(_RENAME);
-	    _popupMenu.add(menuItem);
+	    _popupMenuRD.add(menuItem);
 	    menuItem = new JMenuItem(_DELETE);
 	    menuItem.addActionListener(new PopupListener());
 	    menuItem.setActionCommand(_DELETE);
-	    _popupMenu.add(menuItem);
+	    _popupMenuRD.add(menuItem);
+	    
+	    
+	    menuItem = new JMenuItem(_DELETE);
+	    menuItem.addActionListener(new PopupListener());
+	    menuItem.setActionCommand(_DELETE);
+	    _popupMenuD.add(menuItem);
+	    
 		
 	    // create a mouse listener
 		MouseListener ml = new MouseAdapter() {
@@ -136,7 +146,13 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 	    		 	// select the closest element near the click on the tree
 	    	        int row = _tree.getClosestRowForLocation(e.getX(), e.getY());
 	    	        _tree.setSelectionRow(row);
-	    	        _popupMenu.show(e.getComponent(), e.getX(), e.getY());
+	    	        if (_tree.getLastSelectedPathComponent() instanceof Group) {
+	    	        	 _popupMenuRD.show(e.getComponent(), e.getX(), e.getY());
+	    	        }
+	    	        else if ((_tree.getLastSelectedPathComponent() instanceof Wall) || (_tree.getLastSelectedPathComponent() instanceof Ground)) {
+	    	        	 _popupMenuD.show(e.getComponent(), e.getX(), e.getY());
+	    	        }
+	    	        //_popupMenuRD.show(e.getComponent(), e.getX(), e.getY());
 	    	    }
 		     }
 		 };
