@@ -48,7 +48,7 @@ public class GeometricTree implements TreeModel, Observer {
 			return (String) o;
 		if (o instanceof Geometric)
 			return ((Geometric) o).getUID();
-		return o.toString();
+		return _ROOT;
 	}
 	
 	/**
