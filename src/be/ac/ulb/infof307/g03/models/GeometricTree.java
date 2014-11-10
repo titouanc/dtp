@@ -104,11 +104,9 @@ public class GeometricTree implements TreeModel, Observer {
 		// Invalidate parent (since its child list might have changed)
 		if (node instanceof Geometric){
 			Group parent = ((Geometric) node).getGroup();
-			if (parent != null){
-				key = toKey(parent);
-				if (_cache.containsKey(key))
-					_cache.remove(key);
-			}
+			key = toKey(parent);
+			if (_cache.containsKey(key))
+				_cache.remove(key);
 		}
 	}
 	
@@ -173,10 +171,11 @@ public class GeometricTree implements TreeModel, Observer {
 		return res;
 	}
 	
-	private TreeModelEvent _makeEvent(Geometric item){
+	private TreeModelEvent _makeEvent(Geometric item, Boolean invalidate){
 		LinkedList<Object> fullPath = getFullPath(item);
 		fullPath.removeLast();
-		invalidateCache(item);
+		if (invalidate)
+			invalidateCache(item);
 		
 		return new TreeModelEvent(
 			this, 
@@ -187,24 +186,28 @@ public class GeometricTree implements TreeModel, Observer {
 	}
 	
 	private void _createToListeners(Geometric creation){
-		TreeModelEvent event = _makeEvent(creation);
+		TreeModelEvent event = _makeEvent(creation, true);
+		System.out.print("Node created: ");
 		System.out.println(event);
 		for (TreeModelListener l : _listeners)
 			l.treeNodesInserted(event);
 	}
 	
 	private void _updateToListeners(Geometric updated){
-		TreeModelEvent event = _makeEvent(updated);
+		TreeModelEvent event = _makeEvent(updated, true);
+		System.out.print("Node changed: ");
 		System.out.println(event);
 		for (TreeModelListener l : _listeners)
 			l.treeNodesChanged(event);
 	}
 	
 	private void _deleteToListeners(Geometric deletion){
-		TreeModelEvent event = _makeEvent(deletion);
+		TreeModelEvent event = _makeEvent(deletion, false);
+		System.out.print("Node removed: ");
 		System.out.println(event);
 		for (TreeModelListener l : _listeners)
 			l.treeNodesRemoved(event);
+		invalidateCache(deletion);
 	}
 	
 	/**

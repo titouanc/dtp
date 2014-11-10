@@ -66,8 +66,9 @@ public class ObjectTreeController {
 		if (object instanceof Geometric){
 			Geometric item = (Geometric) object;
 			try {
-				_dao.notifyObservers(item.getGroup());
+				System.out.println("DELETE " + item.toString());
 				_dao.delete(item);
+				_dao.notifyObservers(item);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
