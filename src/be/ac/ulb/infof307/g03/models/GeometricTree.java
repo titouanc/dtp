@@ -218,13 +218,15 @@ public class GeometricTree implements TreeModel, Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (arg != null){
-			ModelChange changes = (ModelChange) arg;
-			for (Geometric g : changes.getCreates())
-				_createToListeners(g);
-			for (Geometric g : changes.getUpdates())
-				_updateToListeners(g);
-			for (Geometric g : changes.getDeletes())
-				_deleteToListeners(g);
+			for (Change delta : (List<Change>) arg){
+				System.out.println("[GeometricTree] " + delta.toString());
+				if (delta.isDeletion())
+					this._deleteToListeners(delta.getItem());
+				if (delta.isCreation())
+					this._createToListeners(delta.getItem());
+				if (delta.isUpdate())
+					this._updateToListeners(delta.getItem());
+			}
 		}
 	}
 }

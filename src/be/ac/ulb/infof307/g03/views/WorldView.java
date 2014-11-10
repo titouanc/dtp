@@ -4,9 +4,9 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.io.IOException;
 import java.util.Vector;
 
 import be.ac.ulb.infof307.g03.controllers.WorldController;
@@ -25,12 +25,8 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
-import com.jme3.scene.Node;
-import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
-import com.jme3.util.BufferUtils;
-import com.jme3.util.SkyFactory;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -217,31 +213,29 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 */
 	@Override
 	public void update(Observable arg0, Object msg) {
-		ModelChange changes = (ModelChange) msg;
-		for (Geometric deleted : changes.getDeletes()){
-			if (deleted instanceof Grouped)
-				rootNode.detachChildNamed(deleted.getUID());
-		}
-		for (Geometric updated : changes.getUpdates()){
-			if (updated instanceof Grouped){
-				Grouped grouped = (Grouped) updated;
+		if (msg == null)
+			return;
+		for (Change change : (List<Change>) msg){
+			System.out.println("[3D View] " + change.toString());
+			if (! ( change.getItem() instanceof Grouped))
+				continue;
+			Grouped grouped = (Grouped) change.getItem();
+			
+			if (change.isDeletion())
+				rootNode.detachChildNamed(grouped.getUID());
+			else if (change.isUpdate()){
 				Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
 				Material mat = toUpdate.getMaterial();
 				if (mat != null)
 					mat.setColor("Color", _getColor(grouped));
+			} else if (change.isCreation()){
+				if (grouped instanceof Wall)
+					_drawWall((Wall) grouped);
+				else if (grouped instanceof Ground)
+					_drawGround((Ground) grouped);
 			}
 		}
-		
-		for (Geometric created : changes.getCreates()){
-			if (created instanceof Wall)
-				_drawWall((Wall) created);
-			else if (created instanceof Ground)
-				_drawGround((Ground) created);
-		}
 	}
-
-	
-
 
 	@Override
 	public void onAction(String arg0, boolean arg1, float arg2) {

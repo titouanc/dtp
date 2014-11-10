@@ -31,7 +31,7 @@ public class GeometryDAO extends Observable {
 	private Dao<Wall, Integer> _walls = null;
 	private Dao<Ground, Integer> _grounds = null;
 	private Dao<Point, Integer> _points = null;
-	private ModelChange _changes = null;
+	private List<Change> _changes = null;
 	
 	/**
 	 * Migrate all needed tables to a database
@@ -57,7 +57,7 @@ public class GeometryDAO extends Observable {
 		_grounds = DaoManager.createDao(database, Ground.class);
 		_walls = DaoManager.createDao(database, Wall.class);
 		_points = DaoManager.createDao(database, Point.class);
-		_changes = new ModelChange();
+		_changes = new LinkedList<Change>();
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class GeometryDAO extends Observable {
 			res = _walls.create((Wall) object);
 		if (res != 0){
 			setChanged();
-			_changes.create(object);
+			_changes.add(Change.create(object));
 		}
 		return res;
 	}
@@ -113,8 +113,6 @@ public class GeometryDAO extends Observable {
 			res = _grounds.refresh((Ground) object);
 		else if (object.getClass() == Wall.class)
 			res = _walls.refresh((Wall) object);
-		if (res != 0)
-			setChanged();
 		return res;
 	}
 	
@@ -138,7 +136,7 @@ public class GeometryDAO extends Observable {
 			res = _walls.update((Wall) object);
 		if (res != 0){
 			setChanged();
-			_changes.update(object);
+			_changes.add(Change.update(object));
 		}
 		return res;
 	}
@@ -177,7 +175,7 @@ public class GeometryDAO extends Observable {
 			res = _walls.delete((Wall) object);
 		if (res != 0){
 			setChanged();
-			_changes.delete(object);
+			_changes.add(Change.delete(object));
 		}
 		return res;
 	}
@@ -402,8 +400,8 @@ public class GeometryDAO extends Observable {
 	
 	@Override
 	public void notifyObservers(){
-		ModelChange changes = _changes;
-		_changes = new ModelChange();
+		List<Change> changes = _changes;
+		_changes = new LinkedList<Change>();
 		super.notifyObservers(changes);
 	}
 	

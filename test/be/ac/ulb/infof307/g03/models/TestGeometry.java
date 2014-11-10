@@ -312,12 +312,12 @@ public class TestGeometry {
 	}
 	
 	class MockObserver implements Observer {
-		public ModelChange changes = null;
+		public Change changes = null;
 		
 		@Override
 		public void update(Observable arg0, Object arg1) {
 			assertNotNull(arg1);
-			changes = (ModelChange) arg1;
+			changes = (Change) arg1;
 		}
 	}
 	
