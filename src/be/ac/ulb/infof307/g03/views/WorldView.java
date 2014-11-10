@@ -226,14 +226,17 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			if (updated instanceof Grouped){
 				Grouped grouped = (Grouped) updated;
 				Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
-				toUpdate.getMaterial().setColor("color", _getColor(grouped));
+				Material mat = toUpdate.getMaterial();
+				if (mat != null)
+					mat.setColor("Color", _getColor(grouped));
 			}
 		}
 		
 		for (Geometric created : changes.getCreates()){
-			if (update instanceof Wall){
-				
-			}
+			if (created instanceof Wall)
+				_drawWall((Wall) created);
+			else if (created instanceof Ground)
+				_drawGround((Ground) created);
 		}
 	}
 

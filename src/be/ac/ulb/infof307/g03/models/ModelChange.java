@@ -64,4 +64,18 @@ public class ModelChange {
 	public void delete(Geometric geometric){
 		_delete.add(geometric);
 	}
+	
+	/**
+	 * @return The number of changes in this changeset
+	 */
+	public Integer size(){
+		return _create.size() + _update.size() + _delete.size();
+	}
+	
+	/**
+	 * @return True if there are no changes
+	 */
+	public Boolean isEmpty(){
+		return size() == 0;
+	}
 }

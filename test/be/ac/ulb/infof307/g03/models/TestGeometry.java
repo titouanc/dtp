@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.junit.After;
 import org.junit.Before;
@@ -307,6 +309,41 @@ public class TestGeometry {
 		assertEquals(0, geo.getRootNodes().size());
 		assertTrue(geo.getWalls().isEmpty());
 		assertTrue(geo.getGrounds().isEmpty());
+	}
+	
+	class MockObserver implements Observer {
+		public ModelChange changes = null;
+		
+		@Override
+		public void update(Observable arg0, Object arg1) {
+			assertNotNull(arg1);
+			changes = (ModelChange) arg1;
+		}
+	}
+	
+	@Test
+	public void test_dao_changes() throws SQLException {
+		GeometryDAO geo = new GeometryDAO(_db);
+		MockObserver mock = new MockObserver();
+		create_a_room(geo);
+		
+		geo.addObserver(mock);
+		geo.notifyObservers();
+		assertNotNull(mock.changes);
+		assertFalse(mock.changes.isEmpty());
+	}
+	
+	@Test
+	public void test_dao_no_changes() throws SQLException {
+		GeometryDAO geo = new GeometryDAO(_db);
+		MockObserver mock = new MockObserver();
+		Group room = create_a_room(geo);
+		
+		geo.notifyObservers();
+		assertNull(mock.changes);
+		geo.addObserver(mock);
+		geo.notifyObservers();
+		assertNull(mock.changes);
 	}
 }
 

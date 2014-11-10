@@ -25,7 +25,6 @@ public class Main {
 			public void run(){
 				try {
 					Project proj = createDemoProject();
-					proj.notifyObservers();
 					new GUI(proj);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -51,14 +50,15 @@ public class Main {
 		proj.config("canvas.height", "768");
 		
 		GeometryDAO geo = proj.getGeometryDAO();
-		Point a = new Point(0, 0, 0),
-			  b = new Point(3, 0, 0),
-			  c = new Point(7, 8, 0),
-			  d = new Point(0, 12, 0),
-			  e = new Point(-5, -1, 0);
+		Point a = new Point(0, 0, 1),
+			  b = new Point(3, 0, 1),
+			  c = new Point(7, 8, 1),
+			  d = new Point(0, 12, 1),
+			  e = new Point(-5, -1, 1);
 		
 		createRoom(geo, "Irregular room", a, b, c, d);
 		createRoom(geo, "Triangular room", a, e, d);
+		geo.notifyObservers();
 		return proj;
 	}
 	

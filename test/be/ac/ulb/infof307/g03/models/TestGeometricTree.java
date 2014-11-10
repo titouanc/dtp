@@ -73,17 +73,17 @@ public class TestGeometricTree {
 	 * @author Titouan Christophe
 	 */
 	class MockTreeModelListener implements TreeModelListener {
+		public int calls = 0;
 		public TreeModelEvent change = null, insert = null, remove = null, struct = null;
-		public void reset(){change = insert = remove = struct = null;}
+		public void reset(){change = insert = remove = struct = null; calls = 0;}
 		@Override
-		public void treeNodesChanged(TreeModelEvent arg0) {change = arg0;}
+		public void treeNodesChanged(TreeModelEvent arg0) {change = arg0; calls++;}
 		@Override
-		public void treeNodesInserted(TreeModelEvent arg0) {insert = arg0;}
+		public void treeNodesInserted(TreeModelEvent arg0) {insert = arg0; calls++;}
 		@Override
-		public void treeNodesRemoved(TreeModelEvent arg0) {remove = arg0;}
+		public void treeNodesRemoved(TreeModelEvent arg0) {remove = arg0; calls++;}
 		@Override
-		public void treeStructureChanged(TreeModelEvent arg0) {struct = arg0;}
-		
+		public void treeStructureChanged(TreeModelEvent arg0) {struct = arg0; calls++;}
 	}
 	
 	@Test
@@ -133,21 +133,28 @@ public class TestGeometricTree {
 	public void test_update() throws SQLException{
 		create_basic_project();
 		GeometricTree treemodel = new GeometricTree(_dao);
+		_dao.addObserver(treemodel);
+		
 		MockTreeModelListener mock = new MockTreeModelListener();
 		treemodel.addTreeModelListener(mock);
 		
 		// Simulate observable notifications, assert the listener get the right events
 		Group grp = (Group) _dao.getRootNodes().get(0);
-		treemodel.update(null, grp);
+		grp.setName("TestTest");
+		assertEquals(1, _dao.update(grp));
+		_dao.notifyObservers();
 		assertNotNull(mock.change);
 		
-		treemodel.update(null, null);
-		assertNotNull(mock.struct);
+		mock.reset();
+		_dao.delete(grp);
+		_dao.notifyObservers();
+		assertNotNull(mock.remove);
 		
 		// Detach the listener, it should not receive anything
 		mock.reset();
 		treemodel.removeTreeModelListener(mock);
 		treemodel.update(null, null);
+		_dao.notifyObservers();
 		assertNull(mock.struct);
 	}
 }
