@@ -146,12 +146,12 @@ public class GeometryDAO extends Observable {
 	private int deleteGroup(Group grp) throws SQLException{
 		Ground gnd = getGround(grp);
 		if (gnd != null)
-			_grounds.delete(gnd);
+			delete(gnd);
 		
 		Wall wall = getWall(grp);
 		if (wall != null)
-			_walls.delete(wall);
-		
+			delete(wall);
+			
 		for (Shape shape : getShapesForGroup(grp))
 			delete(shape);
 		return _groups.delete(grp);
