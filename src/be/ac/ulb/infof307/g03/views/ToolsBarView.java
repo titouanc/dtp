@@ -175,21 +175,30 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      * Those buttons are mutually exclusive
      */  
     private void _addButtonRotation() {
+    	
+    	//Stores the path for the assets
     	String dir = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
+    	
+    	//Gets the images
     	Icon _cursorImage = new ImageIcon(dir + "cursor.png");
     	Icon _grabImage = new ImageIcon(dir + "grab.png");
     	Icon _rotateImage = new ImageIcon(dir + "rotate.png");
     	
-
+    	//Creates the buttons
     	JToggleButton rotate = new JToggleButton(_rotateImage);
     	JToggleButton hand   = new JToggleButton(_grabImage);
     	JToggleButton cursor = new JToggleButton(_cursorImage);
 
+    	//Creates the button group (so that there's only one button "selected" at a time
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(rotate);
         buttonGroup.add(hand);
         buttonGroup.add(cursor);
         
+        //Set the cursor button as currently being used
+        cursor.setSelected(true);
+        
+        //Binds the buttons to an action
         rotate.setActionCommand(_rotate);
         rotate.setToolTipText("Rotate the screen");
         rotate.addActionListener(this);
@@ -202,9 +211,6 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         cursor.setToolTipText("Move screen");
         cursor.addActionListener(this);
         
-        
-        
-
         this.add(rotate);
         this.add(hand);
         this.add(cursor);
