@@ -4,21 +4,20 @@
 package be.ac.ulb.infof307.g03.views;
 
 /**
- * @author pierre,walter
+ * @author pierre,walter, Bruno
  * @brief GUI's toolbar View
  */
 
 
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
-import javax.swing.UIManager;
-
-import com.jme3.texture.Image;
 
 import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -33,28 +32,28 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
 	private ToolsBarController _controller;
 	
 	// buttons actions
-	static final private String _UNDO = "Undo";
-	static final private String _REDO = "Redo";
+	static final private String _UNDO 		= "Undo";
+	static final private String _REDO 		= "Redo";
 	
-	static final private String _LINE  = "Line";
-	static final private String _GROUP = "Group";
+	static final private String _LINE  		= "Line";
+	static final private String _GROUP 		= "Group";
 	
 	static final private String _FLOOR_UP   = "FloorUp";
 	static final private String _FLOOR_DOWN = "FloorDown";
 	
-	static final private String _2D = "2D";
-	static final private String _3D = "3D";
+	static final private String _2D 		= "2D";
+	static final private String _3D 		= "3D";
 	
-	static final private String _rotate  = "\u2941";	
-	static final private String _hand = "";  
-	static final private String _cursor=" ";
+	static final private String _rotate  	= "Rotate";	
+	static final private String _hand 		= "Grab";  
+	static final private String _cursor		= "Cursor";
 	
 	//private ImageIcon _cursorImage = new ImageIcon(getClass().getResource("cursor.png"));
 	//private ImageIcon _handImage =   new ImageIcon(getClass().getResource("hand.png"));
 
     /**
      * Constructor of the class ToolsBar.
-     * It add property to the bar: Buttons, not flotable, lay out
+     * It add property to the bar: Buttons, not floatable, lay out
      * @param newControler The view's controller
      */
     public ToolsBarView(ToolsBarController newControler) {
@@ -176,11 +175,15 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      * Those buttons are mutually exclusive
      */  
     private void _addButtonRotation() {
-    	  	
+    	String dir = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
+    	Icon _cursorImage = new ImageIcon(dir + "cursor.png");
+    	Icon _grabImage = new ImageIcon(dir + "grab.png");
+    	Icon _rotateImage = new ImageIcon(dir + "rotate.png");
+    	
 
-    	JToggleButton rotate = new JToggleButton(_rotate);
-    	JToggleButton hand   = new JToggleButton(_hand);
-    	JToggleButton cursor = new JToggleButton(_cursor);
+    	JToggleButton rotate = new JToggleButton(_rotateImage);
+    	JToggleButton hand   = new JToggleButton(_grabImage);
+    	JToggleButton cursor = new JToggleButton(_cursorImage);
 
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(rotate);
@@ -199,8 +202,8 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         cursor.setToolTipText("Move screen");
         cursor.addActionListener(this);
         
-        //cursor.setIcon(_cursorImage);
-        //hand.setIcon(_handImage);
+        
+        
 
         this.add(rotate);
         this.add(hand);
