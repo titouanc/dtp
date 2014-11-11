@@ -61,4 +61,9 @@ public class Group extends Shape {
 	public Boolean isLeaf(){
 		return false;
 	}
+	
+	@Override
+	public String getUID() {
+		return String.format("grp-%d", getId());
+	}
 }

@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.junit.After;
 import org.junit.Before;
@@ -130,6 +132,7 @@ public class TestGeometry {
 		assertEquals(1, geo.create(wall));
 		assertTrue(wall.isVisible());
 		assertEquals(1.0, wall.getHeight(), 0);
+		assertEquals("wal-1", wall.getUID());
 		
 		wall.setHeight(42.27);
 		wall.hide();
@@ -146,6 +149,11 @@ public class TestGeometry {
 		assertEquals(1, wall.getId());
 		assertEquals(1, wall.getGroup().getId());
 		assertEquals(1, geo.getWalls().size());
+		
+		wall.select();
+		assertTrue(wall.isSelected());
+		wall.deselect();
+		assertFalse(wall.isSelected());
 	}
 	
 	@Test
@@ -157,6 +165,12 @@ public class TestGeometry {
 		assertEquals(1, ground.getId());
 		assertEquals(1, ground.getGroup().getId());
 		assertEquals(1, geo.getGrounds().size());
+		
+		assertFalse(ground.isSelected());
+		ground.toggleSelect();
+		assertTrue(ground.isSelected());
+		ground.toggleSelect();
+		assertFalse(ground.isSelected());
 	}
 	
 	/**
@@ -249,6 +263,137 @@ public class TestGeometry {
 		assertEquals(1, g1.getId());
 		assertEquals(2, g2.getId());
 		assertEquals("<>", g1.toString());
+	}
+	
+	@Test
+	public void test_uids() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Group room = create_a_room(geo);
+		
+		Point p = (Point) geo.getByUID("pnt-1");
+		assertNotNull(p);
+		assertTrue(p.equals(new Point()));
+		
+		Line l = (Line) geo.getByUID("lin-1");
+		assertNotNull(l);
+		assertTrue(p.equals(l.getPoints().get(0)));
+		
+		Group g = (Group) geo.getByUID("grp-1");
+		assertNotNull(g);
+		assertTrue(g.equals(room));
+		
+		Wall w = (Wall) geo.getByUID("wal-1");
+		assertNotNull(w);
+		assertTrue(room.equals(w.getGroup()));
+		
+		Ground gnd = (Ground) geo.getByUID("gnd-1");
+		assertNotNull(gnd);
+		assertTrue(room.equals(gnd.getGroup()));
+		
+		Geometric nil = geo.getByUID("naim");
+		assertNull(nil);
+		
+		nil = geo.getByUID("gnd-1000");
+		assertNull(nil);
+		
+		nil = geo.getByUID("zzx-32");
+		assertNull(nil);
+	}
+	
+	@Test
+	public void test_delete_group() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Group room = create_a_room(geo);
+		geo.delete(room);
+		
+		assertEquals(0, geo.getRootNodes().size());
+		assertTrue(geo.getWalls().isEmpty());
+		assertTrue(geo.getGrounds().isEmpty());
+	}
+	
+	/**
+	 * Mock class to test an Observable object. 
+	 * Simply store the last argument given to the update() method,
+	 * and count the number of calls made
+	 * @author Titouan Christophe
+	 * @param <Type> Expected type for update() argument
+	 */
+	class MockObserver<Type> implements Observer {
+		public Type changes = null;
+		private Integer _nCalls = 0;
+		
+		@Override
+		public void update(Observable arg0, Object arg1) {
+			changes = (Type) arg1;
+			_nCalls++;
+		}
+		
+		public void reset(){
+			changes = null;
+			_nCalls = 0;
+		}
+		
+		public Boolean hasBeenCalled(){
+			return _nCalls > 0;
+		}
+		
+		public Integer getCallNumber(){
+			return _nCalls;
+		}
+	}
+	
+	@Test
+	public void test_dao_no_changes() throws SQLException {
+		GeometryDAO geo = new GeometryDAO(_db);
+		MockObserver<List<Change>> mock = new MockObserver<List<Change>>();
+		create_a_room(geo);
+		
+		geo.addObserver(mock);
+		geo.notifyObservers();
+		assertNotNull(mock.changes);
+		assertFalse(mock.changes.isEmpty());
+	}
+	
+	@Test
+	public void test_dao_changes() throws SQLException {
+		GeometryDAO geo = new GeometryDAO(_db);
+		MockObserver<List<Change>> mock = new MockObserver<List<Change>>();
+		Group room = create_a_room(geo);
+		geo.notifyObservers();
+		
+		geo.addObserver(mock);
+		assertFalse(mock.hasBeenCalled());
+		
+		geo.delete(room);
+		geo.notifyObservers();
+		assertNotNull(mock.changes);
+		
+		Change firstChange = mock.changes.get(0);
+		assertFalse(firstChange.isCreation());
+		assertFalse(firstChange.isUpdate());
+		assertTrue(firstChange.isDeletion());
+		
+		mock.reset();
+		
+		geo.create(new Group("Hello"));
+		geo.notifyObservers();
+		assertNotNull(mock.changes);
+		assertEquals(1, mock.changes.size());
+		assertTrue(mock.changes.get(0).isCreation());
+		assertEquals("Hello", ((Group) mock.changes.get(0).getItem()).getName());
+	}
+	
+	@Test
+	public void test_dao_no_changes_before_register() throws SQLException {
+		GeometryDAO geo = new GeometryDAO(_db);
+		MockObserver<List<Change>> mock = new MockObserver<List<Change>>();
+		create_a_room(geo);
+		
+		geo.notifyObservers();
+		assertNull(mock.changes);
+		geo.addObserver(mock);
+		geo.notifyObservers();
+		assertNull(mock.changes);
 	}
 }
 

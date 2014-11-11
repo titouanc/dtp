@@ -4,15 +4,19 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.io.IOException;
 import java.util.Vector;
 
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.input.InputManager;
+import com.jme3.input.MouseInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
@@ -21,22 +25,20 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
-import com.jme3.scene.Node;
-import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
-import com.jme3.util.BufferUtils;
-import com.jme3.util.SkyFactory;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
  * @author fhennecker, julianschembri, brochape, Titouan
  */
-public class WorldView extends SimpleApplication implements Observer {	
+public class WorldView extends SimpleApplication implements Observer, ActionListener {	
 	
 	private GeometryDAO _model = null;
 	private WorldController _controller; 
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
+	
+	static private final String _SELECTOBJECT 	= "SelectObject";
 
 	/**
 	 * Constructor of WorldView
@@ -59,23 +61,30 @@ public class WorldView extends SimpleApplication implements Observer {
 		_controller.getCameraModeController().setCamera(cam);
 		_controller.getCameraModeController().setInputManager(inputManager);
 		_controller.getCameraModeController().setToRemove(this);
-
-		//Generates the grid
-		attachGrid();
-		
-		//Generate the axes
-		attachAxes();
 		
 		//Change the default background
 		viewPort.setBackgroundColor(ColorRGBA.White);
 		
 		//render the scene
 		_makeScene();
+
+		// listen for clicks on the canvas
+		setInput();
 		
 		// Notify our controller that initialisation is done
 		_controller.onViewCreated();
+		this.setPauseOnLostFocus(false);
 	}
-
+	
+	public InputManager getInputManager(){
+		return inputManager;
+	}
+	
+	private void setInput(){
+		inputManager.addMapping(_SELECTOBJECT, new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+		inputManager.addListener(this, _SELECTOBJECT);
+	}
+	
 	/**
 	 * This methods created the grid and adds it to the background
 	 */
@@ -117,21 +126,17 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * Redraw the 3D scene (first shot, still to be optimized)
 	 */
 	private void _makeScene(){
-
+		//Generates the grid
+		attachGrid();
+		
+		//Generate the axes
+		_attachAxes();
+		
 		try {
-			for (Wall wall : _model.getWalls()){
-				Mesh mesh = _model.getWallAsMesh(wall);
-				Geometry node = new Geometry(wall.toString(), mesh);
-				node.setMaterial(_makeBasicMaterial(ColorRGBA.Gray));
-				rootNode.attachChild(node);
-				System.out.println("Rendering " + wall.toString());
-			}
-			for (Ground gnd : _model.getGrounds()){
-				Mesh mesh = _model.getGroundAsMesh(gnd);
-				Geometry node = new Geometry(gnd.toString(), mesh);
-				node.setMaterial(_makeBasicMaterial(ColorRGBA.LightGray));
-				rootNode.attachChild(node);
-			}
+			for (Wall wall : _model.getWalls())
+				_drawWall(wall);
+			for (Ground gnd : _model.getGrounds())
+				_drawGround(gnd);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -142,15 +147,42 @@ public class WorldView extends SimpleApplication implements Observer {
 	/**
 	 * Method used to generate the XYZ Axes
 	 */
-	private void attachAxes(){
+	private void _attachAxes(){
 		Vector3f origin = new Vector3f(0,0,0);
 		Vector3f xAxis = new Vector3f(50,0,0);
 		Vector3f yAxis = new Vector3f(0,50,0);
 		Vector3f zAxis = new Vector3f(0,0,50);
 		
-		attachAxis(origin, xAxis,ColorRGBA.Red);
-		attachAxis(origin, yAxis,ColorRGBA.Green);
-		attachAxis(origin, zAxis,ColorRGBA.Blue);
+		_attachAxis(origin, xAxis,ColorRGBA.Red);
+		_attachAxis(origin, yAxis,ColorRGBA.Green);
+		_attachAxis(origin, zAxis,ColorRGBA.Blue);
+	}
+	
+	private void _drawWall(Wall wall){
+		try {
+			Mesh mesh = _model.getWallAsMesh(wall);
+			Geometry node = new Geometry(wall.getUID(), mesh);
+			node.setMaterial(_makeBasicMaterial(_getColor(wall)));
+			rootNode.attachChild(node);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void _drawGround(Ground gnd){
+		try {
+			Mesh mesh = _model.getGroundAsMesh(gnd);
+			Geometry node = new Geometry(gnd.getUID(), mesh);
+			node.setMaterial(_makeBasicMaterial(_getColor(gnd)));
+			rootNode.attachChild(node);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AssertionError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -159,7 +191,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * @param end End of the vector
 	 * @param color Color of the vector
 	 */
-	private void attachAxis(Vector3f start, Vector3f end,ColorRGBA color){		
+	private void _attachAxis(Vector3f start, Vector3f end,ColorRGBA color){		
 		Line axis = new Line(start,end);
 		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		Geometry axisGeo = new Geometry("Axis", axis);
@@ -168,17 +200,49 @@ public class WorldView extends SimpleApplication implements Observer {
 		mat.setColor("Color", color);
 		rootNode.attachChild(axisGeo);
 	}
-		
-
+	
+	private ColorRGBA _getColor(Grouped grouped){
+		return grouped.isSelected() ? 
+				ColorRGBA.Green : 
+				(grouped instanceof Wall) ? 
+						ColorRGBA.Gray : 
+						ColorRGBA.LightGray;
+	}
 	
 	/**
 	 * Called when the model fires a change notification
 	 */
 	@Override
-	public void update(Observable arg0, Object arg1) {
-		_makeScene();
+	public void update(Observable arg0, Object msg) {
+		if (msg == null)
+			return;
+		for (Change change : (List<Change>) msg){
+			System.out.println("[3D View] " + change.toString());
+			if (! ( change.getItem() instanceof Grouped))
+				continue;
+			Grouped grouped = (Grouped) change.getItem();
+			
+			if (change.isDeletion())
+				rootNode.detachChildNamed(grouped.getUID());
+			else if (change.isUpdate()){
+				Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
+				Material mat = toUpdate.getMaterial();
+				if (mat != null)
+					mat.setColor("Color", _getColor(grouped));
+			} else if (change.isCreation()){
+				if (grouped instanceof Wall)
+					_drawWall((Wall) grouped);
+				else if (grouped instanceof Ground)
+					_drawGround((Ground) grouped);
+			}
+		}
 	}
 
-	
+	@Override
+	public void onAction(String arg0, boolean arg1, float arg2) {
+		if (arg0.equals(_SELECTOBJECT) && arg1){
+            _controller.selectObject(inputManager.getCursorPosition());
+        }	
+	}
 
 }

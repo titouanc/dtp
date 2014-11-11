@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.models;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.j256.ormlite.field.DatabaseField;
 
 /**
@@ -77,5 +78,10 @@ public class Line extends Shape {
 	@Override
 	public Boolean isLeaf(){
 		return true;
+	}
+	
+	@Override
+	public String getUID() {
+		return String.format("lin-%d", getId());
 	}
 }

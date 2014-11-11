@@ -141,4 +141,13 @@ public class Point implements Geometric {
 	public Boolean isLeaf() {
 		return true;
 	}
+	
+	@Override
+	public String getUID() {
+		return String.format("pnt-%d", getId());
+	}
+	
+	public Group getGroup(){
+		return null;
+	}
 }

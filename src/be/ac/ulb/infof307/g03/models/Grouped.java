@@ -22,6 +22,9 @@ public abstract class Grouped implements Geometric {
 	@DatabaseField
 	private Boolean _visible = true;
 	
+	@DatabaseField
+	private Boolean _selected = false;
+	
 	public Grouped() {
 		_group = new Group();
 	}
@@ -67,6 +70,28 @@ public abstract class Grouped implements Geometric {
 	}
 	
 	/**
+	 * Select object
+	 */
+	public void select(){
+		_selected = true;
+	}
+	
+	/**
+	 * Deselect object
+	 */
+	public void deselect(){
+		_selected = false;
+	}
+	
+	/**
+	 * Selects object if it is deselected
+	 * Deselects object if it is selected
+	 */
+	public void toggleSelect(){
+		_selected = !_selected;
+	}
+	
+	/**
 	 * Status of visibility
 	 * @return True if the Shape is visible
 	 */
@@ -74,10 +99,23 @@ public abstract class Grouped implements Geometric {
 		return _visible;
 	}
 	
-	public abstract String toString();
+	/**
+	 * Is the object selected?
+	 * @return True if the Shape is selected
+	 */
+	public Boolean isSelected(){
+		return _selected;
+	}
+	
+	public final String toString(){
+		String suffix = isSelected() ? " [S]" : "";
+		return innerToString() + suffix;
+	}
+	
+	protected abstract String innerToString();
 
 	@Override
 	public Boolean isLeaf(){
-		return false;
+		return true;
 	}
 }
