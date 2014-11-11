@@ -2,6 +2,7 @@ package be.ac.ulb.infof307.g03.controllers;
 
 
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.input.InputManager;
 import com.jme3.renderer.Camera;
@@ -86,6 +87,10 @@ public class CameraModeController implements Observer {
 			}
 			
 		//}
+	}
+	
+	public void setToRemove(WorldView wv) {
+		_cam2D.setWv(wv);
 	}
 	
 }

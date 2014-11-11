@@ -58,6 +58,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		flyCam.setEnabled(false);
 		_controller.getCameraModeController().setCamera(cam);
 		_controller.getCameraModeController().setInputManager(inputManager);
+		_controller.getCameraModeController().setToRemove(this);
 
 		//Generates the grid
 		attachGrid();
