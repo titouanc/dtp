@@ -15,6 +15,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
@@ -397,8 +398,35 @@ public class GeometryDAO extends Observable {
 	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
 	  	mesh.updateBound();
 	  	
+	  	for (Vector3f v : makeBox(new Vector3f(0,0,0), new Vector3f(5,0,0), 10, 2)){
+	  		System.out.println(v+"---------------------------------------------------------------------");
+	  	}
+	  	
 	  	return mesh;
 	}
+	
+	private Vector3f[] makeBox(Vector3f a, Vector3f b, float height, float width){
+		Vector3f[] box = new Vector3f[8];
+		// 1) We need two extruder vectors. Each one goes from one point of the segment to 
+		// its respective corner of the box. We just have to take the negative of these at
+		// the other point of the segment
+		// ---------------------------------------------
+		// |\ <-- extruder1			^	 -extruder2   /|
+		// | \						|(width)	     / |
+		// |  x-------- segment ----|---------------y  |
+		// | /						|			     \ |
+		// |/ <--extruder2			v    -extruder1->Ê\|
+		// ---------------------------------------------
+		Vector2f segment = new Vector2f(b.x-a.x, b.y-a.y);
+		float c = (float) Math.cos((double) segment.angleBetween(new Vector2f(1,0)));
+		float s = (float) Math.sin((double) segment.angleBetween(new Vector2f(0,1)));
+		box[0] = new Vector3f(a.x-c*width/2, a.y+s*width/2, 0);
+		box[1] = new Vector3f(b.x+s*width/2, b.y+c*width/2, 0);
+		box[2] = new Vector3f(b.x+c*width/2, b.y-s*width/2, 0);
+		box[3] = new Vector3f(a.x-s*width/2, a.y-c*width/2, 0);
+		return box;
+	}
+
 	
 	/**
 	 * Transform a Ground into a Mesh
