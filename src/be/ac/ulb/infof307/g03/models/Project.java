@@ -85,7 +85,7 @@ public class Project extends Observable {
 			_config.create(entry);
 		}
 		setChanged();
-		notifyObservers();
+		notifyObservers(entry);
 		return entry.getValue();
 	}
 	
