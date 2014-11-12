@@ -151,6 +151,8 @@ public class TestGeometry {
 		assertTrue(wall.isSelected());
 		wall.deselect();
 		assertFalse(wall.isSelected());
+		
+		//TODO test wall width
 	}
 	
 	@Test
