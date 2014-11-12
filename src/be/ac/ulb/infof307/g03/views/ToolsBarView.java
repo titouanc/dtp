@@ -48,8 +48,8 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
 	static final private String _HAND 		= "Grab";  
 	static final private String _CURSOR		= "Cursor";
 	
-	private ImageIcon _cursorImage = new ImageIcon(getClass().getResource("../asset/cursor.png"));
-	private ImageIcon _handImage =   new ImageIcon(getClass().getResource("../asset/grab.png"));
+	private ImageIcon _cursorImage = new ImageIcon(getClass().getResource("/be/ac/ulb/infof307/g03/asset/cursor.png"));
+	private ImageIcon _handImage =   new ImageIcon(getClass().getResource("/be/ac/ulb/infof307/g03/asset/grab.png"));
 
     /**
      * Constructor of the class ToolsBar.
