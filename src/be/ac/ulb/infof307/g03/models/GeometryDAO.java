@@ -407,23 +407,16 @@ public class GeometryDAO extends Observable {
 	
 	private Vector3f[] makeBox(Vector3f a, Vector3f b, float height, float width){
 		Vector3f[] box = new Vector3f[8];
-		// 1) We need two extruder vectors. Each one goes from one point of the segment to 
-		// its respective corner of the box. We just have to take the negative of these at
-		// the other point of the segment
-		// ---------------------------------------------
-		// |\ <-- extruder1			^	 -extruder2   /|
-		// | \						|(width)	     / |
-		// |  x-------- segment ----|---------------y  |
-		// | /						|			     \ |
-		// |/ <--extruder2			v    -extruder1->Ê\|
-		// ---------------------------------------------
 		Vector2f segment = new Vector2f(b.x-a.x, b.y-a.y);
-		float c = (float) Math.cos((double) segment.angleBetween(new Vector2f(1,0)));
-		float s = (float) Math.sin((double) segment.angleBetween(new Vector2f(0,1)));
-		box[0] = new Vector3f(a.x-c*width/2, a.y+s*width/2, 0);
-		box[1] = new Vector3f(b.x+s*width/2, b.y+c*width/2, 0);
-		box[2] = new Vector3f(b.x+c*width/2, b.y-s*width/2, 0);
-		box[3] = new Vector3f(a.x-s*width/2, a.y-c*width/2, 0);
+		float c = (float) Math.cos((double) segment.angleBetween(new Vector2f(0,0)));
+		System.out.println(segment.angleBetween(new Vector2f(1,0)));
+		System.out.println(c);
+		System.out.println(segment.x);
+		System.out.println(segment.y);
+		box[0] = new Vector3f(a.x-c*width/2, a.y+c*width/2, 0);
+		box[1] = new Vector3f(b.x+c*width/2, b.y+c*width/2, 0);
+		box[2] = new Vector3f(b.x+c*width/2, b.y-c*width/2, 0);
+		box[3] = new Vector3f(a.x-c*width/2, a.y-c*width/2, 0);
 		return box;
 	}
 
