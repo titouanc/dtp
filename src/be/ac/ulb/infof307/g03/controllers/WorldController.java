@@ -28,7 +28,7 @@ public class WorldController {
     private WorldView _view;
     private Project _project;
     private boolean _isViewCreated = false;
-    CameraModeController _cameraModeController = new CameraModeController();
+    CameraModeController _cameraModeController = null;
     
     /**
      * Constructor of WorldController.
@@ -40,7 +40,7 @@ public class WorldController {
         _view = new WorldView(this, project.getGeometryDAO());
         _view.setSettings(settings);
         _view.createCanvas();
-        
+        _cameraModeController = new CameraModeController(project);
         _project = project;
     }
     

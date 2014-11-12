@@ -16,20 +16,21 @@ import com.jme3.renderer.Camera;
  */
 public class CameraModeController implements Observer {
 	
-	public static final boolean VIEW3D = false;
-	public static final boolean VIEW2D = true;
+	public static final String VIEW3D = "3D";
+	public static final String VIEW2D = "2D";
 	
-	private boolean _currentMode = VIEW2D;
+	private String _currentMode = VIEW2D;
 	private Camera2D _cam2D = new Camera2D();
 	private Camera3D _cam3D = new Camera3D();
 	
-	CameraModeController(){
+	CameraModeController(Project proj){
 		_cam2D.setEnabled(true);
 		_cam3D.setEnabled(false);
+		proj.addObserver(this);
 	}
 	
 	public void changeMode(String mode){
-		System.out.println("[CameraController] Change mode to " + mode);
+		System.out.println("[CameraController] Change view mode to " + mode);
 		if (mode != _currentMode){
 			if (mode.equals(VIEW3D)){
 				_cam2D.setEnabled(false);
@@ -60,6 +61,7 @@ public class CameraModeController implements Observer {
 			if (param.getName().equals("world.mode"))
 				changeMode(param.getValue());
 			else if (param.getName().equals("mouse.mode")){
+				System.out.println("[CameraController] Change mouse mode to " + param.getValue());
 				_cam2D.setMouseMode(param.getValue());
 				_cam3D.setMouseMode(param.getValue());
 			}

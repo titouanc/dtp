@@ -88,7 +88,7 @@ public class ToolsBarController implements Observer {
     public void on2d(){
     	System.out.println("[DEBUG] User clicked on : go2D");
     	try {
-    		_project.config("world.mode", "2D");
+    		_project.config("world.mode", CameraModeController.VIEW2D);
     	} catch (SQLException e) {
     		e.printStackTrace();
     	}
@@ -102,7 +102,7 @@ public class ToolsBarController implements Observer {
     public void on3d() {
     	System.out.println("[DEBUG] User clicked on : go3D");
     	try {
-    		_project.config("world.mode", "3D");
+    		_project.config("world.mode", CameraModeController.VIEW3D);
     	} catch (SQLException e) {
     		e.printStackTrace();
     	}
