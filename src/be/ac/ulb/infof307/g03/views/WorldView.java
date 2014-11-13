@@ -175,16 +175,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		_attachAxes();
 		
 		try {
-			for (Wall wall : _model.getWalls()){
-				rootNode.attachChild(getWallAsNode(wall));
-				System.out.println("Rendering " + wall.toString());
-			}
-			for (Ground gnd : _model.getGrounds()){
-				Mesh mesh = _model.getGroundAsMesh(gnd);
-				Geometry node = new Geometry(gnd.getUID(), mesh);
-				node.setMaterial(_makeBasicMaterial(gnd.isSelected() ? ColorRGBA.Green : ColorRGBA.LightGray));
-				rootNode.attachChild(node);
-			}
 			for (Wall wall : _model.getWalls())
 				_drawWall(wall);
 			for (Ground gnd : _model.getGrounds())
@@ -212,10 +202,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	
 	private void _drawWall(Wall wall){
 		try {
-			Mesh mesh = _model.getWallAsMesh(wall);
-			Geometry node = new Geometry(wall.getUID(), mesh);
-			node.setMaterial(_makeBasicMaterial(_getColor(wall)));
-			rootNode.attachChild(node);
+			rootNode.attachChild(getWallAsNode(wall));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -277,10 +264,18 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			if (change.isDeletion())
 				rootNode.detachChildNamed(grouped.getUID());
 			else if (change.isUpdate()){
-				Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
-				Material mat = toUpdate.getMaterial();
-				if (mat != null)
-					mat.setColor("Color", _getColor(grouped));
+				if (rootNode.getChild(grouped.getUID()) instanceof Geometry){
+					Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
+					Material mat = toUpdate.getMaterial();
+					if (mat != null)
+						mat.setColor("Color", _getColor(grouped));
+				}
+				else if (rootNode.getChild(grouped.getUID()) instanceof Node){
+					// Walls are Nodes attached to the rootNode
+					Node toUpdate = (Node) rootNode.getChild(grouped.getUID());
+					toUpdate.detachAllChildren();
+					_drawWall((Wall) grouped);
+				}
 			} else if (change.isCreation()){
 				if (grouped instanceof Wall)
 					_drawWall((Wall) grouped);
