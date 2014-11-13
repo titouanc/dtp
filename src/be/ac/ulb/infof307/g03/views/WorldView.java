@@ -4,6 +4,7 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.io.IOException;
@@ -22,12 +23,14 @@ import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.debug.Grid;
+import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
 import com.jme3.util.BufferUtils;
 import com.jme3.util.SkyFactory;
@@ -129,6 +132,41 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		res.setColor("Color", color);
 		return res;
 	}
+	
+	/**
+	 * Transform a Wall object into a Node containing Boxes (3D object usable in jMonkey)
+	 * @param wall The wall to transform
+	 * @return The Node
+	 * @throws SQLException
+	 */
+	public Node getWallAsNode(Wall wall) throws SQLException{
+		Node res = new Node(wall.getUID());
+		List<Point> allPoints = _model.getPointsForShape(wall.getGroup());
+		
+		for (int i=0; i<allPoints.size()-1; i++){
+			// 1) Build a box the right length, width and height
+			Vector3f a = allPoints.get(i).toVector3f();
+			Vector3f b = allPoints.get(i+1).toVector3f();
+			Vector2f segment = new Vector2f(b.x-a.x, b.y-a.y);
+			Box box = new Box(	segment.length(), 
+								(float) wall.getWidth(), 
+								(float) wall.getHeight());
+			Geometry wallGeometry = new Geometry(wall.getUID()+Integer.toString(i), box);
+			wallGeometry.setMaterial(_makeBasicMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
+			
+			// 2) Place the wall at the right place
+			wallGeometry.setLocalTranslation(a);
+			 
+			// 3) Rotate the wall at the right orientation
+			Quaternion rot = new Quaternion();
+			rot.fromAngleAxis(segment.angleBetween(new Vector2f(1,0)), new Vector3f(0,0,1));
+			wallGeometry.setLocalRotation(rot);
+			
+			// 4) Attach it to the node
+			res.attachChild(wallGeometry);
+		}
+		return res;
+	}
 
 	/**
 	 * Redraw the 3D scene (first shot, still to be optimized)
@@ -136,10 +174,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	private void _makeScene(){
 		try {
 			for (Wall wall : _model.getWalls()){
-				Mesh mesh = _model.getWallAsMesh(wall);
-				Geometry node = new Geometry(wall.getUID(), mesh);
-				node.setMaterial(_makeBasicMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
-				rootNode.attachChild(node);
+				rootNode.attachChild(getWallAsNode(wall));
 				System.out.println("Rendering " + wall.toString());
 			}
 			for (Ground gnd : _model.getGrounds()){
