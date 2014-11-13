@@ -47,8 +47,6 @@ public class Wall extends Grouped {
 		return _width;
 	}
 	
-	public String toString(){
-	@Override
 	protected String innerToString(){
 		return "Wall" + getGroup().toString();
 	}
