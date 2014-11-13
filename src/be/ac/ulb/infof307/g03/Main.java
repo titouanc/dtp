@@ -2,23 +2,30 @@ package be.ac.ulb.infof307.g03;
 
 import java.sql.SQLException;
 
+import com.j256.ormlite.logger.LocalLog;
+
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.*;
 
 public class Main {
 
 	/**
-	 * @brief Main entry point of the program
+	 * Main entry point of the program
+	 * @param args Command line parameters
 	 * @see http://hub.jmonkeyengine.org/wiki/doku.php/jme3:advanced:swing_canvas
 	 */
 	public static void main(String[] args) {
-		// Call GUI
+		// Mac OS X specific configuration
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
+		System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "info");
+		
+		// Enqueue a new GUI in main dispatcher
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){
 				try {
-					new GUI(createDemoProject());
+					Project proj = createDemoProject();
+					new GUI(proj);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -29,7 +36,9 @@ public class Main {
 	}
 	
 	/**
-	 * Create a basic irregular 4-sided polygon in a demo project (not saved on disk)
+	 * Create a basic irregular 4-sided polygon and a triangle,
+	 * build a wall and a ground on them,
+	 * in a demo project (not saved on disk)
 	 * @return The created project
 	 * @throws SQLException
 	 */
@@ -41,14 +50,15 @@ public class Main {
 		proj.config("canvas.height", "768");
 		
 		GeometryDAO geo = proj.getGeometryDAO();
-		Point a = new Point(0, 0, 0),
-			  b = new Point(3, 0, 0),
-			  c = new Point(7, 8, 0),
-			  d = new Point(0, 12, 0),
-			  e = new Point(-5, -1, 0);
+		Point a = new Point(0, 0, 1),
+			  b = new Point(3, 0, 1),
+			  c = new Point(7, 8, 1),
+			  d = new Point(0, 12, 1),
+			  e = new Point(-5, -1, 1);
 		
 		createRoom(geo, "Irregular room", a, b, c, d);
 		createRoom(geo, "Triangular room", a, e, d);
+		geo.notifyObservers();
 		return proj;
 	}
 	

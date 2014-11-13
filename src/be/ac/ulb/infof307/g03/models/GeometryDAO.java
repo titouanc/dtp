@@ -36,6 +36,7 @@ public class GeometryDAO extends Observable {
 	private Dao<Wall, Integer> _walls = null;
 	private Dao<Ground, Integer> _grounds = null;
 	private Dao<Point, Integer> _points = null;
+	private List<Change> _changes = null;
 	
 	/**
 	 * Migrate all needed tables to a database
@@ -61,6 +62,7 @@ public class GeometryDAO extends Observable {
 		_grounds = DaoManager.createDao(database, Ground.class);
 		_walls = DaoManager.createDao(database, Wall.class);
 		_points = DaoManager.createDao(database, Point.class);
+		_changes = new LinkedList<Change>();
 	}
 	
 	/**
@@ -91,8 +93,10 @@ public class GeometryDAO extends Observable {
 			res = _grounds.create((Ground) object);
 		else if (object.getClass() == Wall.class)
 			res = _walls.create((Wall) object);
-		if (res != 0)
+		if (res != 0){
 			setChanged();
+			_changes.add(Change.create(object));
+		}
 		return res;
 	}
 	
@@ -114,8 +118,6 @@ public class GeometryDAO extends Observable {
 			res = _grounds.refresh((Ground) object);
 		else if (object.getClass() == Wall.class)
 			res = _walls.refresh((Wall) object);
-		if (res != 0)
-			setChanged();
 		return res;
 	}
 	
@@ -137,9 +139,25 @@ public class GeometryDAO extends Observable {
 			res = _grounds.update((Ground) object);
 		else if (object.getClass() == Wall.class)
 			res = _walls.update((Wall) object);
-		if (res != 0)
+		if (res != 0){
 			setChanged();
+			_changes.add(Change.update(object));
+		}
 		return res;
+	}
+	
+	private int deleteGroup(Group grp) throws SQLException{
+		Ground gnd = getGround(grp);
+		if (gnd != null)
+			delete(gnd);
+		
+		Wall wall = getWall(grp);
+		if (wall != null)
+			delete(wall);
+			
+		for (Shape shape : getShapesForGroup(grp))
+			delete(shape);
+		return _groups.delete(grp);
 	}
 	
 	/**
@@ -155,16 +173,23 @@ public class GeometryDAO extends Observable {
 		else if (object.getClass() == Line.class)
 			res = _lines.delete((Line) object);
 		else if (object.getClass() == Group.class)
-			res = _groups.delete((Group) object);
+			res = deleteGroup((Group) object);
 		else if (object.getClass() == Ground.class)
 			res = _grounds.delete((Ground) object);
 		else if (object.getClass() == Wall.class)
 			res = _walls.delete((Wall) object);
-		if (res != 0)
+		if (res != 0){
 			setChanged();
+			_changes.add(Change.delete(object));
+		}
 		return res;
 	}
 	
+	/**
+	 * Get a Geometric object from database
+	 * @param uid Unique object id
+	 * @return A Geometric object, or null if not found
+	 */
 	public Geometric getByUID(String uid){
 		String[] parts = uid.split("-");
 		Geometric res = null;
@@ -232,6 +257,18 @@ public class GeometryDAO extends Observable {
 	}
 	
 	/**
+	 * Get a Ground object associated with a Group from database
+	 * @param group The associated group
+	 * @return A Ground object, or null
+	 * @throws SQLException
+	 */
+	public Ground getGround(Group group) throws SQLException {
+		return _grounds.queryForFirst(
+			_grounds.queryBuilder().where().eq("_group_id", group.getId()).prepare()
+		);
+	}
+	
+	/**
 	 * Get a Wall object from the database
 	 * @param wall_id The Wall identifier
 	 * @return a Wall object
@@ -239,6 +276,18 @@ public class GeometryDAO extends Observable {
 	 */
 	public Wall getWall(int wall_id) throws SQLException{
 		return _walls.queryForId(wall_id);
+	}
+	
+	/**
+	 * Get a Wall object associated with a Group from database
+	 * @param group The associated group
+	 * @return A Wall object, or null
+	 * @throws SQLException
+	 */
+	public Wall getWall(Group group) throws SQLException {
+		return _walls.queryForFirst(
+			_walls.queryBuilder().where().eq("_group_id", group.getId()).prepare()
+		);
 	}
 	
 	/**
@@ -353,7 +402,18 @@ public class GeometryDAO extends Observable {
 		res.addAll(_groups.query(groupQ));
 		return res;
 	}
-
+	
+	@Override
+	public void notifyObservers(){
+		List<Change> changes = _changes;
+		_changes = new LinkedList<Change>();
+		super.notifyObservers(changes);
+	}
+	
+	@Override
+	public void notifyObservers(Object arg){
+		notifyObservers();
+	}
 	
 	/**
 	 * Transform a Ground into a Mesh

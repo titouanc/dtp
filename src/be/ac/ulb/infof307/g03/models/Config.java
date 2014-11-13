@@ -35,6 +35,13 @@ public class Config {
 	}
 	
 	/**
+	 * @return The name of the configuration object
+	 */
+	public String getName(){
+		return _key;
+	}
+	
+	/**
 	 * @return The value of the configuration object
 	 */
 	public String getValue(){

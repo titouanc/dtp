@@ -146,4 +146,8 @@ public class Point implements Geometric {
 	public String getUID() {
 		return String.format("pnt-%d", getId());
 	}
+	
+	public Group getGroup(){
+		return null;
+	}
 }

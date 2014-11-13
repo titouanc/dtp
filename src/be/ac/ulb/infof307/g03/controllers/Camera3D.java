@@ -26,6 +26,11 @@ public class Camera3D implements AnalogListener, ActionListener {
 	private boolean _loop = false;
 	private boolean _enabled = true;
 	private InputManager _inputManager;
+	private String _mouseMode;
+	
+    static private final String _MODE_DRAGROTATE = "dragRotate";
+    static private final String _MODE_DRAGSELECT = "dragSelect";
+    static private final String _MODE_DRAGMOVE = "dragMove";
 	
 	static private final String _STRAFELEFT 	= "CAM3D_StrafeLeft";
 	static private final String _STRAFERIGHT	= "CAM3D_StrafeRight";
@@ -36,6 +41,7 @@ public class Camera3D implements AnalogListener, ActionListener {
 	static private final String _DOWN			= "CAM3D_Down";
 	static private final String _LEFT			= "CAM3D_Left";
 	static private final String _RIGHT			= "CAM3D_Right";
+	
 	// !!! <temporary> !!!
 	static private final String _LOOP			= "CAM3D_Loop";
 	// !!! </temporary> !!!
@@ -61,11 +67,22 @@ public class Camera3D implements AnalogListener, ActionListener {
 		_enabled = enable;
 	}
 
-	
+	/**
+	 * Sets a camera
+	 * @param cam
+	 */
 	public void setCam(Camera cam) {
 		_cam = cam;
 	}
-
+	
+	public void setMouseMode(String mouseMode) {
+		_mouseMode = mouseMode;
+	}
+	
+	/**
+	 * Sets an input manager
+	 * @param inputManager
+	 */
 	public void setInputManager(InputManager inputManager) {
 		_inputManager = inputManager;
 		inputSetUp();
@@ -146,7 +163,6 @@ public class Camera3D implements AnalogListener, ActionListener {
 			Quaternion q = new Quaternion();
 			q.fromAxes(left, up, dir);
 			q.normalizeLocal();
-
 			_cam.setAxes(q);
 		}
 	}

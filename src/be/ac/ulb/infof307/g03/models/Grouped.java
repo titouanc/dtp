@@ -107,10 +107,15 @@ public abstract class Grouped implements Geometric {
 		return _selected;
 	}
 	
-	public abstract String toString();
+	public final String toString(){
+		String suffix = isSelected() ? " [S]" : "";
+		return innerToString() + suffix;
+	}
+	
+	protected abstract String innerToString();
 
 	@Override
 	public Boolean isLeaf(){
-		return false;
+		return true;
 	}
 }

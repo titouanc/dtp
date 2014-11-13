@@ -48,6 +48,8 @@ public class Wall extends Grouped {
 	}
 	
 	public String toString(){
+	@Override
+	protected String innerToString(){
 		return "Wall" + getGroup().toString();
 	}
 

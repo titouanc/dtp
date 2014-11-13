@@ -88,7 +88,7 @@ public class ToolsBarController implements Observer {
     public void on2d(){
     	System.out.println("[DEBUG] User clicked on : go2D");
     	try {
-    		_project.config("world.mode", "2D");
+    		_project.config("world.mode", CameraModeController.VIEW2D);
     	} catch (SQLException e) {
     		e.printStackTrace();
     	}
@@ -102,7 +102,7 @@ public class ToolsBarController implements Observer {
     public void on3d() {
     	System.out.println("[DEBUG] User clicked on : go3D");
     	try {
-    		_project.config("world.mode", "3D");
+    		_project.config("world.mode", CameraModeController.VIEW3D);
     	} catch (SQLException e) {
     		e.printStackTrace();
     	}
@@ -112,10 +112,44 @@ public class ToolsBarController implements Observer {
      * The private method is called when the rotation button 
      * is clicked. It will communicate with the controller
      */ 
-    public void rotate(){
+    public void onDragRotateMode(){
     	System.out.println("[DEBUG] User clicked on : rotate");
+    	try {
+			_project.config("mouse.mode", "dragRotate");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
+    /**
+     * The private method is called when the cursor button 
+     * is clicked. It will communicate with the controller
+     */ 
+    public void onDragSelectMode(){
+    	System.out.println("[DEBUG] User clicked on : cursor");
+    	try {
+			_project.config("mouse.mode", "dragSelect");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    /**
+     * The private method is called when the hand button 
+     * is clicked. It will communicate with the controller
+     */ 
+    public void onDragMoveMode(){
+    	System.out.println("[DEBUG] User clicked on : hand");
+    	try {
+			_project.config("mouse.mode", "dragMove");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
 	@Override
 	public void update(Observable o, Object arg) {
 		
