@@ -11,7 +11,7 @@ import com.j256.ormlite.field.DatabaseField;
 public class Wall extends Grouped {
 	@DatabaseField
 	private double _height = 0;
-	private double _width = 0.1;
+	private double _width = 0.2;
 	
 	public Wall(){
 		super();
