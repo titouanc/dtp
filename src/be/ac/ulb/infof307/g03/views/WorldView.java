@@ -147,10 +147,11 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			// 1) Build a box the right length, width and height
 			Vector3f a = allPoints.get(i).toVector3f();
 			Vector3f b = allPoints.get(i+1).toVector3f();
+			float w = (float) wall.getWidth();
 			Vector2f segment = new Vector2f(b.x-a.x, b.y-a.y);
-			Box box = new Box(	segment.length(), 
-								(float) wall.getWidth(), 
-								(float) wall.getHeight());
+			Box box = new Box(	new Vector3f(-w/2,-w/2,0), new Vector3f(segment.length()+w/2, 
+																		w/2, 
+																		(float) wall.getHeight()));
 			Geometry wallGeometry = new Geometry(wall.getUID()+Integer.toString(i), box);
 			wallGeometry.setMaterial(_makeBasicMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
 			
@@ -159,7 +160,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			 
 			// 3) Rotate the wall at the right orientation
 			Quaternion rot = new Quaternion();
-			rot.fromAngleAxis(segment.angleBetween(new Vector2f(1,0)), new Vector3f(0,0,1));
+			rot.fromAngleAxis(-segment.angleBetween(new Vector2f(1,0)), new Vector3f(0,0,1));
 			wallGeometry.setLocalRotation(rot);
 			
 			// 4) Attach it to the node
