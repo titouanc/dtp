@@ -145,16 +145,11 @@ public class TestGeometricTree {
 		_dao.notifyObservers();
 		assertNotNull(mock.change);
 		
-		mock.reset();
-		_dao.delete(grp);
-		_dao.notifyObservers();
-		assertNotNull(mock.remove);
-		
 		// Detach the listener, it should not receive anything
 		mock.reset();
 		treemodel.removeTreeModelListener(mock);
 		treemodel.update(null, null);
 		_dao.notifyObservers();
-		assertNull(mock.struct);
+		assertEquals(0, mock.calls);
 	}
 }

@@ -179,11 +179,12 @@ public class GeometricTree implements TreeModel, Observer {
 	private TreeModelEvent _makeEvent(Geometric item){
 		LinkedList<Object> fullPath = getFullPath(item);
 		fullPath.removeLast();
-		invalidateCache(item);
 		
 		int changePos = getIndexOfChild(fullPath.getLast(), item);
 		if (changePos == -1)
 			return null;
+		
+		invalidateCache(item);
 		
 		return new TreeModelEvent(
 			this, 
