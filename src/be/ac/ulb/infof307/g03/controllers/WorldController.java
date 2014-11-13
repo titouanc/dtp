@@ -5,9 +5,7 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import java.sql.SQLException;
 
-import be.ac.ulb.infof307.g03.models.GeometryDAO;
-import be.ac.ulb.infof307.g03.models.Grouped;
-import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.collision.CollisionResults;
@@ -102,9 +100,16 @@ public class WorldController {
         _view.getRootNode().collideWith(ray, results);
         
         if (results.size() > 0){
+        	// Get 3D object from scene
             Geometry selected = results.getClosestCollision().getGeometry();
-            Grouped grouped = (Grouped) dao.getByUID(selected.getName()); //TODO might not be a Grouped later
-            if (grouped != null){
+            // Get associated Geometric from database
+            Geometric geometric = dao.getByUID(selected.getName());
+            if (geometric == null)
+            	return;
+            
+            // If it is a grouped (Wall, Ground, ...): toggle selection
+            if (geometric instanceof Grouped){
+            	Grouped grouped = (Grouped) geometric;
                 grouped.toggleSelect();
                 try {
                     dao.update(grouped);
@@ -113,6 +118,10 @@ public class WorldController {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+            }
+            // If it is a Point, drag & drop to reposition
+            else if (geometric instanceof Point){
+            	
             }
         }
     }
