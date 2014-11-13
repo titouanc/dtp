@@ -152,7 +152,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			Box box = new Box(	new Vector3f(-w/2,-w/2,0), new Vector3f(segment.length()+w/2, 
 																		w/2, 
 																		(float) wall.getHeight()));
-			Geometry wallGeometry = new Geometry(wall.getUID()+Integer.toString(i), box);
+			Geometry wallGeometry = new Geometry(wall.getUID(), box);
 			wallGeometry.setMaterial(_makeBasicMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
 			
 			// 2) Place the wall at the right place
