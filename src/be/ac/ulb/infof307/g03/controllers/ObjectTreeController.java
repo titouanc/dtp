@@ -83,7 +83,7 @@ public class ObjectTreeController {
 	public void deselectElement(Object element) {
 		if (element instanceof Grouped){
 			Grouped grouped = (Grouped) element;
-			System.out.println("Unselect " + grouped.getUID());
+			System.out.println("[TreeController] Unselect " + grouped.getUID());
 			grouped.deselect();
 			try {
 				_dao.update(grouped);
@@ -91,6 +91,20 @@ public class ObjectTreeController {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		} else if (element instanceof Line){
+			Line line = (Line) element;
+			System.out.println("[TreeController] Unselect " + line.getUID());
+			try {
+				for (Point p : line.getPoints()){
+					p.deselect();
+					_dao.update(p);
+				}
+				_dao.notifyObservers();
+		
+			} catch (SQLException err){
+				// TODO Auto-generated catch block
+				err.printStackTrace();
 			}
 		}
 	}
@@ -102,7 +116,7 @@ public class ObjectTreeController {
 	public void selectElement(Object element) {
 		if (element instanceof Grouped){
 			Grouped grouped = (Grouped) element;
-			System.out.println("Select " + grouped.getUID());
+			System.out.println("[TreeController] Select " + grouped.getUID());
 			grouped.select();
 			try {
 				_dao.update(grouped);
@@ -110,6 +124,20 @@ public class ObjectTreeController {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		} else if (element instanceof Line){
+			Line line = (Line) element;
+			System.out.println("[TreeController] Select " + line.getUID());
+			try {
+				for (Point p : line.getPoints()){
+					p.select();
+					_dao.update(p);
+				}
+				_dao.notifyObservers();
+		
+			} catch (SQLException err){
+				// TODO Auto-generated catch block
+				err.printStackTrace();
 			}
 		}
 	}

@@ -27,6 +27,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
+import com.jme3.scene.shape.Sphere;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -209,6 +210,39 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 						ColorRGBA.LightGray;
 	}
 	
+	private void _updatePoint(Change change){
+		Point point = (Point) change.getItem();
+		
+		if (change.isUpdate()){
+			if (point.isSelected()){
+				Geometry newSphere = new Geometry(point.getUID(), new Sphere(32, 32, 1.0f));
+				newSphere.setLocalTranslation(point.toVector3f());
+				newSphere.setMaterial(this._makeBasicMaterial(ColorRGBA.Red));
+				rootNode.attachChild(newSphere);
+			} else {
+				rootNode.detachChildNamed(point.getUID());
+			}
+		}
+	}
+	
+	private void _updateGrouped(Change change){
+		Grouped grouped = (Grouped) change.getItem();
+		
+		if (change.isDeletion())
+			rootNode.detachChildNamed(grouped.getUID());
+		else if (change.isUpdate()){
+			Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
+			Material mat = toUpdate.getMaterial();
+			if (mat != null)
+				mat.setColor("Color", _getColor(grouped));
+		} else if (change.isCreation()){
+			if (grouped instanceof Wall)
+				_drawWall((Wall) grouped);
+			else if (grouped instanceof Ground)
+				_drawGround((Ground) grouped);
+		}
+	}
+	
 	/**
 	 * Called when the model fires a change notification
 	 */
@@ -218,23 +252,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			return;
 		for (Change change : (List<Change>) msg){
 			System.out.println("[3D View] " + change.toString());
-			if (! ( change.getItem() instanceof Grouped))
-				continue;
-			Grouped grouped = (Grouped) change.getItem();
-			
-			if (change.isDeletion())
-				rootNode.detachChildNamed(grouped.getUID());
-			else if (change.isUpdate()){
-				Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
-				Material mat = toUpdate.getMaterial();
-				if (mat != null)
-					mat.setColor("Color", _getColor(grouped));
-			} else if (change.isCreation()){
-				if (grouped instanceof Wall)
-					_drawWall((Wall) grouped);
-				else if (grouped instanceof Ground)
-					_drawGround((Ground) grouped);
-			}
+			if (change.getItem() instanceof Grouped)
+				_updateGrouped(change);
+			if (change.getItem() instanceof Point)
+				_updatePoint(change);
 		}
 	}
 

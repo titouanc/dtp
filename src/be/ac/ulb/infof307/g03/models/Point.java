@@ -8,8 +8,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
+ * Primitive for all geometric constructions
  * @author Titouan Christophe
- * @brief Primitive saveable object for 3D building
  */
 @DatabaseTable
 public class Point implements Geometric {
@@ -21,6 +21,8 @@ public class Point implements Geometric {
 	private double _y = 0;
 	@DatabaseField(uniqueCombo = true)
 	private double _z = 0;
+	@DatabaseField
+	private Boolean _selected = false;
 	
 	/**
 	 * Create a new (0,0,0) point
@@ -113,6 +115,36 @@ public class Point implements Geometric {
 		this._z = z;
 	}
 	
+	/**
+	 * Select point
+	 */
+	public void select(){
+		_selected = true;
+	}
+	
+	/**
+	 * Deselect point
+	 */
+	public void deselect(){
+		_selected = false;
+	}
+	
+	/**
+	 * Selects point if it is deselected
+	 * Deselects point if it is selected
+	 */
+	public void toggleSelect(){
+		_selected = !_selected;
+	}
+	
+	/**
+	 * Is the point selected?
+	 * @return true if this Point is selected
+	 */
+	public Boolean isSelected(){
+		return _selected;
+	}
+	
 	public String toString(){
 		return String.format("(%f,%f,%f)", _x, _y, _z);
 	}
@@ -138,6 +170,7 @@ public class Point implements Geometric {
 		return new Vector3f((float) _x, (float) _y, (float) _z);
 	}
 	
+	@Override
 	public Boolean isLeaf() {
 		return true;
 	}
@@ -147,6 +180,7 @@ public class Point implements Geometric {
 		return String.format("pnt-%d", getId());
 	}
 	
+	@Override
 	public Group getGroup(){
 		return null;
 	}

@@ -171,43 +171,26 @@ public class GeometricTree implements TreeModel, Observer {
 		return res;
 	}
 	
-	private TreeModelEvent _makeEvent(Geometric item, Boolean invalidate){
+	/**
+	 * Create a TreeModelEvent for TreeModelListeners
+	 * @param item The Geometric that changed
+	 * @return A new event, or null if the Tree doesn't contains item
+	 */
+	private TreeModelEvent _makeEvent(Geometric item){
 		LinkedList<Object> fullPath = getFullPath(item);
 		fullPath.removeLast();
-		if (invalidate)
-			invalidateCache(item);
+		invalidateCache(item);
+		
+		int changePos = getIndexOfChild(fullPath.getLast(), item);
+		if (changePos == -1)
+			return null;
 		
 		return new TreeModelEvent(
 			this, 
 			fullPath.toArray(), 
-			new int[] {getIndexOfChild(fullPath.getLast(), item)},
+			new int[] {changePos},
 			new Object[] {item}
 		);
-	}
-	
-	private void _createToListeners(Geometric creation){
-		TreeModelEvent event = _makeEvent(creation, true);
-		System.out.print("Node created: ");
-		System.out.println(event);
-		for (TreeModelListener l : _listeners)
-			l.treeNodesInserted(event);
-	}
-	
-	private void _updateToListeners(Geometric updated){
-		TreeModelEvent event = _makeEvent(updated, true);
-		System.out.print("Node changed: ");
-		System.out.println(event);
-		for (TreeModelListener l : _listeners)
-			l.treeNodesChanged(event);
-	}
-	
-	private void _deleteToListeners(Geometric deletion){
-		TreeModelEvent event = _makeEvent(deletion, false);
-		System.out.print("Node removed: ");
-		System.out.println(event);
-		for (TreeModelListener l : _listeners)
-			l.treeNodesRemoved(event);
-		invalidateCache(deletion);
 	}
 	
 	/**
@@ -219,13 +202,20 @@ public class GeometricTree implements TreeModel, Observer {
 	public void update(Observable o, Object arg) {
 		if (arg != null){
 			for (Change delta : (List<Change>) arg){
+				TreeModelEvent event = _makeEvent(delta.getItem());
+				if (event == null)
+					continue;
+				
 				System.out.println("[GeometricTree] " + delta.toString());
 				if (delta.isDeletion())
-					this._deleteToListeners(delta.getItem());
+					for (TreeModelListener l : _listeners)
+						l.treeNodesRemoved(event);
 				if (delta.isCreation())
-					this._createToListeners(delta.getItem());
+					for (TreeModelListener l : _listeners)
+						l.treeNodesInserted(event);
 				if (delta.isUpdate())
-					this._updateToListeners(delta.getItem());
+					for (TreeModelListener l : _listeners)
+						l.treeNodesChanged(event);
 			}
 		}
 	}
