@@ -11,6 +11,7 @@ import com.j256.ormlite.field.DatabaseField;
 public class Wall extends Grouped {
 	@DatabaseField
 	private double _height = 0;
+	private double _width = 0.2;
 	
 	public Wall(){
 		super();
@@ -34,7 +35,18 @@ public class Wall extends Grouped {
 		return _height;
 	}
 	
-	@Override
+	public void setWidth(double width){
+		// TODO possibly implement some better error management if the width is < 0
+		if (width < 0)
+			_width = 0;
+		else
+			_width = width;
+	}
+	
+	public double getWidth(){
+		return _width;
+	}
+	
 	protected String innerToString(){
 		return "Wall" + getGroup().toString();
 	}

@@ -15,9 +15,14 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.shape.Box;
 import com.jme3.util.BufferUtils;
 
 /**
@@ -408,57 +413,6 @@ public class GeometryDAO extends Observable {
 	@Override
 	public void notifyObservers(Object arg){
 		notifyObservers();
-	}
-	
-	/**
-	 * Transform a Wall object into a Mesh (3D object usable in jMonkey)
-	 * @param wall The wall to transform
-	 * @return The Mesh
-	 * @throws SQLException
-	 */
-	public Mesh getWallAsMesh(Wall wall) throws SQLException{
-		List<Point> all_points = getPointsForShape(wall.getGroup());
-		Vector3f height = new Vector3f(0, 0, (float) wall.getHeight());
-		
-		int shape_n_points = all_points.size();
-		int volume_n_points = 2 * all_points.size(); //floor && ceil
-		
-		/* 0) Closed polygon ? -> we don't need to store both first && last */
-		Point firstPoint = all_points.get(0);
-		Point lastPoint = all_points.get(shape_n_points - 1);
-		if (firstPoint.equals(lastPoint)){
-			shape_n_points--;
-			volume_n_points -= 2;
-		}
-		
-		/* 1) Build an array of all points */
-		Vector3f vertices[] = new Vector3f[volume_n_points];
-		for (int i=0; i<shape_n_points; i++){
-			vertices[i] = all_points.get(i).toVector3f(); // floor
-			vertices[i + shape_n_points] = all_points.get(i).toVector3f().add(height); //ceil
-		}
-		
-		/* 2) Build an array of indexes on vertices (triangle edges).
-		 *    3 points forms a triangle, 2 triangle per line + elevation. 
-		 *    In case of closed polygon, overflow index to get first point. */
-		int n_triangles = 6 * (all_points.size() - 1);
-		int edges[] = new int[n_triangles];
-		for (int i=0; i<all_points.size()-1; i++){
-			edges[6*i] = i;
-			edges[6*i+1] = (i + 1) % shape_n_points;
-			edges[6*i+2] = i % shape_n_points + shape_n_points;
-			edges[6*i+3] = (i+1) % shape_n_points;
-			edges[6*i+4] = (i+1) % shape_n_points + shape_n_points;
-			edges[6*i+5] = i % shape_n_points + shape_n_points;
-		}
-		
-		/* 3) Pack everything in a Mesh object */
-		Mesh mesh = new Mesh();
-	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
-	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
-	  	mesh.updateBound();
-	  	
-	  	return mesh;
 	}
 	
 	/**

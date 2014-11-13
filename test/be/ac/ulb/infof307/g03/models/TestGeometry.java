@@ -154,6 +154,8 @@ public class TestGeometry {
 		assertTrue(wall.isSelected());
 		wall.deselect();
 		assertFalse(wall.isSelected());
+		
+		//TODO test wall width
 	}
 	
 	@Test
@@ -212,16 +214,6 @@ public class TestGeometry {
 		Ground gnd = geo.getGround(1);
 		assertEquals(room.getId(), gnd.getGroup().getId());
 		assertEquals("Ground<room>", gnd.toString());
-	}
-	
-	@Test
-	public void test_wall_as_mesh() throws SQLException {
-		GeometryDAO geo = new GeometryDAO(_db);
-		create_a_room(geo);
-		Wall wall = geo.getWall(1);
-		Mesh mesh = geo.getWallAsMesh(wall);
-		assertEquals(8, mesh.getVertexCount());
-		assertEquals(8, mesh.getTriangleCount());
 	}
 	
 	@Test

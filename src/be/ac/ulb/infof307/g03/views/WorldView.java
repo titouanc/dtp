@@ -22,10 +22,13 @@ import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import com.jme3.scene.debug.Grid;
+import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
 
@@ -122,6 +125,42 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		res.setColor("Color", color);
 		return res;
 	}
+	
+	/**
+	 * Transform a Wall object into a Node containing Boxes (3D object usable in jMonkey)
+	 * @param wall The wall to transform
+	 * @return The Node
+	 * @throws SQLException
+	 */
+	public Node getWallAsNode(Wall wall) throws SQLException{
+		Node res = new Node(wall.getUID());
+		List<Point> allPoints = _model.getPointsForShape(wall.getGroup());
+		
+		for (int i=0; i<allPoints.size()-1; i++){
+			// 1) Build a box the right length, width and height
+			Vector3f a = allPoints.get(i).toVector3f();
+			Vector3f b = allPoints.get(i+1).toVector3f();
+			float w = (float) wall.getWidth();
+			Vector2f segment = new Vector2f(b.x-a.x, b.y-a.y);
+			Box box = new Box(	new Vector3f(-w/2,-w/2,0), new Vector3f(segment.length()+w/2, 
+																		w/2, 
+																		(float) wall.getHeight()));
+			Geometry wallGeometry = new Geometry(wall.getUID(), box);
+			wallGeometry.setMaterial(_makeBasicMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
+			
+			// 2) Place the wall at the right place
+			wallGeometry.setLocalTranslation(a);
+			 
+			// 3) Rotate the wall at the right orientation
+			Quaternion rot = new Quaternion();
+			rot.fromAngleAxis(-segment.angleBetween(new Vector2f(1,0)), new Vector3f(0,0,1));
+			wallGeometry.setLocalRotation(rot);
+			
+			// 4) Attach it to the node
+			res.attachChild(wallGeometry);
+		}
+		return res;
+	}
 
 	/**
 	 * Redraw the 3D scene (first shot, still to be optimized)
@@ -161,10 +200,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	
 	private void _drawWall(Wall wall){
 		try {
-			Mesh mesh = _model.getWallAsMesh(wall);
-			Geometry node = new Geometry(wall.getUID(), mesh);
-			node.setMaterial(_makeBasicMaterial(_getColor(wall)));
-			rootNode.attachChild(node);
+			rootNode.attachChild(getWallAsNode(wall));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -231,10 +267,18 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		if (change.isDeletion())
 			rootNode.detachChildNamed(grouped.getUID());
 		else if (change.isUpdate()){
-			Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
-			Material mat = toUpdate.getMaterial();
-			if (mat != null)
-				mat.setColor("Color", _getColor(grouped));
+			if (rootNode.getChild(grouped.getUID()) instanceof Geometry){
+				Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
+				Material mat = toUpdate.getMaterial();
+				if (mat != null)
+					mat.setColor("Color", _getColor(grouped));
+			}
+			else if (rootNode.getChild(grouped.getUID()) instanceof Node){
+				// Walls are Nodes attached to the rootNode
+				Node toUpdate = (Node) rootNode.getChild(grouped.getUID());
+				toUpdate.detachAllChildren();
+				_drawWall((Wall) grouped);
+			}
 		} else if (change.isCreation()){
 			if (grouped instanceof Wall)
 				_drawWall((Wall) grouped);
