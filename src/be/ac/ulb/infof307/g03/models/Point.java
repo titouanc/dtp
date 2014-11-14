@@ -62,21 +62,21 @@ public class Point implements Geometric {
 	/**
 	 * @return x coordinate
 	 */
-	double getX() {
+	public double getX() {
 		return this._x;
 	}
 
 	/**
 	 * @return y coordinate
 	 */
-	double getY() {
+	public double getY() {
 		return this._y;
 	}
 
 	/**
 	 * @return z coordinate
 	 */
-	double getZ() {
+	public double getZ() {
 		return this._z;
 	}
 	
@@ -84,7 +84,7 @@ public class Point implements Geometric {
 	 * Copy content of other into this point
 	 * @param other A point to copy
 	 */
-	void copyFrom(Point other){
+	public void copyFrom(Point other){
 		this._id = other.getId();
 		setX(other.getX());
 		setY(other.getY());
@@ -95,7 +95,7 @@ public class Point implements Geometric {
 	 * Set coordinate
 	 * @param x coordinate
 	 */
-	void setX(double x) {
+	public void setX(double x) {
 		this._x = x;
 	}
 
@@ -103,7 +103,7 @@ public class Point implements Geometric {
 	 * Set coordinate
 	 * @param y coordinate
 	 */
-	void setY(double y) {
+	public void setY(double y) {
 		this._y = y;
 	}
 
@@ -111,7 +111,7 @@ public class Point implements Geometric {
 	 * Set coordinate
 	 * @param z coordinate
 	 */
-	void setZ(double z) {
+	public void setZ(double z) {
 		this._z = z;
 	}
 	
