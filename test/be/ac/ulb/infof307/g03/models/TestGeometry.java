@@ -404,5 +404,15 @@ public class TestGeometry {
 		geo.notifyObservers();
 		assertNull(mock.changes);
 	}
+	
+	@Test
+	public void test_get_grouped_for_point() throws SQLException {
+		GeometryDAO geo = new GeometryDAO(_db);
+		create_a_room(geo);
+		
+		Point p = (Point) geo.getByUID("pnt-1");
+		List<Grouped> grouped = geo.getGroupedForPoint(p);
+		assertEquals(2, grouped.size());
+	}
 }
 
