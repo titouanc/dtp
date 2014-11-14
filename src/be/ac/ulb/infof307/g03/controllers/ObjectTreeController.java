@@ -97,6 +97,7 @@ public class ObjectTreeController {
 			System.out.println("[TreeController] Unselect " + line.getUID());
 			try {
 				for (Point p : line.getPoints()){
+					_dao.refresh(p);
 					p.deselect();
 					_dao.update(p);
 				}
