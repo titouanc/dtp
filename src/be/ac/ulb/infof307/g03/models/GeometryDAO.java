@@ -4,8 +4,11 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -15,14 +18,9 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
-import com.jme3.scene.Node;
 import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.scene.shape.Box;
 import com.jme3.util.BufferUtils;
 
 /**
@@ -212,6 +210,49 @@ public class GeometryDAO extends Observable {
 		}
 		return res;
 		
+	}
+	
+	/**
+	 * Retrieve all lines attached to a given point
+	 * @param p The point from which we search lines
+	 * @return A list of lines (might be empty)
+	 * @throws SQLException
+	 */
+	public List<Line> getLinesForPoint(Point p) throws SQLException {
+		int pid = p.getId();
+		return _lines.query(
+			_lines.queryBuilder().where().eq("_p1_id", pid).or().eq("_p2_id", pid).prepare()
+		);
+	}
+	
+	/**
+	 * Retrieve all Grouped item containing a given point
+	 * @param p The point from which we search grouped items
+	 * @return A list of grouped items (might be empty)
+	 * @throws SQLException
+	 */
+	public List<Grouped> getGroupedForPoint(Point p) throws SQLException{
+		/* 
+		 * A point could be contained in multiple Lines that belong to the same Grouped
+		 * Hash them by UID to have a unique set
+		 */
+		Map<String, Grouped> res = new HashMap<String, Grouped>();
+		for (Line l : getLinesForPoint(p)){
+			Group grp = l.getGroup();
+			while (grp != null){
+				Wall wall = getWall(grp);
+				if (wall != null && ! res.containsKey(wall.getUID()))
+					res.put(wall.getUID(), wall);
+				
+				Ground gnd = getGround(grp);
+				if (gnd != null && ! res.containsKey(gnd.getUID())) 
+					res.put(gnd.getUID(), gnd);
+				
+				/* Iterate over parent group */
+				grp = grp.getGroup();
+			}
+		}
+		return new ArrayList<Grouped>(res.values());
 	}
 	
 	/**

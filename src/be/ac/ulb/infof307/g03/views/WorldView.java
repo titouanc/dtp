@@ -250,13 +250,25 @@ public class WorldView extends SimpleApplication implements Observer {
 		Point point = (Point) change.getItem();
 		
 		if (change.isUpdate()){
+			rootNode.detachChildNamed(point.getUID());
 			if (point.isSelected()){
 				Geometry newSphere = new Geometry(point.getUID(), new Sphere(32, 32, 1.0f));
 				newSphere.setLocalTranslation(point.toVector3f());
 				newSphere.setMaterial(this._makeBasicMaterial(ColorRGBA.Red));
 				rootNode.attachChild(newSphere);
-			} else {
-				rootNode.detachChildNamed(point.getUID());
+			}
+			try {
+				for (Grouped grouped : _model.getGroupedForPoint(point)){
+					/* For now: DUMBLY redraw all grouped items */
+					rootNode.detachChildNamed(grouped.getUID());
+					if (grouped instanceof Wall)
+						_drawWall((Wall) grouped);
+					else if (grouped instanceof Ground)
+						_drawGround((Ground) grouped);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

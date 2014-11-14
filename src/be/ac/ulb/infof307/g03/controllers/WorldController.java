@@ -124,17 +124,24 @@ public class WorldController implements ActionListener {
     	if (_movingPoint == null)
     		return;
     	
-    	/* We need the projection of a ray from camera on the plane defined by the height of the moving point */
-    	Plane collidePlane = new Plane(new Vector3f(0, 0, 1), (float) _movingPoint.getZ());
-    	if (collidePlane.isOnPlane(_movingPoint.toVector3f())){
-    		System.out.println("PLAN BIEN DEFINI");
-    	} else {
-    		System.out.println("PLAN MAL DEFINI");
-    	}
-    	
     	Ray ray = getRayForMousePosition();
-        CollisionResults results = new CollisionResults();
-        ray.collideWith(collidePlane, results);
+        Vector3f pos = ray.getOrigin();
+        Vector3f dir = ray.getDirection();
+        
+        /* Get the position of the point along the ray, given its Z coordinate */
+        float t = ((float) _movingPoint.getZ() - pos.getZ())/dir.getZ();
+        Vector3f onPlane = pos.add(dir.mult(t));
+        _movingPoint.setX(onPlane.getX());
+        _movingPoint.setY(onPlane.getY());
+        
+        try {
+        	GeometryDAO dao = _project.getGeometryDAO();
+        	dao.update(_movingPoint);
+        	_movingPoint = null;
+        	dao.notifyObservers();
+        } catch (SQLException err){
+        	err.printStackTrace();
+        }
     }
     
     /**

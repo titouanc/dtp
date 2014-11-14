@@ -58,6 +58,23 @@ public class TestGeometry {
 	}
 	
 	@Test
+	public void test_get_lines_for_point() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Point x = new Point(1, 0, 0),
+		      y = new Point(0, 1, 0),
+		      z = new Point(0, 0, 1);
+		Line xy = new Line(x, y);
+		Line xz = new Line(x, z);
+		
+		geo.create(xy);
+		geo.create(xz);
+		List<Line> lines = geo.getLinesForPoint(x);
+		assertEquals(2, lines.size());
+		assertTrue(xy.equals(lines.get(0)));
+		assertTrue(xz.equals(lines.get(1)));
+	}
+	
+	@Test
 	public void test_get_points_from_line() throws SQLException {
 		GeometryDAO geo = new GeometryDAO(_db);
 		Point x = new Point(1, 0, 0), y = new Point(0, 1, 0);
