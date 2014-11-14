@@ -81,31 +81,35 @@ public class WorldController implements ActionListener {
     }
     
     /**
+     * Return current mouse position as a Ray object, usable for collisions in 3D scenes.
+     * @return The Ray corresponding to the mouse pointer as seen by the camera
+     */
+    public Ray getRayForMousePosition(){
+    	Vector2f cursorPosition = _view.getInputManager().getCursorPosition();
+        Vector3f camPos = _view.getCamera().getWorldCoordinates(cursorPosition, 0f).clone();
+        Vector3f camDir = _view.getCamera().getWorldCoordinates(cursorPosition, 1f).subtractLocal(camPos);
+        return new Ray(camPos, camDir);
+    }
+    
+    /**
      * Convert a click position to clicked item
-     * @param cursorPosition The clicked position, on the screen
      * @return The clicked Geometric item, or null if not found
      */
-    public Geometric getClickedObject(Vector2f cursorPosition){
-    	float mouseX = cursorPosition.getX();
-        float mouseY = cursorPosition.getY();
-        GeometryDAO dao = null;
-        try {
-            dao = _project.getGeometryDAO();
-        } catch (SQLException e1) {
-            return null;
-        }
-        
-        Vector3f camPos = _view.getCamera().getWorldCoordinates(new Vector2f(mouseX, mouseY), 0f).clone();
-        Vector3f camDir = _view.getCamera().getWorldCoordinates(new Vector2f(mouseX, mouseY), 1f).subtractLocal(camPos);
-        Ray ray = new Ray(camPos, camDir);
-        
+    public Geometric getClickedObject(){
         CollisionResults results = new CollisionResults();
-        _view.getRootNode().collideWith(ray, results);
+        _view.getRootNode().collideWith(getRayForMousePosition(), results);
+        
         if (results.size() > 0){
         	// Get 3D object from scene
             Geometry selected = results.getClosestCollision().getGeometry();
-            // Get associated Geometric from database
-            return dao.getByUID(selected.getName());
+            GeometryDAO dao = null;
+            try {
+                dao = _project.getGeometryDAO();
+                // Get associated Geometric from database
+                return dao.getByUID(selected.getName());
+            } catch (SQLException e1) {
+            	e1.printStackTrace();
+            }
         }
         return null;
     }
@@ -115,9 +119,8 @@ public class WorldController implements ActionListener {
      * - Compute final position
      * - Update in database and notify
      * - Set current moving point to null
-     * @param cursorPosition The position of the cursor when the button has been released
      */
-    public void dropMovingPoint(Vector2f cursorPosition){
+    public void dropMovingPoint(){
     	if (_movingPoint == null)
     		return;
     	
@@ -129,18 +132,23 @@ public class WorldController implements ActionListener {
     		System.out.println("PLAN MAL DEFINI");
     	}
     	
-    	float mouseX = cursorPosition.getX();
-        float mouseY = cursorPosition.getY();
-        Vector3f camPos = _view.getCamera().getWorldCoordinates(new Vector2f(mouseX, mouseY), 0f).clone();
-        Vector3f camDir = _view.getCamera().getWorldCoordinates(new Vector2f(mouseX, mouseY), 1f).subtractLocal(camPos);
-        Ray ray = new Ray(camPos, camDir);
+    	Ray ray = getRayForMousePosition();
         CollisionResults results = new CollisionResults();
         ray.collideWith(collidePlane, results);
     }
     
     /**
-     * Method used to select an object when the user right-clicked on the canvas
-     * @param cursorPosition The position of the click on the canvas
+     * Move the currently moving point
+     */
+    public void dragMovingPoint(){
+    	if (_movingPoint == null)
+    		return;
+    	
+    }
+    
+    /**
+     * Toggle selection for a Grouped item, save to database and notify observers
+     * @param grouped The Grouped item to select
      */
     public void selectObject(Grouped grouped) {
         grouped.toggleSelect();
@@ -160,17 +168,16 @@ public class WorldController implements ActionListener {
     @Override
 	public void onAction(String command, boolean mouseDown, float arg2) {
     	System.out.println("[WorldController] onAction: " + command + " - " + (mouseDown ? "press" : "release"));
-		if (command.equals(WorldView.CLICK)){
-			Vector2f clickPos = _view.getInputManager().getCursorPosition();
-			
+    	
+    	if (command.equals(WorldView.CLICK)){
 			/* We're moving a point, and mouse button up: stop the point here */
 			if (_movingPoint != null && ! mouseDown){
-            	System.out.println("[WorldController] Stopping point " + _movingPoint.toString() + " at " + clickPos.toString());
-            	dropMovingPoint(clickPos);
+            	System.out.println("[WorldController] Stopping point " + _movingPoint.getUID() + _movingPoint.toString());
+            	dropMovingPoint();
             }
 			
 			/* Find the Geometric object where we clicked */
-            Geometric clicked = getClickedObject(clickPos);
+            Geometric clicked = getClickedObject();
             
             /* We're not interested if no object */
             if (clicked == null)
@@ -183,9 +190,11 @@ public class WorldController implements ActionListener {
             } 
             /* If it is a Point: initiate drag'n drop */
             else if (clicked instanceof Point && mouseDown){
-            	System.out.println("[WorldController] Moving point " + clicked.toString());
+            	System.out.println("[WorldController] Moving point " + clicked.getUID() + clicked.toString());
         		_movingPoint = (Point) clicked;
             }
+		} else if (command.equals(WorldView.MOVE)){
+			dragMovingPoint();
 		}
 	}
 }

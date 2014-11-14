@@ -15,7 +15,6 @@ import be.ac.ulb.infof307.g03.models.*;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
-import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
@@ -37,7 +36,7 @@ import com.jme3.scene.shape.Sphere;
  * This class is a jMonkey canvas that can be added in a Swing GUI.
  * @author fhennecker, julianschembri, brochape, Titouan
  */
-public class WorldView extends SimpleApplication implements Observer, ActionListener {	
+public class WorldView extends SimpleApplication implements Observer {	
 	
 	private GeometryDAO _model = null;
 	private WorldController _controller; 
