@@ -16,6 +16,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
@@ -42,8 +43,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	private WorldController _controller; 
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	
-	static private final String _SELECTOBJECT 	= "SelectObject";
-
+	static public final String CLICK = "SelectObject";
+	
 	/**
 	 * Constructor of WorldView
 	 * @param newController The view's controller
@@ -85,8 +86,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	}
 	
 	private void setInput(){
-		inputManager.addMapping(_SELECTOBJECT, new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
-		inputManager.addListener(this, _SELECTOBJECT);
+		inputManager.addMapping(CLICK, new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+		inputManager.addListener(_controller, CLICK);
 	}
 	
 	/**
@@ -302,12 +303,4 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 				_updatePoint(change);
 		}
 	}
-
-	@Override
-	public void onAction(String arg0, boolean arg1, float arg2) {
-		if (arg0.equals(_SELECTOBJECT) && arg1){
-            _controller.selectObject(inputManager.getCursorPosition());
-        }	
-	}
-
 }
