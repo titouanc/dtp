@@ -288,7 +288,14 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	@Override
 	public void onAction(String arg0, boolean arg1, float arg2) {
 		if (arg0.equals(_SELECTOBJECT) && arg1){
-            _controller.selectObject(inputManager.getCursorPosition());
+			try {
+				if(_controller.getProject().config("mouse.mode").equals("dragSelect")){
+				    _controller.selectObject(inputManager.getCursorPosition());
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }	
 	}
 

@@ -23,6 +23,8 @@ public class ToolsBarController implements Observer {
 		_view = new ToolsBarView(this);
 		_project = aProject;
 		_project.addObserver(this);
+        //Sets the default mode
+        this.onDragSelectMode();
 	}
 	
 	/**

@@ -52,6 +52,13 @@ public class WorldController {
     }
     
     /**
+     * @return the project
+     */
+    public Project getProject(){
+    	return _project;
+    }
+    
+    /**
      * @return The view context.
      */
     public JmeContext getViewContext(){
