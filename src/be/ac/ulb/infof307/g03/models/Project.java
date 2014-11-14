@@ -56,15 +56,18 @@ public class Project extends Observable {
 	 * If the configuration key is not found, create an empty one.
 	 * @param name The configuration key
 	 * @return The configuration value
-	 * @throws SQLException 
 	 */
-	public String config(String name) throws SQLException{
-		Config entry = _config.queryForId(name);
-		if (entry == null){
-			entry = new Config(name, "");
-			_config.create(entry);
+	public String config(String name) {
+		try {
+			Config entry = _config.queryForId(name);
+			if (entry == null){
+				entry = new Config(name, "");
+				_config.create(entry);
+			}
+			return entry.getValue();
+		} catch (SQLException err){
+			return "";
 		}
-		return entry.getValue();
 	}
 	
 	/**
@@ -73,20 +76,23 @@ public class Project extends Observable {
 	 * @param name The configuration key
 	 * @param value The configuration value
 	 * @return The new value for this configuration key
-	 * @throws SQLException
 	 */
-	public String config(String name, String value) throws SQLException{
-		Config entry = _config.queryForId(name);
-		if (entry != null){
-			entry.setValue(value);
-			_config.update(entry);
-		} else {
-			entry = new Config(name, value);
-			_config.create(entry);
+	public String config(String name, String value) {
+		try {
+			Config entry = _config.queryForId(name);
+			if (entry != null){
+				entry.setValue(value);
+				_config.update(entry);
+			} else {
+				entry = new Config(name, value);
+				_config.create(entry);
+			}
+			setChanged();
+			notifyObservers(entry);
+			return entry.getValue();
+		} catch (SQLException err){
+			return "";
 		}
-		setChanged();
-		notifyObservers(entry);
-		return entry.getValue();
 	}
 	
 	/**

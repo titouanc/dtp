@@ -218,6 +218,7 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         this.add(hand);
         this.add(cursor);
         this.addSeparator();
+        
     }
      
     /**

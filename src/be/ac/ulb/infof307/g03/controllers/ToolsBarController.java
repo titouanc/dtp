@@ -23,6 +23,8 @@ public class ToolsBarController implements Observer {
 		_view = new ToolsBarView(this);
 		_project = aProject;
 		_project.addObserver(this);
+        //Sets the default mode
+        this.onDragSelectMode();
 	}
 	
 	/**
@@ -87,11 +89,7 @@ public class ToolsBarController implements Observer {
      */
     public void on2d(){
     	System.out.println("[DEBUG] User clicked on : go2D");
-    	try {
-    		_project.config("world.mode", CameraModeController.VIEW2D);
-    	} catch (SQLException e) {
-    		e.printStackTrace();
-    	}
+    	_project.config("world.mode", CameraModeController.VIEW2D);
   
     }
     
@@ -101,11 +99,7 @@ public class ToolsBarController implements Observer {
      */
     public void on3d() {
     	System.out.println("[DEBUG] User clicked on : go3D");
-    	try {
-    		_project.config("world.mode", CameraModeController.VIEW3D);
-    	} catch (SQLException e) {
-    		e.printStackTrace();
-    	}
+    	_project.config("world.mode", CameraModeController.VIEW3D);
     }
     
     /**
@@ -114,12 +108,7 @@ public class ToolsBarController implements Observer {
      */ 
     public void onDragRotateMode(){
     	System.out.println("[DEBUG] User clicked on : rotate");
-    	try {
-			_project.config("mouse.mode", "dragRotate");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	_project.config("mouse.mode", "dragRotate");
     }
 
     /**
@@ -128,12 +117,7 @@ public class ToolsBarController implements Observer {
      */ 
     public void onDragSelectMode(){
     	System.out.println("[DEBUG] User clicked on : cursor");
-    	try {
-			_project.config("mouse.mode", "dragSelect");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	_project.config("mouse.mode", "dragSelect");
     }
     
     /**
@@ -142,12 +126,7 @@ public class ToolsBarController implements Observer {
      */ 
     public void onDragMoveMode(){
     	System.out.println("[DEBUG] User clicked on : hand");
-    	try {
-			_project.config("mouse.mode", "dragMove");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	_project.config("mouse.mode", "dragMove");
     }
     
 	@Override

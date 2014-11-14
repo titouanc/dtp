@@ -53,6 +53,13 @@ public class WorldController implements ActionListener {
     }
     
     /**
+     * @return the project
+     */
+    public Project getProject(){
+    	return _project;
+    }
+    
+    /**
      * @return The view context.
      */
     public JmeContext getViewContext(){
@@ -176,7 +183,7 @@ public class WorldController implements ActionListener {
 	public void onAction(String command, boolean mouseDown, float arg2) {
     	System.out.println("[WorldController] onAction: " + command + " - " + (mouseDown ? "press" : "release"));
     	
-    	if (command.equals(WorldView.CLICK)){
+    	if (command.equals(WorldView.CLICK) && _project.config("mouse.mode").equals("dragSelect")){
 			/* We're moving a point, and mouse button up: stop the point here */
 			if (_movingPoint != null && ! mouseDown){
             	System.out.println("[WorldController] Stopping point " + _movingPoint.getUID() + _movingPoint.toString());
@@ -200,8 +207,6 @@ public class WorldController implements ActionListener {
             	System.out.println("[WorldController] Moving point " + clicked.getUID() + clicked.toString());
         		_movingPoint = (Point) clicked;
             }
-		} else if (command.equals(WorldView.MOVE)){
-			dragMovingPoint();
 		}
 	}
 }
