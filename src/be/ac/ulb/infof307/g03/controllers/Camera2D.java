@@ -151,7 +151,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 	/**
 	 * Place the shapes at the center
 	 * of the user's screen
-	 * @param shape 
 	 */
 	public void resetDirection(){
 		Vector<Geometry> shapes = _wv.getShapes();
@@ -186,6 +185,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	      _cam.setLocation(new Vector3f(X,Y,Z+offset));
 		  _cam.lookAt(new Vector3f(X,Y,0),Vector3f.UNIT_Z);
 	      _cam.setParallelProjection(true);
+	      frustumSize = Z/offset+offset;
 	      float aspect = (float) _cam.getWidth() / _cam.getHeight();
 	      _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
 	      
