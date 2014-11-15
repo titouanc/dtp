@@ -152,7 +152,7 @@ public class WorldController implements ActionListener {
     /**
      * Return X and Y position when user click on the screen.
      * @param Z
-     * @return
+     * @return Vector of coordinates
      */
 	public Vector2f getXYForMouse(float Z){
     	Ray ray = getRayForMousePosition();
@@ -164,6 +164,9 @@ public class WorldController implements ActionListener {
         return new Vector2f(onPlane.getX(),onPlane.getY());
     }
 	
+	/**
+	 * @param p Get coordinates X and Y into Point
+	 */
 	public void getXYForMouse(Point p){
 		Vector2f myVector= getXYForMouse((float) p.getZ());
 		p.setX(myVector.getX());
@@ -195,6 +198,9 @@ public class WorldController implements ActionListener {
         }
     }
 
+    /**
+     * Add the points in the Point List when user click to create his wall
+     */
     public void construct(){
     	Point lastPoint=new Point();
 		lastPoint.setZ(1);
@@ -208,7 +214,6 @@ public class WorldController implements ActionListener {
         	err.printStackTrace();
         }
 		_inConstruction.add(lastPoint);
-		System.out.println(_inConstruction);
     }
     
     /**
