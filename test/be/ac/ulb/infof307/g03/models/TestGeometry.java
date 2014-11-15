@@ -401,5 +401,28 @@ public class TestGeometry {
 		geo.create(floor);
 		assertEquals(2.0, geo.getBaseHeight(floor), 0);
 	}
+	
+	@Test
+	public void test_close_point() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Point origin = new Point(0, 0, 0);
+		geo.create(origin);
+		Point p = new Point(0.3, 0, 0);
+		
+		Point res = geo.findClosePoint(p, 0.5);
+		assertNotNull(res);
+		assertTrue(res.equals(origin));
+	}
+	
+	@Test
+	public void test_close_point_too_high() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		Point origin = new Point(0, 0, 0);
+		geo.create(origin);
+		Point p = new Point(0.3, 0, 1);
+		
+		Point res = geo.findClosePoint(p, 0.5);
+		assertNull(res);
+	}
 }
 

@@ -566,4 +566,27 @@ public class GeometryDAO extends Observable {
 	  	mesh.updateBound();
 		return mesh;
 	}
+	
+	/**
+	 * Retrieve the closest point given a point and a bounding radius,
+	 * or null if no point in the bound
+	 * @param p The point from which we search a neighbor
+	 * @param bound The radius to search around p
+	 * @return The closest Point, or null if not existant
+	 * @throws SQLException
+	 */
+	public Point findClosePoint(Point p, double bound) throws SQLException{
+		double xmin = p.getX() - bound,
+		       xmax = p.getX() + bound,
+    		   ymin = p.getY() - bound,
+		       ymax = p.getY() + bound,
+		       zmin = p.getZ() - bound,
+		       zmax = p.getZ() + bound;
+		
+		return _points.queryForFirst(
+			_points.queryBuilder().where().ge("_x", xmin).and().le("_x", xmax).
+			and().ge("_y", ymin).and().le("_y", ymax).
+			and().ge("_z", zmin).and().le("_z", zmax).prepare()
+		);
+	}
 }
