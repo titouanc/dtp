@@ -314,7 +314,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		java.util.List<Spatial> children = node.getChildren();
 		for(int i = 0; i < children.size(); ++i){
 			Spatial child = children.get(i);
-			if(child instanceof Geometry && !(child.getName().equals("Grid"))){
+			if(child instanceof Geometry && !(child.getName().equals("Grid")) && !(child.getName().equals("Axis"))){
 				shapes.add((Geometry) child);
 			}
 			else if(child instanceof Node){

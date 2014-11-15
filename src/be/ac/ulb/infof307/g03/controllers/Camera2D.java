@@ -240,10 +240,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	        */
 	      _cam.setLocation(new Vector3f(X,Y,Z+offset));
 		  _cam.lookAt(new Vector3f(X,Y,0),Vector3f.UNIT_Z);
-		  System.out.println("SETTING UP PARRALEL VIEW");
 	      _cam.setParallelProjection(true);
-		  System.out.println("DONE");
-		  System.out.println(_cam.getWidth() +" & "+ _cam.getHeight());
 	      float aspect = (float) _cam.getWidth() / _cam.getHeight();
 	      _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
 	      
