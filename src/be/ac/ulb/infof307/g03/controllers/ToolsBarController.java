@@ -89,7 +89,7 @@ public class ToolsBarController {
      */
     public void on2d(){
     	System.out.println("[DEBUG] User clicked on : go2D");
-    	_project.config("world.mode", CameraModeController.VIEW2D);
+    	_project.config("world.mode", CameraModeController._VIEW2D);
   
     }
     
@@ -99,7 +99,7 @@ public class ToolsBarController {
      */
     public void on3d() {
     	System.out.println("[DEBUG] User clicked on : go3D");
-    	_project.config("world.mode", CameraModeController.VIEW3D);
+    	_project.config("world.mode", CameraModeController._VIEW3D);
     }
     
     /**

@@ -31,7 +31,7 @@ public class Camera2D implements AnalogListener, ActionListener {
     
     private Camera _cam;
 	private float _rotationSpeed = 3f;
-    private float _moveSpeed = 10f;
+    private float _moveSpeed = 15f;
     private boolean _canMove = false;
     private boolean _canRotate = false;
     private boolean _enabled = true;
@@ -109,11 +109,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 	public void setWv(WorldView wv) {
 		_wv = wv;
 	}
-
-	/**
-	 * Reset the direction toward which the camera looks
-	 */
-
 	
 	/**
 	 * Method to use to move the camera
@@ -134,6 +129,9 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_cam.setLocation(pos); 
 	}
 	
+	/**
+	 * Manage the camera control using the mouse
+	 */
 	public void moveCameraGrab() {
 		if (_canMove) {
 			Vector3f currentMousePosition = mouseOnGroundCoords();

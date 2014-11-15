@@ -66,7 +66,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		flyCam.setEnabled(false);
 		_controller.getCameraModeController().setCamera(cam);
 		_controller.getCameraModeController().setInputManager(inputManager);
-		_controller.getCameraModeController().setToRemove(this);
+		_controller.getCameraModeController().setWorldView(this);
 		
 		//Change the default background
 		viewPort.setBackgroundColor(ColorRGBA.White);
