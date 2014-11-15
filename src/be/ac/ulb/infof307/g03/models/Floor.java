@@ -19,10 +19,18 @@ public class Floor implements Geometric {
 	@DatabaseField
 	double _height = 1.0;
 	
+	/**
+	 * Constructor of the class Floor.
+	 * The constructor is empty
+	 */
 	public Floor(){
 		
 	}
 	
+	/**
+	 * Constructor of the class Floor.
+	 * @param height The height of the floor.
+	 */
 	public Floor(double height){
 		setHeight(height);
 	}
@@ -34,10 +42,16 @@ public class Floor implements Geometric {
 		return _id;
 	}
 	
+	/**
+	 * @param height The height to be set.
+	 */
 	public void setHeight(double height){
 		_height = height;
 	}
 	
+	/**
+	 * @return The height of the floor
+	 */
 	public double getHeight(){
 		return _height;
 	}

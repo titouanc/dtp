@@ -70,9 +70,10 @@ public class Main {
 	
 	/**
 	 * Create a room in a project
-	 * @param dao A geometric Data Acces Object
-	 * @param name The name of this room
+	 * @param dao A geometric Data Acces Object.
+	 * @param name The name of this room.
 	 * @param points Contour of this room, in order
+	 * @return A group which is a room.
 	 * @throws SQLException
 	 */
 	public static Group createRoom(GeometryDAO dao, String name, Point...points) throws SQLException{

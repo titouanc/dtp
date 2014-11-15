@@ -27,7 +27,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;

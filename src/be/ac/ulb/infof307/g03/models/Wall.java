@@ -19,6 +19,10 @@ public class Wall extends Grouped {
 		super();
 	}
 	
+	/**
+	 * Constructor of the class Wall.
+	 * @param group The wall's group.
+	 */
 	public Wall(Group group){
 		super(group);
 	}
