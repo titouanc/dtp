@@ -1,6 +1,7 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
+import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
 import java.sql.SQLException;
 import java.util.Observable;
@@ -10,7 +11,7 @@ import java.util.Observer;
  * @author fhennecker, pierre, wmoulart
  * @brief Controller of the ToolsBar at the top of the application.
  */
-public class ToolsBarController implements Observer {
+public class ToolsBarController {
 	private ToolsBarView _view;
 	private Project _project;
 	
@@ -22,7 +23,7 @@ public class ToolsBarController implements Observer {
 	public ToolsBarController(Project aProject){
 		_view = new ToolsBarView(this);
 		_project = aProject;
-		_project.addObserver(this);
+		_project.addObserver(_view);
         //Sets the default mode
         this.onDragSelectMode();
 	}
@@ -138,9 +139,5 @@ public class ToolsBarController implements Observer {
     	_project.config("mouse.mode", "construct");
     }
     
-	@Override
-	public void update(Observable o, Object arg) {
-		
-	}
 
 }

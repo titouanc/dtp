@@ -17,19 +17,23 @@ import javax.swing.JToolBar;
 import javax.swing.JButton;
 
 import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
+import be.ac.ulb.infof307.g03.models.Config;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
 
 
 /**
  * This class implement a toolbar for the HomePlan GUI
  * It extend JToolBar
  */
-public class ToolsBarView extends JToolBar implements ActionListener  {
+public class ToolsBarView extends JToolBar implements ActionListener, Observer  {
 	private static final long serialVersionUID = 1L;
 	
 	private ToolsBarController _controller;
+	private JToggleButton _createButton;
 	
 	// buttons actions	
 	static final private String _NEWELEMENT	= "NewElement";
@@ -80,13 +84,11 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
     private void _addForms() {
         
         //button group
-    	JButton groupButton = new JButton(_NEWELEMENT);
-    	groupButton.setActionCommand(_NEWELEMENT);
-    	groupButton.setToolTipText("Create a new Element");
-    	groupButton.addActionListener(this);
-        this.add(groupButton);
-        
-
+    	_createButton = new JToggleButton(_NEWELEMENT);
+    	_createButton.setActionCommand(_NEWELEMENT);
+    	_createButton.setToolTipText("Create a new Element");
+    	_createButton.addActionListener(this);
+        this.add(_createButton);       
         this.addSeparator();
     }
 
@@ -187,6 +189,13 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         this.addSeparator();
         
     }
+    
+    /**
+     * @return a JToggleButton
+     */
+    public JToggleButton getCreateButton(){
+    	return _createButton ;
+    }
      
     /**
      * Inherited method from ActionListener abstract class
@@ -220,5 +229,14 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         }
 
 	}
+     
+     @Override
+ 	public void update(Observable o, Object arg) {
+ 		Config param = (Config) arg;
+ 		if (param.getName().equals("mouse.mode")){
+ 			_createButton.setEnabled (! param.getValue().equals("construct"));
+ 			_createButton.setSelected(  param.getValue().equals("construct"));
+ 		}
+ 	}
 
 }

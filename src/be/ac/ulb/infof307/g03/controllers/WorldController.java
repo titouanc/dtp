@@ -220,45 +220,41 @@ public class WorldController implements ActionListener {
     	System.out.println("[WorldController] onAction: " + command + " - " + (mouseDown ? "press" : "release"));
     	
     	if (command.equals(WorldView.RIGHT_CLICK) && _project.config("mouse.mode").equals("dragSelect")){
-    		if (_inConstruction.size()>0 && mouseDown){
-    			// On appelle la fonction de Bruno qui va cleaner la liste et récupérer les points
-    			System.out.println("On clean la liste");
-    		}
-    		else{
-				/* We're moving a point, and mouse button up: stop the point here */
-				if (_movingPoint != null && ! mouseDown){
-	            	System.out.println("[WorldController] Stopping point " + _movingPoint.getUID() + _movingPoint.toString());
-	            	dropMovingPoint();
-	            }
-				
-				/* Find the Geometric object where we clicked */
-	            Geometric clicked = getClickedObject();
-	            
-	            /* We're not interested if no object */
-	            if (clicked == null)
-	            	return;
-	            
-	            /* If it is a Grouped (Wall, Ground): select it */
-	            if (clicked instanceof Grouped && mouseDown){
-	            	System.out.println("[WorldController] Select " + clicked.toString());
-	            	selectObject((Grouped) clicked);
-	            } 
-	            /* If it is a Point: initiate drag'n drop */
-	            else if (clicked instanceof Point && mouseDown){
-	            	System.out.println("[WorldController] Moving point " + clicked.getUID() + clicked.toString());
-	        		_movingPoint = (Point) clicked;
-	            }
-    		}
+			/* We're moving a point, and mouse button up: stop the point here */
+			if (_movingPoint != null && ! mouseDown){
+            	System.out.println("[WorldController] Stopping point " + _movingPoint.getUID() + _movingPoint.toString());
+            	dropMovingPoint();
+            }
+			
+			/* Find the Geometric object where we clicked */
+            Geometric clicked = getClickedObject();
+            
+            /* We're not interested if no object */
+            if (clicked == null)
+            	return;
+            
+            /* If it is a Grouped (Wall, Ground): select it */
+            if (clicked instanceof Grouped && mouseDown){
+            	System.out.println("[WorldController] Select " + clicked.toString());
+            	selectObject((Grouped) clicked);
+            } 
+            /* If it is a Point: initiate drag'n drop */
+            else if (clicked instanceof Point && mouseDown){
+            	System.out.println("[WorldController] Moving point " + clicked.getUID() + clicked.toString());
+        		_movingPoint = (Point) clicked;
+            }
 		}
     	
-    	if (command.equals(WorldView.LEFT_CLICK) && mouseDown && _project.config("mouse.mode").equals("construct")){
-    		construct();
+    	else if (command.equals(WorldView.RIGHT_CLICK) && _project.config("mouse.mode").equals("construct")){
+    		if (_inConstruction.size()>0 && mouseDown){
+    			System.out.println("On clean la liste");
+    			_project.config("mouse.mode","dragSelect");
+    		}
     	}
     	
-    	/*
-    	else if (command.equals(WorldView.LEFT_CLICK) && _project.config("mouse.mode").equals("createElement")){
-
+    	else if (command.equals(WorldView.LEFT_CLICK) && mouseDown && _project.config("mouse.mode").equals("construct")){
+    		construct();
     	}
-    	*/
+    	   	
 	}
 }
