@@ -76,7 +76,7 @@ public class GeometryDAO extends Observable {
 		int res = 0;
 		if (object instanceof Point){
 			Point p = (Point) object;
-			try {_points.create(p);}
+			try {res=_points.create(p);}
 			catch (SQLException err){
 				// Not unique: find existing point and copy its data
 				p.copyFrom(getPoint(p.getX(), p.getY(), p.getZ()));

@@ -1,6 +1,7 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
+import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
 import java.util.Observable;
 import java.util.Observer;
@@ -9,7 +10,7 @@ import java.util.Observer;
  * @author fhennecker, pierre, wmoulart
  * @brief Controller of the ToolsBar at the top of the application.
  */
-public class ToolsBarController implements Observer {
+public class ToolsBarController {
 	private ToolsBarView _view;
 	private Project _project;
 	
@@ -21,7 +22,7 @@ public class ToolsBarController implements Observer {
 	public ToolsBarController(Project aProject){
 		_view = new ToolsBarView(this);
 		_project = aProject;
-		_project.addObserver(this);
+		_project.addObserver(_view);
         //Sets the default mode
         this.onDragSelectMode();
 	}
@@ -128,9 +129,14 @@ public class ToolsBarController implements Observer {
     	_project.config("mouse.mode", "dragMove");
     }
     
-	@Override
-	public void update(Observable o, Object arg) {
-		
-	}
+    /**
+     * The private method is called when the hand button 
+     * is clicked. It will communicate with the controller
+     */ 
+    public void onConstruction(){
+    	System.out.println("[DEBUG] User clicked on : new Element");
+    	_project.config("mouse.mode", "construct");
+    }
+    
 
 }

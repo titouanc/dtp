@@ -4,6 +4,8 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.WorldView;
@@ -18,7 +20,7 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 
 /**
- * @author fhennecker, pierre
+ * @author fhennecker,pierre,wmoulart
  * @brief Controller of the jMonkeyEngine canvas. It handles both the 3D and 2D view.
  */
 public class WorldController implements ActionListener {
@@ -28,6 +30,7 @@ public class WorldController implements ActionListener {
     private boolean _isViewCreated = false;
     CameraModeController _cameraModeController = null;
     private Point _movingPoint = null;
+    private List<Point> _inConstruction ;
     
     /**
      * Constructor of WorldController.
@@ -42,6 +45,7 @@ public class WorldController implements ActionListener {
         _view.createCanvas();
         _cameraModeController = new CameraModeController(project);
         _project = project;
+        _inConstruction = new LinkedList <Point> () ;
     }
     
     /**
@@ -98,6 +102,8 @@ public class WorldController implements ActionListener {
         return new Ray(camPos, camDir);
     }
     
+    
+    
     /**
      * Convert a click position to clicked item
      * @return The clicked Geometric item, or null if not found
@@ -131,15 +137,7 @@ public class WorldController implements ActionListener {
     	if (_movingPoint == null)
     		return;
     	
-    	Ray ray = getRayForMousePosition();
-        Vector3f pos = ray.getOrigin();
-        Vector3f dir = ray.getDirection();
-        
-        /* Get the position of the point along the ray, given its Z coordinate */
-        float t = ((float) _movingPoint.getZ() - pos.getZ())/dir.getZ();
-        Vector3f onPlane = pos.add(dir.mult(t));
-        _movingPoint.setX(onPlane.getX());
-        _movingPoint.setY(onPlane.getY());
+    	getXYForMouse(_movingPoint);
         
         try {
         	GeometryDAO dao = _project.getGeometryDAO();
@@ -150,6 +148,27 @@ public class WorldController implements ActionListener {
         	err.printStackTrace();
         }
     }
+    
+    /**
+     * Return X and Y position when user click on the screen.
+     * @param Z
+     * @return
+     */
+	public Vector2f getXYForMouse(float Z){
+    	Ray ray = getRayForMousePosition();
+        Vector3f pos = ray.getOrigin();
+        Vector3f dir = ray.getDirection();
+        /* Get the position of the point along the ray, given its Z coordinate */
+        float t = (Z - pos.getZ())/dir.getZ();
+        Vector3f onPlane = pos.add(dir.mult(t));
+        return new Vector2f(onPlane.getX(),onPlane.getY());
+    }
+	
+	public void getXYForMouse(Point p){
+		Vector2f myVector= getXYForMouse((float) p.getZ());
+		p.setX(myVector.getX());
+		p.setY(myVector.getY());
+	}
     
     /**
      * Move the currently moving point
@@ -176,14 +195,57 @@ public class WorldController implements ActionListener {
         }
     }
 
+    public void construct(){
+    	Point lastPoint=new Point();
+		lastPoint.setZ(1);
+		getXYForMouse(lastPoint);
+		lastPoint.select();
+		try {
+        	GeometryDAO dao = _project.getGeometryDAO();
+        	dao.create(lastPoint);
+        	dao.notifyObservers();
+        } catch (SQLException err){
+        	err.printStackTrace();
+        }
+		_inConstruction.add(lastPoint);
+		System.out.println(_inConstruction);
+    }
+    
+    /**
+     * Mesh the points together for the walls creation
+     */
+    public void finalizeConstruct(){
+    	Group room = new Group();
+    	GeometryDAO dao;
+		try {
+			dao = _project.getGeometryDAO();
+			dao.create(room);
+	    	for (int i=0; i<_inConstruction.size(); i++){
+	    		_inConstruction.get(i).deselect();
+	    		dao.update(_inConstruction.get(i));
+				dao.addShapeToGroup(room, new Line(_inConstruction.get(i), _inConstruction.get((i+1)%_inConstruction.size())));
+	    	}
+	    	dao.create(new Wall(room));
+	    	dao.create(new Ground(room));
+	    	dao.addGroupToFloor((Floor) dao.getByUID("flr-1"), room);
+	    	dao.notifyObservers();
+	    	_inConstruction.clear();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    	
+    
     /**
      * Handle click
      */
     @Override
 	public void onAction(String command, boolean mouseDown, float arg2) {
+    
     	System.out.println("[WorldController] onAction: " + command + " - " + (mouseDown ? "press" : "release"));
     	
-    	if (command.equals(WorldView.CLICK) && _project.config("mouse.mode").equals("dragSelect")){
+    	if (command.equals(WorldView.RIGHT_CLICK) && _project.config("mouse.mode").equals("dragSelect")){
 			/* We're moving a point, and mouse button up: stop the point here */
 			if (_movingPoint != null && ! mouseDown){
             	System.out.println("[WorldController] Stopping point " + _movingPoint.getUID() + _movingPoint.toString());
@@ -208,5 +270,18 @@ public class WorldController implements ActionListener {
         		_movingPoint = (Point) clicked;
             }
 		}
+    	
+    	else if (command.equals(WorldView.RIGHT_CLICK) && _project.config("mouse.mode").equals("construct")){
+    		if (_inConstruction.size()>0 && mouseDown){
+    			System.out.println("On clean la liste");
+    			finalizeConstruct();
+    			_project.config("mouse.mode","dragSelect");
+    		}
+    	}
+    	
+    	else if (command.equals(WorldView.LEFT_CLICK) && mouseDown && _project.config("mouse.mode").equals("construct")){
+    		construct();
+    	}
+    	   	
 	}
 }

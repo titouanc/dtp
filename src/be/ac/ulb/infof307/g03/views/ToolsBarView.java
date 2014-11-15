@@ -17,26 +17,26 @@ import javax.swing.JToolBar;
 import javax.swing.JButton;
 
 import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
+import be.ac.ulb.infof307.g03.models.Config;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
 
 
 /**
  * This class implement a toolbar for the HomePlan GUI
  * It extend JToolBar
  */
-public class ToolsBarView extends JToolBar implements ActionListener  {
+public class ToolsBarView extends JToolBar implements ActionListener, Observer  {
 	private static final long serialVersionUID = 1L;
 	
 	private ToolsBarController _controller;
+	private JToggleButton _createButton;
 	
-	// buttons actions
-	static final private String _UNDO 		= "Undo";
-	static final private String _REDO 		= "Redo";
-	
-	static final private String _LINE  		= "Line";
-	static final private String _GROUP 		= "Group";
+	// buttons actions	
+	static final private String _NEWELEMENT	= "NewElement";
 	
 	static final private String _FLOOR_UP   = "FloorUp";
 	static final private String _FLOOR_DOWN = "FloorDown";
@@ -69,30 +69,11 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      * The private method used for creating all the buttons 
      */
     private void _addButons(){
-        _addButtonsUndoRedo();
-        _addForms();
         _addButtonsFloor();
         _addButtonsDimension();
         _addButtonRotation();
+        _addForms();
  
-    }
-    
-    /**
-     * The private method used for creating the button undo to 
-     * go back in history and the button redo that does the opposite  
-     */
-    private void _addButtonsUndoRedo() {
-    	// listButton, for adding/removing a button without pain
-    	String[] listButton = new String[] {_UNDO, _REDO};
-    	
-    	for( String buttonName : listButton){
-            JButton button = new JButton(buttonName);
-            button.setActionCommand(buttonName);
-            button.setToolTipText(buttonName+" last action");
-            button.addActionListener(this);
-            this.add(button);
-    	}
-       this.addSeparator();
     }
     
     /**
@@ -100,21 +81,13 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      * possible to add on the project
      */
     private void _addForms() {
-    	// button line
-    	JButton lineButton = new JButton(_LINE);
-    	lineButton.setActionCommand(_LINE);
-    	lineButton.setToolTipText("Create a line");
-    	lineButton.addActionListener(this);
-        this.add(lineButton);
         
         //button group
-    	JButton groupButton = new JButton(_GROUP);
-    	groupButton.setActionCommand(_GROUP);
-    	groupButton.setToolTipText("Create a group");
-    	groupButton.addActionListener(this);
-        this.add(groupButton);
-        
-
+    	_createButton = new JToggleButton(_NEWELEMENT);
+    	_createButton.setActionCommand(_NEWELEMENT);
+    	_createButton.setToolTipText("Create a new Element");
+    	_createButton.addActionListener(this);
+        this.add(_createButton);       
         this.addSeparator();
     }
 
@@ -215,6 +188,13 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         this.addSeparator();
         
     }
+    
+    /**
+     * @return a JToggleButton
+     */
+    public JToggleButton getCreateButton(){
+    	return _createButton ;
+    }
      
     /**
      * Inherited method from ActionListener abstract class
@@ -222,17 +202,8 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      */ @Override
 	public void actionPerformed(ActionEvent action) {
 		String cmd = action.getActionCommand();
-		if (_UNDO.equals(cmd)) { 
-			_controller.onUndo();
-        } 
-		else if (_REDO.equals(cmd)) {
-        	_controller.onRedo();
-        }
-        else if (_LINE.equals(cmd)) {
-        	_controller.onLine() ;
-        }
-        else if (_GROUP.equals(cmd)) {
-        	_controller.onGroup();
+		if (_NEWELEMENT.equals(cmd)) {
+        	_controller.onConstruction();
         } 		
         else if (_FLOOR_DOWN.equals(cmd)) {
         	_controller.onFloorDown() ;
@@ -257,5 +228,14 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         }
 
 	}
+     
+     @Override
+ 	public void update(Observable o, Object arg) {
+ 		Config param = (Config) arg;
+ 		if (param.getName().equals("mouse.mode")){
+ 			_createButton.setEnabled (! param.getValue().equals("construct"));
+ 			_createButton.setSelected(  param.getValue().equals("construct"));
+ 		}
+ 	}
 
 }
