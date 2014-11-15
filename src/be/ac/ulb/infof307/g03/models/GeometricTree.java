@@ -75,20 +75,16 @@ public class GeometricTree implements TreeModel, Observer {
 		List<Geometric> res = new ArrayList<Geometric>();
 		try {
 			if (isRoot(parent))
-				res.addAll(_dao.getRootNodes());
+				res.addAll(_dao.getFloors());
 			else if (parent instanceof Group){
 				Group grp = (Group) parent;
-				
-				Floor floor = _dao.getFloor(grp);
-				if (floor != null) res.add(floor);
-				
 				Wall wall = _dao.getWall(grp);
 				if (wall != null) res.add(wall);
-				
 				Ground gnd = _dao.getGround(grp);
 				if (gnd != null) res.add(gnd);
-				
 				res.addAll(_dao.getShapesForGroup(grp));
+			} else if (parent instanceof Floor){
+				res.addAll(_dao.getGroups((Floor) parent));
 			}
 		} catch (SQLException err) {}
 		

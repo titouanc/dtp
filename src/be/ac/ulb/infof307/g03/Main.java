@@ -56,8 +56,11 @@ public class Main {
 			  d = new Point(0, 12, 1),
 			  e = new Point(-5, -1, 1);
 		
-		createRoom(geo, "Irregular room", a, b, c, d);
-		createRoom(geo, "Triangular room", a, e, d);
+		Floor groundFloor = new Floor();
+		geo.create(groundFloor);
+		
+		geo.addGroupToFloor(groundFloor, createRoom(geo, "Irregular room", a, b, c, d));
+		geo.addGroupToFloor(groundFloor, createRoom(geo, "Triangular room", a, e, d));
 		geo.notifyObservers();
 		return proj;
 	}
@@ -69,7 +72,7 @@ public class Main {
 	 * @param points Contour of this room, in order
 	 * @throws SQLException
 	 */
-	public static void createRoom(GeometryDAO dao, String name, Point...points) throws SQLException{
+	public static Group createRoom(GeometryDAO dao, String name, Point...points) throws SQLException{
 		Group room = new Group(name);
 		dao.create(room);
 		dao.create(new Wall(room, 7));
@@ -77,5 +80,6 @@ public class Main {
 		
 		for (int i=0; i<points.length; i++)
 			dao.addShapeToGroup(room, new Line(points[i], points[(i+1)%points.length]));
+		return room;
 	}
 }

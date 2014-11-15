@@ -12,6 +12,8 @@ import com.j256.ormlite.field.DatabaseField;
 public class Group extends Shape {
 	@DatabaseField(canBeNull = true, unique = true)
 	private String _name = null;
+	@DatabaseField(foreign = true, canBeNull = true, foreignAutoRefresh = true)
+	private Floor _floor = null;
 	
 	/**
 	 * Create a new group project with an empty name;
@@ -26,6 +28,21 @@ public class Group extends Shape {
 	 */
 	public Group(String name){
 		_name = name;
+	}
+	
+	/**
+	 * Set the floor for this group
+	 * @param floor The floor at which this group will be situated
+	 */
+	public void setFloor(Floor floor){
+		_floor = floor;
+	}
+	
+	/**
+	 * @return The floor at which this group is situated
+	 */
+	public Floor getFloor(){
+		return _floor;
 	}
 
 	/**

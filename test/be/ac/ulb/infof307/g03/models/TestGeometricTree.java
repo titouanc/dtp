@@ -43,9 +43,10 @@ public class TestGeometricTree {
 	 * @throws SQLException
 	 */
 	private void create_basic_project() throws SQLException{
+		Floor groundFloor = new Floor();
+		_dao.create(groundFloor);
 		Group top = new Group("Toplevel");
-		_dao.create(top);
-		_dao.create(new Floor(top));
+		_dao.addGroupToFloor(groundFloor, top);
 		
 		Group sub1 = new Group("Sublevel 1");
 		_dao.addShapeToGroup(top, sub1);
@@ -98,14 +99,15 @@ public class TestGeometricTree {
 		assertEquals(1, treemodel.getChildCount(root));
 		assertFalse(treemodel.isLeaf(root));
 		
-		Object top = treemodel.getChild(root, 0);
-		assertEquals(Group.class, top.getClass());
-		assertEquals(2, treemodel.getChildCount(top));
-		
-		Object floor = treemodel.getChild(top, 0);
+		Object floor = treemodel.getChild(root, 0);
 		assertEquals(Floor.class, floor.getClass());
+		assertEquals(1, treemodel.getChildCount(floor));
+		
+		Object top = treemodel.getChild(floor, 0);
+		assertEquals(Group.class, top.getClass());
+		assertEquals(1, treemodel.getChildCount(top));
 				
-		Object sub1 = treemodel.getChild(top, 1);
+		Object sub1 = treemodel.getChild(top, 0);
 		assertEquals(Group.class, sub1.getClass());
 		assertEquals(3, treemodel.getChildCount(sub1));
 		
@@ -133,8 +135,8 @@ public class TestGeometricTree {
 		assertEquals(2, treemodel.getIndexOfChild(grp, subgrp));
 		
 		Object root = treemodel.getRoot();
-		Group top = _dao.getGroup("Toplevel");
-		assertEquals(0, treemodel.getIndexOfChild(root, top));
+		Floor floor = _dao.getFloors().get(0);
+		assertEquals(0, treemodel.getIndexOfChild(root, floor));
 	}
 
 	@Test
@@ -146,11 +148,17 @@ public class TestGeometricTree {
 		MockTreeModelListener mock = new MockTreeModelListener();
 		treemodel.addTreeModelListener(mock);
 		
+		// Create cache
+		treemodel.getChild(treemodel.getChild(treemodel.getChild(treemodel.getRoot(), 0), 0), 0);
+		
 		// Simulate observable notifications, assert the listener get the right events
-		Group grp = (Group) _dao.getRootNodes().get(0);
-		grp.setName("TestTest");
-		assertEquals(1, _dao.update(grp));
+		Floor basement = new Floor();
+		_dao.create(basement);
+		Floor groundFloor = _dao.getFloors().get(0);
+		_dao.update(groundFloor);
+		
 		_dao.notifyObservers();
+		assertNotNull(mock.insert);
 		assertNotNull(mock.change);
 		
 		// Detach the listener, it should not receive anything

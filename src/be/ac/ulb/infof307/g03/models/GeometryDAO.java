@@ -301,6 +301,18 @@ public class GeometryDAO extends Observable {
 	}
 	
 	/**
+	 * Get all groups situated at a given floor
+	 * @param floor The floor from which we want groups
+	 * @return A (possibly empty) List of Groups
+	 * @throws SQLException
+	 */
+	public List<Group> getGroups(Floor floor) throws SQLException {
+		return _groups.query(
+			_groups.queryBuilder().where().eq("_floor_id", floor.getId()).prepare()
+		); 
+	}
+	
+	/**
 	 * Get a Floor object from the database
 	 * @param ground_id The Floor identifier
 	 * @return The floor
@@ -346,12 +358,6 @@ public class GeometryDAO extends Observable {
 	
 	public Floor getFloor(int floor_id) throws SQLException{
 		return _floors.queryForId(floor_id);
-	}
-	
-	public Floor getFloor(Group group) throws SQLException{
-		return _floors.queryForFirst(
-			_floors.queryBuilder().where().eq("_group_id", group.getId()).prepare()
-		);
 	}
 	
 	/**
@@ -427,6 +433,15 @@ public class GeometryDAO extends Observable {
 		setChanged();
 	}
 
+	public void addGroupToFloor(Floor floor, Group grp) throws SQLException {
+		grp.setFloor(floor);
+		if (grp.getId() != 0)
+			update(grp);
+		else
+			create(grp);
+		setChanged();
+	}
+	
 	public List<Floor> getFloors() throws SQLException{
 		return _floors.queryForAll();
 	}
