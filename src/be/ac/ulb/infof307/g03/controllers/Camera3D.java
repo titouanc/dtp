@@ -8,8 +8,10 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 
@@ -20,13 +22,15 @@ import com.jme3.renderer.Camera;
 public class Camera3D implements AnalogListener, ActionListener {
 
 	private Camera _cam;
-	private float _rotationSpeed = 1f;
-	private float _moveSpeed = 3f;
+	private float _rotationSpeed 	= 1f;
+	private float _moveSpeed 		= 10f;
+	private float _zoomSpeed		= 4f;
 	private boolean _canRotate = false;
-	private boolean _loop = false;
+	private boolean _canMove = false;
 	private boolean _enabled = true;
 	private InputManager _inputManager;
-	private String _mouseMode;
+	private String _mouseMode = _MODE_DRAGSELECT;
+	private Vector3f _previousMousePosition;
 	
     static private final String _MODE_DRAGROTATE = "dragRotate";
     static private final String _MODE_DRAGSELECT = "dragSelect";
@@ -36,16 +40,23 @@ public class Camera3D implements AnalogListener, ActionListener {
 	static private final String _STRAFERIGHT	= "CAM3D_StrafeRight";
 	static private final String _FORWARD		= "CAM3D_Forward";
 	static private final String _BACKWARD		= "CAM3D_Backward";
-	static private final String _ROTATEDRAG		= "CAM3D_RotateDrag";
+	static private final String _MOVEDRAG		= "CAM3D_MOVEDRAG";
 	static private final String _UP				= "CAM3D_Up";
 	static private final String _DOWN			= "CAM3D_Down";
 	static private final String _LEFT			= "CAM3D_Left";
 	static private final String _RIGHT			= "CAM3D_Right";
+	static private final String _ROTATELEFT		= "CAM3D_LoopLeft";
+	static private final String _ROTATERIGHT	= "CAM3D_LoopRight";
+	static private final String _ZOOMIN			= "CAM3D_ZoomIn";
+	static private final String _ZOOMOUT		= "CAM3D_ZoomOut";
 	
-	// !!! <temporary> !!!
-	static private final String _LOOP			= "CAM3D_Loop";
-	// !!! </temporary> !!!
-
+	static private float _defaultNear;
+	static private float _defaultFar;
+	static private float _defaultLeft;
+	static private float _defaultRight;
+	static private float _defaultTop;
+	static private float _defaultBottom;
+	
 	/**
 	 * Constructor of the 2D camera
 	 */
@@ -73,6 +84,12 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 */
 	public void setCam(Camera cam) {
 		_cam = cam;
+		_defaultNear = _cam.getFrustumNear();
+		_defaultFar = _cam.getFrustumFar();
+		_defaultLeft = _cam.getFrustumLeft();
+		_defaultRight = _cam.getFrustumRight();
+		_defaultTop = _cam.getFrustumTop();
+		_defaultBottom = _cam.getFrustumBottom();
 	}
 	
 	public void setMouseMode(String mouseMode) {
@@ -93,12 +110,8 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 */
 	public void resetDirection() {
         _cam.setParallelProjection(false);
+        _cam.setFrustum(_defaultNear, _defaultFar, _defaultLeft, _defaultRight, _defaultTop, _defaultBottom);
         
-		Quaternion q = new Quaternion();
-		
-        q.fromAxes(_cam.getLeft(),new Vector3f(0f,0f,1f), _cam.getUp());
-        q.normalizeLocal();
-        _cam.setAxes(q);
         
 	}
 
@@ -110,11 +123,19 @@ public class Camera3D implements AnalogListener, ActionListener {
 	public void moveCamera(float value, boolean sideways) {
 		Vector3f pos = _cam.getLocation().clone();
 		Vector3f vel = new Vector3f();
+		
 		if (sideways) {
-			_cam.getDirection(vel);
+			if (_cam.getDirection().angleBetween(new Vector3f(0,0,-1))<(FastMath.PI/2)) {
+				_cam.getUp(vel);
+			}else {
+				_cam.getDirection(vel);
+			}
 		} else { 
 			_cam.getLeft(vel);
 		}
+		
+		vel.setZ(0);
+		vel.normalizeLocal();
 		vel.multLocal(value*_moveSpeed);
 		pos.addLocal(vel);
 
@@ -129,46 +150,76 @@ public class Camera3D implements AnalogListener, ActionListener {
 	private void rotateCamera(float value, Vector3f axis) {
 		if (!_canRotate) 
 			return;
-		
-		if (_loop) {
-			float cos1deg = 0.99939f;
-	        float sin1deg = 0.03489f;
-	        //if (trigoRotate) {
-	        //	sin1deg *= -1;
-	        //}
-	        
-	        Matrix3f mat = new Matrix3f();
-	        mat.fromAngleNormalAxis(_rotationSpeed * value, _cam.getUp());
+	
+		Matrix3f mat = new Matrix3f();
+        mat.fromAngleNormalAxis(_rotationSpeed * value, axis);
 
-	        Vector3f up = _cam.getUp();
-	        Vector3f left = _cam.getLeft();
-	        Vector3f dir = _cam.getDirection();
+        Vector3f up = _cam.getUp();
+        Vector3f left = _cam.getLeft();
+        Vector3f dir = _cam.getDirection();
 
-	        Vector3f nup = new Vector3f( (cos1deg*up.getX())+(sin1deg*up.getY()), (-sin1deg*up.getX())+(cos1deg*up.getY()), up.getZ() );
-	        Vector3f nleft = new Vector3f( (cos1deg*left.getX())+(sin1deg*left.getY()), (-sin1deg*left.getX())+(cos1deg*left.getY()), left.getZ());
+        mat.mult(up, up);
+        mat.mult(left, left);
+        mat.mult(dir, dir);
 
-	        Quaternion q = new Quaternion();
-	        q.fromAxes(nleft, nup, dir);
-	        q.normalizeLocal();
+        Quaternion q = new Quaternion();
+        q.fromAxes(left, up, dir);
+        q.normalizeLocal();
 
-	        _cam.setAxes(q);
-		} else {
-			Matrix3f mat = new Matrix3f();
-			mat.fromAngleNormalAxis(_rotationSpeed * value, axis);
+        _cam.setAxes(q);
+	}
+	
+	private void selfRotate(float value) {
+		Matrix3f mat = new Matrix3f();
+		mat.fromAngleNormalAxis(_rotationSpeed * value, _cam.getDirection());
 
-			Vector3f up = _cam.getUp();
-			Vector3f left = _cam.getLeft();
-			Vector3f dir = _cam.getDirection();
+		Vector3f up = _cam.getUp();
+		Vector3f left = _cam.getLeft();
+		Vector3f dir = _cam.getDirection();
 
-			mat.mult(up, up);
-			mat.mult(left, left);
-			mat.mult(dir, dir);
+		mat.mult(up, up);
+		mat.mult(left, left);
+		mat.mult(dir, dir);
 
-			Quaternion q = new Quaternion();
-			q.fromAxes(left, up, dir);
-			q.normalizeLocal();
-			_cam.setAxes(q);
+		Quaternion q = new Quaternion();
+		q.fromAxes(left, up, dir);
+		q.normalizeLocal();
+
+		_cam.setAxes(q);
+	}
+	
+	/**
+	 * Calculate the position on the ground where the mouse is projected
+	 * @return The projected position of the mouse on the ground
+	 */
+	private Vector3f mouseOnGroundCoords() {
+		Vector2f click2d = _inputManager.getCursorPosition();
+		Vector3f click3d = _cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
+		Vector3f dir = _cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+		float mul = click3d.z / dir.z;
+		return new Vector3f(click3d.x - (mul*dir.x),click3d.y - (mul*dir.y),0);
+	}
+	
+	private void zoomCamera(float value) {
+		Vector3f pos = _cam.getLocation().clone();
+		Vector3f vel = _cam.getDirection().clone();
+		vel.multLocal(value*_zoomSpeed);
+		pos.addLocal(vel);
+		_cam.setLocation(pos);
+	}
+	
+	public void moveCameraGrab(float value,Vector3f axis) {
+		if (_canMove) {
+			Vector3f currentMousePosition = mouseOnGroundCoords();
+			currentMousePosition.subtractLocal(_previousMousePosition);
+    		Vector3f pos = _cam.getLocation().clone();
+    		pos.subtractLocal(currentMousePosition);
+    		_cam.setLocation(pos);
+    		_previousMousePosition = mouseOnGroundCoords();
+		} else if (_canRotate) { 
+			rotateCamera(value,axis);
 		}
+		
 	}
 	
 	/**
@@ -179,12 +230,17 @@ public class Camera3D implements AnalogListener, ActionListener {
 		// Key event mapping
 		_inputManager.addMapping(_STRAFELEFT,	new KeyTrigger(KeyInput.KEY_LEFT));
 		_inputManager.addMapping(_STRAFERIGHT,	new KeyTrigger(KeyInput.KEY_RIGHT));
-		_inputManager.addMapping(_FORWARD,   	new KeyTrigger(KeyInput.KEY_LSHIFT));
-		_inputManager.addMapping(_BACKWARD,		new KeyTrigger(KeyInput.KEY_LCONTROL));
-		_inputManager.addMapping(_LOOP, 		new KeyTrigger(KeyInput.KEY_L));
+		_inputManager.addMapping(_FORWARD,   	new KeyTrigger(KeyInput.KEY_UP));
+		_inputManager.addMapping(_BACKWARD,		new KeyTrigger(KeyInput.KEY_DOWN));
+		
+		_inputManager.addMapping(_ROTATELEFT, 	new KeyTrigger(KeyInput.KEY_O));
+		_inputManager.addMapping(_ROTATERIGHT, 	new KeyTrigger(KeyInput.KEY_P));
+		
+		_inputManager.addMapping(_ZOOMIN, 		new MouseAxisTrigger(2, false));
+        _inputManager.addMapping(_ZOOMOUT, 		new MouseAxisTrigger(2, true));
 
 		// Mouse event mapping
-		_inputManager.addMapping(_ROTATEDRAG, 	new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+		_inputManager.addMapping(_MOVEDRAG, 	new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		_inputManager.addMapping(_UP, 			new MouseAxisTrigger(1, false));
 		_inputManager.addMapping(_DOWN, 		new MouseAxisTrigger(1, true));
 		_inputManager.addMapping(_LEFT,			new MouseAxisTrigger(0, true));
@@ -196,12 +252,15 @@ public class Camera3D implements AnalogListener, ActionListener {
 				_STRAFERIGHT, 
 				_FORWARD, 
 				_BACKWARD, 
-				_ROTATEDRAG, 
+				_MOVEDRAG, 
 				_UP, 
 				_DOWN,
 				_LEFT, 
 				_RIGHT, 
-				_LOOP
+				_ROTATELEFT,
+				_ROTATERIGHT,
+				_ZOOMIN,
+				_ZOOMOUT
 				);
 	}
 	
@@ -213,10 +272,13 @@ public class Camera3D implements AnalogListener, ActionListener {
 	public void onAction(String name, boolean value, float tpf) {
 		if (!_enabled)
 			return;
-		if (name.equals(_ROTATEDRAG)){
-			_canRotate = value;
-		} else if (name.equals(_LOOP)) {
-			_loop = value;
+		if (name.equals(_MOVEDRAG)) { 
+			_previousMousePosition = mouseOnGroundCoords();
+			if (_mouseMode.equals(_MODE_DRAGMOVE)) {
+				_canMove = value;
+			} else if (_mouseMode.equals(_MODE_DRAGROTATE)){
+				_canRotate = value;
+			}
 		}
 	}
 
@@ -238,13 +300,21 @@ public class Camera3D implements AnalogListener, ActionListener {
 		} else if (name.equals(_BACKWARD)) {
 			this.moveCamera(-value,true);
 		} else if (name.equals(_LEFT)) {
-			rotateCamera(-value, _cam.getUp());
+			moveCameraGrab(-value, _cam.getUp());
 		} else if (name.equals(_RIGHT)) {
-			rotateCamera(value, _cam.getUp());
+			moveCameraGrab(value, _cam.getUp());
 		} else if (name.equals(_UP)) {
-			rotateCamera(value, _cam.getLeft());
+			moveCameraGrab(value, _cam.getLeft());
 		} else if (name.equals(_DOWN)) {
-			rotateCamera(-value, _cam.getLeft());
+			moveCameraGrab(-value, _cam.getLeft());
+		} else if (name.equals(_ROTATELEFT)) {
+			selfRotate(value);
+		} else if (name.equals(_ROTATERIGHT)) {
+			selfRotate(-value);
+		} else if (name.equals(_ZOOMIN)) {
+			zoomCamera(value);
+		} else if (name.equals(_ZOOMOUT)) {
+			zoomCamera(-value);
 		}
 
 	}

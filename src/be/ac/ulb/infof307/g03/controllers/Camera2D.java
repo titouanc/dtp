@@ -148,8 +148,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 		return new Vector3f(click3d.x - (mul*dir.x),click3d.y - (mul*dir.y),0);
 	}
 	
-
-	
 	/**
 	 * Place the shapes at the center
 	 * of the user's screen
@@ -184,8 +182,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 	      frustumSize = Z/offset+offset;
 	      float aspect = (float) _cam.getWidth() / _cam.getHeight();
 	      _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
-	      
-
 	  }
 	
 	/**
@@ -241,10 +237,10 @@ public class Camera2D implements AnalogListener, ActionListener {
 	public void inputSetUp() {
 
 		// Key event mapping
-		_inputManager.addMapping(_STRAFELEFT,		new KeyTrigger(KeyInput.KEY_LEFT));
-		_inputManager.addMapping(_STRAFERIGHT,		new KeyTrigger(KeyInput.KEY_RIGHT));
-		_inputManager.addMapping(_FORWARD,   		new KeyTrigger(KeyInput.KEY_UP));
-		_inputManager.addMapping(_BACKWARD,			new KeyTrigger(KeyInput.KEY_DOWN));
+		_inputManager.addMapping(_STRAFELEFT,	new KeyTrigger(KeyInput.KEY_LEFT));
+		_inputManager.addMapping(_STRAFERIGHT,	new KeyTrigger(KeyInput.KEY_RIGHT));
+		_inputManager.addMapping(_FORWARD,   	new KeyTrigger(KeyInput.KEY_UP));
+		_inputManager.addMapping(_BACKWARD,		new KeyTrigger(KeyInput.KEY_DOWN));
 		
 		// Mouse event mapping
 		_inputManager.addMapping(_MOVEDRAG, 	new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
@@ -254,11 +250,11 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_inputManager.addMapping(_LEFT,			new MouseAxisTrigger(0, true));
 		_inputManager.addMapping(_RIGHT,		new MouseAxisTrigger(0, false));
 		
-		_inputManager.addMapping(_ROTATELEFT,			new KeyTrigger(KeyInput.KEY_O)); 
-		_inputManager.addMapping(_ROTATERIGHT,		new KeyTrigger(KeyInput.KEY_P));
+		_inputManager.addMapping(_ROTATELEFT,	new KeyTrigger(KeyInput.KEY_O)); 
+		_inputManager.addMapping(_ROTATERIGHT,	new KeyTrigger(KeyInput.KEY_P));
 
-		_inputManager.addMapping(_ZOOMIN, new MouseAxisTrigger(2, false));
-        _inputManager.addMapping(_ZOOMOUT, new MouseAxisTrigger(2, true));
+		_inputManager.addMapping(_ZOOMIN, 		new MouseAxisTrigger(2, false));
+        _inputManager.addMapping(_ZOOMOUT, 		new MouseAxisTrigger(2, true));
 
 
 		// Add the names to the action listener
