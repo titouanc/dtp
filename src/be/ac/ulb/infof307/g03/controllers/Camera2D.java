@@ -314,8 +314,8 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_inputManager.addMapping(_RIGHT,		new MouseAxisTrigger(0, false));
 		// !!! <temporary> !!!
 		
-		_inputManager.addMapping(_ROTATELEFT,			new KeyTrigger(KeyInput.KEY_L)); 
-		_inputManager.addMapping(_ROTATERIGHT,		new KeyTrigger(KeyInput.KEY_R));
+		_inputManager.addMapping(_ROTATELEFT,			new KeyTrigger(KeyInput.KEY_O)); 
+		_inputManager.addMapping(_ROTATERIGHT,			new KeyTrigger(KeyInput.KEY_P));
 		// !!! </temporary> !!!
 		_inputManager.addMapping(_ZOOMIN, new MouseAxisTrigger(2, false));
         _inputManager.addMapping(_ZOOMOUT, new MouseAxisTrigger(2, true));
