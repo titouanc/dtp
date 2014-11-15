@@ -27,6 +27,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
@@ -78,6 +80,12 @@ public class WorldView extends SimpleApplication implements Observer {
 		// Notify our controller that initialisation is done
 		_controller.onViewCreated();
 		this.setPauseOnLostFocus(false);
+	}
+	
+	public Vector<Geometry> getShapes(){
+		shapes = new Vector<Geometry>();
+		this.generateShapesList(rootNode);
+		return shapes;
 	}
 	
 	public InputManager getInputManager(){
@@ -298,6 +306,25 @@ public class WorldView extends SimpleApplication implements Observer {
 				_drawGround((Ground) grouped);
 		}
 	}
+	
+	/**
+	 * @param node
+	 */
+	public void generateShapesList(Node node){
+		java.util.List<Spatial> children = node.getChildren();
+		for(int i = 0; i < children.size(); ++i){
+			Spatial child = children.get(i);
+			if(child instanceof Geometry && !(child.getName().equals("Grid"))){
+				shapes.add((Geometry) child);
+			}
+			else if(child instanceof Node){
+				generateShapesList((Node) child);
+			}
+		}
+	}
+
+	
+	
 	
 	/**
 	 * Called when the model fires a change notification
