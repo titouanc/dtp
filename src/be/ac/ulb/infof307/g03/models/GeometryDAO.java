@@ -34,6 +34,7 @@ public class GeometryDAO extends Observable {
 	private Dao<Wall, Integer> _walls = null;
 	private Dao<Ground, Integer> _grounds = null;
 	private Dao<Point, Integer> _points = null;
+	private Dao<Floor, Integer> _floors = null;
 	private List<Change> _changes = null;
 	
 	/**
@@ -47,6 +48,7 @@ public class GeometryDAO extends Observable {
 		TableUtils.createTableIfNotExists(database, Group.class);
 		TableUtils.createTableIfNotExists(database, Ground.class);
 		TableUtils.createTableIfNotExists(database, Wall.class);
+		TableUtils.createTableIfNotExists(database, Floor.class);
 	}
 	
 	/**
@@ -60,6 +62,7 @@ public class GeometryDAO extends Observable {
 		_grounds = DaoManager.createDao(database, Ground.class);
 		_walls = DaoManager.createDao(database, Wall.class);
 		_points = DaoManager.createDao(database, Point.class);
+		_floors = DaoManager.createDao(database, Floor.class);
 		_changes = new LinkedList<Change>();
 	}
 	
@@ -71,7 +74,7 @@ public class GeometryDAO extends Observable {
 	 */
 	public int create(Geometric object) throws SQLException{
 		int res = 0;
-		if (object.getClass() == Point.class){
+		if (object instanceof Point){
 			Point p = (Point) object;
 			try {_points.create(p);}
 			catch (SQLException err){
@@ -79,18 +82,20 @@ public class GeometryDAO extends Observable {
 				p.copyFrom(getPoint(p.getX(), p.getY(), p.getZ()));
 			}
 		}
-		else if (object.getClass() == Line.class){
+		else if (object instanceof Line){
 			Line line = (Line) object;
 			for (Point p : line.getPoints())
 				create(p);
 			res = _lines.create(line);
 		}
-		else if (object.getClass() == Group.class)
+		else if (object instanceof Group)
 			res = _groups.create((Group) object);
-		else if (object.getClass() == Ground.class)
+		else if (object instanceof Ground)
 			res = _grounds.create((Ground) object);
-		else if (object.getClass() == Wall.class)
+		else if (object instanceof Wall)
 			res = _walls.create((Wall) object);
+		else if (object instanceof Floor)
+			res = _floors.create((Floor) object);
 		if (res != 0){
 			setChanged();
 			_changes.add(Change.create(object));
@@ -106,16 +111,18 @@ public class GeometryDAO extends Observable {
 	 */
 	public int refresh(Geometric object) throws SQLException{
 		int res = 0;
-		if (object.getClass() == Point.class)
+		if (object instanceof Point)
 			res = _points.refresh((Point) object);
-		else if (object.getClass() == Line.class)
+		else if (object instanceof Line)
 			res = _lines.refresh((Line) object);
-		else if (object.getClass() == Group.class)
+		else if (object instanceof Group)
 			res = _groups.refresh((Group) object);
-		else if (object.getClass() == Ground.class)
+		else if (object instanceof Ground)
 			res = _grounds.refresh((Ground) object);
-		else if (object.getClass() == Wall.class)
+		else if (object instanceof Wall)
 			res = _walls.refresh((Wall) object);
+		else if (object instanceof Floor)
+			res = _floors.refresh((Floor) object);
 		return res;
 	}
 	
@@ -127,16 +134,18 @@ public class GeometryDAO extends Observable {
 	 */
 	public int update(Geometric object) throws SQLException{
 		int res = 0;
-		if (object.getClass() == Point.class)
+		if (object instanceof Point)
 			res = _points.update((Point) object);
-		else if (object.getClass() == Line.class)
+		else if (object instanceof Line)
 			res = _lines.update((Line) object);
-		else if (object.getClass() == Group.class)
+		else if (object instanceof Group)
 			res = _groups.update((Group) object);
-		else if (object.getClass() == Ground.class)
+		else if (object instanceof Ground)
 			res = _grounds.update((Ground) object);
-		else if (object.getClass() == Wall.class)
+		else if (object instanceof Wall)
 			res = _walls.update((Wall) object);
+		else if (object instanceof Floor)
+			res = _floors.update((Floor) object);
 		if (res != 0){
 			setChanged();
 			_changes.add(Change.update(object));
@@ -166,16 +175,18 @@ public class GeometryDAO extends Observable {
 	 */
 	public int delete(Geometric object) throws SQLException{
 		int res = 0;
-		if (object.getClass() == Point.class)
+		if (object instanceof Point)
 			res = _points.delete((Point) object);
-		else if (object.getClass() == Line.class)
+		else if (object instanceof Line)
 			res = _lines.delete((Line) object);
-		else if (object.getClass() == Group.class)
+		else if (object instanceof Group)
 			res = deleteGroup((Group) object);
-		else if (object.getClass() == Ground.class)
+		else if (object instanceof Ground)
 			res = _grounds.delete((Ground) object);
-		else if (object.getClass() == Wall.class)
+		else if (object instanceof Wall)
 			res = _walls.delete((Wall) object);
+		else if (object instanceof Floor)
+			res = _floors.delete((Floor) object);
 		if (res != 0){
 			setChanged();
 			_changes.add(Change.delete(object));
@@ -204,6 +215,8 @@ public class GeometryDAO extends Observable {
 					res = getPoint(id);
 				else if (parts[0].equals("wal"))
 					res = getWall(id);
+				else if (parts[0].equals("flr"))
+					res = getFloor(id);
 			}
 		} catch (SQLException e){
 			e.printStackTrace();
@@ -331,6 +344,16 @@ public class GeometryDAO extends Observable {
 		);
 	}
 	
+	public Floor getFloor(int floor_id) throws SQLException{
+		return _floors.queryForId(floor_id);
+	}
+	
+	public Floor getFloor(Group group) throws SQLException{
+		return _floors.queryForFirst(
+			_floors.queryBuilder().where().eq("_group_id", group.getId()).prepare()
+		);
+	}
+	
 	/**
 	 * Retrieve a point from the database, given its identifier
 	 * @param point_id The point identifier
@@ -404,11 +427,16 @@ public class GeometryDAO extends Observable {
 		setChanged();
 	}
 
+	public List<Floor> getFloors() throws SQLException{
+		return _floors.queryForAll();
+	}
+	
 	/**
 	 * Retrieve all Walls from database
 	 * @return A list of all project's walls
 	 * @throws SQLException
 	 */
+
 	public List<Wall> getWalls() throws SQLException{
 		return _walls.queryForAll();
 	}

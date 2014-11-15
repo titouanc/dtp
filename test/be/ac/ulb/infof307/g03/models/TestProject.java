@@ -44,6 +44,16 @@ public class TestProject {
 	}
 	
 	@Test
+	public void test_project_observable(){
+		MockObserver<Config> mock = new MockObserver<Config>();
+		proj.addObserver(mock);
+		proj.config("Hello", "World");
+		assertEquals(1, mock.getCallNumber());
+		assertEquals("Hello", mock.changes.getName());
+		assertEquals("World", mock.changes.getValue());
+	}
+	
+	@Test
 	public void test_geoDAO_is_singleton() throws SQLException {
 		GeometryDAO geo = proj.getGeometryDAO();
 		GeometryDAO geo2 = proj.getGeometryDAO();

@@ -33,6 +33,7 @@ public class TestGeometricTree {
 	/**
 	 * Create a new Project structured like this:
 	 * - Group "Toplevel"
+	 *    - Floor
 	 *    - Group "Sublevel 1"
 	 *        - Ground
 	 *        - Line (0,0,0) (0,0,1)
@@ -44,6 +45,7 @@ public class TestGeometricTree {
 	private void create_basic_project() throws SQLException{
 		Group top = new Group("Toplevel");
 		_dao.create(top);
+		_dao.create(new Floor(top));
 		
 		Group sub1 = new Group("Sublevel 1");
 		_dao.addShapeToGroup(top, sub1);
@@ -98,9 +100,12 @@ public class TestGeometricTree {
 		
 		Object top = treemodel.getChild(root, 0);
 		assertEquals(Group.class, top.getClass());
-		assertEquals(1, treemodel.getChildCount(top));
+		assertEquals(2, treemodel.getChildCount(top));
 		
-		Object sub1 = treemodel.getChild(top, 0);
+		Object floor = treemodel.getChild(top, 0);
+		assertEquals(Floor.class, floor.getClass());
+				
+		Object sub1 = treemodel.getChild(top, 1);
 		assertEquals(Group.class, sub1.getClass());
 		assertEquals(3, treemodel.getChildCount(sub1));
 		
@@ -113,6 +118,9 @@ public class TestGeometricTree {
 	public void test_tree_indexes() throws SQLException {
 		create_basic_project();
 		GeometricTree treemodel = new GeometricTree(_dao);
+		
+		Floor flr = (Floor) _dao.getByUID("flr-1");
+		assertNotNull(flr);
 		
 		Ground gnd = (Ground) _dao.getByUID("gnd-1");
 		assertNotNull(gnd);
