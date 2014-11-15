@@ -3,6 +3,9 @@
  */
 package be.ac.ulb.infof307.g03.controllers;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import be.ac.ulb.infof307.g03.views.MenuBarView;
 
 /**
@@ -11,6 +14,7 @@ import be.ac.ulb.infof307.g03.views.MenuBarView;
  */
 public class MenuBarController {
 	private MenuBarView _view;
+	private FileChooserController _fileController;
 	
 	/**
 	 * Constructor of MenuBarController.
@@ -18,6 +22,7 @@ public class MenuBarController {
 	 */
 	public MenuBarController(){
 		_view = new MenuBarView(this);
+		_fileController = new FileChooserController(_view);
 	}
 	
 	/**
@@ -31,19 +36,22 @@ public class MenuBarController {
 	 * Handler launched when menu item "New" is clicked
 	 */
 	public void onNew() {
-		System.out.println("new");
+		System.out.println("[DEBUG] User clicked on new");
 	}
 	/**
 	 * Handler launched when menu item "Open" is clicked
 	 */
 	public void onOpen() {
-		System.out.println("open");
+		System.out.println("[DEBUG] User clicked on open");
+		_fileController.notifyDisplayOpen();
+		
 	}
 	/**
 	 * Handler launched when menu item "Save" clicked
 	 */
 	public void onSave() {
-		System.out.println("save");
+		System.out.println("[DEBUG] User clicked on save");
+		_fileController.notifyDisplaySave();
 	}
 	/**
 	 * Handler launched when menu item "Quit" clicked
@@ -55,12 +63,12 @@ public class MenuBarController {
 	 * Handler launched when menu item "Undo" clicked
 	 */
 	public void onUndo() {
-		System.out.println("undo");
+		System.out.println("[DEBUG] User clicked on undo");
 	}
 	/**
 	 * Handler launched when menu item "Redo" clicked
 	 */
 	public void onRedo() {
-		System.out.println("redo");
+		System.out.println("[DEBUG] User clicked on redo");
 	}
 }
