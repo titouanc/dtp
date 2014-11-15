@@ -178,12 +178,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 		  }
 		  X=(minX+maxX)/2;
 		  Y=(minY+maxY)/2;
-		  /*
-			Quaternion q = new Quaternion();
-	        q.fromAxes(_cam.getLeft(), _cam.getUp(), new Vector3f(0,0,-1));
-	        q.normalizeLocal();
-	        _cam.setAxes(q);
-	        */
 	      _cam.setLocation(new Vector3f(X,Y,Z+offset));
 		  _cam.lookAt(new Vector3f(X,Y,0),Vector3f.UNIT_Z);
 	      _cam.setParallelProjection(true);
@@ -252,7 +246,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_inputManager.addMapping(_FORWARD,   		new KeyTrigger(KeyInput.KEY_UP));
 		_inputManager.addMapping(_BACKWARD,			new KeyTrigger(KeyInput.KEY_DOWN));
 		
-		
 		// Mouse event mapping
 		_inputManager.addMapping(_MOVEDRAG, 	new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		
@@ -260,11 +253,10 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_inputManager.addMapping(_DOWN, 		new MouseAxisTrigger(1, true));
 		_inputManager.addMapping(_LEFT,			new MouseAxisTrigger(0, true));
 		_inputManager.addMapping(_RIGHT,		new MouseAxisTrigger(0, false));
-		// !!! <temporary> !!!
 		
 		_inputManager.addMapping(_ROTATELEFT,			new KeyTrigger(KeyInput.KEY_O)); 
 		_inputManager.addMapping(_ROTATERIGHT,		new KeyTrigger(KeyInput.KEY_P));
-		// !!! </temporary> !!!
+
 		_inputManager.addMapping(_ZOOMIN, new MouseAxisTrigger(2, false));
         _inputManager.addMapping(_ZOOMOUT, new MouseAxisTrigger(2, true));
 
@@ -284,7 +276,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 
 									_ROTATELEFT, 
 									_ROTATERIGHT,
-									// !!! </temporary> !!!
+									
 									_ZOOMIN, 
 									_ZOOMOUT
 		);
@@ -332,17 +324,13 @@ public class Camera2D implements AnalogListener, ActionListener {
 			this.moveCameraGrab();
 		} else if(name.equals(_LEFT)){
 			this.moveCameraGrab();
-		}else if(name.equals(_RIGHT)){
+		} else if(name.equals(_RIGHT)){
 			this.moveCameraGrab();
-		}
-		// !!! <temporary> !!!
-		if (name.equals(_ROTATELEFT)) {
+		} else if (name.equals(_ROTATELEFT)) {
 			rotateCamera(value, false);
 		} else if (name.equals(_ROTATERIGHT)) {
 			rotateCamera(-value, true);
-		} else 
-		// !!! </temporary> !!!
-		if (name.equals(_ZOOMIN)) {
+		} else if (name.equals(_ZOOMIN)) {
 			zoomCamera(-value);
 		} else if (name.equals(_ZOOMOUT)) {
 			zoomCamera(value);
