@@ -50,6 +50,7 @@ public class Camera2D implements AnalogListener, ActionListener {
     private Vector3f _previousMousePosition;
     private Spline _mouseSpline;
     private WorldView _wv;
+    private float frustumSize = 10;
     
     static private final String _STRAFELEFT 	= "CAM2D_StrafeLeft";
 	static private final String _STRAFERIGHT	= "CAM2D_StrafeRight"; 
@@ -237,8 +238,16 @@ public class Camera2D implements AnalogListener, ActionListener {
 	        q.normalizeLocal();
 	        _cam.setAxes(q);
 	        */
-		  _cam.setLocation(new Vector3f(X,Y,Z+offset));
+	      _cam.setLocation(new Vector3f(X,Y,Z+offset));
 		  _cam.lookAt(new Vector3f(X,Y,0),Vector3f.UNIT_Z);
+		  System.out.println("SETTING UP PARRALEL VIEW");
+	      _cam.setParallelProjection(true);
+		  System.out.println("DONE");
+		  System.out.println(_cam.getWidth() +" & "+ _cam.getHeight());
+	      float aspect = (float) _cam.getWidth() / _cam.getHeight();
+	      _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
+	      
+
 	  }
 	
 	/**
@@ -246,6 +255,11 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 * float value : value of zoom
 	 */
 	private void zoomCamera(float value){
+        frustumSize += 0.3f * value;
+
+        float aspect = (float) _cam.getWidth() / _cam.getHeight();
+        _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
+
 		Vector3f pos = _cam.getLocation().clone();
 		pos.setZ(pos.getZ() + (value*_moveSpeed));
 		_cam.setLocation(pos);

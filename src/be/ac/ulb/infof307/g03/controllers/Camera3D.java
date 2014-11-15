@@ -92,6 +92,8 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 * Reset the direction toward which the camera looks
 	 */
 	public void resetDirection() {
+        _cam.setParallelProjection(false);
+        
 		Quaternion q = new Quaternion();
 		
         q.fromAxes(_cam.getLeft(),new Vector3f(0f,0f,1f), _cam.getUp());
