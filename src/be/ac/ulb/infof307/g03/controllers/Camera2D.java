@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import be.ac.ulb.infof307.g03.views.WorldView;
 
-import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -13,19 +12,14 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.material.Material;
-import com.jme3.material.RenderState.FaceCullMode;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Ray;
 import com.jme3.math.Spline;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.shape.Curve;
 
 /**
  * Camera2D is the controller of the camera when the view is switched on 2D
@@ -84,24 +78,39 @@ public class Camera2D implements AnalogListener, ActionListener {
 	
 	/**
 	 * Method used to declare that the 2D camera is being used (or not)
+	 * @param enable New boolean saying if camera2D is enabled.
 	 */
 	public void setEnabled(boolean enable) {
 		_enabled = enable;
 	}
 	
+	/**
+	 * @param cam The new Camera to be set.
+	 */
 	public void setCam(Camera cam) {
 		_cam = cam;
 	}
 	
+	/**
+	 * This method set the input. Additionally it call the
+	 * set up input method
+	 * @param inputManager The new input manager to be set.
+	 */
 	public void setInputManager(InputManager inputManager) {
 		_inputManager = inputManager;
 		inputSetUp();
 	}
 	
+	/**
+	 * @param mouseMode The new mouse mode to be set.
+	 */
 	public void setMouseMode(String mouseMode) {
 		_mouseMode = mouseMode;
 	}
 	
+	/**
+	 * @param wv The new world view to be set.
+	 */
 	public void setWv(WorldView wv) {
 		_wv = wv;
 	}

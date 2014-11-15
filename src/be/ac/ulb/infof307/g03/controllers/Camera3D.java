@@ -69,19 +69,22 @@ public class Camera3D implements AnalogListener, ActionListener {
 
 	/**
 	 * Sets a camera
-	 * @param cam
+	 * @param cam The new camera to be set.
 	 */
 	public void setCam(Camera cam) {
 		_cam = cam;
 	}
 	
+	/**
+	 * @param mouseMode The new mouse to be set.
+	 */
 	public void setMouseMode(String mouseMode) {
 		_mouseMode = mouseMode;
 	}
 	
 	/**
 	 * Sets an input manager
-	 * @param inputManager
+	 * @param inputManager The new input manager to be set.
 	 */
 	public void setInputManager(InputManager inputManager) {
 		_inputManager = inputManager;
