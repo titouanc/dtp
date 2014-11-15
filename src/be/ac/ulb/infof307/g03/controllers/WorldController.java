@@ -10,8 +10,6 @@ import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Plane;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -20,7 +18,7 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 
 /**
- * @author fhennecker,pierre
+ * @author fhennecker, pierre
  * @brief Controller of the jMonkeyEngine canvas. It handles both the 3D and 2D view.
  */
 public class WorldController implements ActionListener {
@@ -35,6 +33,7 @@ public class WorldController implements ActionListener {
      * Constructor of WorldController.
      * It creates the controller view.
      * @param settings The jMonkey application settings
+     * @param project The main project
      * @throws SQLException 
      */
     public WorldController(AppSettings settings, Project project) throws SQLException{

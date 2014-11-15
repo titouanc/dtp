@@ -25,10 +25,18 @@ public abstract class Grouped implements Geometric {
 	@DatabaseField
 	private Boolean _selected = false;
 	
+	/**
+	 * Constructor of the class Grouped
+	 * It creates a new group
+	 */
 	public Grouped() {
 		_group = new Group();
 	}
 	
+	/**
+	 * Constructor of the class Grouped
+	 * @param group The group to be grouped
+	 */
 	public Grouped(Group group){
 		setGroup(group);
 	}

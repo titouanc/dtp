@@ -21,7 +21,7 @@ public interface Geometric {
 	
 	/**
 	 * Every Geometric object has a unique identifier.
-	 * @return
+	 * @return The Unique identifier (UID) of the Geometric
 	 */
 	public String getUID();
 }

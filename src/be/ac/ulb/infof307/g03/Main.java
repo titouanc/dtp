@@ -1,9 +1,7 @@
 package be.ac.ulb.infof307.g03;
 
 import java.sql.SQLException;
-
 import com.j256.ormlite.logger.LocalLog;
-
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.*;
 
@@ -17,7 +15,7 @@ public class Main {
 	/**
 	 * Main entry point of the program
 	 * @param args Command line parameters
-	 * @see http://hub.jmonkeyengine.org/wiki/doku.php/jme3:advanced:swing_canvas
+	 * @see <a href=" http://hub.jmonkeyengine.org/wiki/doku.php/jme3:advanced:swing_canvas">Jmonkey doc</a>
 	 */
 	public static void main(String[] args) {
 		// Mac OS X specific configuration

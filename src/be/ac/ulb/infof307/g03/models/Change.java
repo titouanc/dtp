@@ -1,19 +1,28 @@
 package be.ac.ulb.infof307.g03.models;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+
 
 /**
  * Represent a change in the model
  * @author Titouan Christophe
  */
 public class Change {
+
 	/**
-	 * Change types
+	 * Characterize the type of change.
+	 * Define the integer 1 as create
 	 */
-	public final static int CREATE=1, UPDATE=2, DELETE=4;
+	public final static int CREATE=1;
+	/**
+	 * Characterize the type of change.
+	 * Define the integer 2 as update
+	 */
+	public final static int UPDATE=2;
+	/**
+	 * Characterize the type of change.
+	 * Define the integer 4 as delete
+	 */
+	public final static int DELETE=4;
 	private Integer _type;
 	private Geometric _item;
 	
