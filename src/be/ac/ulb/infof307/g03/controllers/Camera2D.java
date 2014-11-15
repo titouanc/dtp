@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import be.ac.ulb.infof307.g03.views.WorldView;
 
-import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -13,21 +12,13 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.material.Material;
-import com.jme3.material.RenderState.FaceCullMode;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Ray;
-import com.jme3.math.Spline;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Curve;
 
 /**
  * Camera2D is the controller of the camera when the view is switched on 2D
@@ -48,7 +39,6 @@ public class Camera2D implements AnalogListener, ActionListener {
     private InputManager _inputManager;
     private String _mouseMode = _MODE_DRAGSELECT;
     private Vector3f _previousMousePosition;
-    private Spline _mouseSpline;
     private WorldView _wv;
     private float frustumSize = 10;
     
@@ -62,15 +52,12 @@ public class Camera2D implements AnalogListener, ActionListener {
 	static private final String _RIGHT			= "CAM2D_Right";
 	static private final String _UP				= "CAM2D_Up";
 	static private final String _DOWN			= "CAM2D_Down";
-	// !!! </temporary> !!!
+
 	static private final String _ZOOMIN			= "CAM2D_ZoomIn";
 	static private final String _ZOOMOUT		= "CAM2D_ZoomOut";
 
 	static private final String _ROTATELEFT 	= "CAM2D_RotateLeft";
 	static private final String _ROTATERIGHT	= "CAM2D_RotateRight";
-	
-	static private final boolean _KEYBOARD 		= true;
-	static private final boolean _MOUSE 		= false;
     
 	/**
 	 * Constructor of the 2D camera
