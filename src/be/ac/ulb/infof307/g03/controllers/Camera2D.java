@@ -333,3 +333,4 @@ public class Camera2D implements AnalogListener, ActionListener {
 		}	
 	}
 }
+
