@@ -19,7 +19,8 @@ public class FileChooserController {
 	private Project _project;
 	
 	/**
-	 * @param parent 
+	 * @param parent The parent of the controller to be linked
+	 * @param project The main project
 	 * 
 	 */
 	public FileChooserController(Component parent,Project project){
@@ -54,7 +55,8 @@ public class FileChooserController {
 	}
 	
 	/**
-	 * @param fileToOpen
+	 * This method is called by the view when the user has chosen a file to open
+	 * @param fileToOpen The file to be opened
 	 */
 	public void openProject(File fileToOpen){
 		System.out.println("You chose to open this file: " + fileToOpen.getName());
@@ -62,7 +64,8 @@ public class FileChooserController {
 	}
 	
 	/**
-	 * @param fileToCreate
+	 * This method is called by the view when the user has chosen a new file to create
+	 * @param fileToCreate The new project file to be created
 	 */
 	public void newProject(File fileToCreate){
 		System.out.println("You chose to create a new project named: " + fileToCreate.getName());
@@ -70,7 +73,8 @@ public class FileChooserController {
 	}
 
 	/**
-	 * @param fileToSave
+	 * This method is called by the view when the user has chosen a new file to saves
+	 * @param fileToSave The File to be saved as a new file
 	 */
 	public void saveAsProject(File fileToSave) {
 		System.out.println("You chose to save as this file: " + fileToSave.getName());

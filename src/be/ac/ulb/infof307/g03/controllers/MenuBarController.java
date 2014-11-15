@@ -3,12 +3,8 @@
  */
 package be.ac.ulb.infof307.g03.controllers;
 
-import java.awt.Frame;
 
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.MenuBarView;
@@ -84,6 +80,7 @@ public class MenuBarController {
 	public void onUndo() {
 		System.out.println("[DEBUG] User clicked on undo");
 	}
+	
 	/**
 	 * Handler launched when menu item "Redo" clicked
 	 */

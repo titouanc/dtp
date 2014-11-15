@@ -23,7 +23,7 @@ public class MainPaneController {
 	
 	/**
 	 * Constructor of MainPaneController.
-	 * @param The project to be display on the MainPane
+	 * @param project The project to be display on the MainPane
 	 * @throws SQLException 
 	 */
 	public MainPaneController(Project project) throws SQLException{

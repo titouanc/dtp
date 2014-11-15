@@ -12,14 +12,14 @@ import be.ac.ulb.infof307.g03.controllers.FileChooserController;
 
 /**
  * @author pierre
- *
+ * This class is a view of a file dialog
  */
 public class FileChooserView {
 	JFileChooser _chooser;
 	FileChooserController _controller;
 	
 	/**
-	 * @param controller 
+	 * @param controller  The view's controller
 	 * 
 	 */
 	public FileChooserView(FileChooserController controller){
