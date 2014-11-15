@@ -92,10 +92,14 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 * Reset the direction toward which the camera looks
 	 */
 	public void resetDirection() {
+        _cam.setParallelProjection(false);
+        
 		Quaternion q = new Quaternion();
+		
         q.fromAxes(_cam.getLeft(),new Vector3f(0f,0f,1f), _cam.getUp());
         q.normalizeLocal();
         _cam.setAxes(q);
+        
 	}
 
 	/**
@@ -175,8 +179,8 @@ public class Camera3D implements AnalogListener, ActionListener {
 		// Key event mapping
 		_inputManager.addMapping(_STRAFELEFT,	new KeyTrigger(KeyInput.KEY_LEFT));
 		_inputManager.addMapping(_STRAFERIGHT,	new KeyTrigger(KeyInput.KEY_RIGHT));
-		_inputManager.addMapping(_FORWARD,   	new KeyTrigger(KeyInput.KEY_UP));
-		_inputManager.addMapping(_BACKWARD,		new KeyTrigger(KeyInput.KEY_DOWN));
+		_inputManager.addMapping(_FORWARD,   	new KeyTrigger(KeyInput.KEY_LSHIFT));
+		_inputManager.addMapping(_BACKWARD,		new KeyTrigger(KeyInput.KEY_LCONTROL));
 		_inputManager.addMapping(_LOOP, 		new KeyTrigger(KeyInput.KEY_L));
 
 		// Mouse event mapping
