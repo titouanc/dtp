@@ -15,7 +15,6 @@ import be.ac.ulb.infof307.g03.models.*;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
-import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
@@ -49,6 +48,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	/**
 	 * Constructor of WorldView
 	 * @param newController The view's controller
+	 * @param model The DAO pattern model class
 	 */
 	public WorldView(WorldController newController, GeometryDAO model){
 		super();

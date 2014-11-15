@@ -74,24 +74,39 @@ public class Camera2D implements AnalogListener, ActionListener {
 	
 	/**
 	 * Method used to declare that the 2D camera is being used (or not)
+	 * @param enable New boolean saying if camera2D is enabled.
 	 */
 	public void setEnabled(boolean enable) {
 		_enabled = enable;
 	}
 	
+	/**
+	 * @param cam The new Camera to be set.
+	 */
 	public void setCam(Camera cam) {
 		_cam = cam;
 	}
 	
+	/**
+	 * This method set the input. Additionally it call the
+	 * set up input method
+	 * @param inputManager The new input manager to be set.
+	 */
 	public void setInputManager(InputManager inputManager) {
 		_inputManager = inputManager;
 		inputSetUp();
 	}
 	
+	/**
+	 * @param mouseMode The new mouse mode to be set.
+	 */
 	public void setMouseMode(String mouseMode) {
 		_mouseMode = mouseMode;
 	}
 	
+	/**
+	 * @param wv The new world view to be set.
+	 */
 	public void setWv(WorldView wv) {
 		_wv = wv;
 	}

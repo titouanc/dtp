@@ -78,6 +78,11 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener {
 	 * @author titou
 	 */
 	class GeometricRenderer extends DefaultTreeCellRenderer {
+		/**
+		 * Default serial version UID
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public Component getTreeCellRendererComponent(
                 JTree tree,
                 Object value,

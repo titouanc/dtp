@@ -12,6 +12,9 @@ public class Wall extends Grouped {
 	@DatabaseField
 	private double _width = 0.2;
 	
+	/**
+	 * Constructor of the class Wall.
+	 */
 	public Wall(){
 		super();
 	}
@@ -20,14 +23,24 @@ public class Wall extends Grouped {
 		super(group);
 	}
 	
+	/**
+	 * @param width The new value for the width of the wall.
+	 */
 	public void setWidth(double width){
 		// TODO possibly implement some better error management if the width is < 0
-		if (width < 0)
+		if (width < 0){
 			_width = 0;
-		else
+			// add print otherwise error would be pass under silence
+			System.out.println("[DEBUG] Wall received an incoherent value for width. Value is under 0");
+		}else{
 			_width = width;
+		}
 	}
 	
+	
+	/**
+	 * @return The width of the Wall.
+	 */
 	public double getWidth(){
 		return _width;
 	}
