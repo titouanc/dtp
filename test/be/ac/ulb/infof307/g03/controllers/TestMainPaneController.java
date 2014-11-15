@@ -18,24 +18,21 @@ import com.jme3.system.AppSettings;
  * @author fhennecker
  *
  */
-public class TestWorldController {
+public class TestMainPaneController {
 	
-	private WorldController _world;
+	private MainPaneController _controller;
 	private Project _project;
 	
 	@Before
 	public void setUp() throws SQLException{
-		AppSettings settings = new AppSettings(true);
-        settings.setFrameRate(60);
         _project = new Project();
         _project.create(":memory:");
         
-        _world = new WorldController(settings, _project);
+        _controller = new MainPaneController(_project);
 	}
 	
 	@Test
 	public void testCreation(){
-		assertNotNull(_world.getView());
-		assertEquals(_world.getProject(), _project);
+		assertNotNull(_controller.getView());
 	}
 }
