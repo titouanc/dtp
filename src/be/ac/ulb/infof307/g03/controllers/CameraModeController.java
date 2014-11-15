@@ -50,6 +50,10 @@ public class CameraModeController implements Observer {
 		_cam3D.setCam(cam);
 	}
 	
+	public Camera2D get2DCam(){
+		return _cam2D;
+	}
+	
 	public void setInputManager(InputManager inputManager) {
 		_cam2D.setInputManager(inputManager);
 		_cam3D.setInputManager(inputManager);

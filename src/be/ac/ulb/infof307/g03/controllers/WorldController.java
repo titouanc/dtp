@@ -85,6 +85,7 @@ public class WorldController implements ActionListener {
      */
     public void onViewCreated(){
         _isViewCreated = true;
+        _cameraModeController.get2DCam().resetDirection();
     }
     
     /**
