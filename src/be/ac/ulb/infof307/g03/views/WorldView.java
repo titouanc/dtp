@@ -42,7 +42,8 @@ public class WorldView extends SimpleApplication implements Observer {
 	private WorldController _controller; 
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	
-	static public final String CLICK = "SelectObject";
+	static public final String RIGHT_CLICK = "SelectObject";
+	static public final String LEFT_CLICK =  "Select";
 	
 	/**
 	 * Constructor of WorldView
@@ -85,8 +86,10 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	private void setInput(){
-		inputManager.addMapping(CLICK, new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
-		inputManager.addListener(_controller, CLICK);
+		inputManager.addMapping(RIGHT_CLICK, new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+		inputManager.addMapping(LEFT_CLICK,  new MouseButtonTrigger(MouseInput.BUTTON_LEFT ));
+		inputManager.addListener(_controller, RIGHT_CLICK);
+		inputManager.addListener(_controller, LEFT_CLICK);
 	}
 	
 	/**
@@ -248,28 +251,25 @@ public class WorldView extends SimpleApplication implements Observer {
 	
 	private void _updatePoint(Change change){
 		Point point = (Point) change.getItem();
-		
-		if (change.isUpdate()){
-			rootNode.detachChildNamed(point.getUID());
-			if (point.isSelected()){
-				Geometry newSphere = new Geometry(point.getUID(), new Sphere(32, 32, 1.0f));
-				newSphere.setLocalTranslation(point.toVector3f());
-				newSphere.setMaterial(this._makeBasicMaterial(ColorRGBA.Red));
-				rootNode.attachChild(newSphere);
+		rootNode.detachChildNamed(point.getUID());
+		if (point.isSelected()){
+			Geometry newSphere = new Geometry(point.getUID(), new Sphere(32, 32, 1.0f));
+			newSphere.setLocalTranslation(point.toVector3f());
+			newSphere.setMaterial(this._makeBasicMaterial(ColorRGBA.Red));
+			rootNode.attachChild(newSphere);
+		}
+		try {
+			for (Grouped grouped : _model.getGroupedForPoint(point)){
+				/* For now: DUMBLY redraw all grouped items */
+				rootNode.detachChildNamed(grouped.getUID());
+				if (grouped instanceof Wall)
+					_drawWall((Wall) grouped);
+				else if (grouped instanceof Ground)
+					_drawGround((Ground) grouped);
 			}
-			try {
-				for (Grouped grouped : _model.getGroupedForPoint(point)){
-					/* For now: DUMBLY redraw all grouped items */
-					rootNode.detachChildNamed(grouped.getUID());
-					if (grouped instanceof Wall)
-						_drawWall((Wall) grouped);
-					else if (grouped instanceof Ground)
-						_drawGround((Ground) grouped);
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
