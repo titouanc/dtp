@@ -200,9 +200,17 @@ public class WorldController implements ActionListener {
 		lastPoint.setZ(1);
 		getXYForMouse(lastPoint);
 		lastPoint.select();
+		
 		try {
         	GeometryDAO dao = _project.getGeometryDAO();
-        	dao.create(lastPoint);
+        	Point found = dao.findClosePoint(lastPoint, 1);
+        	if (found != null){
+        		lastPoint = found;
+        		lastPoint.select();
+        		dao.update(found);
+        	} else {
+        		dao.create(lastPoint);
+        	}
         	dao.notifyObservers();
         } catch (SQLException err){
         	err.printStackTrace();
