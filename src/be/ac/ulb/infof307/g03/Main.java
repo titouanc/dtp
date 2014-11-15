@@ -7,6 +7,11 @@ import com.j256.ormlite.logger.LocalLog;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.*;
 
+/**
+ * @author all
+ * This is the Main class of the Home Plans program
+ * It's first call at execution
+ */
 public class Main {
 
 	/**

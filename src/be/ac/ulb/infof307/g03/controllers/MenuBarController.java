@@ -3,6 +3,10 @@
  */
 package be.ac.ulb.infof307.g03.controllers;
 
+
+import javax.swing.JOptionPane;
+
+import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.MenuBarView;
 
 /**
@@ -11,13 +15,19 @@ import be.ac.ulb.infof307.g03.views.MenuBarView;
  */
 public class MenuBarController {
 	private MenuBarView _view;
+	private FileChooserController _fileController;
+	private Project _project;
 	
 	/**
 	 * Constructor of MenuBarController.
 	 * It creates the view associated with the controller.
+	 * @param project 
 	 */
-	public MenuBarController(){
+	public MenuBarController(Project project){
+		_project = project;
 		_view = new MenuBarView(this);
+		_fileController = new FileChooserController(_view, project);
+		
 	}
 	
 	/**
@@ -31,36 +41,50 @@ public class MenuBarController {
 	 * Handler launched when menu item "New" is clicked
 	 */
 	public void onNew() {
-		System.out.println("new");
+		_fileController.notifyDisplayNew();
 	}
+	
 	/**
 	 * Handler launched when menu item "Open" is clicked
 	 */
 	public void onOpen() {
-		System.out.println("open");
+		_fileController.notifyDisplayOpen();
+		
 	}
+	
 	/**
 	 * Handler launched when menu item "Save" clicked
 	 */
 	public void onSave() {
-		System.out.println("save");
+		// TODO define if this is a violation of MVC ?
+		JOptionPane.showMessageDialog(_view,"Project saved. (auto-save is enabled)", "Information", JOptionPane.PLAIN_MESSAGE);
 	}
+	
+	/**
+	 * Handler launched when menu item "Save" clicked
+	 */
+	public void onSaveAs() {
+		_fileController.notifyDisplaySaveAs();
+	}
+	
 	/**
 	 * Handler launched when menu item "Quit" clicked
 	 */
 	public void onQuit() {
 		System.exit(0);
 	}
+	
 	/**
 	 * Handler launched when menu item "Undo" clicked
 	 */
 	public void onUndo() {
-		System.out.println("undo");
+		System.out.println("[DEBUG] User clicked on undo");
 	}
+	
 	/**
 	 * Handler launched when menu item "Redo" clicked
 	 */
 	public void onRedo() {
-		System.out.println("redo");
+		System.out.println("[DEBUG] User clicked on redo");
 	}
 }
