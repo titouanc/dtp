@@ -16,12 +16,30 @@ public class Floor implements Geometric {
 	private int _id = 0;
 	@DatabaseField(foreign = true, canBeNull = true, foreignAutoRefresh = true)
 	private Floor _previous = null;
+	@DatabaseField
+	double _height = 1.0;
+	
+	public Floor(){
+		
+	}
+	
+	public Floor(double height){
+		setHeight(height);
+	}
 	
 	/**
 	 * @return The floor id
 	 */
 	public int getId(){
 		return _id;
+	}
+	
+	public void setHeight(double height){
+		_height = height;
+	}
+	
+	public double getHeight(){
+		return _height;
 	}
 	
 	/**

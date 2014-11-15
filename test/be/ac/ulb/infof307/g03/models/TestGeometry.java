@@ -144,18 +144,15 @@ public class TestGeometry {
 	@Test
 	public void test_wall() throws SQLException{
 		GeometryDAO geo = new GeometryDAO(_db);
-		Wall wall = new Wall(1);
+		Wall wall = new Wall();
 		
 		assertEquals(1, geo.create(wall));
 		assertTrue(wall.isVisible());
-		assertEquals(1.0, wall.getHeight(), 0);
 		assertEquals("wal-1", wall.getUID());
 		
-		wall.setHeight(42.27);
 		wall.hide();
 		geo.update(wall);
 		wall = geo.getWall(1);
-		assertEquals(42.27, geo.getWall(wall.getId()).getHeight(), 0);
 		assertFalse(wall.isVisible());
 		
 		wall.show();
@@ -204,7 +201,7 @@ public class TestGeometry {
 	private Group create_a_room(GeometryDAO geo) throws SQLException{
 		Group room = new Group("room");
 		geo.create(room);
-		geo.create(new Wall(room, 2.35));
+		geo.create(new Wall(room));
 		geo.create(new Ground(room));
 		
 		Point o = new Point(0, 0, 0),
@@ -384,6 +381,25 @@ public class TestGeometry {
 		Point p = (Point) geo.getByUID("pnt-1");
 		List<Grouped> grouped = geo.getGroupedForPoint(p);
 		assertEquals(2, grouped.size());
+	}
+	
+	@Test
+	public void test_floor_height() throws SQLException{
+		GeometryDAO geo = new GeometryDAO(_db);
+		
+		Floor floor = new Floor();
+		assertEquals(1.0, floor.getHeight(), 0);
+		
+		Floor groundFloor = new Floor();
+		floor.setPrevious(groundFloor);
+		
+		Floor basement = new Floor();
+		groundFloor.setPrevious(basement);
+
+		geo.create(basement);
+		geo.create(groundFloor);
+		geo.create(floor);
+		assertEquals(2.0, geo.getBaseHeight(floor), 0);
 	}
 }
 

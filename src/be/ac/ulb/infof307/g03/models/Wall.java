@@ -10,29 +10,14 @@ import com.j256.ormlite.field.DatabaseField;
  */
 public class Wall extends Grouped {
 	@DatabaseField
-	private double _height = 0;
 	private double _width = 0.2;
 	
 	public Wall(){
 		super();
 	}
 	
-	public Wall(Group group, double height){
+	public Wall(Group group){
 		super(group);
-		setHeight(height);
-	}
-	
-	public Wall(double height){
-		super();
-		setHeight(height);
-	}
-	
-	public void setHeight(double h){
-		_height = h;
-	}
-	
-	public double getHeight(){
-		return _height;
 	}
 	
 	public void setWidth(double width){

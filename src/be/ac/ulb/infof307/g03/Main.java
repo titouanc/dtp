@@ -56,7 +56,7 @@ public class Main {
 			  d = new Point(0, 12, 1),
 			  e = new Point(-5, -1, 1);
 		
-		Floor groundFloor = new Floor();
+		Floor groundFloor = new Floor(7);
 		geo.create(groundFloor);
 		
 		geo.addGroupToFloor(groundFloor, createRoom(geo, "Irregular room", a, b, c, d));
@@ -75,7 +75,7 @@ public class Main {
 	public static Group createRoom(GeometryDAO dao, String name, Point...points) throws SQLException{
 		Group room = new Group(name);
 		dao.create(room);
-		dao.create(new Wall(room, 7));
+		dao.create(new Wall(room));
 		dao.create(new Ground(room));
 		
 		for (int i=0; i<points.length; i++)

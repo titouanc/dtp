@@ -361,6 +361,22 @@ public class GeometryDAO extends Observable {
 	}
 	
 	/**
+	 * Get the floor containing a given shape
+	 * @param shape The Shape from which we want the floor
+	 * @return The Floor, or null if not found
+	 */
+	public Floor getFloor(Shape shape) {
+		if (shape.getGroup() != null)
+			return getFloor(shape.getGroup());
+		if (shape instanceof Group){
+			Group grp = (Group) shape;
+			if (grp.getFloor() != null)
+				return grp.getFloor();
+		}
+		return null;
+	}
+	
+	/**
 	 * Retrieve a point from the database, given its identifier
 	 * @param point_id The point identifier
 	 * @return an in-memory Point object
@@ -485,6 +501,19 @@ public class GeometryDAO extends Observable {
 		res.addAll(_lines.query(lineQ));
 		res.addAll(_groups.query(groupQ));
 		return res;
+	}
+	
+	/**
+	 * Return the sum of the heights of all the floors below
+	 * (ie the baseline for this floor)
+	 * @param floor
+	 * @return The elevation of the base of given floor
+	 */
+	public double getBaseHeight(Floor floor){
+		if (floor.isFirstFloor())
+			return 0;
+		Floor bottom = floor.getPrevious();
+		return getBaseHeight(bottom) + bottom.getHeight();
 	}
 	
 	@Override

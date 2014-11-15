@@ -136,6 +136,8 @@ public class WorldView extends SimpleApplication implements Observer {
 		Node res = new Node(wall.getUID());
 		List<Point> allPoints = _model.getPointsForShape(wall.getGroup());
 		
+		float height = (float) _model.getFloor(wall.getGroup()).getHeight();
+		
 		for (int i=0; i<allPoints.size()-1; i++){
 			// 1) Build a box the right length, width and height
 			Vector3f a = allPoints.get(i).toVector3f();
@@ -143,8 +145,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			float w = (float) wall.getWidth();
 			Vector2f segment = new Vector2f(b.x-a.x, b.y-a.y);
 			Box box = new Box(	new Vector3f(-w/2,-w/2,0), new Vector3f(segment.length()+w/2, 
-																		w/2, 
-																		(float) wall.getHeight()));
+																		w/2, height));
 			Geometry wallGeometry = new Geometry(wall.getUID(), box);
 			wallGeometry.setMaterial(_makeBasicMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
 			

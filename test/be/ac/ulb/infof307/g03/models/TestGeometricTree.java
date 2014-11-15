@@ -66,7 +66,7 @@ public class TestGeometricTree {
 		
 		_dao.addShapeToGroup(sub1, new Line(o, xy));
 		
-		_dao.create(new Wall(sub2, 1));
+		_dao.create(new Wall(sub2));
 		_dao.create(new Ground(sub1));
 	}
 
