@@ -25,6 +25,11 @@ public abstract class Shape implements Geometric {
 		return _id;
 	}
 	
+	/**
+	 * Check if two shapes are the same.
+	 * @param other The shape to be compared.
+	 * @return True if equals, False otherwise.
+	 */
 	public final Boolean equals(Shape other){
 		Boolean res = true;
 		if (getId() != 0)
@@ -32,12 +37,26 @@ public abstract class Shape implements Geometric {
 		return res && equalsByContent(other);
 	}
 	
+	/**
+	 * Abstract method to check if two shapes have the same content.
+	 * @param other The shape to be compared.
+	 * @return True if equals, False otherwise.
+	 */
 	public abstract Boolean equalsByContent(Shape other);
 	
+	/**
+	 * Check if two shapes have the same Id
+	 * @param other The shape to be compared.
+	 * @return True if equals, False otherwise.
+	 */
 	public final Boolean equalsById(Shape other){
 		return getId() == other.getId();
 	}
 	
+	/**
+	 * This method is a setter.
+	 * @param grp The new group of the shape.
+	 */
 	public void addToGroup(Group grp){
 		_group = grp;
 	}
