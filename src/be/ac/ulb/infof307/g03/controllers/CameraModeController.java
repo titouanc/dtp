@@ -1,14 +1,15 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 
-import java.util.Observable;
-import java.util.Observer;
-
-import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.WorldView;
+
 import com.jme3.input.InputManager;
 import com.jme3.renderer.Camera;
+
+import java.sql.SQLException;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * @author julianschembri
@@ -22,54 +23,70 @@ public class CameraModeController implements Observer {
 	private String _currentMode = VIEW2D;
 	private Camera2D _cam2D = new Camera2D();
 	private Camera3D _cam3D = new Camera3D();
+	private Project _project;
 	
-	CameraModeController(Project proj){
+	/**
+	 * 
+	 * @param aProject
+	 */
+	CameraModeController(Project aProject) {
+		_project = aProject;
 		_cam2D.setEnabled(true);
 		_cam3D.setEnabled(false);
-		proj.addObserver(this);
+		aProject.addObserver(this);
 	}
 	
+	/**
+	 * 
+	 * @param mode
+	 */
 	public void changeMode(String mode){
-		System.out.println("[CameraController] Change view mode to " + mode);
-		if (mode != _currentMode){
-			if (mode.equals(VIEW3D)){
+		if(!mode.equals(_currentMode)){
+			if(mode.equals(VIEW3D)){
 				_cam2D.setEnabled(false);
 				_cam3D.setEnabled(true);
 				//_cam3D.resetDirection();
-			} else if (mode.equals(VIEW2D)) {
+				_currentMode = VIEW3D;
+			} else{
 				_cam2D.setEnabled(true);
 				_cam3D.setEnabled(false);
 				_cam2D.resetDirection();
-			}
-			_currentMode = mode;
+				_currentMode = VIEW2D;
+			}		
 		}
 	}
 	
+	/**
+	 * 
+	 * @param cam
+	 */
 	public void setCamera(Camera cam) {
 		_cam2D.setCam(cam);
 		_cam3D.setCam(cam);
 	}
 	
+	/**
+	 * 
+	 * @param inputManager
+	 */
 	public void setInputManager(InputManager inputManager) {
 		_cam2D.setInputManager(inputManager);
 		_cam3D.setInputManager(inputManager);
 	}
 
+	@Override
 	public void update(Observable o, Object arg) {
-		if (arg instanceof Config){
-			Config param = (Config) arg;
-			if (param.getName().equals("world.mode"))
-				changeMode(param.getValue());
-			else if (param.getName().equals("mouse.mode")){
-				System.out.println("[CameraController] Change mouse mode to " + param.getValue());
-				_cam2D.setMouseMode(param.getValue());
-				_cam3D.setMouseMode(param.getValue());
+		//if (arg.getClass()==_project.getClass()) {
+			try {				
+				changeMode(_project.config("world.mode"));
+				_cam2D.setMouseMode(_project.config("mouse.mode"));
+				_cam3D.setMouseMode(_project.config("mouse.mode"));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}
-	}
-	
-	public void setToRemove(WorldView wv) {
-		_cam2D.setWv(wv);
+			
+		//}
 	}
 	
 }

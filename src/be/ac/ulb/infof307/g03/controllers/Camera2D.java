@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import be.ac.ulb.infof307.g03.views.WorldView;
 
-import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -13,21 +12,14 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.material.Material;
-import com.jme3.material.RenderState.FaceCullMode;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Ray;
 import com.jme3.math.Spline;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Curve;
 
 /**
  * Camera2D is the controller of the camera when the view is switched on 2D
@@ -48,7 +40,6 @@ public class Camera2D implements AnalogListener, ActionListener {
     private InputManager _inputManager;
     private String _mouseMode = _MODE_DRAGSELECT;
     private Vector3f _previousMousePosition;
-    private Spline _mouseSpline;
     private WorldView _wv;
     
     static private final String _STRAFELEFT 	= "CAM2D_StrafeLeft";
@@ -111,7 +102,12 @@ public class Camera2D implements AnalogListener, ActionListener {
 	/**
 	 * Reset the direction toward which the camera looks
 	 */
-
+	public void resetDirection() {
+		Quaternion q = new Quaternion();
+        q.fromAxes(_cam.getLeft(), _cam.getUp(), new Vector3f(0,0,-1));
+        q.normalizeLocal();
+        _cam.setAxes(q);
+	}
 	
 	/**
 	 * Method to use to move the camera
@@ -152,7 +148,6 @@ public class Camera2D implements AnalogListener, ActionListener {
     		pos.normalizeLocal();
     		float angle = FastMath.PI - pos.angleBetween(currentMousePosition);
     		System.out.println(angle);
-    		
             /*Vector3f v3 = new Vector3f	( 	(FastMath.cos(angle)*pos.getX())+(FastMath.sin(angle)*pos.getY()), 
             								(-FastMath.sin(angle)*pos.getX())+(FastMath.cos(angle)*pos.getY()), 
             								pos.getZ() 
@@ -200,21 +195,17 @@ public class Camera2D implements AnalogListener, ActionListener {
 		return new Vector3f(click3d.x - (mul*dir.x),click3d.y - (mul*dir.y),0);
 	}
 	
-
 	
 	/**
 	 * Place the shapes at the center
 	 * of the user's screen
-	 * @param shape 
 	 */
-	public void resetDirection(){
-		Vector<Geometry> shapes = _wv.getShapes();
-		System.out.println("SIEZ  :" + shapes.size());
+	public void camHeight(Vector <Geometry> shape){
 		  float minX = 0,minY = 0,maxX = 0,maxY = 0,X = 0, Y= 0,Z = 0;
 		  int offset=17;
 		  Vector3f center;
-		  for(int i =0; i< shapes.size();++i){
-			  center=shapes.elementAt(i).getModelBound().getCenter();
+		  for(int i =0; i< shape.size();++i){
+			  center=shape.elementAt(i).getModelBound().getCenter();
 			  if (center.x<minX){
 				  minX=center.x;
 			  }
@@ -231,14 +222,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 		  }
 		  X=(minX+maxX)/2;
 		  Y=(minY+maxY)/2;
-		  /*
-			Quaternion q = new Quaternion();
-	        q.fromAxes(_cam.getLeft(), _cam.getUp(), new Vector3f(0,0,-1));
-	        q.normalizeLocal();
-	        _cam.setAxes(q);
-	        */
-		  _cam.setLocation(new Vector3f(X,Y,Z+offset));
-		  _cam.lookAt(new Vector3f(X,Y,0),Vector3f.UNIT_Z);
+		  _cam.setLocation(new Vector3f(X,Y,Z+offset));	  
 	  }
 	
 	/**

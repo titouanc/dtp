@@ -113,6 +113,8 @@ public class Camera3D implements AnalogListener, ActionListener {
 		} else { 
 			_cam.getLeft(vel);
 		}
+		vel.setZ(0);
+		vel.normalizeLocal();
 		vel.multLocal(value*_moveSpeed);
 		pos.addLocal(vel);
 
@@ -177,8 +179,8 @@ public class Camera3D implements AnalogListener, ActionListener {
 		// Key event mapping
 		_inputManager.addMapping(_STRAFELEFT,	new KeyTrigger(KeyInput.KEY_LEFT));
 		_inputManager.addMapping(_STRAFERIGHT,	new KeyTrigger(KeyInput.KEY_RIGHT));
-		_inputManager.addMapping(_FORWARD,   	new KeyTrigger(KeyInput.KEY_LSHIFT));
-		_inputManager.addMapping(_BACKWARD,		new KeyTrigger(KeyInput.KEY_LCONTROL));
+		_inputManager.addMapping(_FORWARD,   	new KeyTrigger(KeyInput.KEY_UP));
+		_inputManager.addMapping(_BACKWARD,		new KeyTrigger(KeyInput.KEY_DOWN));
 		_inputManager.addMapping(_LOOP, 		new KeyTrigger(KeyInput.KEY_L));
 
 		// Mouse event mapping
