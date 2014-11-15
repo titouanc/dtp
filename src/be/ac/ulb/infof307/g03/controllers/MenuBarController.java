@@ -3,7 +3,11 @@
  */
 package be.ac.ulb.infof307.g03.controllers;
 
+import java.awt.Frame;
+
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import be.ac.ulb.infof307.g03.models.Project;
@@ -26,7 +30,7 @@ public class MenuBarController {
 	public MenuBarController(Project project){
 		_project = project;
 		_view = new MenuBarView(this);
-		_fileController = new FileChooserController(_view);
+		_fileController = new FileChooserController(_view, project);
 		
 	}
 	
@@ -43,6 +47,7 @@ public class MenuBarController {
 	public void onNew() {
 		_fileController.notifyDisplayNew();
 	}
+	
 	/**
 	 * Handler launched when menu item "Open" is clicked
 	 */
@@ -50,18 +55,29 @@ public class MenuBarController {
 		_fileController.notifyDisplayOpen();
 		
 	}
+	
 	/**
 	 * Handler launched when menu item "Save" clicked
 	 */
 	public void onSave() {
-		System.out.println("[DEBUG] User clicked on new");
+		// TODO define if this is a violation of MVC ?
+		JOptionPane.showMessageDialog(_view,"Project saved. (auto-save is enabled)", "Information", JOptionPane.PLAIN_MESSAGE);
 	}
+	
+	/**
+	 * Handler launched when menu item "Save" clicked
+	 */
+	public void onSaveAs() {
+		_fileController.notifyDisplaySaveAs();
+	}
+	
 	/**
 	 * Handler launched when menu item "Quit" clicked
 	 */
 	public void onQuit() {
 		System.exit(0);
 	}
+	
 	/**
 	 * Handler launched when menu item "Undo" clicked
 	 */

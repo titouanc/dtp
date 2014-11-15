@@ -57,5 +57,19 @@ public class FileChooserView {
 		
 	}
 	
+	/**
+	 * This method display a dialog to save as a file.
+	 * When the user has chosen a file, it ask the controller 
+	 * to process it.
+	 * @param parent Parent of the dialog window.
+	 */
+	public void displaySaveAs(Component parent){
+		int returnVal = _chooser.showSaveDialog(parent);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	    	_controller.saveAsProject(_chooser.getSelectedFile());
+	    }
+		
+	}
+	
 
 }
