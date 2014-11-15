@@ -129,6 +129,15 @@ public class ToolsBarController implements Observer {
     	_project.config("mouse.mode", "dragMove");
     }
     
+    /**
+     * The private method is called when the hand button 
+     * is clicked. It will communicate with the controller
+     */ 
+    public void onConstruction(){
+    	System.out.println("[DEBUG] User clicked on : new Element");
+    	_project.config("mouse.mode", "construct");
+    }
+    
 	@Override
 	public void update(Observable o, Object arg) {
 		

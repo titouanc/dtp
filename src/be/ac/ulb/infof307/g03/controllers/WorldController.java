@@ -22,7 +22,7 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 
 /**
- * @author fhennecker,pierre
+ * @author fhennecker,pierre,wmoulart
  * @brief Controller of the jMonkeyEngine canvas. It handles both the 3D and 2D view.
  */
 public class WorldController implements ActionListener {
@@ -251,7 +251,7 @@ public class WorldController implements ActionListener {
     		}
 		}
     	
-    	if (command.equals(WorldView.LEFT_CLICK) && mouseDown){
+    	if (command.equals(WorldView.LEFT_CLICK) && mouseDown && _project.config("mouse.mode").equals("construct")){
     		construct();
     	}
     	

@@ -34,7 +34,7 @@ import com.jme3.scene.shape.Sphere;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
- * @author fhennecker, julianschembri, brochape, Titouan
+ * @author fhennecker, julianschembri, brochape, Titouan,wmoulart
  */
 public class WorldView extends SimpleApplication implements Observer {	
 	

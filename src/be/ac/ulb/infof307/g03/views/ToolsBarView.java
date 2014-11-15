@@ -44,8 +44,6 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
 	static final private String _HAND 		= "Grab";  
 	static final private String _CURSOR		= "Cursor";
 	
-	private ImageIcon _cursorImage = new ImageIcon(getClass().getResource("/be/ac/ulb/infof307/g03/asset/cursor.png"));
-	private ImageIcon _handImage =   new ImageIcon(getClass().getResource("/be/ac/ulb/infof307/g03/asset/grab.png"));
 
     /**
      * Constructor of the class ToolsBar.
@@ -182,8 +180,6 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
         cursor.setToolTipText("Move screen");
         cursor.addActionListener(this);
         
-        cursor.setIcon(_cursorImage);
-        hand.setIcon(_handImage);
 
         this.add(rotate);
         this.add(hand);
@@ -199,7 +195,7 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
 	public void actionPerformed(ActionEvent action) {
 		String cmd = action.getActionCommand();
 		if (_NEWELEMENT.equals(cmd)) {
-        	_controller.onGroup();
+        	_controller.onConstruction();
         } 		
         else if (_FLOOR_DOWN.equals(cmd)) {
         	_controller.onFloorDown() ;
