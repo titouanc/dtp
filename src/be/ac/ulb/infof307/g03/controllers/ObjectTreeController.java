@@ -131,6 +131,7 @@ public class ObjectTreeController {
 			System.out.println("[TreeController] Select " + line.getUID());
 			try {
 				for (Point p : line.getPoints()){
+					_dao.refresh(p);
 					p.select();
 					_dao.update(p);
 				}
