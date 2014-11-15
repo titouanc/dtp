@@ -27,7 +27,7 @@ public class FileChooserController {
 	}
 	
 	/**
-	 * 
+	 * Notify the view to view to display the open window
 	 */
 	public void notifyDisplayOpen(){
 		_view.displayOpen(_parent);
@@ -35,17 +35,17 @@ public class FileChooserController {
 	}
 	
 	/**
-	 * 
+	 * Notify the view to view to display the save window
 	 */
-	public void notifyDisplaySave(){
-		_view.displaySave(_parent);
+	public void notifyDisplayNew(){
+		_view.displayNew(_parent);
 		
 	}
 	
 	/**
 	 * @param fileToOpen
 	 */
-	public void open(File fileToOpen){
+	public void openProject(File fileToOpen){
 		System.out.println("You chose to open this file: " + fileToOpen.getName());
 		
 	}
@@ -53,7 +53,7 @@ public class FileChooserController {
 	/**
 	 * @param fileToSave
 	 */
-	public void save(File fileToSave){
+	public void newProject(File fileToSave){
 		System.out.println("You chose to save as this file: " + fileToSave.getName());
 		
 	}

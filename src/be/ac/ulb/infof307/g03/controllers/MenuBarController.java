@@ -6,6 +6,7 @@ package be.ac.ulb.infof307.g03.controllers;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.MenuBarView;
 
 /**
@@ -15,14 +16,18 @@ import be.ac.ulb.infof307.g03.views.MenuBarView;
 public class MenuBarController {
 	private MenuBarView _view;
 	private FileChooserController _fileController;
+	private Project _project;
 	
 	/**
 	 * Constructor of MenuBarController.
 	 * It creates the view associated with the controller.
+	 * @param project 
 	 */
-	public MenuBarController(){
+	public MenuBarController(Project project){
+		_project = project;
 		_view = new MenuBarView(this);
 		_fileController = new FileChooserController(_view);
+		
 	}
 	
 	/**
@@ -36,13 +41,12 @@ public class MenuBarController {
 	 * Handler launched when menu item "New" is clicked
 	 */
 	public void onNew() {
-		System.out.println("[DEBUG] User clicked on new");
+		_fileController.notifyDisplayNew();
 	}
 	/**
 	 * Handler launched when menu item "Open" is clicked
 	 */
 	public void onOpen() {
-		System.out.println("[DEBUG] User clicked on open");
 		_fileController.notifyDisplayOpen();
 		
 	}
@@ -50,8 +54,7 @@ public class MenuBarController {
 	 * Handler launched when menu item "Save" clicked
 	 */
 	public void onSave() {
-		System.out.println("[DEBUG] User clicked on save");
-		_fileController.notifyDisplaySave();
+		System.out.println("[DEBUG] User clicked on new");
 	}
 	/**
 	 * Handler launched when menu item "Quit" clicked
