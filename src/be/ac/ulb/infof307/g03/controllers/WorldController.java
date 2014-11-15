@@ -212,6 +212,31 @@ public class WorldController implements ActionListener {
     }
     
     /**
+     * Mesh the points together for the walls creation
+     */
+    public void finalizeConstruct(){
+    	Group room = new Group();
+    	GeometryDAO dao;
+		try {
+			dao = _project.getGeometryDAO();
+			dao.create(room);
+	    	for (int i=0; i<_inConstruction.size(); i++){
+	    		_inConstruction.get(i).deselect();
+	    		dao.update(_inConstruction.get(i));
+				dao.addShapeToGroup(room, new Line(_inConstruction.get(i), _inConstruction.get((i+1)%_inConstruction.size())));
+	    	}
+	    	dao.create(new Wall(room,1));
+	    	dao.create(new Ground(room));
+	    	dao.notifyObservers();
+	    	_inConstruction.clear();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    	
+    
+    /**
      * Handle click
      */
     @Override
@@ -248,6 +273,7 @@ public class WorldController implements ActionListener {
     	else if (command.equals(WorldView.RIGHT_CLICK) && _project.config("mouse.mode").equals("construct")){
     		if (_inConstruction.size()>0 && mouseDown){
     			System.out.println("On clean la liste");
+    			finalizeConstruct();
     			_project.config("mouse.mode","dragSelect");
     		}
     	}
