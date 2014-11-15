@@ -129,9 +129,11 @@ public class Camera2D implements AnalogListener, ActionListener {
     		_cam.setLocation(pos);
     		_previousMousePosition = mouseOnGroundCoords();
 		}
+		/*
 		if (_canRotate) { // TODO
-			System.out.println("Use 'L' and 'R' button to rotate.");
+			System.out.println("Use 'O' and 'P' button to rotate.");
 		}
+		*/
 	}
 	
 	/**
@@ -213,28 +215,29 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 * boolean trigoRotate : direction of the rotation
 	 */
 	private void rotateCamera(float value, boolean trigoRotate) {
-        
-        float cos1deg = 0.99939f;
-        float sin1deg = 0.03489f;
-        if (trigoRotate) {
-        	sin1deg *= -1;
-        }
-        
-        Matrix3f mat = new Matrix3f();
-        mat.fromAngleNormalAxis(_rotationSpeed * value, _cam.getUp());
-
-        Vector3f up = _cam.getUp();
-        Vector3f left = _cam.getLeft();
-        Vector3f dir = _cam.getDirection();
-
-        Vector3f nup = new Vector3f( (cos1deg*up.getX())+(sin1deg*up.getY()), (-sin1deg*up.getX())+(cos1deg*up.getY()), up.getZ() );
-        Vector3f nleft = new Vector3f( (cos1deg*left.getX())+(sin1deg*left.getY()), (-sin1deg*left.getX())+(cos1deg*left.getY()), left.getZ());
-
-        Quaternion q = new Quaternion();
-        q.fromAxes(nleft, nup, dir);
-        q.normalizeLocal();
-
-        _cam.setAxes(q);
+		if(_mouseMode.equals(_MODE_DRAGROTATE)){
+	        float cos1deg = 0.99939f;
+	        float sin1deg = 0.03489f;
+	        if (trigoRotate) {
+	        	sin1deg *= -1;
+	        }
+	        
+	        Matrix3f mat = new Matrix3f();
+	        mat.fromAngleNormalAxis(_rotationSpeed * value, _cam.getUp());
+	
+	        Vector3f up = _cam.getUp();
+	        Vector3f left = _cam.getLeft();
+	        Vector3f dir = _cam.getDirection();
+	
+	        Vector3f nup = new Vector3f( (cos1deg*up.getX())+(sin1deg*up.getY()), (-sin1deg*up.getX())+(cos1deg*up.getY()), up.getZ() );
+	        Vector3f nleft = new Vector3f( (cos1deg*left.getX())+(sin1deg*left.getY()), (-sin1deg*left.getX())+(cos1deg*left.getY()), left.getZ());
+	
+	        Quaternion q = new Quaternion();
+	        q.fromAxes(nleft, nup, dir);
+	        q.normalizeLocal();
+	
+	        _cam.setAxes(q);
+		}
 		
 	}
 
@@ -259,8 +262,8 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_inputManager.addMapping(_RIGHT,		new MouseAxisTrigger(0, false));
 		// !!! <temporary> !!!
 		
-		_inputManager.addMapping(_ROTATELEFT,			new KeyTrigger(KeyInput.KEY_L)); 
-		_inputManager.addMapping(_ROTATERIGHT,		new KeyTrigger(KeyInput.KEY_R));
+		_inputManager.addMapping(_ROTATELEFT,			new KeyTrigger(KeyInput.KEY_O)); 
+		_inputManager.addMapping(_ROTATERIGHT,		new KeyTrigger(KeyInput.KEY_P));
 		// !!! </temporary> !!!
 		_inputManager.addMapping(_ZOOMIN, new MouseAxisTrigger(2, false));
         _inputManager.addMapping(_ZOOMOUT, new MouseAxisTrigger(2, true));
