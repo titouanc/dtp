@@ -31,12 +31,8 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
 	
 	private ToolsBarController _controller;
 	
-	// buttons actions
-	static final private String _UNDO 		= "Undo";
-	static final private String _REDO 		= "Redo";
-	
-	static final private String _LINE  		= "Line";
-	static final private String _GROUP 		= "Group";
+	// buttons actions	
+	static final private String _NEWELEMENT	= "NewElement";
 	
 	static final private String _FLOOR_UP   = "FloorUp";
 	static final private String _FLOOR_DOWN = "FloorDown";
@@ -72,30 +68,11 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      * The private method used for creating all the buttons 
      */
     private void _addButons(){
-        _addButtonsUndoRedo();
-        _addForms();
         _addButtonsFloor();
         _addButtonsDimension();
         _addButtonRotation();
+        _addForms();
  
-    }
-    
-    /**
-     * The private method used for creating the button undo to 
-     * go back in history and the button redo that does the opposite  
-     */
-    private void _addButtonsUndoRedo() {
-    	// listButton, for adding/removing a button without pain
-    	String[] listButton = new String[] {_UNDO, _REDO};
-    	
-    	for( String buttonName : listButton){
-            JButton button = new JButton(buttonName);
-            button.setActionCommand(buttonName);
-            button.setToolTipText(buttonName+" last action");
-            button.addActionListener(this);
-            this.add(button);
-    	}
-       this.addSeparator();
     }
     
     /**
@@ -103,17 +80,11 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      * possible to add on the project
      */
     private void _addForms() {
-    	// button line
-    	JButton lineButton = new JButton(_LINE);
-    	lineButton.setActionCommand(_LINE);
-    	lineButton.setToolTipText("Create a line");
-    	lineButton.addActionListener(this);
-        this.add(lineButton);
         
         //button group
-    	JButton groupButton = new JButton(_GROUP);
-    	groupButton.setActionCommand(_GROUP);
-    	groupButton.setToolTipText("Create a group");
+    	JButton groupButton = new JButton(_NEWELEMENT);
+    	groupButton.setActionCommand(_NEWELEMENT);
+    	groupButton.setToolTipText("Create a new Element");
     	groupButton.addActionListener(this);
         this.add(groupButton);
         
@@ -227,16 +198,7 @@ public class ToolsBarView extends JToolBar implements ActionListener  {
      */ @Override
 	public void actionPerformed(ActionEvent action) {
 		String cmd = action.getActionCommand();
-		if (_UNDO.equals(cmd)) { 
-			_controller.onUndo();
-        } 
-		else if (_REDO.equals(cmd)) {
-        	_controller.onRedo();
-        }
-        else if (_LINE.equals(cmd)) {
-        	_controller.onLine() ;
-        }
-        else if (_GROUP.equals(cmd)) {
+		if (_NEWELEMENT.equals(cmd)) {
         	_controller.onGroup();
         } 		
         else if (_FLOOR_DOWN.equals(cmd)) {
