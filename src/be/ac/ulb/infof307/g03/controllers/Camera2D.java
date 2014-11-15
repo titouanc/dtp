@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import be.ac.ulb.infof307.g03.views.WorldView;
 
-import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -13,21 +12,13 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.material.Material;
-import com.jme3.material.RenderState.FaceCullMode;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Ray;
-import com.jme3.math.Spline;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Curve;
 
 /**
  * Camera2D is the controller of the camera when the view is switched on 2D
@@ -48,7 +39,6 @@ public class Camera2D implements AnalogListener, ActionListener {
     private InputManager _inputManager;
     private String _mouseMode = _MODE_DRAGSELECT;
     private Vector3f _previousMousePosition;
-    private Spline _mouseSpline;
     private WorldView _wv;
     private float frustumSize = 10;
     
@@ -62,15 +52,12 @@ public class Camera2D implements AnalogListener, ActionListener {
 	static private final String _RIGHT			= "CAM2D_Right";
 	static private final String _UP				= "CAM2D_Up";
 	static private final String _DOWN			= "CAM2D_Down";
-	// !!! </temporary> !!!
+
 	static private final String _ZOOMIN			= "CAM2D_ZoomIn";
 	static private final String _ZOOMOUT		= "CAM2D_ZoomOut";
 
 	static private final String _ROTATELEFT 	= "CAM2D_RotateLeft";
 	static private final String _ROTATERIGHT	= "CAM2D_RotateRight";
-	
-	static private final boolean _KEYBOARD 		= true;
-	static private final boolean _MOUSE 		= false;
     
 	/**
 	 * Constructor of the 2D camera
@@ -142,50 +129,8 @@ public class Camera2D implements AnalogListener, ActionListener {
     		_cam.setLocation(pos);
     		_previousMousePosition = mouseOnGroundCoords();
 		}
-		if (_canRotate) { // 
-			Vector3f currentMousePosition = mouseOnGroundCoords();
-			currentMousePosition.subtractLocal(_previousMousePosition);
-			currentMousePosition.normalizeLocal();
-    		Vector3f pos = _cam.getLocation().clone();
-    		pos.setZ(0);
-    		pos.subtractLocal(_previousMousePosition);
-    		float d = pos.length();
-    		pos.normalizeLocal();
-    		float angle = FastMath.PI - pos.angleBetween(currentMousePosition);
-    		System.out.println(angle);
-    		
-            /*Vector3f v3 = new Vector3f	( 	(FastMath.cos(angle)*pos.getX())+(FastMath.sin(angle)*pos.getY()), 
-            								(-FastMath.sin(angle)*pos.getX())+(FastMath.cos(angle)*pos.getY()), 
-            								pos.getZ() 
-            							);
-            v3.multLocal(d);
-            v3.setZ(_cam.getLocation().getZ());
-            _cam.setLocation(v3.add(_previousMousePosition));*/
-            //_cam.lookAt(_previousMousePosition, new Vector3f(0,1,0));
-    		
-    		/*float hDistance = distance * FastMath.sin((FastMath.PI / 2) - vRotation);
-            Vector3f pos = new Vector3f(hDistance * FastMath.cos(rotation), distance * FastMath.sin(vRotation), hDistance * FastMath.sin(rotation));
-            pos = pos.add(target.getLocalTranslation());
-            cam.setLocation(pos);
-            cam.lookAt(target.getLocalTranslation(), initialUpVec);
-    		 */
-    		
-			
-			/*Vector3f currentMousePosition = mouseOnGroundCoords();
-			currentMousePosition.subtractLocal(_previousMousePosition);
-			currentMousePosition.normalizeLocal();
-			
-			Vector3f pos = _cam.getLocation().clone();
-    		pos.setZ(0);
-    		float dist  = pos.distance(_previousMousePosition);
-			
-			currentMousePosition.multLocal(-dist);
-			
-			_previousMousePosition.addLocal(currentMousePosition);
-			_previousMousePosition.setZ(_cam.getLocation().getZ());
-    		
-    		//System.out.println("Current angle : "+angle);
-    		_cam.setLocation(_previousMousePosition);*/
+		if (_canRotate) { // TODO
+			System.out.println("Use 'L' and 'R' button to rotate.");
 		}
 	}
 	
@@ -206,7 +151,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 	/**
 	 * Place the shapes at the center
 	 * of the user's screen
-	 * @param shape 
 	 */
 	public void resetDirection(){
 		Vector<Geometry> shapes = _wv.getShapes();
@@ -241,6 +185,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	      _cam.setLocation(new Vector3f(X,Y,Z+offset));
 		  _cam.lookAt(new Vector3f(X,Y,0),Vector3f.UNIT_Z);
 	      _cam.setParallelProjection(true);
+	      frustumSize = Z/offset+offset;
 	      float aspect = (float) _cam.getWidth() / _cam.getHeight();
 	      _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
 	      
@@ -355,7 +300,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 			if (_mouseMode.equals(_MODE_DRAGMOVE)) {
 				_canMove = value;
 			} else if (_mouseMode.equals(_MODE_DRAGROTATE)){
-				//_cam.lookAt(_previousMousePosition, new Vector3f(0,1,0));
 				_canRotate = value;
 			}
 		}
