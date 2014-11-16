@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.prefs.Preferences;
 
+import be.ac.ulb.infof307.g03.models.DemoProject;
 import be.ac.ulb.infof307.g03.models.Project;
 
 /**
@@ -43,16 +44,34 @@ public class BootController {
 	/**
 	 * @return Return the last project opened
 	 * @throws SQLException
-	 * @throws IOException 
 	 */
-	public Project loadLastProject() throws SQLException, IOException{
-		Project proj = new Project();
+	public Project loadLastProject() throws SQLException{
 		String lastProjectPath = getLastProjectPath(); 
+		System.out.println("[DEBUG] Last project path : " + lastProjectPath);
 		if (lastProjectPath != null){
+			Project proj = new Project();
 			proj.create(lastProjectPath);
-		}else{
-			// TODO demo ?
+			return proj;
 		}
-		return proj;	
+		return null;
+	}
+
+	/**
+	 * @return a
+	 * @throws SQLException
+	 */
+	public Project initProject() throws SQLException {
+		Project proj;
+		try{
+			proj = loadLastProject();
+		}
+		catch(SQLException e){
+			proj = null;
+		}
+		if (proj == null){
+			DemoProject demo = new DemoProject();
+			proj = demo.createDemoProject();
+		}
+		return proj;
 	}
 }
