@@ -4,6 +4,8 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -40,6 +42,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	
 	private GeometryDAO _model = null;
 	private WorldController _controller; 
+	private LinkedList<Change> _queuedChanges = null;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	
 	static public final String RIGHT_CLICK = "SelectObject";
@@ -55,6 +58,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		_controller = newController;
 		_model = model;
 		_model.addObserver(this);
+		_queuedChanges = new LinkedList<Change>();
 		this.setDisplayStatView(false);
 	}
 	
@@ -322,23 +326,36 @@ public class WorldView extends SimpleApplication implements Observer {
 			}
 		}
 	}
-
-	
-	
 	
 	/**
 	 * Called when the model fires a change notification
+	 * Enqueues Changes, they should be applied in render thread
 	 */
 	@Override
 	public void update(Observable arg0, Object msg) {
 		if (msg == null)
 			return;
-		for (Change change : (List<Change>) msg){
-			System.out.println("[3D View] " + change.toString());
-			if (change.getItem() instanceof Grouped)
-				_updateGrouped(change);
-			if (change.getItem() instanceof Point)
-				_updatePoint(change);
+		synchronized (_queuedChanges) {
+			_queuedChanges.addAll((List<Change>) msg);
+		}
+	}
+	
+	/**
+	 * Modify scene in render thread, if any Change
+	 */
+	@Override
+	public void simpleUpdate(float t){
+		synchronized (_queuedChanges){
+			if (_queuedChanges.size() > 0){
+				for (Change change : _queuedChanges){
+					System.out.println("[3D View] " + change.toString());
+					if (change.getItem() instanceof Grouped)
+						_updateGrouped(change);
+					if (change.getItem() instanceof Point)
+						_updatePoint(change);
+				}		
+				_queuedChanges.clear();
+			}
 		}
 	}
 }
