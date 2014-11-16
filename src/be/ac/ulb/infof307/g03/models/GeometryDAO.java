@@ -57,6 +57,15 @@ public class GeometryDAO extends Observable {
 	 * @throws SQLException
 	 */
 	public GeometryDAO(ConnectionSource database) throws SQLException{
+		resetConnection(database);
+	}
+	
+	/**
+	 * Reset the inner database connection
+	 * @param database The new database handler
+	 * @throws SQLException
+	 */
+	public void resetConnection(ConnectionSource database) throws SQLException {
 		_lines = DaoManager.createDao(database, Line.class);
 		_groups = DaoManager.createDao(database, Group.class);
 		_grounds = DaoManager.createDao(database, Ground.class);
@@ -64,6 +73,26 @@ public class GeometryDAO extends Observable {
 		_points = DaoManager.createDao(database, Point.class);
 		_floors = DaoManager.createDao(database, Floor.class);
 		_changes = new LinkedList<Change>();
+	}
+	
+	/**
+	 * Copy all content from another DAO
+	 * @param other the original DAO
+	 * @return The number of copied Geometric
+	 * @throws SQLException
+	 */
+	public int copyFrom(GeometryDAO other) throws SQLException{
+		List<Geometric> toCopy = new ArrayList<Geometric>();
+		toCopy.addAll(other._floors.queryForAll());
+		toCopy.addAll(other._points.queryForAll());
+		toCopy.addAll(other._lines.queryForAll());
+		toCopy.addAll(other._groups.queryForAll());
+		toCopy.addAll(other._walls.queryForAll());
+		toCopy.addAll(other._grounds.queryForAll());
+		int res = 0;
+		for (Geometric g : toCopy)
+			res += create(g);
+		return res;
 	}
 	
 	/**
