@@ -18,7 +18,6 @@ import com.j256.ormlite.table.TableUtils;
  */
 
 public class Project extends Observable {
-	private String _filename = null;
 	private ConnectionSource _db = null;
 	private Dao<Config, String> _config = null;
 	private GeometryDAO _geo = null;
@@ -39,7 +38,6 @@ public class Project extends Observable {
 		load(filename);
 		TableUtils.createTableIfNotExists(_db, Config.class);
 		GeometryDAO.migrate(_db);
-		_filename = filename;
 	}
 
 	/**
@@ -50,7 +48,6 @@ public class Project extends Observable {
 	public void load(String filename) throws SQLException {
 		_db = new JdbcConnectionSource("jdbc:sqlite:" + filename);
 		_config = DaoManager.createDao(_db, Config.class);
-		_filename = filename;
 	}
 	
 	/**
@@ -60,13 +57,26 @@ public class Project extends Observable {
 	 * @throws SQLException
 	 */
 	public int saveAs(String filename) throws SQLException {
-		int res = 0;
+		/* Open new DB handler */
 		ConnectionSource newDB = new JdbcConnectionSource("jdbc:sqlite:" + filename);
+		Dao<Config, String> newDAO = DaoManager.createDao(newDB, Config.class);
+		
+		/* Migrate schemas */
+		TableUtils.createTableIfNotExists(newDB, Config.class);
 		GeometryDAO.migrate(newDB);
+		
+		/* Copy data */
+		int res = 0;
 		res += new GeometryDAO(newDB).copyFrom(getGeometryDAO());
+		for (Config c : _config.queryForAll())
+			newDAO.create(c);
+		
+		/* Replace current DB handler with new one */
 		getGeometryDAO().resetConnection(newDB);
 		_db.close();
 		_db = newDB;
+		_config = newDAO;
+		
 		return res;
 	}
 

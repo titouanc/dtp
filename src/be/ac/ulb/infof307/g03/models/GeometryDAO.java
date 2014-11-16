@@ -508,12 +508,14 @@ public class GeometryDAO extends Observable {
 	}
 	
 	/**
-	 * Add a shape to a group
+	 * Add a shape to a group in database
 	 * @param grp Destination group
 	 * @param shape Shape to add to the group
 	 * @throws SQLException
 	 */
 	public void addShapeToGroup(Group grp, Shape shape) throws SQLException{
+		if (grp.getId() == 0)
+			_groups.create(grp);
 		shape.addToGroup(grp);
 		if (shape.getId() != 0)
 			update(shape);
@@ -522,7 +524,15 @@ public class GeometryDAO extends Observable {
 		setChanged();
 	}
 
+	/**
+	 * Add a group to a floor in database
+	 * @param floor The Floor to add
+	 * @param grp The Group to put the Floor into
+	 * @throws SQLException
+	 */
 	public void addGroupToFloor(Floor floor, Group grp) throws SQLException {
+		if (floor.getId() == 0)
+			_floors.create(floor);
 		grp.setFloor(floor);
 		if (grp.getId() != 0)
 			update(grp);
