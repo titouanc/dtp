@@ -30,6 +30,7 @@ public class Camera3D implements AnalogListener, ActionListener {
 	private InputManager _inputManager;
 	private String _mouseMode = _MODE_DRAGSELECT;
 	private Vector3f _previousMousePosition;
+    private final int minimumHeight = 1;
 	
 	// Mouse Mode 
     static private final String _MODE_DRAGROTATE = "dragRotate";
@@ -224,7 +225,9 @@ public class Camera3D implements AnalogListener, ActionListener {
 		Vector3f vel = _cam.getDirection().clone();
 		vel.multLocal(value*_zoomSpeed);
 		pos.addLocal(vel);
-		_cam.setLocation(pos);
+		if (pos.z > minimumHeight){
+			_cam.setLocation(pos);
+		}
 	}
 	
 	/**
