@@ -55,7 +55,7 @@
             <formatter type="xml"/>
             <batchtest fork="yes" todir="${junit.output.dir}">
                 <fileset dir="${tests}">
-                  <include name="**/*Test*.java"/>
+                  <include name="**/AllTests.java"/>
                 </fileset>
             </batchtest>
         </junit>
