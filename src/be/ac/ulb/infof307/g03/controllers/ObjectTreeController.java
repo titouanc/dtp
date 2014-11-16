@@ -92,11 +92,9 @@ public class ObjectTreeController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (element instanceof Line){
-			Line line = (Line) element;
-			System.out.println("[TreeController] Unselect " + line.getUID());
+		} else if (element instanceof Shape){
 			try {
-				for (Point p : line.getPoints()){
+				for (Point p : _dao.getPointsForShape((Shape) element)){
 					_dao.refresh(p);
 					p.deselect();
 					_dao.update(p);
@@ -126,11 +124,9 @@ public class ObjectTreeController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (element instanceof Line){
-			Line line = (Line) element;
-			System.out.println("[TreeController] Select " + line.getUID());
+		} else if (element instanceof Shape){
 			try {
-				for (Point p : line.getPoints()){
+				for (Point p : _dao.getPointsForShape((Shape) element)){
 					_dao.refresh(p);
 					p.select();
 					_dao.update(p);
