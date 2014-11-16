@@ -266,7 +266,7 @@ public class WorldController implements ActionListener {
     		construct();
 		
 		/* Different things can happen in dragSelect mode */
-		else if (rightClick && mouseMode.equals("dragSelect")){
+		else if (leftClick && mouseMode.equals("dragSelect")){
 			/* Find the Geometric object where we clicked */
             Geometric clicked = getClickedObject();
             
