@@ -239,6 +239,23 @@ public class GeometryDAO extends Observable {
 	}
 	
 	/**
+	 * Get all Grouped items that belong to a given group
+	 * @param group The group from which we want Grouped items
+	 * @return a (possibly empty) list of Grouped items
+	 * @throws SQLException 
+	 */
+	public List<Grouped> getGrouped(Group group) throws SQLException{
+		List<Grouped> res = new ArrayList<Grouped>(2);
+		Wall wall = getWall(group);
+		if (wall != null)
+			res.add(wall);
+		Ground gnd = getGround(group);
+		if (gnd != null)
+			res.add(gnd);
+		return res;
+	}
+	
+	/**
 	 * Retrieve all Grouped item containing a given point
 	 * @param p The point from which we search grouped items
 	 * @return A list of grouped items (might be empty)

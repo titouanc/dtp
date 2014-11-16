@@ -64,7 +64,7 @@ public class GeometricTree implements TreeModel, Observer {
 	 * @param parent The node we're querying for children
 	 * @return A list of Geometric object
 	 */
-	private List<Geometric> getNodes(Object parent) {
+	private List<Geometric> _getNodes(Object parent) {
 		String key = toKey(parent);
 		
 		// We have this information in cache, simply return it
@@ -78,10 +78,7 @@ public class GeometricTree implements TreeModel, Observer {
 				res.addAll(_dao.getFloors());
 			else if (parent instanceof Group){
 				Group grp = (Group) parent;
-				Wall wall = _dao.getWall(grp);
-				if (wall != null) res.add(wall);
-				Ground gnd = _dao.getGround(grp);
-				if (gnd != null) res.add(gnd);
+				res.addAll(_dao.getGrouped(grp));
 				res.addAll(_dao.getShapesForGroup(grp));
 			} else if (parent instanceof Floor){
 				res.addAll(_dao.getGroups((Floor) parent));
@@ -119,13 +116,13 @@ public class GeometricTree implements TreeModel, Observer {
 
 	@Override
 	public Object getChild(Object parent, int index) {
-		List<Geometric> children = getNodes(parent);
+		List<Geometric> children = _getNodes(parent);
 		return children.get(index);
 	}
 
 	@Override
 	public int getChildCount(Object parent) {
-		return getNodes(parent).size();
+		return _getNodes(parent).size();
 	}
 
 	@Override
@@ -134,7 +131,7 @@ public class GeometricTree implements TreeModel, Observer {
 			return 0;
 		
 		String key = ((Geometric) child).getUID();
-		List<Geometric> children = getNodes(parent);
+		List<Geometric> children = _getNodes(parent);
 		
 		for (int i = 0; i < children.size(); i++)
 			if (key.equals(children.get(i).getUID()))

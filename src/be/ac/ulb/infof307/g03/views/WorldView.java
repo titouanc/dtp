@@ -269,46 +269,31 @@ public class WorldView extends SimpleApplication implements Observer {
 			newSphere.setLocalTranslation(point.toVector3f());
 			newSphere.setMaterial(this._makeBasicMaterial(ColorRGBA.Red));
 			rootNode.attachChild(newSphere);
-		}
-		try {
-			for (Grouped grouped : _model.getGroupedForPoint(point)){
-				/* For now: DUMBLY redraw all grouped items */
-				rootNode.detachChildNamed(grouped.getUID());
-				if (grouped instanceof Wall)
-					_drawWall((Wall) grouped);
-				else if (grouped instanceof Ground)
-					_drawGround((Ground) grouped);
+			try {
+				for (Grouped grouped : _model.getGroupedForPoint(point))
+					_updateGrouped(Change.update(grouped));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
-	
+		
 	private void _updateGrouped(Change change){
 		Grouped grouped = (Grouped) change.getItem();
 		
-		if (change.isDeletion())
+		/* 3D object don't exist yet if it is a creation */
+		if (! change.isCreation())
 			rootNode.detachChildNamed(grouped.getUID());
-		else if (change.isUpdate()){
-			if (rootNode.getChild(grouped.getUID()) instanceof Geometry){
-				Geometry toUpdate = (Geometry) rootNode.getChild(grouped.getUID());
-				Material mat = toUpdate.getMaterial();
-				if (mat != null)
-					mat.setColor("Color", _getColor(grouped));
-			}
-			else if (rootNode.getChild(grouped.getUID()) instanceof Node){
-				// Walls are Nodes attached to the rootNode
-				Node toUpdate = (Node) rootNode.getChild(grouped.getUID());
-				toUpdate.detachAllChildren();
-				_drawWall((Wall) grouped);
-			}
-		} else if (change.isCreation()){
+		
+		/* No need to redraw if it is a deletion */
+		if (! change.isDeletion()){
 			if (grouped instanceof Wall)
 				_drawWall((Wall) grouped);
 			else if (grouped instanceof Ground)
 				_drawGround((Ground) grouped);
 		}
+		
+		/* Conclusion: updates will do both (detach & redraw) */
 	}
 	
 	/**
@@ -353,6 +338,7 @@ public class WorldView extends SimpleApplication implements Observer {
 						_updateGrouped(change);
 					if (change.getItem() instanceof Point)
 						_updatePoint(change);
+					System.out.println("---");
 				}		
 				_queuedChanges.clear();
 			}
