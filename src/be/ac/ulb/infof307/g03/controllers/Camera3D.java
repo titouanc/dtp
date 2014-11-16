@@ -132,11 +132,7 @@ public class Camera3D implements AnalogListener, ActionListener {
 		Vector3f vel = new Vector3f();
 		
 		if (sideways) { // forward or backward
-			if (_cam.getDirection().angleBetween(new Vector3f(0,0,-1))<(FastMath.PI/2)) { // the camera is looking downward 
-				_cam.getUp(vel);
-			}else { // the camera is looking forward
-				_cam.getDirection(vel);
-			}
+			_cam.getDirection(vel);
 		} else { // strafe left or right
 			_cam.getLeft(vel);
 		}
