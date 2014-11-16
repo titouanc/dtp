@@ -5,6 +5,9 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import java.awt.Component;
 import java.io.File;
+import java.sql.SQLException;
+
+import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
@@ -77,10 +80,11 @@ public class FileChooserController {
 	 * @param fileToSave The File to be saved as a new file
 	 */
 	public void saveAsProject(File fileToSave) {
-		System.out.println("You chose to save as this file: " + fileToSave.getName());
-		
+		String filename = fileToSave.getAbsolutePath();
+		try {
+			_project.saveAs(filename);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(_parent, "Unable to save as " + filename + ": " + e.toString());
+		}
 	}
-
-
-
 }
