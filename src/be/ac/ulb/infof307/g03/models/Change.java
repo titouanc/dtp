@@ -90,6 +90,6 @@ public class Change {
 	
 	public String toString(){
 		String prefix = isCreation() ? "Creation " : isDeletion() ? "Deletion " : "Update "; 
-		return prefix + getItem().getUID();
+		return prefix + getItem().toString();
 	}
 }

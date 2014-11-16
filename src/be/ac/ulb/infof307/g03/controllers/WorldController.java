@@ -174,15 +174,6 @@ public class WorldController implements ActionListener {
 	}
     
     /**
-     * Move the currently moving point
-     */
-    public void dragMovingPoint(){
-    	if (_movingPoint == null)
-    		return;
-    	
-    }
-    
-    /**
      * Toggle selection for a Grouped item, save to database and notify observers
      * @param grouped The Grouped item to select
      */
@@ -233,6 +224,8 @@ public class WorldController implements ActionListener {
 		try {
 			dao = _project.getGeometryDAO();
 			dao.create(room);
+			room.setName(room.getUID());
+			dao.update(room);
 	    	for (int i=0; i<_inConstruction.size(); i++){
 	    		_inConstruction.get(i).deselect();
 	    		dao.update(_inConstruction.get(i));
@@ -247,24 +240,33 @@ public class WorldController implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		_project.config("mouse.mode","dragSelect");
     }
-    	
     
     /**
      * Handle click
      */
     @Override
 	public void onAction(String command, boolean mouseDown, float arg2) {
-    
-    	System.out.println("[WorldController] onAction: " + command + " - " + (mouseDown ? "press" : "release"));
-    	
-    	if (command.equals(WorldView.RIGHT_CLICK) && _project.config("mouse.mode").equals("dragSelect")){
-			/* We're moving a point, and mouse button up: stop the point here */
-			if (_movingPoint != null && ! mouseDown){
-            	System.out.println("[WorldController] Stopping point " + _movingPoint.getUID() + _movingPoint.toString());
-            	dropMovingPoint();
-            }
-			
+    	String mouseMode = _project.config("mouse.mode");
+		boolean leftClick = command.equals(WorldView.LEFT_CLICK);
+		boolean rightClick = command.equals(WorldView.RIGHT_CLICK);
+		boolean mouseUp = ! mouseDown;
+		
+		/* We're moving a point, and mouse button up: stop the point here */
+		if (_movingPoint != null && mouseUp)
+        	dropMovingPoint();
+		
+		/* We're building a shape, and right-click: finish shape */
+    	else if (mouseDown && rightClick && _inConstruction.size() > 0)
+			finalizeConstruct();
+		
+		/* We're in construct mode and left-click: add a point */
+    	else if (mouseDown && leftClick && mouseMode.equals("construct"))
+    		construct();
+		
+		/* Different things can happen in dragSelect mode */
+		else if (rightClick && mouseMode.equals("dragSelect")){
 			/* Find the Geometric object where we clicked */
             Geometric clicked = getClickedObject();
             
@@ -278,23 +280,8 @@ public class WorldController implements ActionListener {
             	selectObject((Grouped) clicked);
             } 
             /* If it is a Point: initiate drag'n drop */
-            else if (clicked instanceof Point && mouseDown){
-            	System.out.println("[WorldController] Moving point " + clicked.getUID() + clicked.toString());
+            else if (clicked instanceof Point && mouseDown)
         		_movingPoint = (Point) clicked;
-            }
-		}
-    	
-    	else if (command.equals(WorldView.RIGHT_CLICK) && _project.config("mouse.mode").equals("construct")){
-    		if (_inConstruction.size()>0 && mouseDown){
-    			System.out.println("On clean la liste");
-    			finalizeConstruct();
-    			_project.config("mouse.mode","dragSelect");
-    		}
-    	}
-    	
-    	else if (command.equals(WorldView.LEFT_CLICK) && mouseDown && _project.config("mouse.mode").equals("construct")){
-    		construct();
-    	}
-    	   	
+		}  	
 	}
 }
