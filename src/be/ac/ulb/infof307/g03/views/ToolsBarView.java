@@ -83,9 +83,9 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
     private void _addForms() {
         
         //button group
-    	_createButton = new JToggleButton(_NEWELEMENT);
+    	_createButton = new JToggleButton("New Room");
     	_createButton.setActionCommand(_NEWELEMENT);
-    	_createButton.setToolTipText("Create a new Element");
+    	_createButton.setToolTipText("Create a new room");
     	_createButton.addActionListener(this);
         this.add(_createButton);       
         this.addSeparator();
