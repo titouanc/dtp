@@ -3,15 +3,10 @@
  */
 package be.ac.ulb.infof307.g03.controllers;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.sql.SQLException;
-import java.util.Scanner;
+import java.util.prefs.Preferences;
 
-import junit.framework.Test;
 import be.ac.ulb.infof307.g03.models.Project;
 
 /**
@@ -19,43 +14,29 @@ import be.ac.ulb.infof307.g03.models.Project;
  *
  */
 public class BootController {
-	static final private String HISTORY_FILE = ".openProjectPath";
-
+	static final private String LAST_PROJECT = "LastOpenedProject";
+	private Preferences _prefs;
 	
-
 	/**
-	 * @return The path of the jar encoded in Utf8
-	 * @throws UnsupportedEncodingException 
+	 * 
 	 */
-	public String getJarPath() throws UnsupportedEncodingException{
-		String jarPath = Test.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		String decodedPath = URLDecoder.decode(jarPath, "UTF-8");
-		return decodedPath;
+	public BootController(){
+		 _prefs = Preferences.userRoot().node(this.getClass().getName());
 	}
 	
 	/**
 	 * @param path 
-	 * @throws IOException 
 	 * 
 	 */
-	public void saveCurrentProjectPath(String path) throws IOException{
-		// https://stackoverflow.com/questions/320542/how-to-get-the-path-of-a-running-jar-file
-		// windows <3
-		String historyFile = getJarPath() + HISTORY_FILE;
-		File file = new File (historyFile);
-		PrintWriter out = new PrintWriter(file); // hope this will work with Windows
-		out.flush();
-		out.println(path);
-		out.close();
+	public void saveCurrentProjectPath(String path){
+		_prefs.put(LAST_PROJECT, path);
 	}
 	
 	/**
 	 * @return A string containing the path of the last project opened
-	 * @throws IOException 
 	 */
-	public String getLastProjectPath() throws IOException{
-		String historyFile = getJarPath() + HISTORY_FILE;
-		String path = new Scanner( new File(historyFile) ).useDelimiter("\\A").next();
+	public String getLastProjectPath(){
+		String path = _prefs.get(LAST_PROJECT, null);
 		return path;
 	}
 	
@@ -67,7 +48,11 @@ public class BootController {
 	public Project loadLastProject() throws SQLException, IOException{
 		Project proj = new Project();
 		String lastProjectPath = getLastProjectPath(); 
-		proj.create(lastProjectPath);
+		if (lastProjectPath != null){
+			proj.create(lastProjectPath);
+		}else{
+			// TODO demo ?
+		}
 		return proj;	
 	}
 }
