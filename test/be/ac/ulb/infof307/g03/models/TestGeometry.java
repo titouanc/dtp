@@ -400,6 +400,13 @@ public class TestGeometry {
 		geo.create(groundFloor);
 		geo.create(floor);
 		assertEquals(2.0, geo.getBaseHeight(floor), 0);
+		
+		assertNull(geo.getNextFloor(floor));
+		assertNull(geo.getPreviousFloor(basement));
+		
+		String uid = groundFloor.getUID();
+		assertEquals(uid, geo.getPreviousFloor(floor).getUID());
+		assertEquals(uid, geo.getNextFloor(basement).getUID());
 	}
 	
 	@Test

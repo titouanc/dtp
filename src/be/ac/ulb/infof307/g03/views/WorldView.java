@@ -178,7 +178,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 
 	/**
-	 * Redraw the 3D scene (first shot, still to be optimized)
+	 * Redraw the entire 3D scene
 	 */
 	private void _makeScene(){
 		//Generates the grid
@@ -193,7 +193,6 @@ public class WorldView extends SimpleApplication implements Observer {
 			for (Ground gnd : _model.getGrounds())
 				_drawGround(gnd);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -253,6 +252,10 @@ public class WorldView extends SimpleApplication implements Observer {
 		rootNode.attachChild(axisGeo);
 	}
 	
+	/**
+	 * @param grouped a Grouped item
+	 * @return The color it should have in 3D view
+	 */
 	private ColorRGBA _getColor(Grouped grouped){
 		return grouped.isSelected() ? 
 				ColorRGBA.Green : 
@@ -261,6 +264,10 @@ public class WorldView extends SimpleApplication implements Observer {
 						ColorRGBA.LightGray;
 	}
 	
+	/**
+	 * Update view when a Point has changed
+	 * @param change
+	 */
 	private void _updatePoint(Change change){
 		Point point = (Point) change.getItem();
 		rootNode.detachChildNamed(point.getUID());
@@ -277,7 +284,11 @@ public class WorldView extends SimpleApplication implements Observer {
 			}
 		}
 	}
-		
+	
+	/**
+	 * Update view when a Grouped has changed
+	 * @param change
+	 */
 	private void _updateGrouped(Change change){
 		Grouped grouped = (Grouped) change.getItem();
 		

@@ -373,8 +373,35 @@ public class GeometryDAO extends Observable {
 		);
 	}
 	
+	/**
+	 * Get a floor given its floor id
+	 * @param floor_id The floor identifier
+	 * @return a Floor object, or null if not found
+	 * @throws SQLException
+	 */
 	public Floor getFloor(int floor_id) throws SQLException{
 		return _floors.queryForId(floor_id);
+	}
+	
+	/**
+	 * Get previous (below) floor
+	 * @param floor the Floor from which we search a previous one
+	 * @return a Floor object, or null first floor was given
+	 */
+	public Floor getPreviousFloor(Floor floor){
+		return floor.getPrevious();
+	}
+	
+	/**
+	 * Get next (above) floor
+	 * @param floor the Floor from which we search a next one
+	 * @return a Floor object, or null if last floor was given
+	 * @throws SQLException
+	 */
+	public Floor getNextFloor(Floor floor) throws SQLException{
+		return _floors.queryForFirst(
+			_floors.queryBuilder().where().eq("_previous_id", floor.getId()).prepare()
+		);
 	}
 	
 	/**
