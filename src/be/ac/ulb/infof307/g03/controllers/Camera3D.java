@@ -8,7 +8,6 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -17,7 +16,7 @@ import com.jme3.renderer.Camera;
 
 /**
  * Camera2D is the controller of the camera when the view is switched on 2D
- * @author schembrijulian
+ * @author schembrijulian, brochape
  */
 public class Camera3D implements AnalogListener, ActionListener {
 
@@ -59,6 +58,9 @@ public class Camera3D implements AnalogListener, ActionListener {
 	static private float _defaultRight;
 	static private float _defaultTop;
 	static private float _defaultBottom;
+	
+	// Default camera parameter
+	private final int _defaultCameraZ = 40;
 	
 	/**
 	 * Constructor of the 2D camera
@@ -109,6 +111,8 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 * @param inputManager The new input manager to be set.
 	 */
 	public void setInputManager(InputManager inputManager) {
+		System.out.println("ICI");
+
 		_inputManager = inputManager;
 		inputSetUp();
 	}
@@ -118,9 +122,13 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 */
 	public void resetDirection() {
         _cam.setParallelProjection(false);
-        _cam.setFrustum(_defaultNear, _defaultFar, _defaultLeft, _defaultRight, _defaultTop, _defaultBottom);
         
+        _cam.setLocation(new Vector3f(_cam.getLocation().x,_cam.getLocation().y,_defaultCameraZ));
+        //TODO : Unhardcode it ^ (get current zposition (correctly, it is currently fucked up) or set a default z-position)
+        _cam.setFrustum(_defaultNear, _defaultFar, _defaultLeft, _defaultRight, _defaultTop,_defaultBottom);
 	}
+	
+	
 
 	/**
 	 * Method to use to move the camera

@@ -166,7 +166,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 */
 	public void resetDirection(){
 		Vector<Geometry> shapes = _wv.getShapes();
-		System.out.println("SIEZ  :" + shapes.size());
 		  float minX = 0,minY = 0,maxX = 0,maxY = 0,X = 0, Y= 0,Z = 0;
 		  int offset=17;
 		  Vector3f center;
