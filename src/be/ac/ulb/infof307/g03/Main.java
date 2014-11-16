@@ -38,6 +38,7 @@ public class Main {
 
 	}
 	
+	
 	/**
 	 * Create a basic irregular 4-sided polygon and a triangle,
 	 * build a wall and a ground on them,
