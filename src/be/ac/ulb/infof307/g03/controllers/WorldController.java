@@ -275,10 +275,9 @@ public class WorldController implements ActionListener {
             	return;
             
             /* If it is a Grouped (Wall, Ground): select it */
-            if (clicked instanceof Grouped && mouseDown){
-            	System.out.println("[WorldController] Select " + clicked.toString());
+            if (clicked instanceof Grouped && mouseDown)
             	selectObject((Grouped) clicked);
-            } 
+            
             /* If it is a Point: initiate drag'n drop */
             else if (clicked instanceof Point && mouseDown)
         		_movingPoint = (Point) clicked;

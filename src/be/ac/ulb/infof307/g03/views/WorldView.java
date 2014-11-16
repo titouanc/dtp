@@ -344,12 +344,10 @@ public class WorldView extends SimpleApplication implements Observer {
 		synchronized (_queuedChanges){
 			if (_queuedChanges.size() > 0){
 				for (Change change : _queuedChanges){
-					System.out.println("[3D View] " + change.toString());
 					if (change.getItem() instanceof Grouped)
 						_updateGrouped(change);
-					if (change.getItem() instanceof Point)
+					else if (change.getItem() instanceof Point)
 						_updatePoint(change);
-					System.out.println("---");
 				}		
 				_queuedChanges.clear();
 			}
