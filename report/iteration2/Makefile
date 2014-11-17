@@ -1,6 +1,5 @@
 main.tex: substories 
 	/bin/echo "\\chapter{Itération 2}"> $@
-	cat intro.tex >> $@
 	/bin/echo "\\section{Histoires utilisateur}" >> $@
 	cat substories/*.tex >> $@
 

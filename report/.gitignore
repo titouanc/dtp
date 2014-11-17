@@ -7,3 +7,4 @@ pv/*.tex
 *.aux
 *.log
 *.toc
+stories.tex
