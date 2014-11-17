@@ -88,7 +88,7 @@ public class WorldController implements ActionListener {
      */
     public void onViewCreated(){
         _isViewCreated = true;
-        _cameraModeController.get2DCam().resetDirection();
+        _cameraModeController.get2DCam().resetCamera();
     }
     
     /**
@@ -101,8 +101,6 @@ public class WorldController implements ActionListener {
         Vector3f camDir = _view.getCamera().getWorldCoordinates(cursorPosition, 1f).subtractLocal(camPos);
         return new Ray(camPos, camDir);
     }
-    
-    
     
     /**
      * Convert a click position to clicked item

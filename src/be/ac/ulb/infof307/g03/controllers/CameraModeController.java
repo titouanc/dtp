@@ -57,11 +57,11 @@ public class CameraModeController implements Observer {
 			if (mode.equals(_VIEW3D)){
 				_cam2D.setEnabled(false);
 				_cam3D.setEnabled(true);
-				_cam3D.resetDirection();
+				_cam3D.resetCamera();
 			} else if (mode.equals(_VIEW2D)) {
 				_cam2D.setEnabled(true);
 				_cam3D.setEnabled(false);
-				_cam2D.resetDirection();
+				_cam2D.resetCamera();
 			}
 			_currentMode = mode;
 		}
