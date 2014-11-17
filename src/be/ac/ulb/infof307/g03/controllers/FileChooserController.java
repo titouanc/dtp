@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
+import be.ac.ulb.infof307.g03.views.GUI;
 
 /**
  * @author pierre
@@ -63,13 +64,18 @@ public class FileChooserController {
 	 */
 	public void openProject(File fileToOpen){
 		System.out.println("[DEBUG] You chose to open: " + fileToOpen.getName());
-		String filename = fileToOpen.getAbsolutePath();
-		try {
-			_project = new Project();
-			_project.load(filename);
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(_parent, "Unable to open project named " + filename + ": " + e.toString());
-		}	
+		final String filename = fileToOpen.getAbsolutePath();
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run(){
+				try{
+					Project prj = new Project();
+					prj.load(filename);
+					new GUI(prj);
+				}catch (SQLException e) {
+					JOptionPane.showMessageDialog(_parent, "Unable to open project named " + filename + ": " + e.toString());
+				}
+			}
+		});	
 	}
 	
 	/**
