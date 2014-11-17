@@ -8,7 +8,6 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -21,16 +20,21 @@ import com.jme3.renderer.Camera;
  */
 public class Camera3D implements AnalogListener, ActionListener {
 
+	// Attributes
 	private Camera _cam;
-	private float _rotationSpeed 	= 1f;
-	private float _moveSpeed 		= 10f;
-	private float _zoomSpeed		= 4f;
-	private boolean _canRotate = false;
-	private boolean _canMove = false;
-	private boolean _enabled = true;
 	private InputManager _inputManager;
 	private String _mouseMode = _MODE_DRAGSELECT;
 	private Vector3f _previousMousePosition;
+	
+	// Speed parameters
+	private float _rotationSpeed 	= 1f;
+	private float _moveSpeed 		= 10f;
+	private float _zoomSpeed		= 4f;
+	
+	// Flags
+	private boolean _canRotate 		= false;
+	private boolean _canMove 		= false;
+	private boolean _enabled 		= true;
 	
 	// Mouse Mode 
     static private final String _MODE_DRAGROTATE = "dragRotate";
@@ -88,7 +92,7 @@ public class Camera3D implements AnalogListener, ActionListener {
 	public void setCam(Camera cam) {
 		_cam = cam;
 		
-		// Used to reset frustum parameters
+		// Reset frustum parameters
 		_defaultNear = _cam.getFrustumNear();
 		_defaultFar = _cam.getFrustumFar();
 		_defaultLeft = _cam.getFrustumLeft();
@@ -116,8 +120,9 @@ public class Camera3D implements AnalogListener, ActionListener {
 	/**
 	 * Reset the direction toward which the camera looks
 	 */
-	public void resetDirection() {
+	public void resetCamera() {
         _cam.setParallelProjection(false);
+        // Reset default frustum parameters
         _cam.setFrustum(_defaultNear, _defaultFar, _defaultLeft, _defaultRight, _defaultTop, _defaultBottom);
         
 	}
@@ -131,29 +136,38 @@ public class Camera3D implements AnalogListener, ActionListener {
 		Vector3f pos = _cam.getLocation().clone();
 		Vector3f vel = new Vector3f();
 		
+		// Choose the vector to follow
 		if (sideways) { // forward or backward
-			_cam.getDirection(vel);
+			if (_cam.getDirection()!=Vector3f.UNIT_Z) {
+				_cam.getDirection(vel);
+			} else {
+				_cam.getUp(vel);
+			}
 		} else { // strafe left or right
 			_cam.getLeft(vel);
 		}
 		
+		// Make this vector parallel to the Oxy plan
 		vel.setZ(0);
 		vel.normalizeLocal();
+		
+		// Find the new position
 		vel.multLocal(value*_moveSpeed);
 		pos.addLocal(vel);
 
+		// Move the camera
 		_cam.setLocation(pos);
 	}
 	
 	/**
-	 * Rotate the camera like a man can move his head
+	 * Rotate the camera like a man can move his head using Quaternion
 	 * @param value
 	 * @param axis
 	 */
 	private void rotateCameraByGrab(float value, Vector3f axis) {
 		if (!_canRotate) 
 			return;
-	
+		
 		Matrix3f mat = new Matrix3f();
         mat.fromAngleNormalAxis(_rotationSpeed * value, axis);
 
@@ -220,7 +234,7 @@ public class Camera3D implements AnalogListener, ActionListener {
 	}
 	
 	/**
-	 * Move the camera by using mouse moves
+	 * Move the camera using mouse moves
 	 */
 	private void moveCameraByGrab() {
 		Vector3f currentMousePosition = mouseOnGroundCoords();
