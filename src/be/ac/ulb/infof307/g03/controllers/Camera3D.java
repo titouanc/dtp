@@ -8,6 +8,7 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -147,7 +148,7 @@ public class Camera3D implements AnalogListener, ActionListener {
 		
 		// Choose the vector to follow
 		if (sideways) { // forward or backward
-			if (_cam.getDirection()!=Vector3f.UNIT_Z) {
+			if (FastMath.abs(_cam.getDirection().getZ())!=1) {
 				_cam.getDirection(vel);
 			} else {
 				_cam.getUp(vel);
