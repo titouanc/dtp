@@ -18,6 +18,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
@@ -87,11 +88,18 @@ public class WorldView extends SimpleApplication implements Observer {
 		this.setPauseOnLostFocus(false);
 	}
 	
+	/**
+	 * Creates a directional light across the whole world. 
+	 */
 	private void _addSun(){
 		DirectionalLight sun = new DirectionalLight();
-		sun.setColor(ColorRGBA.White);
+		sun.setColor(ColorRGBA.Gray);
 		sun.setDirection(new Vector3f(-.5f,-.5f,-1f).normalizeLocal());
 		rootNode.addLight(sun);
+		
+		AmbientLight ambient = new AmbientLight();
+		ambient.setColor(ColorRGBA.White.mult(1.3f));
+		rootNode.addLight(ambient);
 	}
 	
 	public Vector<Geometry> getShapes(){
@@ -157,6 +165,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		Material res = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		res.setColor("Diffuse", color);
+		res.setColor("Ambient", color);
 		return res;
 	}
 	
@@ -250,7 +259,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		try {
 			Mesh mesh = _model.getGroundAsMesh(gnd);
 			Geometry node = new Geometry(gnd.getUID(), mesh);
-			node.setMaterial(_makeLightedMaterial(_getColor(gnd)));
+			node.setMaterial(_makeBasicMaterial(_getColor(gnd)));
 			rootNode.attachChild(node);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
