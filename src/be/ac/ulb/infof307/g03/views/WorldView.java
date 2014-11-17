@@ -164,8 +164,10 @@ public class WorldView extends SimpleApplication implements Observer {
 	private Material _makeLightedMaterial(ColorRGBA color){
 		Material res = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		res.setBoolean("UseMaterialColors", true);
 		res.setColor("Diffuse", color);
 		res.setColor("Ambient", color);
+		res.setColor("Specular", color);
 		return res;
 	}
 	
