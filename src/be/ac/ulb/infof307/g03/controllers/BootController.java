@@ -3,6 +3,7 @@
  */
 package be.ac.ulb.infof307.g03.controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.prefs.Preferences;
@@ -49,9 +50,11 @@ public class BootController {
 		String lastProjectPath = getLastProjectPath(); 
 		System.out.println("[DEBUG] Last project path : " + lastProjectPath);
 		if (lastProjectPath != null){
-			Project proj = new Project();
-			proj.load(lastProjectPath);
-			return proj;
+			if (new File(lastProjectPath).exists()){ // not sure about python style lazy eval in java => split if
+				Project proj = new Project();
+				proj.load(lastProjectPath);
+				return proj;
+			}
 		}
 		return null;
 	}
