@@ -62,8 +62,13 @@ public class FileChooserController {
 	 * @param fileToOpen The file to be opened
 	 */
 	public void openProject(File fileToOpen){
-		System.out.println("You chose to open this file: " + fileToOpen.getName());
-		
+		System.out.println("[DEBUG] You chose to open: " + fileToOpen.getName());
+		String filename = fileToOpen.getAbsolutePath();
+		try {
+			_project.load(filename);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(_parent, "Unable to save as " + filename + ": " + e.toString());
+		}	
 	}
 	
 	/**
@@ -71,7 +76,13 @@ public class FileChooserController {
 	 * @param fileToCreate The new project file to be created
 	 */
 	public void newProject(File fileToCreate){
-		System.out.println("You chose to create a new project named: " + fileToCreate.getName());
+		System.out.println("[DEBUG] You chose to create a new project named: " + fileToCreate.getName());
+		String filename = fileToCreate.getAbsolutePath();
+		try {
+			_project.create(filename);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(_parent, "Unable to save as " + filename + ": " + e.toString());
+		}
 		
 	}
 
@@ -80,6 +91,7 @@ public class FileChooserController {
 	 * @param fileToSave The File to be saved as a new file
 	 */
 	public void saveAsProject(File fileToSave) {
+		System.out.println("[DEBUG] You chose to save as a new file: " + fileToSave.getName());
 		String filename = fileToSave.getAbsolutePath();
 		try {
 			_project.saveAs(filename);
