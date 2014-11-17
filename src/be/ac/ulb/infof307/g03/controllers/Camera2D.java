@@ -32,6 +32,7 @@ public class Camera2D implements AnalogListener, ActionListener {
     private Vector3f _previousMousePosition;
     private WorldView _wv;
     private float frustumSize = 10;
+    private final int minimumHeight = 1;
     
     // Speed parameters
 	private float _rotationSpeed	= 1f;
@@ -178,7 +179,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 */
 	public void resetCamera(){
 		Vector<Geometry> shapes = _wv.getShapes();
-		System.out.println("SIEZ  :" + shapes.size());
 		  float minX = 0,minY = 0,maxX = 0,maxY = 0,X = 0, Y= 0,Z = 0;
 		  int offset=17;
 		  Vector3f center;
@@ -213,14 +213,17 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 * float value : value of zoom
 	 */
 	private void zoomCamera(float value){
-        frustumSize += 0.3f * value;
-
-        float aspect = (float) _cam.getWidth() / _cam.getHeight();
-        _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
-
-		Vector3f pos = _cam.getLocation().clone();
-		pos.setZ(pos.getZ() + (value*_zoomSpeed));
-		_cam.setLocation(pos);
+		if(frustumSize + 0.3f * value >= minimumHeight){
+			
+	        frustumSize += 0.3f * value;
+	
+	        float aspect = (float) _cam.getWidth() / _cam.getHeight();
+	        _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
+	
+			Vector3f pos = _cam.getLocation().clone();
+			pos.setZ(pos.getZ() + (value*_moveSpeed));
+			_cam.setLocation(pos);
+		}
     }
 	
 	/**
