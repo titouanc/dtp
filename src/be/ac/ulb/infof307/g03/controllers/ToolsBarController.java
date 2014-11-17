@@ -2,9 +2,16 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
 import be.ac.ulb.infof307.g03.models.Config;
+import be.ac.ulb.infof307.g03.models.Floor;
+import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
+
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
+import javax.swing.JOptionPane;
 
 /**
  * @author fhennecker, pierre, wmoulart
@@ -72,7 +79,18 @@ public class ToolsBarController {
      * is clicked. It will communicate with the controller
      */
     public void onFloorUp(){
-    	System.out.println("[DEBUG] User clicked on : floorUp");	
+    	String currentFloorUID = _project.config("floor.current");
+		try {
+			GeometryDAO dao = _project.getGeometryDAO();
+			Floor floor = (Floor) dao.getByUID(currentFloorUID);
+	    	Floor nextFloor = dao.getNextFloor(floor);
+	    	if (nextFloor != null)
+	    		_project.config("floor.current", nextFloor.getUID());
+	    	else
+	    		JOptionPane.showMessageDialog(_view, "No floor above");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     }
     
     /**
@@ -80,7 +98,33 @@ public class ToolsBarController {
      * is clicked. It will communicate with the controller
      */
     public void onFloorDown(){
-    	System.out.println("[DEBUG] User clicked on : floor down");
+    	String currentFloorUID = _project.config("floor.current");
+		try {
+			GeometryDAO dao = _project.getGeometryDAO();
+			Floor floor = (Floor) dao.getByUID(currentFloorUID);
+	    	Floor prevFloor = dao.getPreviousFloor(floor);
+	    	if (prevFloor != null)
+	    		_project.config("floor.current", prevFloor.getUID());
+	    	else
+	    		JOptionPane.showMessageDialog(_view, "No floor below");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    /**
+     * Callback for "new floor" button
+     */
+    public void onFloorNew(){
+		try {
+			GeometryDAO dao = _project.getGeometryDAO();
+			List<Floor>floors = dao.getFloors();
+			Floor newFloor = new Floor();
+	    	newFloor.setPrevious(floors.get(floors.size() - 1));
+	    	dao.create(newFloor);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     }
     
     /**

@@ -231,7 +231,7 @@ public class WorldController implements ActionListener {
 	    	}
 	    	dao.create(new Wall(room));
 	    	dao.create(new Ground(room));
-	    	dao.addGroupToFloor((Floor) dao.getByUID("flr-1"), room);
+	    	dao.addGroupToFloor((Floor) dao.getByUID(_project.config("floor.current")), room);
 	    	dao.notifyObservers();
 	    	_inConstruction.clear();
 		} catch (SQLException e) {
