@@ -65,6 +65,7 @@ public class FileChooserController {
 		System.out.println("[DEBUG] You chose to open: " + fileToOpen.getName());
 		String filename = fileToOpen.getAbsolutePath();
 		try {
+			_project = new Project();
 			_project.load(filename);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(_parent, "Unable to save as " + filename + ": " + e.toString());
@@ -79,6 +80,7 @@ public class FileChooserController {
 		System.out.println("[DEBUG] You chose to create a new project named: " + fileToCreate.getName());
 		String filename = fileToCreate.getAbsolutePath();
 		try {
+			_project = new Project();
 			_project.create(filename);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(_parent, "Unable to save as " + filename + ": " + e.toString());
