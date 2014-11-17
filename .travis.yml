@@ -1,0 +1,9 @@
+language: java
+script: ant
+notifications:
+    irc:
+        channels:
+            - "chat.freenode.org#dtp"
+        on_success: never
+        on_failure: always
+        use_notice: true

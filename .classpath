@@ -4,8 +4,9 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/j3dcore.jar"/>
-	<classpathentry kind="lib" path="lib/j3dutils.jar"/>
-	<classpathentry kind="lib" path="lib/vecmath.jar"/>
+	<classpathentry kind="lib" path="lib/ormlite-core-4.48.jar"/>
+	<classpathentry kind="lib" path="lib/ormlite-jdbc-4.48.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.7.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jMonkeyEngine"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
