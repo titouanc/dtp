@@ -68,7 +68,7 @@ public class FileChooserController {
 			_project = new Project();
 			_project.load(filename);
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(_parent, "Unable to save as " + filename + ": " + e.toString());
+			JOptionPane.showMessageDialog(_parent, "Unable to open project named " + filename + ": " + e.toString());
 		}	
 	}
 	
@@ -83,7 +83,7 @@ public class FileChooserController {
 			_project = new Project();
 			_project.create(filename);
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(_parent, "Unable to save as " + filename + ": " + e.toString());
+			JOptionPane.showMessageDialog(_parent, "Unable to create a new project as " + filename + ": " + e.toString());
 		}
 		
 	}
