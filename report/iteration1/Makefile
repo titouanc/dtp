@@ -3,6 +3,7 @@ main.tex: substories libs
 	cat intro.tex >> $@
 	/bin/echo "\\section{Librairies introduites}" >> $@
 	cat libs/*.tex >> $@
+	cat report.tex >> $@
 
 .PHONY: pv substories libs clean
 

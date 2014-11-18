@@ -1,13 +1,13 @@
-\section{Itération 1}
+\section{Rapport de fin d'itération}
 
 Le développement de l'itération 1 s'est bien déroulé. La charge de travail a 
 été correctement répartie le long des 3 semaines de développement, tout le monde
 a pris part de manière équilibrée au travail et on ne déplore aucun conflit.\\
 
-\subscection{Architecture}
+\subsection{Architecture}
 
 	\subsubsection{Architecture générale}
-	\includegraphics{../uml/general_architecture.pdf}
+	\includegraphics{uml/general-architecture.pdf}
 
 	On voit directement l'utilisation du MVC, couplé avec un design pattern
 	Observable et un DAO. Cette architecture nous permet de :
@@ -74,7 +74,7 @@ groupe, comme par exemple le pair programming ou les sprints d'une journée.
 	complète et qui s'intégrait bien dans l'architecture de l'application. \\
 
 	Toutefois, lors de la première moitié de la première itération, nous sommes
-	souvent tombés dans le piège du \"\textit{perfectionnement d'abord}\", en
+	souvent tombés dans le piège du "\textit{perfectionnement d'abord}", en
 	passant beaucoup de temps sur le perfectionnement utilitaire de l'unité.
 	Nous aurions dû passer plus vite - une fois que l'architecture d'une unité
 	était bien intégrée dans l'application - au développement des autres unités.
@@ -96,19 +96,19 @@ groupe, comme par exemple le pair programming ou les sprints d'une journée.
 	Des outils d'évaluation de la qualité du code ont été utilisés. Parmi eux, 
 	on peut en noter trois : 
 
-	\subsubsubsection{EclEMMA}
+	\paragraph{EclEMMA}
 	Cet outil nous a permis d'évaluer facilement la couverture des tests dans 
 	l'application et nous permet d'estimer visuellement très rapidement cette 
 	dernière.
 
-	\subsubsubsection{Missing Javadoc (Eclipse)}
+	\paragraph{Missing Javadoc (Eclipse)}
 	On peut configurer Eclipse pour afficher des warnings là où le code n'est
 	pas documenté, ce qui est très pratique.
 
-	\subsubsubsection{PMD}
+	\paragraph{PMD}
 	Plusieurs d'entre nous ont installé PMD en fin d'itération pour évaluer le
 	respect des conventions de code. Nous n'avons cependant pas pris le temps
-	de \"réparer\" les quelques erreurs mises en évidence.
+	de "réparer" les quelques erreurs mises en évidence.
 
 \subsection{Réflexion sur les librairies choisies}
 
