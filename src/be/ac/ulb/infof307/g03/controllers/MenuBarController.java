@@ -4,6 +4,8 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 
+import java.awt.event.WindowEvent;
+
 import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.Project;
@@ -80,7 +82,7 @@ public class MenuBarController {
 	 * Handler launched when menu item "Quit" clicked
 	 */
 	public void onQuit() {
-		_gui.dispose();
+		_gui.dispatchEvent(new WindowEvent(_gui, WindowEvent.WINDOW_CLOSING));
 	}
 	
 	/**
