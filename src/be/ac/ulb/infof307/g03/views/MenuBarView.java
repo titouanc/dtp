@@ -27,6 +27,7 @@ public class MenuBarView extends JMenuBar implements ActionListener {
 	static private final String _QUIT = "quit";
 	static private final String _UNDO = "undo";
 	static private final String _REDO = "redo";
+	static private final String _KEYBINDINGS = "keybindings";
 	
 	/**
 	 * Constructor of the class MenuBar
@@ -73,6 +74,7 @@ public class MenuBarView extends JMenuBar implements ActionListener {
         
         // Build the Help menu
         menu = new JMenu("Help");
+        menu.add(createMenuItem("Keybindings", KeyEvent.VK_H, _KEYBINDINGS, "Show the keybindings"));
         menu.getAccessibleContext().setAccessibleDescription("Help.");
         this.add(menu);
     }
