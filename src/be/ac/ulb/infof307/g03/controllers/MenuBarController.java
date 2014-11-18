@@ -7,6 +7,7 @@ package be.ac.ulb.infof307.g03.controllers;
 import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.views.GUI;
 import be.ac.ulb.infof307.g03.views.MenuBarView;
 
 /**
@@ -17,14 +18,16 @@ public class MenuBarController {
 	private MenuBarView _view;
 	private FileChooserController _fileController;
 	private Project _project;
+	private GUI _gui;
 	
 	/**
 	 * Constructor of MenuBarController.
 	 * It creates the view associated with the controller.
 	 * @param project 
 	 */
-	public MenuBarController(Project project){
+	public MenuBarController(Project project,GUI gui){
 		_project = project;
+		_gui = gui;
 		_view = new MenuBarView(this);
 		_fileController = new FileChooserController(_view, project);
 		
@@ -71,7 +74,8 @@ public class MenuBarController {
 	 * Handler launched when menu item "Quit" clicked
 	 */
 	public void onQuit() {
-		System.exit(0);
+		//System.exit(0);
+		_gui.dispose();
 	}
 	
 	/**
