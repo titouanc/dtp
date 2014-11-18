@@ -1,0 +1,130 @@
+\section{Itération 1}
+
+Le développement de l'itération 1 s'est bien déroulé. La charge de travail a 
+été correctement répartie le long des 3 semaines de développement, tout le monde
+a pris part de manière équilibrée au travail et on ne déplore aucun conflit.\\
+
+\subscection{Architecture}
+
+	\subsubsection{Architecture générale}
+	\includegraphics{../uml/general_architecture.pdf}
+
+	On voit directement l'utilisation du MVC, couplé avec un design pattern
+	Observable et un DAO. Cette architecture nous permet de :
+	\begin{itemize}
+		\item rajouter/supprimer une vue (+ contrôleur) très facilement
+		\item garder toutes les vues à jour
+		\item découpler un maximum toutes les parties de l'application
+		\item garder l'état du projet entre deux sessions d'utilisation
+	\end{itemize}
+
+	Prenons un exemple : le passage d'une vue 3D à une vue 2D et inversement.
+	Ce passage a des implications dans plusieurs vues. La première est
+	bien évidemment l'éditeur général, qui doit afficher le monde différemment
+	en fonction du mode; la deuxième est la toolsbar, qui permet de changer de
+	mode.\\
+
+	Quand on clique sur le bouton 2D/3D, la ToolsBarView notifie son contrôleur
+	d'un event reçu. Le contrôleur utilise alors le DAO pour dire au modèle que
+	le mode a été changé. Le modèle a en effet une valeur de configuration qui
+	stocke le mode. Ce dernier notifie alors toutes les vues concernées du 
+	changement (via le pattern Observer), dont l'éditeur principal qui va alors
+	changer son mode d'affichage.\\
+
+	En plus de cela, comme le modèle dispose de la sauvegarde automatique, 
+	si l'utilisateur quitte ce projet en mode 3D, il le retrouvera en mode 3D,
+	s'il le quitte en mode 2D, il le retrouvera en mode 2D.
+
+\subsection{Bonnes pratiques utilisées}
+Plusieurs pratiques ont été mises en place pour faciliter le développement en 
+groupe, comme par exemple le pair programming ou les sprints d'une journée.
+
+	\subsubsection{Pair programming}
+	\`A plusieurs moments, nous avons travaillé par deux sur un même ordinateur pour
+	les problèmes plus épineux. Un développeur écrivait du code, et l'autre essayait
+	de le corriger et de penser aux edge cases en même temps. Cela nous a permis de 
+	partager beaucoup plus facilement des idées et de compléter des features
+	complexes de manière rapide et robuste.
+
+	\subsubsection{Sprints d'une journée}
+	En déployant un outil de statistiques de notre repository Git, on voit que le 
+	samedi est le jour de la semaine où l'équipe commite le plus. La raison de ce 
+	pic est simple : à deux reprises lors de cette itération, nous nous sommes
+	retrouvés ensemble physiquement, autour d'une grande table, pour travailler sur
+	le projet. \\
+
+	Au début de la matinée, nous faisions une réunion pour établir les
+	objectifs de la journée puis nous nous lancions tous sur la production de
+	features. C'est lors de ces sprints que l'avancement était le plus marqué et 
+	que nous pouvions prendre du recul facilement sur ce qui avait déjà été fait, 
+	et ce qu'il restait à faire.
+
+	\subsubsection{Développent itératif/fractal}
+	Cette pratique a été adoptée dès le début, mais nous nous sommes rendus compte
+	vers la moitié de l'itération que nous l'utilisions mal. Le principe de cette
+	technique est de considérer chaque feature comme une unité qu'on peut développer
+	à plusieurs niveaux de \textit{perfection}. \\
+
+	Nous nous sommes forcés de produire très vite des proofs of concept, ou 
+	Minimum Viable Products pour les unités à développer. Cette unité était 
+	alors souvent à un stade de fonctionnalité très pauvre, dont l'architecture 
+	n'était pas forcément bien pensée. Il fallait alors réécrire, rajouter ou 
+	déplacer du code pour améliorer le point de vue utilité autant que le point 
+	de vue de beauté interne du code, afin d'arriver à une unité fonctionnelle 
+	complète et qui s'intégrait bien dans l'architecture de l'application. \\
+
+	Toutefois, lors de la première moitié de la première itération, nous sommes
+	souvent tombés dans le piège du \"\textit{perfectionnement d'abord}\", en
+	passant beaucoup de temps sur le perfectionnement utilitaire de l'unité.
+	Nous aurions dû passer plus vite - une fois que l'architecture d'une unité
+	était bien intégrée dans l'application - au développement des autres unités.
+
+	\subsubsection{Test-Driven Development}
+	Cette technique, qu'il ne faut plus expliquer, a été utilisée, surtout pour
+	le développement du modèle et s'est effectivement avérée positive lorsqu'il
+	a fallu se baser sur un modèle robuste.
+
+	\subsubsection{Staging area}
+	Nous avons créé une branche \texttt{stage} sur laquelle nous testions la 
+	version de développement la plus récente de l'application. De manière
+	régulière, nous passions tous les changements de \texttt{stage} en
+	production sur \texttt{master}. La condition de mise en production était 
+	simple : tout le code doit être documenté, et tout ce qui peut être testé
+	doit être testé.
+
+	\subsubsection{Couverture de la qualité du code}
+	Des outils d'évaluation de la qualité du code ont été utilisés. Parmi eux, 
+	on peut en noter trois : 
+
+	\subsubsubsection{EclEMMA}
+	Cet outil nous a permis d'évaluer facilement la couverture des tests dans 
+	l'application et nous permet d'estimer visuellement très rapidement cette 
+	dernière.
+
+	\subsubsubsection{Missing Javadoc (Eclipse)}
+	On peut configurer Eclipse pour afficher des warnings là où le code n'est
+	pas documenté, ce qui est très pratique.
+
+	\subsubsubsection{PMD}
+	Plusieurs d'entre nous ont installé PMD en fin d'itération pour évaluer le
+	respect des conventions de code. Nous n'avons cependant pas pris le temps
+	de \"réparer\" les quelques erreurs mises en évidence.
+
+\subsection{Réflexion sur les librairies choisies}
+
+	Généralement, nous sommes satisfaits de nos choix.
+
+	\subsubsection{jMonkeyEngine}
+	Même si elle est plutôt facile à utiliser, nous nous sommes rendus compte
+	que la documentation et les ressources disponibles pouvaient parfois être
+	rares. Une grande partie de ce que nous avons trouvé venait directement 
+	du site officiel de jMonkeyEngine qui, en soi, est très complet, mais qui
+	est parfois lacunaire sur certains sujets.\\
+
+	En prenant un peu de recul, nous nous rendons compte que nous utilisons
+	des fonctionnalités d'assez bas niveau et que nous aurions pu nous 
+	satisfaire de moins.
+
+	\subsubsection{Swing}
+	Swing reste un excellent choix, nous n'avons pas à nous plaindre.
+
