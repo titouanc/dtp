@@ -29,9 +29,7 @@ public class DemoProject {
 			  d = new Point(0, 12, 0),
 			  e = new Point(-5, -1, 0);
 		
-		Floor groundFloor = new Floor(7);
-		geo.create(groundFloor);
-		
+		Floor groundFloor = (Floor) proj.getGeometryDAO().getByUID("flr-1");
 		geo.addGroupToFloor(groundFloor, createRoom(geo, "Irregular room", a, b, c, d));
 		geo.addGroupToFloor(groundFloor, createRoom(geo, "Triangular room", a, e, d));
 		geo.notifyObservers();
