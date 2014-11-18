@@ -5,11 +5,11 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import java.awt.Component;
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
+import be.ac.ulb.infof307.g03.models.DemoProject;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.GUI;
@@ -27,6 +27,7 @@ public class FileChooserController {
 	/**
 	 * @param parent The parent of the controller to be linked
 	 * @param project The main project
+	 * @param gui The main GUI for .dispose
 	 * 
 	 */
 	public FileChooserController(Component parent,Project project,GUI gui){
@@ -59,6 +60,26 @@ public class FileChooserController {
 	public void notifyDisplaySaveAs() {
 		_view.displaySaveAs(_parent);
 		
+	}
+	
+	
+	/**
+	 * This method is called by the view when the user want to see the demo
+	 */
+	public void openDemo(){
+		_gui.dispose();
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run(){
+				try{
+					Project prj = new Project();
+					prj = DemoProject.create();
+					new GUI(prj);
+					
+				}catch (SQLException e) {
+					JOptionPane.showMessageDialog(_parent, "Unable to load demo : :" + e.toString());
+				}
+			}
+		});	
 	}
 	
 	/**
@@ -116,7 +137,7 @@ public class FileChooserController {
 	 */
 	public void saveAsProject(File fileToSave) {
 		System.out.println("[DEBUG] You chose to save as a new file: " + fileToSave.getName());
-		String filename = fileToSave.getAbsolutePath();
+		String filename = fileToSave.getAbsolutePath() + ".hpj";
 		try {
 			_project.saveAs(filename);
 			BootController bc = new BootController();

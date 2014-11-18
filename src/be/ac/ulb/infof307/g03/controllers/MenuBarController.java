@@ -17,16 +17,15 @@ import be.ac.ulb.infof307.g03.views.MenuBarView;
 public class MenuBarController {
 	private MenuBarView _view;
 	private FileChooserController _fileController;
-	private Project _project;
-	private GUI _gui;
+	private GUI _gui; // to dispose when top left red cross is clicked
 	
 	/**
 	 * Constructor of MenuBarController.
 	 * It creates the view associated with the controller.
-	 * @param project 
+	 * @param project The main project
+	 * @param gui The main gui frame (for .dispose())
 	 */
 	public MenuBarController(Project project,GUI gui){
-		_project = project;
 		_gui = gui;
 		_view = new MenuBarView(this);
 		_fileController = new FileChooserController(_view, project, gui);
@@ -56,6 +55,13 @@ public class MenuBarController {
 	}
 	
 	/**
+	 * Handler launched when menu item "Demo" is clicked
+	 */
+	public void onDemo() {
+		_fileController.openDemo();
+	}
+	
+	/**
 	 * Handler launched when menu item "Save" clicked
 	 */
 	public void onSave() {
@@ -74,7 +80,6 @@ public class MenuBarController {
 	 * Handler launched when menu item "Quit" clicked
 	 */
 	public void onQuit() {
-		//System.exit(0);
 		_gui.dispose();
 	}
 	
@@ -91,4 +96,5 @@ public class MenuBarController {
 	public void onRedo() {
 		System.out.println("[DEBUG] User clicked on redo");
 	}
+
 }
