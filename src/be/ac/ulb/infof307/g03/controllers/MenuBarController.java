@@ -87,4 +87,16 @@ public class MenuBarController {
 	public void onRedo() {
 		System.out.println("[DEBUG] User clicked on redo");
 	}
+
+	/**
+	 * Handler launcher when menu item "Keybindings" clicked
+	 */
+	public void onKeybindings() {
+		String keybindingsMessage = "General \nCtrl + N : Create a new project\n"
+				+ "Ctrl + O : Open a new Project \nCtrl + S : Save current project \nCtrl + A : Save As..\n"
+				+ "Ctrl + Q : Quit \nCtrl + Z : Undo \nCtrl + Y : Redo\n"
+				+ "Ctrl + H : Show this text box ";
+		JOptionPane.showMessageDialog(_view, keybindingsMessage);
+		
+	}
 }

@@ -28,6 +28,7 @@ public class MenuBarView extends JMenuBar implements ActionListener {
 	static private final String _UNDO = "undo";
 	static private final String _REDO = "redo";
 	static private final String _KEYBINDINGS = "keybindings";
+	static private final String _HELP = "help";
 	
 	/**
 	 * Constructor of the class MenuBar
@@ -74,7 +75,8 @@ public class MenuBarView extends JMenuBar implements ActionListener {
         
         // Build the Help menu
         menu = new JMenu("Help");
-        menu.add(createMenuItem("Keybindings", KeyEvent.VK_H, _KEYBINDINGS, "Show the keybindings"));
+        menu.add(createMenuItem("Keybindings", KeyEvent.VK_K, _KEYBINDINGS, "Display the keybindings."));
+        menu.add(createMenuItem("Help", KeyEvent.VK_H, _HELP, "Display the help."));
         menu.getAccessibleContext().setAccessibleDescription("Help.");
         this.add(menu);
     }
@@ -100,6 +102,8 @@ public class MenuBarView extends JMenuBar implements ActionListener {
 			_controller.onUndo();
 		} else if (cmd.equals(_REDO)) {
 			_controller.onRedo();
+		} else if(cmd.equals(_KEYBINDINGS)) {
+			_controller.onKeybindings();
 		}
 	}    
 	
