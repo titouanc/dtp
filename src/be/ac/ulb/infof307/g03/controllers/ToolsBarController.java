@@ -122,6 +122,7 @@ public class ToolsBarController {
 			Floor newFloor = new Floor(7);
 	    	newFloor.setPrevious(floors.get(floors.size() - 1));
 	    	dao.create(newFloor);
+	    	dao.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -75,13 +75,13 @@ public class TestProject {
 	}
 	
 	/**
-	 * Test saveAs creates a new file
+	 * Test that saveAs creates a new file
 	 * @throws SQLException
 	 */
 	@Test
 	public void test_saveAs() throws SQLException{
 		proj.getGeometryDAO().create(new Point(0, 0, 0));
-		assertEquals(1, proj.saveAs(FILENAME));
+		proj.saveAs(FILENAME);
 		assertTrue(new File(FILENAME).exists());
 	}
 	
@@ -137,15 +137,15 @@ public class TestProject {
 	public void test_saveAs_changedHandler() throws SQLException {
 		GeometryDAO dao = proj.getGeometryDAO();
 		/* Pre condition: the project is empty */
-		assertEquals(0, dao.getFloors().size());
+		assertEquals(0, dao.getRootNodes().size());
 		/* Save copy to file */
 		proj.saveAs(FILENAME);
-		/* THEN create a floor */
-		dao.create(new Floor());
+		/* THEN create a group */
+		dao.create(new Group());
 		/* Open the newly created file as a new projet */
 		Project copy = new Project();
 		copy.load(FILENAME);
 		/* It should contain the created Floor */
-		assertEquals(1, copy.getGeometryDAO().getFloors().size());
+		assertEquals(1, copy.getGeometryDAO().getRootNodes().size());
 	}
 }
