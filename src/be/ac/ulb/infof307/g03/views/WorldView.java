@@ -23,6 +23,7 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -229,6 +230,8 @@ public class WorldView extends SimpleApplication implements Observer {
 				_drawWall(wall);
 			for (Ground gnd : _model.getGrounds())
 				_drawGround(gnd);
+			for (Roof roof : _model.getRoofs())
+				_drawRoof(roof);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -279,6 +282,26 @@ public class WorldView extends SimpleApplication implements Observer {
 		}
 	}
 	
+	private void _drawRoof(Roof roof){
+		if (! roof.isVisible())
+			return;
+		try {
+			Mesh mesh = _model.getRoofAsMesh(roof);
+			Material mat;
+			Geometry node = new Geometry(roof.getUID(), mesh);
+			mat=_makeBasicMaterial(_getColor(roof));
+			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+			node.setMaterial(mat);
+			rootNode.attachChild(node);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AssertionError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Method used to generate one axe from start to end in a certain color
 	 * @param start Start of the vector
@@ -298,13 +321,33 @@ public class WorldView extends SimpleApplication implements Observer {
 	/**
 	 * @param grouped a Grouped item
 	 * @return The color it should have in 3D view
+	 * @throws SQLException 
 	 */
-	private ColorRGBA _getColor(Grouped grouped){
-		return grouped.isSelected() ? 
-				ColorRGBA.Green : 
-				(grouped instanceof Wall) ? 
-						ColorRGBA.Gray : 
-						ColorRGBA.LightGray;
+	private ColorRGBA _getColor(Grouped grouped) throws SQLException{
+		ColorRGBA color;
+		if (grouped.isSelected()){
+			color=ColorRGBA.Green;
+		}
+		else if (grouped instanceof Wall){
+			color=ColorRGBA.Gray;
+		}
+		else if (grouped instanceof Roof){
+			int choice=_model.getFloors().size()%3;
+			float nbFloor=(float) ((_model.getFloors().size()/10)+0.1);
+			if (choice==1){
+				color=new ColorRGBA(nbFloor,0f,0f, 0.5f);
+			}
+			else if (choice==2){
+				color=new ColorRGBA(0f,nbFloor,0f, 0.5f);
+			}
+			else{
+				color=new ColorRGBA(0f,0f,nbFloor, 0.5f);
+			}
+		}
+		else{
+			color=ColorRGBA.LightGray;	
+		}
+		return color;
 	}
 	
 	/**
@@ -345,6 +388,8 @@ public class WorldView extends SimpleApplication implements Observer {
 				_drawWall((Wall) grouped);
 			else if (grouped instanceof Ground)
 				_drawGround((Ground) grouped);
+			else if (grouped instanceof Roof)
+				_drawRoof((Roof) grouped);
 		}
 		
 		/* Conclusion: updates will do both (detach & redraw) */
