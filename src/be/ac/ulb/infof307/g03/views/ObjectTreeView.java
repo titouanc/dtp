@@ -44,6 +44,7 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 	private static final long serialVersionUID = 1L;
 	private JTree _tree;
 	private ObjectTreeController _controller;
+	private Project _project;
 	private GeometryDAO _dao;
 	private DefaultMutableTreeNode _root = new DefaultMutableTreeNode("Root");
 	private Map<String,DefaultMutableTreeNode> _nodes = new HashMap<String,DefaultMutableTreeNode>();
@@ -101,8 +102,12 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 			if (value instanceof Grouped){
 				Grouped item = (Grouped) value;
 				sel = item.isSelected();
-				System.out.println("[RENDER TREE ELEMENT] " + item.toString());
+			} else if (value instanceof Floor){
+				Floor fl = (Floor) value;
+				sel = _project.config("floor.current").equals(fl.getUID());
 			}
+			if (sel)
+				System.out.println("SELECTED: " + value.toString());
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 			return this;
 		}
@@ -142,6 +147,7 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 	public ObjectTreeView(ObjectTreeController newController, Project project) {
 		super(new GridLayout(1, 0));
 		_controller = newController;
+		_project = project;
 		
 		try {
 			_dao = project.getGeometryDAO();
@@ -225,20 +231,48 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
+		/* Flag: do we need to update GUI ? */
 		boolean updateUI = false;
 		List<Change> changes = (List<Change>) arg1;
+		
 		for (Change change : changes){
 			Geometric changed = change.getItem();
-			if (change.isUpdate() && changed instanceof Group){
-				// Update grouped (name might have changed)
-			} else if (change.isDeletion()){
+			
+			/* An object has been update: update the linked object in TreeView */
+			if (change.isUpdate()){
+				DefaultMutableTreeNode node = _nodes.get(changed.getUID());
+				if (node != null){
+					node.setUserObject(changed);
+					updateUI = true;
+				}
+				/* For groups, also update Grouped items (their toString() is different) */
+				if (changed instanceof Group){
+					Group grp = (Group) changed;
+					try {
+						for (Grouped grouped : _dao.getGrouped(grp)){
+							node = _nodes.get(grouped.getUID());
+							if (node != null){
+								node.setUserObject(grouped);
+								updateUI = true;
+							}
+						}
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			/* An object has been deleted: remove from tree */
+			else if (change.isDeletion()){
 				DefaultMutableTreeNode node = _nodes.get(changed.getUID());
 				if (node != null){
 					node.removeFromParent();
 					_nodes.remove(node);
 					updateUI = true;
 				}
-			} else if (change.isCreation() && ! _nodes.containsKey(changed.getUID())){
+			}
+			/* Creation: insert in right place in tree */
+			else if (change.isCreation() && ! _nodes.containsKey(changed.getUID())){
 				DefaultMutableTreeNode newNode = null;
 				try {newNode = _createTree(changed);}
 				catch (SQLException err){err.printStackTrace();}
@@ -260,9 +294,9 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 				
 			}
 		}
-		if (updateUI){
+		
+		/* Update GUI if needed */
+		if (updateUI)
 			_tree.updateUI();
-			System.out.println(changes);
-		}
 	}
 }
