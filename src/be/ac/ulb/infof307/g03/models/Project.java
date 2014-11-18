@@ -39,7 +39,7 @@ public class Project extends Observable {
 		TableUtils.createTableIfNotExists(_db, Config.class);
 		GeometryDAO.migrate(_db);
 		
-		Floor mainFloor = new Floor();
+		Floor mainFloor = new Floor(7);
 		getGeometryDAO().create(mainFloor);
 		config("floor.current", mainFloor.getUID());
 	}

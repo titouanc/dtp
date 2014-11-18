@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({TestGeometry.class, TestGeometricTree.class, TestLine.class, TestPoint.class, TestProject.class})
+@SuiteClasses({TestGeometry.class, TestLine.class, TestPoint.class, TestProject.class})
 public class TestModels {
 
 }

@@ -17,6 +17,7 @@ import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 public class ObjectTreeController {
 	private ObjectTreeView _view;
 	private GeometryDAO _dao;
+	private Project _project;
 	
 	/**
 	 * @param project Project object from model
@@ -24,6 +25,7 @@ public class ObjectTreeController {
 	 */
 	public ObjectTreeController(Project project) {
 		_view = new ObjectTreeView(this, project);
+		_project = project;
 		try {
 			_dao = project.getGeometryDAO();
 		} catch (SQLException e) {
@@ -113,7 +115,10 @@ public class ObjectTreeController {
 	 * @param element
 	 */
 	public void selectElement(Object element) {
-		if (element instanceof Grouped){
+		if (element instanceof Floor){
+			Floor current = (Floor) element;
+			_project.config("floor.current", current.getUID());
+		} else if (element instanceof Grouped){
 			Grouped grouped = (Grouped) element;
 			System.out.println("[TreeController] Select " + grouped.getUID());
 			grouped.select();
