@@ -251,6 +251,8 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	private void _drawWall(Wall wall){
+		if (! wall.isVisible())
+			return;
 		try {
 			rootNode.attachChild(getWallAsNode(wall));
 		} catch (SQLException e) {
@@ -260,6 +262,8 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	private void _drawGround(Ground gnd){
+		if (! gnd.isVisible())
+			return;
 		try {
 			Mesh mesh = _model.getGroundAsMesh(gnd);
 			Geometry node = new Geometry(gnd.getUID(), mesh);

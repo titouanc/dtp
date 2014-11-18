@@ -48,12 +48,11 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 	private GeometryDAO _dao;
 	private DefaultMutableTreeNode _root = new DefaultMutableTreeNode("Root");
 	private Map<String,DefaultMutableTreeNode> _nodes = new HashMap<String,DefaultMutableTreeNode>();
-	
-	private JPopupMenu _popupMenuRD;
-	private JPopupMenu _popupMenuD;
-	
+		
 	static private final String _RENAME  = "Rename" ;
-	static private final String _DELETE = "Delete";
+	static private final String _DELETE  = "Delete";
+	static private final String _HIDE    = "Hide";
+	static private final String _SHOW    = "Show";
 	
 	/**
 	 * This class implements a ActionListener to be 
@@ -76,6 +75,10 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 			} else if (cmd.equals(_DELETE)) {
 				_controller.deselectElement(clickedItem);
 				_controller.deleteNode(clickedItem);
+			} else if (cmd.equals(_SHOW)){
+				_controller.showGrouped((Grouped) clickedItem);
+			} else if (cmd.equals(_HIDE)){
+				_controller.hideGrouped((Grouped) clickedItem);
 			}
 		}
 
@@ -142,6 +145,37 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 	}
 	
 	/**
+	 * Build a contextual menu for a clicked item
+	 * @param item
+	 */
+	private JPopupMenu _createPopupMenu(Geometric geo){
+		if (geo instanceof Line)
+			return null;
+		
+		PopupListener listener = new PopupListener();
+		JPopupMenu res = new JPopupMenu();
+		JMenuItem menuItem = new JMenuItem(_DELETE);
+		menuItem.addActionListener(listener);
+		menuItem.setActionCommand(_DELETE);
+		res.add(menuItem);
+		
+		if (geo instanceof Group){
+			menuItem = new JMenuItem(_RENAME);
+			menuItem.addActionListener(listener);
+			menuItem.setActionCommand(_RENAME);
+			res.add(menuItem);
+		} else if (geo instanceof Grouped){
+			String action = ((Grouped) geo).isVisible() ? _HIDE : _SHOW;
+			menuItem = new JMenuItem(action);
+			menuItem.addActionListener(listener);
+			menuItem.setActionCommand(action);
+			res.add(menuItem);
+		}
+		
+		return res;
+	}
+	
+	/**
 	 * Constructor of the main class ObjectTree
 	 */
 	public ObjectTreeView(ObjectTreeController newController, Project project) {
@@ -167,26 +201,6 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 		_tree.setRootVisible(false);
 		_tree.setShowsRootHandles(true);
 		
-		// Add a menu popup to the tree
-		_popupMenuRD = new JPopupMenu();
-		_popupMenuD = new JPopupMenu();
-		
-	    JMenuItem menuItem = new JMenuItem(_RENAME);
-	    menuItem.addActionListener(new PopupListener());
-	    menuItem.setActionCommand(_RENAME);
-	    _popupMenuRD.add(menuItem);
-	    menuItem = new JMenuItem(_DELETE);
-	    menuItem.addActionListener(new PopupListener());
-	    menuItem.setActionCommand(_DELETE);
-	    _popupMenuRD.add(menuItem);
-	    
-	    
-	    menuItem = new JMenuItem(_DELETE);
-	    menuItem.addActionListener(new PopupListener());
-	    menuItem.setActionCommand(_DELETE);
-	    _popupMenuD.add(menuItem);
-	    
-		
 	    // create a mouse listener
 		MouseListener ml = new MouseAdapter() {
 		     public void mousePressed(MouseEvent e) {
@@ -197,12 +211,9 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 	    	        _tree.setSelectionRow(row);
 	    	        DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
 	    	        Geometric clickedItem = (Geometric) clickedNode.getUserObject();
-	    	        if (clickedItem instanceof Group) {
-	    	        	 _popupMenuRD.show(e.getComponent(), e.getX(), e.getY());
-	    	        }
-	    	        else if (clickedItem instanceof Grouped) {
-	    	        	 _popupMenuD.show(e.getComponent(), e.getX(), e.getY());
-	    	        }
+	    	        JPopupMenu menuForItem = _createPopupMenu(clickedItem);
+	    	        if (menuForItem != null) 
+	    	        	menuForItem.show(e.getComponent(), e.getX(), e.getY());
 	    	    }
 		     }
 		 };
