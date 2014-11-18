@@ -74,6 +74,8 @@ public class FileChooserController {
 				try{
 					Project prj = new Project();
 					prj.load(filename);
+					BootController bc = new BootController();
+					bc.saveCurrentProjectPath(filename);
 					new GUI(prj);
 					
 				}catch (SQLException e) {
@@ -96,6 +98,8 @@ public class FileChooserController {
 				try{
 					Project prj = new Project();
 					prj.create(filename);
+					BootController bc = new BootController();
+					bc.saveCurrentProjectPath(filename);
 					new GUI(prj);
 					
 				}catch (SQLException e) {
@@ -115,6 +119,8 @@ public class FileChooserController {
 		String filename = fileToSave.getAbsolutePath();
 		try {
 			_project.saveAs(filename);
+			BootController bc = new BootController();
+			bc.saveCurrentProjectPath(filename);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(_parent, "Unable to save as " + filename + ": " + e.toString());
 		}
