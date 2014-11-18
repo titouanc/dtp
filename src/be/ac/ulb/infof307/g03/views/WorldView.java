@@ -359,7 +359,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		Point point = (Point) change.getItem();
 		rootNode.detachChildNamed(point.getUID());
 		if (point.isSelected()){			
-			Sphere mySphere = new Sphere(16,16, 1.0f);
+			Sphere mySphere = new Sphere(32,32, 1.0f);
 		    Geometry sphere = new Geometry(point.getUID(), mySphere);
 		    mySphere.setTextureMode(Sphere.TextureMode.Projected); // better quality on spheres
 		    TangentBinormalGenerator.generate(mySphere);           // for lighting effect
