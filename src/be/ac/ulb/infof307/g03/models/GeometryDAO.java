@@ -616,18 +616,21 @@ public class GeometryDAO extends Observable {
 	 * @param ground The ground to transform
 	 * @return The mesh
 	 * @throws SQLException
-	 * @throws AssertionError If the number of points is less than 3
+	 * @throws IllegalArgumentException If the number of points is less than 3
 	 */
-	public Mesh getGroundAsMesh(Ground ground) throws SQLException, AssertionError {
+	public Mesh getGroundAsMesh(Ground ground) throws SQLException, IllegalArgumentException {
 		List<Point> all_points = getPointsForShape(ground.getGroup());
 		int shape_n_points = all_points.size();
-		assert(shape_n_points > 2);
 		
 		/* 0) Closed polygon ? -> we don't need to store both first && last */
 		Point firstPoint = all_points.get(0);
 		Point lastPoint = all_points.get(shape_n_points - 1);
 		if (firstPoint.equals(lastPoint))
 			shape_n_points--;
+		
+		if(shape_n_points < 3){
+			throw new IllegalArgumentException();
+		}
 		
 		/* 1) Build an array of all points */
 		Vector3f vertices[] = new Vector3f[shape_n_points];
