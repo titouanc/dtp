@@ -334,8 +334,8 @@ public class GeometryDAO extends Observable {
 					res.put(gnd.getUID(), gnd);
 				
 				Roof roof = getRoof(grp);
-				if (roof != null && !res.containsKey(gnd.getUID()))
-					res.put(gnd.getUID(), roof);
+				if (roof != null && ! res.containsKey(roof.getUID()))
+					res.put(roof.getUID(), roof);
 				
 				/* Iterate over parent group */
 				grp = grp.getGroup();
