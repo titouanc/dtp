@@ -144,4 +144,24 @@ public class ObjectTreeController {
 			}
 		}
 	}
+
+	public void hideGrouped(Grouped grouped){
+		grouped.hide();
+		try {
+			_dao.update(grouped);
+			_dao.notifyObservers();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void showGrouped(Grouped grouped){
+		grouped.show();
+		try {
+			_dao.update(grouped);
+			_dao.notifyObservers();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

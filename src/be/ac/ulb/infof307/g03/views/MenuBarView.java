@@ -22,6 +22,7 @@ public class MenuBarView extends JMenuBar implements ActionListener {
 	
 	static private final String _NEW  = "new" ;
 	static private final String _OPEN = "open";
+	static private final String _DEMO = "demo";
 	static private final String _SAVE = "save";
 	static private final String _SAVE_AS = "saveAs";
 	static private final String _QUIT = "quit";
@@ -52,6 +53,8 @@ public class MenuBarView extends JMenuBar implements ActionListener {
         menu.add(createMenuItem("New", KeyEvent.VK_N, _NEW, "Create a new project."));
         // Build Open action
         menu.add(createMenuItem("Open", KeyEvent.VK_O, _OPEN, "Open a saved project."));
+        // Build Open action
+        menu.add(createMenuItem("Demo",KeyEvent.VK_D, _DEMO, "Open the demo of the project."));
         // Separator
         menu.addSeparator();
         // Build Save action
@@ -94,11 +97,13 @@ public class MenuBarView extends JMenuBar implements ActionListener {
 			_controller.onNew();
 		} else if (cmd.equals(_OPEN)) {
 			_controller.onOpen();
+		} else if (cmd.equals(_DEMO)) {
+			_controller.onDemo();
 		} else if (cmd.equals(_SAVE)) {
 			_controller.onSave();
 		} else if (cmd.equals(_SAVE_AS)) {
 			_controller.onSaveAs();
-		}else if (cmd.equals(_QUIT)) {
+		} else if (cmd.equals(_QUIT)) {
 			_controller.onQuit();
 		} else if (cmd.equals(_UNDO)) {
 			_controller.onUndo();

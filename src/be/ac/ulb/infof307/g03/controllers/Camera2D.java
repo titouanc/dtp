@@ -264,6 +264,9 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_inputManager.addMapping(_ROTATELEFT,	new KeyTrigger(KeyInput.KEY_O)); 
 		_inputManager.addMapping(_ROTATERIGHT,	new KeyTrigger(KeyInput.KEY_P));
 		
+		_inputManager.addMapping(_ZOOMIN,		new KeyTrigger(KeyInput.KEY_ADD));
+		_inputManager.addMapping(_ZOOMOUT,		new KeyTrigger(KeyInput.KEY_SUBTRACT));
+		
 		// Mouse event mapping
 		_inputManager.addMapping(_MOVEDRAG, 	new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		
@@ -349,7 +352,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 			zoomCamera(-value);
 		} else if (name.equals(_ZOOMOUT)) {
 			zoomCamera(value);
-		}	
+		} 
 	}
 }
 

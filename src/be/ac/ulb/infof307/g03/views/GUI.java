@@ -38,7 +38,7 @@ public class GUI extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Create the menuBar
-        _menuBar = new MenuBarController(project);
+        _menuBar = new MenuBarController(project, this);
         this.setJMenuBar(_menuBar.getView());
         
         // Create the main panel

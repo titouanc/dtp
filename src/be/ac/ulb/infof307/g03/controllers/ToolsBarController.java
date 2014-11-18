@@ -1,15 +1,12 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
-import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JOptionPane;
 

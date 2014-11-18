@@ -50,6 +50,8 @@ public class WorldController implements ActionListener, Observer {
         _project = project;
         _inConstruction = new LinkedList <Point>();
         Floor currentFloor = (Floor) project.getGeometryDAO().getByUID(project.config("floor.current"));
+        if (currentFloor == null)
+        	currentFloor = project.getGeometryDAO().getFloors().get(0);
         _currentHeight = project.getGeometryDAO().getBaseHeight(currentFloor);
         project.addObserver(this);
     }
@@ -118,7 +120,7 @@ public class WorldController implements ActionListener, Observer {
         
         if (results.size() > 0){
         	// Get 3D object from scene
-            Geometry selected = results.getClosestCollision().getGeometry();
+            Geometry selected = results.getClosestCollision().getGeometry();         
             GeometryDAO dao = null;
             try {
                 dao = _project.getGeometryDAO();
@@ -182,16 +184,15 @@ public class WorldController implements ActionListener, Observer {
      * @param grouped The Grouped item to select
      */
     public void selectObject(Grouped grouped) {
-        grouped.toggleSelect();
-        try {
-        	GeometryDAO dao = _project.getGeometryDAO();
-            dao.update(grouped);
-            dao.notifyObservers(grouped);
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+	        try {
+	        	grouped.toggleSelect();
+	        	GeometryDAO dao = _project.getGeometryDAO();
+	            dao.update(grouped);
+	            dao.notifyObservers(grouped);
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
 
     /**
      * Add the points in the Point List when user click to create his wall
@@ -237,6 +238,7 @@ public class WorldController implements ActionListener, Observer {
 	    	}
 	    	dao.create(new Wall(room));
 	    	dao.create(new Ground(room));
+	    	dao.create(new Roof(room));
 	    	dao.addGroupToFloor((Floor) dao.getByUID(_project.config("floor.current")), room);
 	    	dao.notifyObservers();
 	    	_inConstruction.clear();
@@ -275,7 +277,7 @@ public class WorldController implements ActionListener, Observer {
             Geometric clicked = getClickedObject();
             
             /* We're not interested if no object */
-            if (clicked == null)
+            if (clicked == null  )
             	return;
             
             /* If it is a Grouped (Wall, Ground): select it */
@@ -285,6 +287,7 @@ public class WorldController implements ActionListener, Observer {
             /* If it is a Point: initiate drag'n drop */
             else if (clicked instanceof Point && mouseDown)
         		_movingPoint = (Point) clicked;
+            
 		}  	
 	}
 

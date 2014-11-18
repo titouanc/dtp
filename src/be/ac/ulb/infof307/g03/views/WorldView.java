@@ -23,6 +23,7 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -37,6 +38,7 @@ import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -165,7 +167,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	private Material _makeLightedMaterial(ColorRGBA color){
 		Material res = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		res.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		res.setBoolean("UseMaterialColors", true);
 		res.setColor("Diffuse", color);
 		res.setColor("Ambient", color);
@@ -195,8 +197,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			Box box = new Box(	new Vector3f(-w/2,-w/2,0), new Vector3f(segment.length()+w/2, 
 																		w/2, height));
 			Geometry wallGeometry = new Geometry(wall.getUID(), box);
-			wallGeometry.setMaterial(_makeLightedMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
-			
+			wallGeometry.setMaterial(_makeLightedMaterial(wall.isSelected() ? new ColorRGBA(0f,1.2f,0f, 0.5f) : ColorRGBA.Gray));
 			// 2) Place the wall at the right place
 			wallGeometry.setLocalTranslation(a);
 			 
@@ -229,6 +230,8 @@ public class WorldView extends SimpleApplication implements Observer {
 				_drawWall(wall);
 			for (Ground gnd : _model.getGrounds())
 				_drawGround(gnd);
+			for (Roof roof : _model.getRoofs())
+				_drawRoof(roof);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -251,6 +254,8 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	private void _drawWall(Wall wall){
+		if (! wall.isVisible())
+			return;
 		try {
 			rootNode.attachChild(getWallAsNode(wall));
 		} catch (SQLException e) {
@@ -260,10 +265,15 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	private void _drawGround(Ground gnd){
+		if (! gnd.isVisible())
+			return;
 		try {
 			Mesh mesh = _model.getGroundAsMesh(gnd);
 			Geometry node = new Geometry(gnd.getUID(), mesh);
-			node.setMaterial(_makeBasicMaterial(_getColor(gnd)));
+			Material mat;
+			mat=_makeBasicMaterial(_getColor(gnd));
+			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+			node.setMaterial(mat);
 			rootNode.attachChild(node);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -272,6 +282,26 @@ public class WorldView extends SimpleApplication implements Observer {
 			JOptionPane.showMessageDialog(null, "Not enough point to draw a ground.", "Error", JOptionPane.WARNING_MESSAGE);
 			System.out.println("[DEBUG] User try to draw a wall with not enough point");
 			//e.printStackTrace();
+		}
+	}
+	
+	private void _drawRoof(Roof roof){
+		if (! roof.isVisible())
+			return;
+		try {
+			Mesh mesh = _model.getRoofAsMesh(roof);
+			Material mat;
+			Geometry node = new Geometry(roof.getUID(), mesh);
+			mat=_makeBasicMaterial(_getColor(roof));
+			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+			node.setMaterial(mat);
+			rootNode.attachChild(node);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AssertionError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -294,13 +324,33 @@ public class WorldView extends SimpleApplication implements Observer {
 	/**
 	 * @param grouped a Grouped item
 	 * @return The color it should have in 3D view
+	 * @throws SQLException 
 	 */
-	private ColorRGBA _getColor(Grouped grouped){
-		return grouped.isSelected() ? 
-				ColorRGBA.Green : 
-				(grouped instanceof Wall) ? 
-						ColorRGBA.Gray : 
-						ColorRGBA.LightGray;
+	private ColorRGBA _getColor(Grouped grouped) throws SQLException{
+		ColorRGBA color;
+		if (grouped.isSelected()){
+			color=new ColorRGBA(0f,1.2f,0f, 0.5f);
+		}
+		else if (grouped instanceof Wall){
+			color=new ColorRGBA(0f,1.2f,0f, 0.5f);
+		}
+		else if (grouped instanceof Roof){
+			int choice=_model.getFloors().size()%3;
+			float nbFloor=(float) ((_model.getFloors().size()/10)+0.1);
+			if (choice==1){
+				color=new ColorRGBA(nbFloor,0f,0f, 0.5f);
+			}
+			else if (choice==2){
+				color=new ColorRGBA(0f,nbFloor,0f, 0.5f);
+			}
+			else{
+				color=new ColorRGBA(0f,0f,nbFloor, 0.5f);
+			}
+		}
+		else{
+			color=ColorRGBA.LightGray;	
+		}
+		return color;
 	}
 	
 	/**
@@ -310,11 +360,17 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void _updatePoint(Change change){
 		Point point = (Point) change.getItem();
 		rootNode.detachChildNamed(point.getUID());
-		if (point.isSelected()){
-			Geometry newSphere = new Geometry(point.getUID(), new Sphere(32, 32, 1.0f));
-			newSphere.setLocalTranslation(point.toVector3f());
-			newSphere.setMaterial(this._makeBasicMaterial(ColorRGBA.Red));
-			rootNode.attachChild(newSphere);
+		if (point.isSelected()){			
+			Sphere mySphere = new Sphere(32,32, 1.0f);
+		    Geometry sphere = new Geometry(point.getUID(), mySphere);
+		    mySphere.setTextureMode(Sphere.TextureMode.Projected);
+		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
+		    sphereMat.setBoolean("UseMaterialColors",true);    
+		    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
+		    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		    sphere.setMaterial(sphereMat);
+		    sphere.setLocalTranslation(point.toVector3f());
+		    rootNode.attachChild(sphere);
 			try {
 				for (Grouped grouped : _model.getGroupedForPoint(point))
 					_updateGrouped(Change.update(grouped));
@@ -341,6 +397,8 @@ public class WorldView extends SimpleApplication implements Observer {
 				_drawWall((Wall) grouped);
 			else if (grouped instanceof Ground)
 				_drawGround((Ground) grouped);
+			else if (grouped instanceof Roof)
+				_drawRoof((Roof) grouped);
 		}
 		
 		/* Conclusion: updates will do both (detach & redraw) */
