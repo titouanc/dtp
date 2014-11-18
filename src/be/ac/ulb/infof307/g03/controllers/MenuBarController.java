@@ -29,7 +29,7 @@ public class MenuBarController {
 		_project = project;
 		_gui = gui;
 		_view = new MenuBarView(this);
-		_fileController = new FileChooserController(_view, project);
+		_fileController = new FileChooserController(_view, project, gui);
 		
 	}
 	

@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
@@ -21,15 +22,17 @@ public class FileChooserController {
 	private FileChooserView _view;
 	private Component _parent;
 	private Project _project;
+	private GUI _gui;
 	
 	/**
 	 * @param parent The parent of the controller to be linked
 	 * @param project The main project
 	 * 
 	 */
-	public FileChooserController(Component parent,Project project){
+	public FileChooserController(Component parent,Project project,GUI gui){
 		_parent = parent;
 		_project = project;
+		_gui = gui;
 		_view = new FileChooserView(this);
 		
 	}
@@ -65,12 +68,14 @@ public class FileChooserController {
 	public void openProject(File fileToOpen){
 		System.out.println("[DEBUG] You chose to open: " + fileToOpen.getName());
 		final String filename = fileToOpen.getAbsolutePath();
+		_gui.dispose();
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){
 				try{
 					Project prj = new Project();
 					prj.load(filename);
 					new GUI(prj);
+					
 				}catch (SQLException e) {
 					JOptionPane.showMessageDialog(_parent, "Unable to open project named " + filename + ": " + e.toString());
 				}
@@ -84,13 +89,20 @@ public class FileChooserController {
 	 */
 	public void newProject(File fileToCreate){
 		System.out.println("[DEBUG] You chose to create a new project named: " + fileToCreate.getName());
-		String filename = fileToCreate.getAbsolutePath();
-		try {
-			_project = new Project();
-			_project.create(filename);
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(_parent, "Unable to create a new project as " + filename + ": " + e.toString());
-		}
+		final String filename = fileToCreate.getAbsolutePath();
+		_gui.dispose();
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run(){
+				try{
+					Project prj = new Project();
+					prj.create(filename);
+					new GUI(prj);
+					
+				}catch (SQLException e) {
+					JOptionPane.showMessageDialog(_parent, "Unable to create a new project named " + filename + ": " + e.toString());
+				}
+			}
+		});
 		
 	}
 
