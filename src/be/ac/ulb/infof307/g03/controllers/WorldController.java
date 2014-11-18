@@ -182,29 +182,14 @@ public class WorldController implements ActionListener, Observer {
      * @param grouped The Grouped item to select
      */
     public void selectObject(Grouped grouped) {
-        if(grouped.getClass().getName().equals("be.ac.ulb.infof307.g03.models.Roof")){
-        	try {
-				GeometryDAO dao = _project.getGeometryDAO();
-				dao.getGround(grouped.getGroup()).toggleSelect();				
-				dao.update(dao.getGround(grouped.getGroup()));
-	            dao.notifyObservers(dao.getGround(grouped.getGroup()));	            
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}     	
-    	}
-        else{
 	        try {
 	        	grouped.toggleSelect();
 	        	GeometryDAO dao = _project.getGeometryDAO();
 	            dao.update(grouped);
 	            dao.notifyObservers(grouped);
 	        } catch (SQLException e) {
-	            // TODO Auto-generated catch block
 	            e.printStackTrace();
 	        }
-        }
-        
 	    }
 
     /**

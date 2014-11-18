@@ -720,6 +720,8 @@ public class GeometryDAO extends Observable {
 	 */
 	public Mesh getRoofAsMesh(Roof roof) throws SQLException, AssertionError {
 		List<Point> all_points = getPointsForShape(roof.getGroup());
+		Floor currentFloor = getFloor(roof.getGroup());
+		
 		int shape_n_points = all_points.size();
 		assert(shape_n_points > 2);
 		
@@ -733,7 +735,7 @@ public class GeometryDAO extends Observable {
 		Vector3f vertices[] = new Vector3f[shape_n_points];
 		for (int i=0; i<shape_n_points; i++){			
 			vertices[i] = all_points.get(i).toVector3f();
-			vertices[i].setZ(_floors.queryForAll().size()*7);
+			vertices[i].setZ((float) (all_points.get(i).getZ() + currentFloor.getHeight()));
 		}
 		
 		
