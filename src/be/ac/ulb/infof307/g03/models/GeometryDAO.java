@@ -448,7 +448,14 @@ public class GeometryDAO extends Observable {
 	 * @return a Floor object, or null first floor was given
 	 */
 	public Floor getPreviousFloor(Floor floor){
-		return floor.getPrevious();
+		Floor res = null;
+		if (floor.getPrevious() != null){
+			try {res = getFloor(floor.getPrevious().getId());} 
+			catch (SQLException err){
+				err.printStackTrace();
+			}
+		}
+		return res;
 	}
 	
 	/**
@@ -656,7 +663,7 @@ public class GeometryDAO extends Observable {
 	public double getBaseHeight(Floor floor){
 		if (floor.isFirstFloor())
 			return 0;
-		Floor bottom = floor.getPrevious();
+		Floor bottom = getPreviousFloor(floor);
 		return getBaseHeight(bottom) + bottom.getHeight();
 	}
 	
