@@ -125,8 +125,8 @@ public class MenuBarController {
 		JOptionPane.showMessageDialog(_view, helpMessage);
 	}
 	public void onAbout() {
-		String aboutMessage = "<html><center>HomePlans v1.0.0</center>\n\n"
-				+ "Made by F. Hennecker, T. Christophe, J. Schembri, P. Gérard, W. Moulart, B. Rocha Pereira<html>";
+		String aboutMessage = "HomePlans v1.0.0\n\n"
+				+ "Made by F. Hennecker, T. Christophe, J. Schembri, P. Gerard, W. Moulart, B. Rocha Pereira";
 		JOptionPane.showMessageDialog(_view, aboutMessage);
 		
 	}
