@@ -94,6 +94,6 @@ public class Floor implements Geometric {
 	}
 	
 	public String toString(){
-		return isFirstFloor() ? "First floor" : "Floor";
+		return String.format("Floor %d", getId());
 	}
 }
