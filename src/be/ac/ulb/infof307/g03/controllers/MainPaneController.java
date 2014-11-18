@@ -31,7 +31,6 @@ public class MainPaneController {
         AppSettings settings = new AppSettings(true);
         settings.setFrameRate(60);
         settings.setAudioRenderer(null);
-        settings.setAudioRenderer(null);
         settings.setUseInput(true);
         // Create jme3 canvas
         _world = new WorldController(settings, project);
