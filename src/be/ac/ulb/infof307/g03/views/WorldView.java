@@ -167,7 +167,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	private Material _makeLightedMaterial(ColorRGBA color){
 		Material res = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		res.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		res.setBoolean("UseMaterialColors", true);
 		res.setColor("Diffuse", color);
 		res.setColor("Ambient", color);
@@ -197,8 +197,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			Box box = new Box(	new Vector3f(-w/2,-w/2,0), new Vector3f(segment.length()+w/2, 
 																		w/2, height));
 			Geometry wallGeometry = new Geometry(wall.getUID(), box);
-			wallGeometry.setMaterial(_makeLightedMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
-			
+			wallGeometry.setMaterial(_makeLightedMaterial(wall.isSelected() ? new ColorRGBA(0f,1.2f,0f, 0.5f) : ColorRGBA.Gray));
 			// 2) Place the wall at the right place
 			wallGeometry.setLocalTranslation(a);
 			 
@@ -271,7 +270,10 @@ public class WorldView extends SimpleApplication implements Observer {
 		try {
 			Mesh mesh = _model.getGroundAsMesh(gnd);
 			Geometry node = new Geometry(gnd.getUID(), mesh);
-			node.setMaterial(_makeBasicMaterial(_getColor(gnd)));
+			Material mat;
+			mat=_makeBasicMaterial(_getColor(gnd));
+			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+			node.setMaterial(mat);
 			rootNode.attachChild(node);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -327,10 +329,10 @@ public class WorldView extends SimpleApplication implements Observer {
 	private ColorRGBA _getColor(Grouped grouped) throws SQLException{
 		ColorRGBA color;
 		if (grouped.isSelected()){
-			color=ColorRGBA.Green;
+			color=new ColorRGBA(0f,1.2f,0f, 0.5f);
 		}
 		else if (grouped instanceof Wall){
-			color=ColorRGBA.Gray;
+			color=new ColorRGBA(0f,1.2f,0f, 0.5f);
 		}
 		else if (grouped instanceof Roof){
 			int choice=_model.getFloors().size()%3;
