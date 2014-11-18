@@ -152,17 +152,39 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
      * Those buttons are mutually exclusive
      */  
     private void _addButtonRotation() {
+    	String classPath = getClass().getResource("ToolsBarView.class").toString();
+    	String prefix = "";
+    	System.out.println(classPath.subSequence(0, 3));
+    	Icon _cursorImage ;
+    	Icon _grabImage ;
+    	Icon _rotateImage;
     	
+    	JToggleButton rotate;
+    	JToggleButton hand;
+    	JToggleButton cursor;
+    	
+    	if(classPath.subSequence(0, 3).equals("jar")){
+    		prefix = "/";
+        	_cursorImage = new ImageIcon(getClass().getResource(prefix + "cursor.png"));
+        	_grabImage = new ImageIcon(getClass().getResource(prefix + "grab.png"));
+        	_rotateImage = new ImageIcon(getClass().getResource(prefix + "rotate.png"));
+        	rotate = new JToggleButton(_rotateImage);
+        	hand   = new JToggleButton(_grabImage);
+        	cursor = new JToggleButton(_cursorImage);
+    	}
+    	else{
+    		//TODO WRONG PATH
+    		prefix = "../assets/";
+        	rotate = new JToggleButton("Select Tool");
+        	hand   = new JToggleButton("Grab Tool");
+        	cursor = new JToggleButton("Rotation Tool");
+    	}
+    	System.out.println(prefix);
+
 
     	//Gets the images)
-    	Icon _cursorImage = new ImageIcon(getClass().getResource("../asset/cursor.png"));
-    	Icon _grabImage = new ImageIcon(getClass().getResource("../asset/grab.png"));
-    	Icon _rotateImage = new ImageIcon(getClass().getResource("../asset/rotate.png"));
     	
     	//Creates the buttons
-    	JToggleButton rotate = new JToggleButton(_rotateImage);
-    	JToggleButton hand   = new JToggleButton(_grabImage);
-    	JToggleButton cursor = new JToggleButton(_cursorImage);
 
     	//Creates the button group (so that there's only one button "selected" at a time
         ButtonGroup buttonGroup = new ButtonGroup();
