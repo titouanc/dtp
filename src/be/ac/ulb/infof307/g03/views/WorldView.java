@@ -363,8 +363,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		if (point.isSelected()){			
 			Sphere mySphere = new Sphere(32,32, 1.0f);
 		    Geometry sphere = new Geometry(point.getUID(), mySphere);
-		    mySphere.setTextureMode(Sphere.TextureMode.Projected); // better quality on spheres
-		    TangentBinormalGenerator.generate(mySphere);           // for lighting effect
+		    mySphere.setTextureMode(Sphere.TextureMode.Projected);
 		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
 		    sphereMat.setBoolean("UseMaterialColors",true);    
 		    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
