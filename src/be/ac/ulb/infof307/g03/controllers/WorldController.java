@@ -6,6 +6,8 @@ package be.ac.ulb.infof307.g03.controllers;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.WorldView;
@@ -23,7 +25,7 @@ import com.jme3.system.JmeContext;
  * @author fhennecker,pierre,wmoulart
  * @brief Controller of the jMonkeyEngine canvas. It handles both the 3D and 2D view.
  */
-public class WorldController implements ActionListener {
+public class WorldController implements ActionListener, Observer {
     
     private WorldView _view;
     private Project _project;
@@ -31,6 +33,7 @@ public class WorldController implements ActionListener {
     CameraModeController _cameraModeController = null;
     private Point _movingPoint = null;
     private List<Point> _inConstruction ;
+    private double _currentHeight;
     
     /**
      * Constructor of WorldController.
@@ -45,7 +48,10 @@ public class WorldController implements ActionListener {
         _view.createCanvas();
         _cameraModeController = new CameraModeController(project);
         _project = project;
-        _inConstruction = new LinkedList <Point> () ;
+        _inConstruction = new LinkedList <Point>();
+        Floor currentFloor = (Floor) project.getGeometryDAO().getByUID(project.config("floor.current"));
+        _currentHeight = project.getGeometryDAO().getBaseHeight(currentFloor);
+        project.addObserver(this);
     }
     
     /**
@@ -88,7 +94,7 @@ public class WorldController implements ActionListener {
      */
     public void onViewCreated(){
         _isViewCreated = true;
-        _cameraModeController.get2DCam().resetDirection();
+        _cameraModeController.get2DCam().resetCamera();
     }
     
     /**
@@ -101,8 +107,6 @@ public class WorldController implements ActionListener {
         Vector3f camDir = _view.getCamera().getWorldCoordinates(cursorPosition, 1f).subtractLocal(camPos);
         return new Ray(camPos, camDir);
     }
-    
-    
     
     /**
      * Convert a click position to clicked item
@@ -194,7 +198,7 @@ public class WorldController implements ActionListener {
      */
     public void construct(){
     	Point lastPoint=new Point();
-		lastPoint.setZ(1);
+		lastPoint.setZ(_currentHeight);
 		getXYForMouse(lastPoint);
 		lastPoint.select();
 		
@@ -233,7 +237,7 @@ public class WorldController implements ActionListener {
 	    	}
 	    	dao.create(new Wall(room));
 	    	dao.create(new Ground(room));
-	    	dao.addGroupToFloor((Floor) dao.getByUID("flr-1"), room);
+	    	dao.addGroupToFloor((Floor) dao.getByUID(_project.config("floor.current")), room);
 	    	dao.notifyObservers();
 	    	_inConstruction.clear();
 		} catch (SQLException e) {
@@ -282,5 +286,18 @@ public class WorldController implements ActionListener {
             else if (clicked instanceof Point && mouseDown)
         		_movingPoint = (Point) clicked;
 		}  	
+	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		Config changed = (Config) arg1;
+		if (changed.getName().equals("floor.current")){
+	        try {
+	        	Floor currentFloor = (Floor) _project.getGeometryDAO().getByUID(changed.getValue());
+				_currentHeight = _project.getGeometryDAO().getBaseHeight(currentFloor);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

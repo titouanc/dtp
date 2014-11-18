@@ -6,9 +6,11 @@ package be.ac.ulb.infof307.g03.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import be.ac.ulb.infof307.g03.models.DemoProject;
+import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.Project;
 
 /**
@@ -70,6 +72,14 @@ public class BootController {
 		
 		if (proj == null)
 			proj = DemoProject.create();
+		
+		List<Floor> floors = proj.getGeometryDAO().getFloors();
+		if (floors.size() == 0){
+			proj.getGeometryDAO().create(new Floor());
+			floors = proj.getGeometryDAO().getFloors();
+		}
+		proj.config("floor.current", floors.get(0).getUID());
+		
 		return proj;
 	}
 }

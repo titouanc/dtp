@@ -639,8 +639,8 @@ public class GeometryDAO extends Observable {
 		int edges[] = new int[3 * n_triangles];
 		for (int i=0; i<n_triangles; i++){
 			edges[3 * i] = 0;
-			edges[3 * i + 1] = i+1;
-			edges[3 * i + 2] = i+2;
+			edges[3 * i + 1] = i+2;
+			edges[3 * i + 2] = i+1;
 		}
 		
 		Mesh mesh = new Mesh();

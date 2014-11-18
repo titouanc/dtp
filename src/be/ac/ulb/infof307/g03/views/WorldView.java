@@ -18,6 +18,8 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
@@ -86,6 +88,20 @@ public class WorldView extends SimpleApplication implements Observer {
 		this.setPauseOnLostFocus(false);
 	}
 	
+	/**
+	 * Creates a directional light across the whole world. 
+	 */
+	private void _addSun(){
+		DirectionalLight sun = new DirectionalLight();
+		sun.setColor(ColorRGBA.Gray);
+		sun.setDirection(new Vector3f(-.5f,-.5f,-1f).normalizeLocal());
+		rootNode.addLight(sun);
+		
+		AmbientLight ambient = new AmbientLight();
+		ambient.setColor(ColorRGBA.White.mult(1.3f));
+		rootNode.addLight(ambient);
+	}
+	
 	public Vector<Geometry> getShapes(){
 		shapes = new Vector<Geometry>();
 		this.generateShapesList(rootNode);
@@ -141,6 +157,22 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	/**
+	 * This creates a basic colored material which is going to be affected by lighting
+	 * @param color
+	 * @return The material created
+	 */
+	private Material _makeLightedMaterial(ColorRGBA color){
+		Material res = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		res.setBoolean("UseMaterialColors", true);
+		res.setColor("Diffuse", color);
+		res.setColor("Ambient", color);
+		res.setColor("Specular", color);
+		return res;
+	}
+	
+	
+	/**
 	 * Transform a Wall object into a Node containing Boxes (3D object usable in jMonkey)
 	 * @param wall The wall to transform
 	 * @return The Node
@@ -161,7 +193,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			Box box = new Box(	new Vector3f(-w/2,-w/2,0), new Vector3f(segment.length()+w/2, 
 																		w/2, height));
 			Geometry wallGeometry = new Geometry(wall.getUID(), box);
-			wallGeometry.setMaterial(_makeBasicMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
+			wallGeometry.setMaterial(_makeLightedMaterial(wall.isSelected() ? ColorRGBA.Green : ColorRGBA.Gray));
 			
 			// 2) Place the wall at the right place
 			wallGeometry.setLocalTranslation(a);
@@ -187,11 +219,15 @@ public class WorldView extends SimpleApplication implements Observer {
 		//Generate the axes
 		_attachAxes();
 		
+		// Add a bit of sunlight into our lives
+		_addSun();
+		
 		try {
 			for (Wall wall : _model.getWalls())
 				_drawWall(wall);
 			for (Ground gnd : _model.getGrounds())
 				_drawGround(gnd);
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -40,6 +40,7 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
 	
 	static final private String _FLOOR_UP   = "FloorUp";
 	static final private String _FLOOR_DOWN = "FloorDown";
+	static final private String _FLOOR_NEW  = "FloorNew";
 	
 	static final private String _2D 		= "2D";
 	static final private String _3D 		= "3D";
@@ -97,18 +98,24 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
      */
     private void _addButtonsFloor() {
     	// button floor up
-        JButton buttonUp = new JButton("+");
+        JButton buttonUp = new JButton("up");
         buttonUp.setActionCommand(_FLOOR_UP);
         buttonUp.setToolTipText("This will increase the floor seen");
         buttonUp.addActionListener(this);
         this.add(buttonUp);
         
         // button floor down
-        JButton buttonDown = new JButton("-");
+        JButton buttonDown = new JButton("down");
         buttonDown.setActionCommand(_FLOOR_DOWN);
         buttonDown.setToolTipText("This will decrease the floor seen");
         buttonDown.addActionListener(this);
         this.add(buttonDown);
+        
+        JButton buttonNew = new JButton("new Floor");
+        buttonNew.setActionCommand(_FLOOR_NEW);
+        buttonNew.setToolTipText("Create a new floor...");
+        buttonNew.addActionListener(this);
+        this.add(buttonNew);
 
         this.addSeparator();
     }
@@ -210,6 +217,9 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
         }
         else if (_FLOOR_UP.equals(cmd)) {
         	_controller.onFloorUp();
+        }
+        else if (_FLOOR_NEW.equals(cmd)){
+        	_controller.onFloorNew();
         }
         else if (_2D.equals(cmd)) {
         	_controller.on2d() ;

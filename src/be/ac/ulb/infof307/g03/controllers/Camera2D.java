@@ -25,22 +25,31 @@ import com.jme3.scene.Geometry;
  */
 public class Camera2D implements AnalogListener, ActionListener {
 	
-	static private final String _MODE_DRAGROTATE = "dragRotate";
-    static private final String _MODE_DRAGSELECT = "dragSelect";
-    static private final String _MODE_DRAGMOVE = "dragMove";
-    
+	// Attributes
     private Camera _cam;
-	private float _rotationSpeed = 3f;
-    private float _moveSpeed = 15f;
-    private boolean _canMove = false;
-    private boolean _canRotate = false;
-    private boolean _enabled = true;
     private InputManager _inputManager;
     private String _mouseMode = _MODE_DRAGSELECT;
     private Vector3f _previousMousePosition;
     private WorldView _wv;
     private float frustumSize = 10;
+    private final int minimumHeight = 1;
     
+    // Speed parameters
+	private float _rotationSpeed	= 1f;
+    private float _moveSpeed		= 15f;
+    private float _zoomSpeed		= 4f;
+    
+    // Flags
+    private boolean _canMove	= false;
+    private boolean _canRotate	= false;
+    private boolean _enabled	= true;
+    
+    // Carera mode alias
+	static private final String _MODE_DRAGROTATE = "dragRotate";
+    static private final String _MODE_DRAGSELECT = "dragSelect";
+    static private final String _MODE_DRAGMOVE = "dragMove";
+    
+    // Input alias
     static private final String _STRAFELEFT 	= "CAM2D_StrafeLeft";
 	static private final String _STRAFERIGHT	= "CAM2D_StrafeRight"; 
 	static private final String _FORWARD 		= "CAM2D_Forward";
@@ -65,7 +74,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	}
     
 	/**
-	 * @return true if the 2D is currently used
+	 * @return true if the 2D camera controller is currently used
 	 */
 	public boolean isEnabled() {
 		return _enabled;
@@ -130,22 +139,26 @@ public class Camera2D implements AnalogListener, ActionListener {
 	}
 	
 	/**
-	 * Manage the camera control using the mouse
+	 * Manage the camera control using a click and grab with the mouse
 	 */
-	public void moveCameraGrab() {
+	private void clickAndGrab() {
 		if (_canMove) {
-			Vector3f currentMousePosition = mouseOnGroundCoords();
-			currentMousePosition.subtractLocal(_previousMousePosition);
-    		Vector3f pos = _cam.getLocation().clone();
-    		pos.subtractLocal(currentMousePosition);
-    		_cam.setLocation(pos);
-    		_previousMousePosition = mouseOnGroundCoords();
+			moveCameraByGrab();
 		}
 		/*
 		if (_canRotate) { // TODO
 			System.out.println("Use 'O' and 'P' button to rotate.");
 		}
 		*/
+	}
+	
+	private void moveCameraByGrab() {
+		Vector3f currentMousePosition = mouseOnGroundCoords();
+		currentMousePosition.subtractLocal(_previousMousePosition);
+		Vector3f pos = _cam.getLocation().clone();
+		pos.subtractLocal(currentMousePosition);
+		_cam.setLocation(pos);
+		_previousMousePosition = mouseOnGroundCoords();
 	}
 	
 	/**
@@ -164,9 +177,8 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 * Place the shapes at the center
 	 * of the user's screen
 	 */
-	public void resetDirection(){
+	public void resetCamera(){
 		Vector<Geometry> shapes = _wv.getShapes();
-		System.out.println("SIEZ  :" + shapes.size());
 		  float minX = 0,minY = 0,maxX = 0,maxY = 0,X = 0, Y= 0,Z = 0;
 		  int offset=17;
 		  Vector3f center;
@@ -201,14 +213,17 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 * float value : value of zoom
 	 */
 	private void zoomCamera(float value){
-        frustumSize += 0.3f * value;
-
-        float aspect = (float) _cam.getWidth() / _cam.getHeight();
-        _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
-
-		Vector3f pos = _cam.getLocation().clone();
-		pos.setZ(pos.getZ() + (value*_moveSpeed));
-		_cam.setLocation(pos);
+		if(frustumSize + 0.3f * value >= minimumHeight){
+			
+	        frustumSize += 0.3f * value;
+	
+	        float aspect = (float) _cam.getWidth() / _cam.getHeight();
+	        _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
+	
+			Vector3f pos = _cam.getLocation().clone();
+			pos.setZ(pos.getZ() + (value*_moveSpeed));
+			_cam.setLocation(pos);
+		}
     }
 	
 	/**
@@ -217,30 +232,22 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 * boolean trigoRotate : direction of the rotation
 	 */
 	private void rotateCamera(float value, boolean trigoRotate) {
-		if(_mouseMode.equals(_MODE_DRAGROTATE)){
-	        float cos1deg = 0.99939f;
-	        float sin1deg = 0.03489f;
-	        if (trigoRotate) {
-	        	sin1deg *= -1;
-	        }
-	        
-	        Matrix3f mat = new Matrix3f();
-	        mat.fromAngleNormalAxis(_rotationSpeed * value, _cam.getUp());
-	
-	        Vector3f up = _cam.getUp();
-	        Vector3f left = _cam.getLeft();
-	        Vector3f dir = _cam.getDirection();
-	
-	        Vector3f nup = new Vector3f( (cos1deg*up.getX())+(sin1deg*up.getY()), (-sin1deg*up.getX())+(cos1deg*up.getY()), up.getZ() );
-	        Vector3f nleft = new Vector3f( (cos1deg*left.getX())+(sin1deg*left.getY()), (-sin1deg*left.getX())+(cos1deg*left.getY()), left.getZ());
-	
-	        Quaternion q = new Quaternion();
-	        q.fromAxes(nleft, nup, dir);
-	        q.normalizeLocal();
-	
-	        _cam.setAxes(q);
-		}
-		
+		Matrix3f mat = new Matrix3f();
+		mat.fromAngleNormalAxis(_rotationSpeed * value, _cam.getDirection());
+
+		Vector3f up = _cam.getUp();
+		Vector3f left = _cam.getLeft();
+		Vector3f dir = _cam.getDirection();
+
+		mat.mult(up, up);
+		mat.mult(left, left);
+		mat.mult(dir, dir);
+
+		Quaternion q = new Quaternion();
+		q.fromAxes(left, up, dir);
+		q.normalizeLocal();
+
+		_cam.setAxes(q);
 	}
 
 	/**
@@ -254,6 +261,9 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_inputManager.addMapping(_FORWARD,   	new KeyTrigger(KeyInput.KEY_UP));
 		_inputManager.addMapping(_BACKWARD,		new KeyTrigger(KeyInput.KEY_DOWN));
 		
+		_inputManager.addMapping(_ROTATELEFT,	new KeyTrigger(KeyInput.KEY_O)); 
+		_inputManager.addMapping(_ROTATERIGHT,	new KeyTrigger(KeyInput.KEY_P));
+		
 		// Mouse event mapping
 		_inputManager.addMapping(_MOVEDRAG, 	new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		
@@ -261,9 +271,6 @@ public class Camera2D implements AnalogListener, ActionListener {
 		_inputManager.addMapping(_DOWN, 		new MouseAxisTrigger(1, true));
 		_inputManager.addMapping(_LEFT,			new MouseAxisTrigger(0, true));
 		_inputManager.addMapping(_RIGHT,		new MouseAxisTrigger(0, false));
-		
-		_inputManager.addMapping(_ROTATELEFT,	new KeyTrigger(KeyInput.KEY_O)); 
-		_inputManager.addMapping(_ROTATERIGHT,	new KeyTrigger(KeyInput.KEY_P));
 
 		_inputManager.addMapping(_ZOOMIN, 		new MouseAxisTrigger(2, false));
         _inputManager.addMapping(_ZOOMOUT, 		new MouseAxisTrigger(2, true));
@@ -327,13 +334,13 @@ public class Camera2D implements AnalogListener, ActionListener {
 		} else if (name.equals(_BACKWARD)) {
 			this.moveCamera(-value,true);
 		} else if(name.equals(_UP)){
-			this.moveCameraGrab();
+			this.clickAndGrab();
 		} else if(name.equals(_DOWN)){
-			this.moveCameraGrab();
+			this.clickAndGrab();
 		} else if(name.equals(_LEFT)){
-			this.moveCameraGrab();
+			this.clickAndGrab();
 		} else if(name.equals(_RIGHT)){
-			this.moveCameraGrab();
+			this.clickAndGrab();
 		} else if (name.equals(_ROTATELEFT)) {
 			rotateCamera(value, false);
 		} else if (name.equals(_ROTATERIGHT)) {
