@@ -153,13 +153,11 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
      */  
     private void _addButtonRotation() {
     	
-    	//Stores the path for the assets
-    	String dir = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
-    	
-    	//Gets the images
-    	Icon _cursorImage = new ImageIcon(dir + "cursor.png");
-    	Icon _grabImage = new ImageIcon(dir + "grab.png");
-    	Icon _rotateImage = new ImageIcon(dir + "rotate.png");
+
+    	//Gets the images)
+    	Icon _cursorImage = new ImageIcon(getClass().getResource("../asset/cursor.png"));
+    	Icon _grabImage = new ImageIcon(getClass().getResource("../asset/grab.png"));
+    	Icon _rotateImage = new ImageIcon(getClass().getResource("../asset/rotate.png"));
     	
     	//Creates the buttons
     	JToggleButton rotate = new JToggleButton(_rotateImage);
