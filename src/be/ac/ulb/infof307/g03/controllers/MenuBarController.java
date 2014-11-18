@@ -93,10 +93,41 @@ public class MenuBarController {
 	 */
 	public void onKeybindings() {
 		String keybindingsMessage = "General \nCtrl + N : Create a new project\n"
-				+ "Ctrl + O : Open a new Project \nCtrl + S : Save current project \nCtrl + A : Save As..\n"
-				+ "Ctrl + Q : Quit \nCtrl + Z : Undo \nCtrl + Y : Redo\n"
-				+ "Ctrl + H : Show this text box ";
+				+ "Ctrl + O : Open a new Project \n"
+				+ "Ctrl + S : Save current project \n"
+				+ "Ctrl + A : Save As..\n"
+				+ "Ctrl + Q : Quit \n"
+				+ "Ctrl + Z : Undo \n"
+				+ "Ctrl + Y : Redo\n"
+				+ "Ctrl + K : Show this text box \n"
+				+ "Ctrl + H : Show the tools help\n"
+				+ "Arrows : Move\n\n"
+				+ "Mouse wheel : Zoom in/out\n"
+				+ "2D Mode\n O/P : Rotate Left/Right";
 		JOptionPane.showMessageDialog(_view, keybindingsMessage);
+	}
+
+	public void onTools() {
+		String helpMessage = "Floors\n"
+				+ "+ : Go one floor upper\n"
+				+ "- : Go one floor lower\n"
+				+ "new Floor : Create a new floor\n"
+				+ "\n"
+				+ "Dimension\n"
+				+ "2D : Switch to 2D\n"
+				+ "3D : Switch to 3D\n"
+				+ "\n"
+				+ "Cursor Tools\n"
+				+ "Rotation Mode : Drag with left click to rotate\n"
+				+ "Grab Mode : Drag with left click to move\n"
+				+ "Simple Cursor Mode : Used to select\n"
+				+ "New Room : Used to create new rooms; Left click to create corners, Right click to confirm";
+		JOptionPane.showMessageDialog(_view, helpMessage);
+	}
+	public void onAbout() {
+		String aboutMessage = "<html><center>HomePlans v1.0.0</center>\n\n"
+				+ "Made by F. Hennecker, T. Christophe, J. Schembri, P. Gérard, W. Moulart, B. Rocha Pereira<html>";
+		JOptionPane.showMessageDialog(_view, aboutMessage);
 		
 	}
 }
