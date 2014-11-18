@@ -23,6 +23,7 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -37,6 +38,7 @@ import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -310,11 +312,18 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void _updatePoint(Change change){
 		Point point = (Point) change.getItem();
 		rootNode.detachChildNamed(point.getUID());
-		if (point.isSelected()){
-			Geometry newSphere = new Geometry(point.getUID(), new Sphere(32, 32, 1.0f));
-			newSphere.setLocalTranslation(point.toVector3f());
-			newSphere.setMaterial(this._makeBasicMaterial(ColorRGBA.Red));
-			rootNode.attachChild(newSphere);
+		if (point.isSelected()){			
+			Sphere mySphere = new Sphere(16,16, 1.0f);
+		    Geometry sphere = new Geometry(point.getUID(), mySphere);
+		    mySphere.setTextureMode(Sphere.TextureMode.Projected); // better quality on spheres
+		    TangentBinormalGenerator.generate(mySphere);           // for lighting effect
+		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
+		    sphereMat.setBoolean("UseMaterialColors",true);    
+		    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
+		    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		    sphere.setMaterial(sphereMat);
+		    sphere.setLocalTranslation(point.toVector3f());
+		    rootNode.attachChild(sphere);
 			try {
 				for (Grouped grouped : _model.getGroupedForPoint(point))
 					_updateGrouped(Change.update(grouped));
