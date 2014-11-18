@@ -163,7 +163,7 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
     	JToggleButton hand;
     	JToggleButton cursor;
     	
-    	if(classPath.subSequence(0, 3).equals("jar")){
+    	if(classPath.subSequence(0, 3).equals("rsr")){
     		prefix = "/";
         	_cursorImage = new ImageIcon(getClass().getResource(prefix + "cursor.png"));
         	_grabImage = new ImageIcon(getClass().getResource(prefix + "grab.png"));
