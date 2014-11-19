@@ -25,7 +25,7 @@ public class Roof extends Grouped {
 
 	@Override
 	protected final String innerToString() {
-		return "Roof" + getGroup().toString();
+		return "Roof";
 	}
 
 	@Override
