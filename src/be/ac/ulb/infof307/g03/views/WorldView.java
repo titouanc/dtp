@@ -45,7 +45,8 @@ import com.jme3.util.TangentBinormalGenerator;
  */
 public class WorldView extends SimpleApplication implements Observer {	
 	
-	private GeometryDAO _model = null;
+	private Project _project = null;
+	private GeometryDAO _dao = null;
 	private WorldController _controller; 
 	private LinkedList<Change> _queuedChanges = null;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
@@ -55,11 +56,17 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * @param newController The view's controller
 	 * @param model The DAO pattern model class
 	 */
-	public WorldView(WorldController newController, GeometryDAO model){
+	public WorldView(WorldController newController, Project project){
 		super();
 		_controller = newController;
-		_model = model;
-		_model.addObserver(this);
+		_project = project;
+		try {
+			_dao= project.getGeometryDAO();
+			_dao.addObserver(this);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		_queuedChanges = new LinkedList<Change>();
 		this.setDisplayStatView(false);
 	}
@@ -173,10 +180,10 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	public Node getWallAsNode(Wall wall) throws SQLException{
 		Node res = new Node(wall.getUID());
-		List<Point> allPoints = _model.getPointsForShape(wall.getGroup());
+		List<Point> allPoints = _dao.getPointsForShape(wall.getGroup());
 		
-		float height = (float) _model.getFloor(wall.getGroup()).getHeight();
-		float elevation = (float) _model.getBaseHeight(_model.getFloor(wall.getGroup()));
+		float height = (float) _dao.getFloor(wall.getGroup()).getHeight();
+		float elevation = (float) _dao.getBaseHeight(_dao.getFloor(wall.getGroup()));
 		
 		for (int i=0; i<allPoints.size()-1; i++){
 			// 1) Build a box the right length, width and height
@@ -216,11 +223,11 @@ public class WorldView extends SimpleApplication implements Observer {
 		_addSun();
 		
 		try {
-			for (Wall wall : _model.getWalls())
+			for (Wall wall : _dao.getWalls())
 				_drawWall(wall);
-			for (Ground gnd : _model.getGrounds())
+			for (Ground gnd : _dao.getGrounds())
 				_drawGround(gnd);
-			for (Roof roof : _model.getRoofs())
+			for (Roof roof : _dao.getRoofs())
 				_drawRoof(roof);
 			
 		} catch (SQLException e) {
@@ -258,7 +265,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		if (! gnd.isVisible())
 			return;
 		try {
-			Mesh mesh = _model.getGroundAsMesh(gnd);
+			Mesh mesh = _dao.getGroundAsMesh(gnd);
 			Geometry node = new Geometry(gnd.getUID(), mesh);
 			Material mat;
 			mat=_makeBasicMaterial(_getColor(gnd));
@@ -279,7 +286,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		if (! roof.isVisible())
 			return;
 		try {
-			Mesh mesh = _model.getRoofAsMesh(roof);
+			Mesh mesh = _dao.getRoofAsMesh(roof);
 			Material mat;
 			Geometry node = new Geometry(roof.getUID(), mesh);
 			mat=_makeBasicMaterial(_getColor(roof));
@@ -325,8 +332,8 @@ public class WorldView extends SimpleApplication implements Observer {
 			color=new ColorRGBA(0f,1.2f,0f, 0.5f);
 		}
 		else if (grouped instanceof Roof){
-			int choice=_model.getFloors().size()%3;
-			float nbFloor=(float) ((_model.getFloors().size()/10)+0.1);
+			int choice=_dao.getFloors().size()%3;
+			float nbFloor=(float) ((_dao.getFloors().size()/10)+0.1);
 			if (choice==1){
 				color=new ColorRGBA(nbFloor,0f,0f, 0.5f);
 			}
@@ -349,6 +356,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	private void _updatePoint(Change change){
 		Point point = (Point) change.getItem();
+		Floor floor = (Floor) _dao.getByUID(_project.config("floor.current"));
 		rootNode.detachChildNamed(point.getUID());
 		if (point.isSelected()){			
 			Sphere mySphere = new Sphere(32,32, 1.0f);
@@ -359,10 +367,10 @@ public class WorldView extends SimpleApplication implements Observer {
 		    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
 		    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		    sphere.setMaterial(sphereMat);
-		    sphere.setLocalTranslation(point.toVector3f());
+		    sphere.setLocalTranslation(point.toVector3f().setZ((float) _dao.getBaseHeight(floor)));
 		    rootNode.attachChild(sphere);
 			try {
-				for (Grouped grouped : _model.getGroupedForPoint(point))
+				for (Grouped grouped : _dao.getGroupedForPoint(point))
 					_updateGrouped(Change.update(grouped));
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -397,6 +405,8 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void _updateFloor(Change change){
 		Floor floor = (Floor) change.getItem();
 		rootNode.detachAllChildren();
+		while (rootNode.getWorldLightList().size() > 0)
+			rootNode.getWorldLightList().remove(0);
 		_makeScene();
 	}
 	
