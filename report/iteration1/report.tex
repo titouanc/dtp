@@ -20,7 +20,10 @@ tous continuer sur les différents aspects du projet dans une architecture propr
 \subsection{Architecture}
 
 	\subsubsection{Architecture générale}
-	\includegraphics{uml/general-architecture.pdf}
+	\begin{figure}[h]
+		\includegraphics[width=\textwidth]{uml/general-architecture.pdf}
+		\caption{\label{fig:overall:components} Diagramme de composants général}
+	\end{figure}
 
 	On voit directement l'utilisation du MVC, couplé avec un design pattern
 	Observable et un DAO. Cette architecture nous permet de :
@@ -45,6 +48,36 @@ tous continuer sur les différents aspects du projet dans une architecture propr
 	changer son mode d'affichage.\\
 
 	\subsubsection{Architecture du modèle}
+	Le modèle est architecturé selon le design pattern Data Access Object.
+	La classe \texttt{Project} a la responsabilité de l'accès au fichier du
+	projet, et des valeurs de configurations générales. Il donne en outre accès
+	au \texttt{GeometryDAO}, qui est un singleton pour le projet, et qui permet
+	d'effectuer les opérations CRUD\footnote{Create Refresh Update Delete},
+	ainsi que des recherches d'objets selon différents critères.
+
+	Les objets enregistrables par le \texttt{GeometryDAO} implémentent tous
+	l'interface \texttt{Geometric}. On distingue 4 catégories d'objet dans le
+	modèle:
+
+	\begin{itemize}
+		\item Les \texttt{Point} représentent une position dans l'espace
+		\item Les \texttt{Shape} définissent des formes bidimensionnelles 
+		      composées de \texttt{Point}
+		\item Les \texttt{Grouped} définissent des constructions sur les 
+		      \texttt{Shape}
+		\item Les \texttt{Floor} permettent de grouper ces éléments par étage.
+	\end{itemize}
+
+	La séparation de la forme et des constructions nous permet d'associer
+	facilement différents éléments de la pièce (murs, sols, plafonds) qui sont
+	bâtis à partir des mêmes points. En outre, plusieurs pièces peuvent contenir
+	le même point, facilitant ainsi la détection de pièces adjacentes, le
+	déplacement d'un coin de mur entre plusieurs pièces, ...
+
+	\begin{figure}[h!]
+		\includegraphics[width=\textwidth]{uml/models.png}
+		\caption{\label{fig:models:classdiagram} Diagramme de classes du modèle}
+	\end{figure}
 
 	\subsubsection{Architecture de la GUI}
 
