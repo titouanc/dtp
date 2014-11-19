@@ -110,6 +110,8 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
                 boolean leaf,
                 int row,
                 boolean hasFocus){
+			if (value instanceof DefaultMutableTreeNode)
+				value = ((DefaultMutableTreeNode) value).getUserObject();
 			if (value instanceof Grouped){
 				Grouped item = (Grouped) value;
 				sel = item.isSelected();
