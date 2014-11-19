@@ -750,7 +750,8 @@ public class GeometryDAO extends Observable {
 		Vector3f vertices[] = new Vector3f[shape_n_points];
 		for (int i=0; i<shape_n_points; i++){			
 			vertices[i] = all_points.get(i).toVector3f();
-			vertices[i].setZ((float) (all_points.get(i).getZ() + currentFloor.getHeight()));
+			// Ceilings need to be just a bit below their real height to not clip through the top face of the walls
+			vertices[i].setZ((float) (all_points.get(i).getZ() + currentFloor.getHeight()-0.001));
 		}
 		
 		
