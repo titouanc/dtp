@@ -154,7 +154,7 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
     	Icon cursorImage ;
     	Icon grabImage ;
     	Icon rotateImage;
-    	Icon constructImage;
+    	Icon pencilImage;
     	
     	JToggleButton rotate;
     	JToggleButton hand;
@@ -164,18 +164,18 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
         	cursorImage = new ImageIcon(getClass().getResource(prefix + "cursor.png"));
         	grabImage = new ImageIcon(getClass().getResource(prefix + "grab.png"));
         	rotateImage = new ImageIcon(getClass().getResource(prefix + "rotate.png"));
-        	constructImage = new ImageIcon(getClass().getResource(prefix + "pencil.png"));
+        	pencilImage = new ImageIcon(getClass().getResource(prefix + "pencil.png"));
         	rotate = new JToggleButton(rotateImage);
         	hand   = new JToggleButton(grabImage);
         	_cursorButton = new JToggleButton(cursorImage);
-        	_createButton = new JToggleButton();
+        	_createButton = new JToggleButton(pencilImage);
     	} else {
     		//TODO WRONG PATH
     		prefix = "../assets/";
         	rotate = new JToggleButton("Select Tool");
         	hand   = new JToggleButton("Grab Tool");
         	_cursorButton = new JToggleButton("Rotation Tool");
-        	_createButton = new JToggleButton("Construc Tool");
+        	_createButton = new JToggleButton("Pencil Tool");
     	}
     	System.out.println(prefix);
 
