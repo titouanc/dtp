@@ -216,7 +216,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      */
     public void construct(){
     	Point lastPoint=new Point();
-		lastPoint.setZ(_currentHeight);
+		lastPoint.setZ(0);
 		getXYForMouse(lastPoint);
 		lastPoint.select();
 		

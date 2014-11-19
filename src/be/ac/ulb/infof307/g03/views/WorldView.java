@@ -176,6 +176,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		List<Point> allPoints = _model.getPointsForShape(wall.getGroup());
 		
 		float height = (float) _model.getFloor(wall.getGroup()).getHeight();
+		float elevation = (float) _model.getBaseHeight(_model.getFloor(wall.getGroup()));
 		
 		for (int i=0; i<allPoints.size()-1; i++){
 			// 1) Build a box the right length, width and height
@@ -183,8 +184,8 @@ public class WorldView extends SimpleApplication implements Observer {
 			Vector3f b = allPoints.get(i+1).toVector3f();
 			float w = (float) wall.getWidth();
 			Vector2f segment = new Vector2f(b.x-a.x, b.y-a.y);
-			Box box = new Box(	new Vector3f(-w/2,-w/2,0), new Vector3f(segment.length()+w/2, 
-																		w/2, height));
+			Box box = new Box(	new Vector3f(-w/2,-w/2,elevation), new Vector3f(segment.length()+w/2, 
+																		w/2, elevation+height));
 			Geometry wallGeometry = new Geometry(wall.getUID(), box);
 			wallGeometry.setMaterial(_makeLightedMaterial(wall.isSelected() ? new ColorRGBA(0f,1.2f,0f, 0.5f) : ColorRGBA.Gray));
 			// 2) Place the wall at the right place
@@ -393,6 +394,10 @@ public class WorldView extends SimpleApplication implements Observer {
 		/* Conclusion: updates will do both (detach & redraw) */
 	}
 	
+	private void _updateFloor(Change change){
+		Floor floor = (Floor) change.getItem();
+	}
+	
 	/**
 	 * @param node
 	 */
@@ -434,6 +439,8 @@ public class WorldView extends SimpleApplication implements Observer {
 						_updateGrouped(change);
 					else if (change.getItem() instanceof Point)
 						_updatePoint(change);
+					else if (change.getItem() instanceof Floor)
+						_updateFloor(change);
 				}		
 				_queuedChanges.clear();
 			}

@@ -707,8 +707,10 @@ public class GeometryDAO extends Observable {
 		
 		/* 1) Build an array of all points */
 		Vector3f vertices[] = new Vector3f[shape_n_points];
-		for (int i=0; i<shape_n_points; i++)
+		for (int i=0; i<shape_n_points; i++){
 			vertices[i] = all_points.get(i).toVector3f();
+			vertices[i].setZ((float) getBaseHeight(getFloor(ground.getGroup())));
+		}
 		
 		/* 2) Polygon triangulation to make a surface */
 		int n_triangles = shape_n_points - 2;
@@ -751,7 +753,7 @@ public class GeometryDAO extends Observable {
 		for (int i=0; i<shape_n_points; i++){			
 			vertices[i] = all_points.get(i).toVector3f();
 			// Ceilings need to be just a bit below their real height to not clip through the top face of the walls
-			vertices[i].setZ((float) (all_points.get(i).getZ() + currentFloor.getHeight()-0.001));
+			vertices[i].setZ((float) (all_points.get(i).getZ() + currentFloor.getHeight() + getBaseHeight(currentFloor)-0.001));
 		}
 		
 		
