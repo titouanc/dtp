@@ -21,6 +21,7 @@ import com.jme3.input.MouseInput;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
+import com.jme3.light.Light;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.material.RenderState.FaceCullMode;
@@ -235,6 +236,15 @@ public class WorldView extends SimpleApplication implements Observer {
 		}
 		
 	}
+	
+	/**
+	 * Cleans the entire scene. Removes all children and lights.
+	 */
+	private void _cleanScene(){
+		rootNode.detachAllChildren();
+		for (Light light : rootNode.getWorldLightList())
+		rootNode.removeLight(light);
+	}
 
 	/**
 	 * Method used to generate the XYZ Axes
@@ -404,9 +414,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	
 	private void _updateFloor(Change change){
 		Floor floor = (Floor) change.getItem();
-		rootNode.detachAllChildren();
-		while (rootNode.getWorldLightList().size() > 0)
-			rootNode.getWorldLightList().remove(0);
+		_cleanScene();
 		_makeScene();
 	}
 	
