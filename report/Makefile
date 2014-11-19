@@ -2,6 +2,8 @@ all: report.pdf stories.pdf
 
 report.pdf: report.tex iteration1 iteration2 pv
 	pdflatex $<
+	# ToC
+	pdflatex $<
 
 .PHONY: iteration1 iteration2 clean pv
 iteration1:
