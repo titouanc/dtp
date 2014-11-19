@@ -62,7 +62,6 @@ public class WorldView extends SimpleApplication implements Observer {
 		_model.addObserver(this);
 		_queuedChanges = new LinkedList<Change>();
 		this.setDisplayStatView(false);
-		
 	}
 	
 	/**

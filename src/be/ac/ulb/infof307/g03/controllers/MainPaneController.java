@@ -32,6 +32,7 @@ public class MainPaneController {
         settings.setFrameRate(60);
         settings.setAudioRenderer(null);
         settings.setUseInput(true);
+        settings.setSamples(4); // enables antialiasing
         // Create jme3 canvas
         _world = new WorldController(settings, project);
         // Set up event listener
