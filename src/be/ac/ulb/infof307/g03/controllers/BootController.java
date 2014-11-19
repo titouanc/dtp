@@ -22,7 +22,7 @@ public class BootController {
 	 * 
 	 */
 	public BootController(){
-		 _prefs = Preferences.userRoot().node(this.getClass().getName());
+		 _prefs = Preferences.userRoot().node("be.ac.ulb.infof307.g03.HomePlans");
 	}
 	
 	/**
