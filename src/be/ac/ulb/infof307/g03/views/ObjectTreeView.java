@@ -113,8 +113,6 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 				Floor fl = (Floor) value;
 				sel = _project.config("floor.current").equals(fl.getUID());
 			}
-			if (sel)
-				System.out.println("SELECTED: " + value.toString());
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 			return this;
 		}
