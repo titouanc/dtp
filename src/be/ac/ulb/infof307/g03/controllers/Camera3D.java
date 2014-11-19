@@ -128,6 +128,7 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 * Reset the direction toward which the camera looks
 	 */
 	public void resetCamera() {
+		System.out.println("reset en 3D : appelée");
         _cam.setParallelProjection(false);
         
         _cam.setLocation(new Vector3f(_cam.getLocation().x,_cam.getLocation().y,_defaultCameraZ));

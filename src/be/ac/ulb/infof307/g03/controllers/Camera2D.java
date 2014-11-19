@@ -178,6 +178,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 * of the user's screen
 	 */
 	public void resetCamera(){
+		System.out.println("reset en 2D : appelé");
 		Vector<Geometry> shapes = _wv.getShapes();
 		  float minX = 0,minY = 0,maxX = 0,maxY = 0,X = 0, Y= 0,Z = 0;
 		  int offset=17;

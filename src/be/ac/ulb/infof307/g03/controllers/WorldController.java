@@ -40,9 +40,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     private List<Point> _inConstruction ;
     private double _currentHeight;
     
-    // Flags
-    private boolean _isViewCreated = false;
-    
     // Input alias
     static private final String _RIGHTCLICK 	= "WC_SelectObject";
 	static private final String _LEFTCLICK 		= "WC_Select";
@@ -105,14 +102,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      */
     public void startViewCanvas(){
         _view.startCanvas();
-    }
-    
-    /**
-     * Gets called when the view is initialized.
-     */
-    public void onViewCreated(){
-        _isViewCreated = true;
-        _cameraModeController.get2DCam().resetCamera();
     }
     
     /**

@@ -69,10 +69,12 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	@Override
 	public void simpleInitApp() {
+		// !!! cam only exist when this function is called !!!
 		flyCam.setEnabled(false);
 		_controller.getCameraModeController().setCamera(cam);
 		_controller.getCameraModeController().setInputManager(inputManager);
 		_controller.getCameraModeController().setWorldView(this);
+		_controller.getCameraModeController().updateMode();
 		
 		//Change the default background
 		viewPort.setBackgroundColor(ColorRGBA.White);
@@ -84,7 +86,6 @@ public class WorldView extends SimpleApplication implements Observer {
 		_controller.inputSetUp(inputManager);
 		
 		// Notify our controller that initialisation is done
-		_controller.onViewCreated();
 		this.setPauseOnLostFocus(false);
 	}
 	

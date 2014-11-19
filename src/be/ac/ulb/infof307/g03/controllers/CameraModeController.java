@@ -42,30 +42,27 @@ public class CameraModeController implements Observer {
 	 * @param proj
 	 */
 	CameraModeController(Project proj){
-		_cam2D.setEnabled(true);
-		_cam3D.setEnabled(false);
+		if (! proj.config("world.mode").equals("")) 
+			_currentMode = proj.config("world.mode");
 		proj.addObserver(this);
 	}
 	
 	/**
 	 * This method is used to change the actual mode.
-	 * @param mode A valid mode as _VIEW3D of _VIEW2D.
 	 */
-	public void changeMode(String mode){
-		System.out.println("[CameraController] Change view mode to " + mode);
-		if (mode != _currentMode){
-			if (mode.equals(_VIEW3D)){
-				_cam2D.setEnabled(false);
-				_cam3D.setEnabled(true);
-				_cam3D.resetCamera();
-			} else if (mode.equals(_VIEW2D)) {
-				_cam2D.setEnabled(true);
-				_cam3D.setEnabled(false);
-				_cam2D.resetCamera();
-			}
-			_currentMode = mode;
+	public void updateMode() {
+		System.out.println("[CameraController] Change view mode to " + _currentMode);
+		if (_currentMode.equals(_VIEW3D)){
+			_cam2D.setEnabled(false);
+			_cam3D.setEnabled(true);
+			_cam3D.resetCamera();
+		} else if (_currentMode.equals(_VIEW2D)) {
+			_cam2D.setEnabled(true);
+			_cam3D.setEnabled(false);
+			_cam2D.resetCamera();
 		}
 	}
+
 	
 	/**
 	 * Set the camera in the two camera controllers
@@ -99,9 +96,10 @@ public class CameraModeController implements Observer {
 	public void update(Observable o, Object arg) {
 		if (arg instanceof Config){
 			Config param = (Config) arg;
-			if (param.getName().equals("world.mode"))
-				changeMode(param.getValue());
-			else if (param.getName().equals("mouse.mode")){
+			if (param.getName().equals("world.mode")) {
+				_currentMode = param.getValue();
+				updateMode();
+			} else if (param.getName().equals("mouse.mode")){
 				System.out.println("[CameraController] Change mouse mode to " + param.getValue());
 				_cam2D.setMouseMode(param.getValue());
 				_cam3D.setMouseMode(param.getValue());

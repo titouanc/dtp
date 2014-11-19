@@ -18,6 +18,7 @@ import javax.swing.JButton;
 
 import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
 import be.ac.ulb.infof307.g03.models.Config;
+import be.ac.ulb.infof307.g03.models.Project;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +34,7 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
 	private static final long serialVersionUID = 1L;
 	
 	private ToolsBarController _controller;
+	private Project _project;
 	private JToggleButton _createButton;
 	
 	// buttons actions	
@@ -54,19 +56,20 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
      * It add property to the bar: Buttons, not floatable, lay out
      * @param newControler The view's controller
      */
-    public ToolsBarView(ToolsBarController newControler) {
+    public ToolsBarView(ToolsBarController newControler, Project project) {
     	super("HomePlan Toolbox");
     	
     	_controller = newControler;
+    	_project = project;
     	
     	// define if toolsbar can move
         this.setFloatable(false); 
         // add buttons
         _addButons();
-      
+        
     }
-    
-    /**
+
+	/**
      * The private method used for creating all the buttons 
      */
     private void _addButons(){
@@ -126,8 +129,16 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
      */  
     private void _addButtonsDimension() {
     	JToggleButton secondDimension = new JToggleButton(_2D);
-    	secondDimension.setSelected(true);
     	JToggleButton thirdDimension = new JToggleButton(_3D);
+    	
+    	// restore mode
+    	String worldMode = _project.config("world.mode");
+    	if (worldMode.equals("2D")) {
+    		secondDimension.setSelected(true);
+    	} else if (worldMode.equals("3D")) {
+    		thirdDimension.setSelected(true);
+    	}
+    	
     	// ButtonGroup make the mutually exclusive 
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(secondDimension);

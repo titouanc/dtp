@@ -24,7 +24,7 @@ public class ToolsBarController {
 	 * @param aProject A project object
 	 */
 	public ToolsBarController(Project aProject){
-		_view = new ToolsBarView(this);
+		_view = new ToolsBarView(this,aProject);
 		_project = aProject;
 		_project.addObserver(_view);
         //Sets the default mode
