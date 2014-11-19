@@ -67,14 +67,14 @@ public class MenuBarView extends JMenuBar implements ActionListener {
         
         
         // Build the Edit menu
-        menu = new JMenu("Edit");
-        menu.getAccessibleContext().setAccessibleDescription("Edit the project.");
-        this.add(menu);
+//        menu = new JMenu("Edit");
+//        menu.getAccessibleContext().setAccessibleDescription("Edit the project.");
+//        this.add(menu);
         
         // Build Undo action
-        menu.add(createMenuItem("Undo", KeyEvent.VK_Z, _UNDO, "Undo last action."));
+//        menu.add(createMenuItem("Undo", KeyEvent.VK_Z, _UNDO, "Undo last action."));
         // Build Redo action
-        menu.add(createMenuItem("Redo", KeyEvent.VK_Y, _REDO, "Redo last undo action."));
+//        menu.add(createMenuItem("Redo", KeyEvent.VK_Y, _REDO, "Redo last undo action."));
         
         
         // Build the Help menu
