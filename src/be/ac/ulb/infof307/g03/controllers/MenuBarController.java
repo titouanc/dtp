@@ -4,9 +4,12 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 
+import java.awt.event.WindowEvent;
+
 import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.views.GUI;
 import be.ac.ulb.infof307.g03.views.MenuBarView;
 
 /**
@@ -16,17 +19,18 @@ import be.ac.ulb.infof307.g03.views.MenuBarView;
 public class MenuBarController {
 	private MenuBarView _view;
 	private FileChooserController _fileController;
-	private Project _project;
+	private GUI _gui; // to dispose when top left red cross is clicked
 	
 	/**
 	 * Constructor of MenuBarController.
 	 * It creates the view associated with the controller.
-	 * @param project 
+	 * @param project The main project
+	 * @param gui The main gui frame (for .dispose())
 	 */
-	public MenuBarController(Project project){
-		_project = project;
+	public MenuBarController(Project project,GUI gui){
+		_gui = gui;
 		_view = new MenuBarView(this);
-		_fileController = new FileChooserController(_view, project);
+		_fileController = new FileChooserController(_view, project, gui);
 		
 	}
 	
@@ -53,6 +57,13 @@ public class MenuBarController {
 	}
 	
 	/**
+	 * Handler launched when menu item "Demo" is clicked
+	 */
+	public void onDemo() {
+		_fileController.openDemo();
+	}
+	
+	/**
 	 * Handler launched when menu item "Save" clicked
 	 */
 	public void onSave() {
@@ -71,7 +82,7 @@ public class MenuBarController {
 	 * Handler launched when menu item "Quit" clicked
 	 */
 	public void onQuit() {
-		System.exit(0);
+		_gui.dispatchEvent(new WindowEvent(_gui, WindowEvent.WINDOW_CLOSING));
 	}
 	
 	/**
@@ -86,5 +97,48 @@ public class MenuBarController {
 	 */
 	public void onRedo() {
 		System.out.println("[DEBUG] User clicked on redo");
+	}
+
+	/**
+	 * Handler launcher when menu item "Keybindings" clicked
+	 */
+	public void onKeybindings() {
+		String keybindingsMessage = "General \nCtrl + N : Create a new project\n"
+				+ "Ctrl + O : Open a new Project \n"
+				+ "Ctrl + S : Save current project \n"
+				+ "Ctrl + A : Save As..\n"
+				+ "Ctrl + Q : Quit \n"
+				+ "Ctrl + Z : Undo \n"
+				+ "Ctrl + Y : Redo\n"
+				+ "Ctrl + K : Show this text box \n"
+				+ "Ctrl + H : Show the tools help\n"
+				+ "Arrows : Move\n\n"
+				+ "Mouse wheel : Zoom in/out\n"
+				+ "2D Mode\n O/P : Rotate Left/Right";
+		JOptionPane.showMessageDialog(_view, keybindingsMessage);
+	}
+
+	public void onTools() {
+		String helpMessage = "Floors\n"
+				+ "+ : Go one floor upper\n"
+				+ "- : Go one floor lower\n"
+				+ "new Floor : Create a new floor\n"
+				+ "\n"
+				+ "Dimension\n"
+				+ "2D : Switch to 2D\n"
+				+ "3D : Switch to 3D\n"
+				+ "\n"
+				+ "Cursor Tools\n"
+				+ "Rotation Mode : Drag with left click to rotate\n"
+				+ "Grab Mode : Drag with left click to move\n"
+				+ "Simple Cursor Mode : Used to select\n"
+				+ "New Room : Used to create new rooms; Left click to create corners, Right click to confirm";
+		JOptionPane.showMessageDialog(_view, helpMessage);
+	}
+	public void onAbout() {
+		String aboutMessage = "HomePlans v1.0.0\n\n"
+				+ "Made by F. Hennecker, T. Christophe, J. Schembri, P. Gerard, W. Moulart, B. Rocha Pereira";
+		JOptionPane.showMessageDialog(_view, aboutMessage);
+		
 	}
 }

@@ -5,6 +5,8 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
+
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 
@@ -142,6 +144,55 @@ public class ObjectTreeController {
 				// TODO Auto-generated catch block
 				err.printStackTrace();
 			}
+		}
+	}
+
+	/**
+	 * Unset the visible flag of a Grouped item
+	 * @param grouped
+	 */
+	public void hideGrouped(Grouped grouped){
+		grouped.hide();
+		try {
+			_dao.update(grouped);
+			_dao.notifyObservers();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Set the visible flag of a Grouped item
+	 * @param grouped
+	 */
+	public void showGrouped(Grouped grouped){
+		grouped.show();
+		try {
+			_dao.update(grouped);
+			_dao.notifyObservers();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void setWidth(Wall wall, String userInput){
+		double width = wall.getWidth();
+		try {
+			width = Double.parseDouble(userInput);
+		} catch (NumberFormatException err){
+			JOptionPane.showMessageDialog(_view, "Invalid width " + err.getMessage());
+			return;
+		}
+		if (width <= 0){
+			JOptionPane.showMessageDialog(_view, "Cannot set a non strictly positive width !");
+			return;
+		}
+		wall.setWidth(width);
+		try {
+			_dao.update(wall);
+			_dao.notifyObservers();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 }

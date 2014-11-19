@@ -284,8 +284,8 @@ public class Camera3D implements AnalogListener, ActionListener {
 		_inputManager.addMapping(_ROTATELEFT, 	new KeyTrigger(KeyInput.KEY_O));
 		_inputManager.addMapping(_ROTATERIGHT, 	new KeyTrigger(KeyInput.KEY_P));
 		
-		_inputManager.addMapping(_ZOOMIN, 		new MouseAxisTrigger(2, false));
-        _inputManager.addMapping(_ZOOMOUT, 		new MouseAxisTrigger(2, true));
+		_inputManager.addMapping(_ZOOMIN,	 	new KeyTrigger(KeyInput.KEY_ADD));
+		_inputManager.addMapping(_ZOOMOUT, 		new KeyTrigger(KeyInput.KEY_SUBTRACT));
 
 		// Mouse event mapping
 		_inputManager.addMapping(_MOVEDRAG, 	new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
@@ -293,6 +293,9 @@ public class Camera3D implements AnalogListener, ActionListener {
 		_inputManager.addMapping(_DOWN, 		new MouseAxisTrigger(1, true));
 		_inputManager.addMapping(_LEFT,			new MouseAxisTrigger(0, true));
 		_inputManager.addMapping(_RIGHT,		new MouseAxisTrigger(0, false));
+		
+		_inputManager.addMapping(_ZOOMIN, 		new MouseAxisTrigger(2, false));
+        _inputManager.addMapping(_ZOOMOUT, 		new MouseAxisTrigger(2, true));
 
 		// Add the names to the action listener
 		_inputManager.addListener(	this, 

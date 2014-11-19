@@ -38,7 +38,7 @@ public class DemoProject {
 	
 	/**
 	 * Create a room in a project
-	 * @param dao A geometric Data Acces Object.
+	 * @param dao A geometric Data Access Object.
 	 * @param name The name of this room.
 	 * @param points Contour of this room, in order
 	 * @return A group which is a room.
@@ -49,6 +49,7 @@ public class DemoProject {
 		dao.create(room);
 		dao.create(new Wall(room));
 		dao.create(new Ground(room));
+		dao.create(new Roof(room));
 		
 		for (int i=0; i<points.length; i++)
 			dao.addShapeToGroup(room, new Line(points[i], points[(i+1)%points.length]));

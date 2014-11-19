@@ -5,11 +5,9 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.prefs.Preferences;
 
 import be.ac.ulb.infof307.g03.models.DemoProject;
-import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.Project;
 
 /**
@@ -24,7 +22,7 @@ public class BootController {
 	 * 
 	 */
 	public BootController(){
-		 _prefs = Preferences.userRoot().node(this.getClass().getName());
+		 _prefs = Preferences.userRoot().node("HomePlans");
 	}
 	
 	/**

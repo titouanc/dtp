@@ -13,7 +13,12 @@ import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.collision.CollisionResults;
+import com.jme3.input.InputManager;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.MouseAxisTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -25,15 +30,26 @@ import com.jme3.system.JmeContext;
  * @author fhennecker,pierre,wmoulart
  * @brief Controller of the jMonkeyEngine canvas. It handles both the 3D and 2D view.
  */
-public class WorldController implements ActionListener, Observer {
+public class WorldController implements ActionListener, AnalogListener, Observer {
     
+	// Attributes
     private WorldView _view;
     private Project _project;
-    private boolean _isViewCreated = false;
-    CameraModeController _cameraModeController = null;
+    private CameraModeController _cameraModeController = null;
     private Point _movingPoint = null;
     private List<Point> _inConstruction ;
     private double _currentHeight;
+    
+    // Flags
+    private boolean _isViewCreated = false;
+    
+    // Input alias
+    static private final String _RIGHTCLICK 	= "WC_SelectObject";
+	static private final String _LEFTCLICK 		= "WC_Select";
+	static private final String _LEFT 			= "WC_Left";
+	static private final String _RIGHT			= "WC_Right";
+	static private final String _UP				= "WC_Up";
+	static private final String _DOWN			= "WC_Down";
     
     /**
      * Constructor of WorldController.
@@ -50,11 +66,13 @@ public class WorldController implements ActionListener, Observer {
         _project = project;
         _inConstruction = new LinkedList <Point>();
         Floor currentFloor = (Floor) project.getGeometryDAO().getByUID(project.config("floor.current"));
+        if (currentFloor == null)
+        	currentFloor = project.getGeometryDAO().getFloors().get(0);
         _currentHeight = project.getGeometryDAO().getBaseHeight(currentFloor);
         project.addObserver(this);
     }
-    
-    /**
+
+	/**
      * @return the world view.
      */
     public WorldView getView(){
@@ -118,7 +136,7 @@ public class WorldController implements ActionListener, Observer {
         
         if (results.size() > 0){
         	// Get 3D object from scene
-            Geometry selected = results.getClosestCollision().getGeometry();
+            Geometry selected = results.getClosestCollision().getGeometry();         
             GeometryDAO dao = null;
             try {
                 dao = _project.getGeometryDAO();
@@ -137,7 +155,7 @@ public class WorldController implements ActionListener, Observer {
      * - Update in database and notify
      * - Set current moving point to null
      */
-    public void dropMovingPoint(){
+    public void dropMovingPoint(boolean finalDrop){
     	if (_movingPoint == null)
     		return;
     	
@@ -146,7 +164,8 @@ public class WorldController implements ActionListener, Observer {
         try {
         	GeometryDAO dao = _project.getGeometryDAO();
         	dao.update(_movingPoint);
-        	_movingPoint = null;
+        	if (finalDrop) 
+        		_movingPoint = null;
         	dao.notifyObservers();
         } catch (SQLException err){
         	err.printStackTrace();
@@ -182,16 +201,15 @@ public class WorldController implements ActionListener, Observer {
      * @param grouped The Grouped item to select
      */
     public void selectObject(Grouped grouped) {
-        grouped.toggleSelect();
-        try {
-        	GeometryDAO dao = _project.getGeometryDAO();
-            dao.update(grouped);
-            dao.notifyObservers(grouped);
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+	        try {
+	        	grouped.toggleSelect();
+	        	GeometryDAO dao = _project.getGeometryDAO();
+	            dao.update(grouped);
+	            dao.notifyObservers(grouped);
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
 
     /**
      * Add the points in the Point List when user click to create his wall
@@ -237,6 +255,7 @@ public class WorldController implements ActionListener, Observer {
 	    	}
 	    	dao.create(new Wall(room));
 	    	dao.create(new Ground(room));
+	    	dao.create(new Roof(room));
 	    	dao.addGroupToFloor((Floor) dao.getByUID(_project.config("floor.current")), room);
 	    	dao.notifyObservers();
 	    	_inConstruction.clear();
@@ -247,45 +266,80 @@ public class WorldController implements ActionListener, Observer {
 		_project.config("mouse.mode","dragSelect");
     }
     
+    private void mouseMoved(float value) {
+    	if (_movingPoint != null) {
+    		dropMovingPoint(false);
+    	}
+    }
+    
+	public void inputSetUp(InputManager inputManager){
+		// Mouse event mapping
+		inputManager.addMapping(_RIGHTCLICK, 	new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+		inputManager.addMapping(_LEFTCLICK,  	new MouseButtonTrigger(MouseInput.BUTTON_LEFT ));
+
+		inputManager.addMapping(_UP, 			new MouseAxisTrigger(1, false));
+		inputManager.addMapping(_DOWN, 			new MouseAxisTrigger(1, true));
+		inputManager.addMapping(_LEFT,			new MouseAxisTrigger(0, true));
+		inputManager.addMapping(_RIGHT,			new MouseAxisTrigger(0, false));
+		
+		inputManager.addListener(this, 
+										_RIGHTCLICK, 
+										_LEFTCLICK,
+										
+										_UP,
+										_DOWN,
+										_LEFT,
+										_RIGHT
+								);
+	}
+    
+    private void dragSelectHandler() {
+    	/* Find the Geometric object where we clicked */
+        Geometric clicked = getClickedObject();
+        
+        /* We're not interested if no object */
+        if (clicked == null  )
+        	return;
+        
+        /* If it is a Grouped (Wall, Ground): select it */
+        if (clicked instanceof Grouped)
+        	selectObject((Grouped) clicked);
+        
+        /* If it is a Point: initiate drag'n drop */
+        else if (clicked instanceof Point)
+    		_movingPoint = (Point) clicked;
+    }
+    
     /**
      * Handle click
      */
     @Override
-	public void onAction(String command, boolean mouseDown, float arg2) {
+	public void onAction(String name, boolean value, float tpf) {
+    	// TODO check if it's not better to keep this in an attribute updated when it's modified with observer/observable
     	String mouseMode = _project.config("mouse.mode");
-		boolean leftClick = command.equals(WorldView.LEFT_CLICK);
-		boolean rightClick = command.equals(WorldView.RIGHT_CLICK);
-		boolean mouseUp = ! mouseDown;
 		
-		/* We're moving a point, and mouse button up: stop the point here */
-		if (_movingPoint != null && mouseUp)
-        	dropMovingPoint();
+		if (name.equals(_LEFTCLICK)) {
+			if (value) { // on click
+				if (mouseMode.equals("construct")) { /* We're in construct mode and left-click: add a point */
+					construct();
+				} else if (mouseMode.equals("dragSelect")) {
+					dragSelectHandler();
+				}
+			} else { // on release
+				if (_movingPoint != null) { // We're moving a point, and mouse button up: stop the point here
+					dropMovingPoint(true);
+				}
+			}
+		} else if (name.equals(_RIGHTCLICK)) {
+			if (value) { // on click
+				if (_inConstruction.size() > 0) { // We're building a shape, and right-click: finish shape
+					finalizeConstruct(); 
+				}
+			} else { // on release
+				
+			}
+		}
 		
-		/* We're building a shape, and right-click: finish shape */
-    	else if (mouseDown && rightClick && _inConstruction.size() > 0)
-			finalizeConstruct();
-		
-		/* We're in construct mode and left-click: add a point */
-    	else if (mouseDown && leftClick && mouseMode.equals("construct"))
-    		construct();
-		
-		/* Different things can happen in dragSelect mode */
-		else if (leftClick && mouseMode.equals("dragSelect")){
-			/* Find the Geometric object where we clicked */
-            Geometric clicked = getClickedObject();
-            
-            /* We're not interested if no object */
-            if (clicked == null)
-            	return;
-            
-            /* If it is a Grouped (Wall, Ground): select it */
-            if (clicked instanceof Grouped && mouseDown)
-            	selectObject((Grouped) clicked);
-            
-            /* If it is a Point: initiate drag'n drop */
-            else if (clicked instanceof Point && mouseDown)
-        		_movingPoint = (Point) clicked;
-		}  	
 	}
 
 	@Override
@@ -298,6 +352,19 @@ public class WorldController implements ActionListener, Observer {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	@Override
+	public void onAnalog(String name, float value, float tpf) {
+		if (name.equals(_UP)) {
+			mouseMoved(value);
+		} else if (name.equals(_DOWN)) {
+			mouseMoved(value);
+		} else if (name.equals(_LEFT)) {
+			mouseMoved(value);
+		} else if (name.equals(_RIGHT)) {
+			mouseMoved(value);
 		}
 	}
 }

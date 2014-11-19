@@ -24,7 +24,7 @@ import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
 
 /**
- * @author Titouan Christophe
+ * @author Titouan Christophe, Walter Moulart
  * The geometry class is a DAO for all geometry related models.
  * Handle CRUD operations, and the associations logic
  */
@@ -35,6 +35,7 @@ public class GeometryDAO extends Observable {
 	private Dao<Ground, Integer> _grounds = null;
 	private Dao<Point, Integer> _points = null;
 	private Dao<Floor, Integer> _floors = null;
+	private Dao<Roof,  Integer> _roofs = null;
 	private List<Change> _changes = null;
 	
 	/**
@@ -49,10 +50,11 @@ public class GeometryDAO extends Observable {
 		TableUtils.createTableIfNotExists(database, Ground.class);
 		TableUtils.createTableIfNotExists(database, Wall.class);
 		TableUtils.createTableIfNotExists(database, Floor.class);
+		TableUtils.createTableIfNotExists(database, Roof.class);
 	}
 	
 	/**
-	 * Create a new geometric data acess object that relies on given database
+	 * Create a new geometric data access object that relies on given database
 	 * @param database A valid connection for ORMLite
 	 * @throws SQLException
 	 */
@@ -72,6 +74,7 @@ public class GeometryDAO extends Observable {
 		_walls = DaoManager.createDao(database, Wall.class);
 		_points = DaoManager.createDao(database, Point.class);
 		_floors = DaoManager.createDao(database, Floor.class);
+		_roofs = DaoManager.createDao(database, Roof.class);
 		_changes = new LinkedList<Change>();
 	}
 	
@@ -89,6 +92,7 @@ public class GeometryDAO extends Observable {
 		toCopy.addAll(other._groups.queryForAll());
 		toCopy.addAll(other._walls.queryForAll());
 		toCopy.addAll(other._grounds.queryForAll());
+		toCopy.addAll(other._roofs.queryForAll());
 		int res = 0;
 		for (Geometric g : toCopy)
 			res += create(g);
@@ -125,6 +129,9 @@ public class GeometryDAO extends Observable {
 			res = _walls.create((Wall) object);
 		else if (object instanceof Floor)
 			res = _floors.create((Floor) object);
+		else if (object instanceof Roof){
+			res = _roofs.create((Roof) object);
+		}
 		if (res != 0){
 			setChanged();
 			_changes.add(Change.create(object));
@@ -152,6 +159,9 @@ public class GeometryDAO extends Observable {
 			res = _walls.refresh((Wall) object);
 		else if (object instanceof Floor)
 			res = _floors.refresh((Floor) object);
+		else if (object instanceof Roof){
+			res= _roofs.refresh((Roof)object);
+		}
 		return res;
 	}
 	
@@ -175,6 +185,9 @@ public class GeometryDAO extends Observable {
 			res = _walls.update((Wall) object);
 		else if (object instanceof Floor)
 			res = _floors.update((Floor) object);
+		else if (object instanceof Roof){
+			res= _roofs.update((Roof) object);
+		}
 		if (res != 0){
 			setChanged();
 			_changes.add(Change.update(object));
@@ -191,9 +204,20 @@ public class GeometryDAO extends Observable {
 		if (wall != null)
 			delete(wall);
 			
+		Roof roof = getRoof(grp);
+		if (roof != null)
+			delete(roof);
+		
 		for (Shape shape : getShapesForGroup(grp))
 			delete(shape);
+		
 		return _groups.delete(grp);
+	}
+	
+	private int deleteFloor(Floor floor) throws SQLException {
+		for (Group grp : getGroups(floor))
+			deleteGroup(grp);
+		return _floors.delete(floor);
 	}
 	
 	/**
@@ -215,7 +239,9 @@ public class GeometryDAO extends Observable {
 		else if (object instanceof Wall)
 			res = _walls.delete((Wall) object);
 		else if (object instanceof Floor)
-			res = _floors.delete((Floor) object);
+			res = deleteFloor((Floor) object);
+		else if (object instanceof Roof)
+			res = _roofs.delete((Roof) object);
 		if (res != 0){
 			setChanged();
 			_changes.add(Change.delete(object));
@@ -246,6 +272,8 @@ public class GeometryDAO extends Observable {
 					res = getWall(id);
 				else if (parts[0].equals("flr"))
 					res = getFloor(id);
+				else if (parts[0].equals("roof"))
+					res = getRoof(id);
 			}
 		} catch (SQLException e){
 			e.printStackTrace();
@@ -281,6 +309,9 @@ public class GeometryDAO extends Observable {
 		Ground gnd = getGround(group);
 		if (gnd != null)
 			res.add(gnd);
+		Roof roof = getRoof(group);
+		if (roof !=null)
+			res.add(roof);
 		return res;
 	}
 	
@@ -306,6 +337,10 @@ public class GeometryDAO extends Observable {
 				Ground gnd = getGround(grp);
 				if (gnd != null && ! res.containsKey(gnd.getUID())) 
 					res.put(gnd.getUID(), gnd);
+				
+				Roof roof = getRoof(grp);
+				if (roof != null && ! res.containsKey(roof.getUID()))
+					res.put(roof.getUID(), roof);
 				
 				/* Iterate over parent group */
 				grp = grp.getGroup();
@@ -418,7 +453,14 @@ public class GeometryDAO extends Observable {
 	 * @return a Floor object, or null first floor was given
 	 */
 	public Floor getPreviousFloor(Floor floor){
-		return floor.getPrevious();
+		Floor res = null;
+		if (floor.getPrevious() != null){
+			try {res = getFloor(floor.getPrevious().getId());} 
+			catch (SQLException err){
+				err.printStackTrace();
+			}
+		}
+		return res;
 	}
 	
 	/**
@@ -565,6 +607,37 @@ public class GeometryDAO extends Observable {
 	}
 	
 	/**
+	 * Get a Roof object from the database
+	 * @param roof_id The Roof identifier
+	 * @return a Roof object
+	 * @throws SQLException
+	 */
+	public Roof getRoof(int roof_id) throws SQLException{
+		return _roofs.queryForId(roof_id);
+	}
+	
+	/**
+	 * Retrieve all Roofs from database
+	 * @return A list of all project's roofs
+	 * @throws SQLException
+	 */
+	public List<Roof> getRoofs() throws SQLException{
+		return _roofs.queryForAll();
+	}
+	
+	/**
+	 * Get a Roof object associated with a Group from database
+	 * @param group The associated group
+	 * @return A Roof object, or null
+	 * @throws SQLException
+	 */
+	public Roof getRoof(Group group) throws SQLException {
+		return _roofs.queryForFirst(
+			_roofs.queryBuilder().where().eq("_group_id", group.getId()).prepare()
+		);
+	}
+	
+	/**
 	 * Get all orphan shapes from the database
 	 * @return All Shapes in project that are not in a group
 	 * @throws SQLException 
@@ -595,7 +668,7 @@ public class GeometryDAO extends Observable {
 	public double getBaseHeight(Floor floor){
 		if (floor.isFirstFloor())
 			return 0;
-		Floor bottom = floor.getPrevious();
+		Floor bottom = getPreviousFloor(floor);
 		return getBaseHeight(bottom) + bottom.getHeight();
 	}
 	
@@ -636,6 +709,51 @@ public class GeometryDAO extends Observable {
 		Vector3f vertices[] = new Vector3f[shape_n_points];
 		for (int i=0; i<shape_n_points; i++)
 			vertices[i] = all_points.get(i).toVector3f();
+		
+		/* 2) Polygon triangulation to make a surface */
+		int n_triangles = shape_n_points - 2;
+		int edges[] = new int[3 * n_triangles];
+		for (int i=0; i<n_triangles; i++){
+			edges[3 * i] = 0;
+			edges[3 * i + 1] = i+2;
+			edges[3 * i + 2] = i+1;
+		}
+		
+		Mesh mesh = new Mesh();
+	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
+	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
+	  	mesh.updateBound();
+		return mesh;
+	}
+	
+	/**
+	 * Transform a Roof into a Mesh
+	 * @param roof The ground to transform 
+	 * @return The mesh
+	 * @throws SQLException
+	 * @throws AssertionError If the number of points is less than 3
+	 */
+	public Mesh getRoofAsMesh(Roof roof) throws SQLException, AssertionError {
+		List<Point> all_points = getPointsForShape(roof.getGroup());
+		Floor currentFloor = getFloor(roof.getGroup());
+		
+		int shape_n_points = all_points.size();
+		assert(shape_n_points > 2);
+		
+		/* 0) Closed polygon ? -> we don't need to store both first && last */
+		Point firstPoint = all_points.get(0);
+		Point lastPoint = all_points.get(shape_n_points - 1);
+		if (firstPoint.equals(lastPoint))
+			shape_n_points--;
+		
+		/* 1) Build an array of all points */
+		Vector3f vertices[] = new Vector3f[shape_n_points];
+		for (int i=0; i<shape_n_points; i++){			
+			vertices[i] = all_points.get(i).toVector3f();
+			// Ceilings need to be just a bit below their real height to not clip through the top face of the walls
+			vertices[i].setZ((float) (all_points.get(i).getZ() + currentFloor.getHeight()-0.001));
+		}
+		
 		
 		/* 2) Polygon triangulation to make a surface */
 		int n_triangles = shape_n_points - 2;
