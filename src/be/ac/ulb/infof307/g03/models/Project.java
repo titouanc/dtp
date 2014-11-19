@@ -21,6 +21,7 @@ public class Project extends Observable {
 	private ConnectionSource _db = null;
 	private Dao<Config, String> _config = null;
 	private GeometryDAO _geo = null;
+	private String _filename = null;
 
 	/**
 	 * Create a new Project object (needs to be initialized with load() or create())
@@ -42,6 +43,7 @@ public class Project extends Observable {
 		Floor mainFloor = new Floor(7);
 		getGeometryDAO().create(mainFloor);
 		config("floor.current", mainFloor.getUID());
+		_filename = filename;
 	}
 
 	/**
@@ -52,6 +54,21 @@ public class Project extends Observable {
 	public void load(String filename) throws SQLException {
 		_db = new JdbcConnectionSource("jdbc:sqlite:" + filename);
 		_config = DaoManager.createDao(_db, Config.class);
+		_filename = filename;
+	}
+	
+	/**
+	 * @return True if the project is not an in-memory database
+	 */
+	public Boolean isOnDisk(){
+		return ! _filename.equals(":memory:");
+	}
+	
+	/**
+	 * @return Return the filename for this project
+	 */
+	public String getFilename(){
+		return _filename;
 	}
 	
 	/**
@@ -80,6 +97,8 @@ public class Project extends Observable {
 		_db.close();
 		_db = newDB;
 		_config = newDAO;
+		
+		_filename = filename;
 		
 		return res;
 	}

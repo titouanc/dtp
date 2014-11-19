@@ -34,7 +34,7 @@ public class GUI extends JFrame {
 	 */
 	public GUI(Project project) throws SQLException {
 		// Create and set up the window
-		super("HomePlans");
+		super("HomePlans" + (project.isOnDisk() ? " - " + project.getFilename() : "Unsaved"));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Create the menuBar
