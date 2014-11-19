@@ -22,7 +22,7 @@ tous continuer sur les différents aspects du projet dans une architecture propr
 	\subsubsection{Architecture générale}
 	\begin{figure}[h]
 		\includegraphics[width=\textwidth]{uml/general-architecture.pdf}
-		\caption{\label{fig:overall:components} Diagramme de composants général}
+		\caption{\label{fig:mvc:components} Diagramme de composants général}
 	\end{figure}
 
 	On voit directement l'utilisation du MVC, couplé avec un design pattern
@@ -47,6 +47,11 @@ tous continuer sur les différents aspects du projet dans une architecture propr
 	changement (via le pattern Observer), dont l'éditeur principal qui va alors
 	changer son mode d'affichage.\\
 
+	\begin{figure}[h]
+		\includegraphics[width=\textwidth]{uml/MVC-sequence.eps}
+		\caption{\label{fig:mvc:sequence} Diagramme de séquence MVC}
+	\end{figure}
+
 	\subsubsection{Architecture du modèle}
 	Le modèle est architecturé selon le design pattern Data Access Object.
 	La classe \texttt{Project} a la responsabilité de l'accès au fichier du
@@ -57,7 +62,7 @@ tous continuer sur les différents aspects du projet dans une architecture propr
 
 	Les objets enregistrables par le \texttt{GeometryDAO} implémentent tous
 	l'interface \texttt{Geometric}. On distingue 4 catégories d'objet dans le
-	modèle:
+	modèle (Figure \ref{fig:models:classdiagram}):
 
 	\begin{itemize}
 		\item Les \texttt{Point} représentent une position dans l'espace
