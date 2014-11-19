@@ -269,7 +269,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(null, "Not enough point to draw a ground.", "Error", JOptionPane.WARNING_MESSAGE);
+			//JOptionPane.showMessageDialog(null, "Not enough point to draw a ground.", "Error", JOptionPane.WARNING_MESSAGE);
 			System.out.println("[DEBUG] User try to draw a wall with not enough point");
 			//e.printStackTrace();
 		}
@@ -288,9 +288,9 @@ public class WorldView extends SimpleApplication implements Observer {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (AssertionError e) {
+		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("[DEBUG] User tried to create a wall with not enough point");
 		}
 	}
 	
