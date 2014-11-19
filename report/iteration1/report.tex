@@ -41,7 +41,7 @@ tous continuer sur les différents aspects du projet dans une architecture propr
 \subsection{Architecture}
 
 	\subsubsection{Architecture générale}
-	\begin{figure}[h]
+	\begin{figure}
 		\includegraphics[width=\textwidth]{uml/general-architecture.pdf}
 		\caption{\label{fig:mvc:components} Diagramme de composants général}
 	\end{figure}
@@ -68,7 +68,7 @@ tous continuer sur les différents aspects du projet dans une architecture propr
 	changement (via le pattern Observer), dont l'éditeur principal qui va alors
 	changer son mode d'affichage.\\
 
-	\begin{figure}[h]
+	\begin{figure}
 		\includegraphics[width=\textwidth]{uml/MVC-sequence.eps}
 		\caption{\label{fig:mvc:sequence} Diagramme de séquence MVC}
 	\end{figure}
@@ -100,7 +100,7 @@ tous continuer sur les différents aspects du projet dans une architecture propr
 	le même point, facilitant ainsi la détection de pièces adjacentes, le
 	déplacement d'un coin de mur entre plusieurs pièces, ...
 
-	\begin{figure}[h!]
+	\begin{figure}
 		\includegraphics[width=\textwidth]{uml/models.png}
 		\caption{\label{fig:models:classdiagram} Diagramme de classes du modèle}
 	\end{figure}
@@ -120,7 +120,7 @@ tous continuer sur les différents aspects du projet dans une architecture propr
 	La WorldView est une sous-classe d'une SimpleApplication jMonkey. C'est
 	le canevas 3D à proprement parler. 
 
-	\begin{figure}[h!]
+	\begin{figure}
 		\includegraphics[width=\textwidth]{uml/gui.png}
 		\caption{\label{fig:models:classdiagram} Diagramme de classes de la GUI}
 	\end{figure}
@@ -229,3 +229,12 @@ groupe, comme par exemple le pair programming ou les sprints d'une journée.
 
 	\subsubsection{Swing}
 	Swing reste un excellent choix, nous n'avons pas à nous plaindre.
+
+\subsection{Conclusion - What's next}
+
+La fonctionnalité atteinte lors de cette itération est satisfaisante. Il en est
+de même pour la stabilité de la release. Il reste toutefois quelques légers
+problèmes d'expérience utilisateur, et quelques bugs mineurs persistent.\\
+
+Nous avons déjà prévu de commencer l'itération par une revue complète du code et
+par un refactoring en tout cas du modèle.
