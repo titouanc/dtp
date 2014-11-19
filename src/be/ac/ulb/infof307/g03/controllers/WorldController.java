@@ -204,8 +204,16 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	        try {
 	        	grouped.toggleSelect();
 	        	GeometryDAO dao = _project.getGeometryDAO();
+	        	for (Point p : dao.getPointsForShape(grouped.getGroup())){
+	        		if (grouped.isSelected())
+	        			p.select();
+	        		else
+	        			p.deselect();
+	        		dao.update(p);
+	        	}
 	            dao.update(grouped);
 	            dao.notifyObservers(grouped);
+	            _project.config("floor.current", grouped.getGroup().getFloor().getUID());
 	        } catch (SQLException e) {
 	            e.printStackTrace();
 	        }

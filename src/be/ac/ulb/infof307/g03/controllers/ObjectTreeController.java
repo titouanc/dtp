@@ -90,6 +90,10 @@ public class ObjectTreeController {
 			System.out.println("[TreeController] Unselect " + grouped.getUID());
 			grouped.deselect();
 			try {
+				for (Point p : (_dao.getPointsForShape(grouped.getGroup()))){
+					p.deselect();
+					_dao.update(p);
+				}
 				_dao.update(grouped);
 				_dao.notifyObservers(grouped);
 			} catch (SQLException e) {
@@ -125,6 +129,10 @@ public class ObjectTreeController {
 			System.out.println("[TreeController] Select " + grouped.getUID());
 			grouped.select();
 			try {
+				for (Point p : (_dao.getPointsForShape(grouped.getGroup()))){
+					p.select();
+					_dao.update(p);
+				}
 				_dao.update(grouped);
 				_dao.notifyObservers(grouped);
 			} catch (SQLException e) {
