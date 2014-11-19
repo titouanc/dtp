@@ -85,6 +85,7 @@
 
             <fileset dir="${src}" defaultexcludes="yes">
                 <exclude name="**/*Test*.java"/>
+                <exclude name="**/*.png"/>
             </fileset>
 
             <doctitle><![CDATA[<h1>HomePlan's documentation</h1>]]></doctitle>
