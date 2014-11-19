@@ -279,9 +279,8 @@ public class WorldView extends SimpleApplication implements Observer {
 			return;
 		try {
 			Mesh mesh = _model.getRoofAsMesh(roof);
-			Material mat;
 			Geometry node = new Geometry(roof.getUID(), mesh);
-			mat=_makeBasicMaterial(_getColor(roof));
+			Material mat = _makeBasicMaterial(_getColor(roof));
 			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 			node.setMaterial(mat);
 			rootNode.attachChild(node);
@@ -318,26 +317,20 @@ public class WorldView extends SimpleApplication implements Observer {
 	private ColorRGBA _getColor(Grouped grouped) throws SQLException{
 		ColorRGBA color;
 		if (grouped.isSelected()){
-			color=new ColorRGBA(0f,1.2f,0f, 0.5f);
+			color = new ColorRGBA(0f,1.2f,0f, 0.5f);
 		}
 		else if (grouped instanceof Wall){
-			color=new ColorRGBA(0f,1.2f,0f, 0.5f);
+			color = new ColorRGBA(0f, 1.2f, 0f, 0.5f);
 		}
 		else if (grouped instanceof Roof){
-			int choice=_model.getFloors().size()%3;
-			float nbFloor=(float) ((_model.getFloors().size()/10)+0.1);
-			if (choice==1){
-				color=new ColorRGBA(nbFloor,0f,0f, 0.5f);
-			}
-			else if (choice==2){
-				color=new ColorRGBA(0f,nbFloor,0f, 0.5f);
-			}
-			else{
-				color=new ColorRGBA(0f,0f,nbFloor, 0.5f);
-			}
+			int hash = grouped.getGroup().getFloor().getId();
+			double r = Math.sin(hash)/4 + 0.25;
+			double g = Math.sin(hash + Math.PI/3)/4 + 0.25;
+			double b = Math.sin(hash + 2*Math.PI/3)/4 + 0.25;
+			color = new ColorRGBA((float)r, (float)g, (float)b, 0.3f);
 		}
 		else{
-			color=ColorRGBA.LightGray;	
+			color= ColorRGBA.LightGray;	
 		}
 		return color;
 	}
