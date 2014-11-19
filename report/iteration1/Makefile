@@ -1,8 +1,11 @@
+all: main.tex ../uml/MVC-sequence.eps
+
 main.tex: substories libs
 	/bin/echo "\\chapter{Itération 1}"> $@
 	cat intro.tex >> $@
 	/bin/echo "\\section{Librairies introduites}" >> $@
 	cat libs/*.tex >> $@
+	cat report.tex >> $@
 
 .PHONY: pv substories libs clean
 
@@ -11,6 +14,9 @@ main.tex: substories libs
 
 substories:
 	make -C substories
+
+%.eps: %.dia
+	dia -e $@ $<
 
 libs:
 	make -C libs
