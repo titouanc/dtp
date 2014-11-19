@@ -4,7 +4,6 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -51,9 +50,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	private LinkedList<Change> _queuedChanges = null;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	
-	static public final String RIGHT_CLICK = "SelectObject";
-	static public final String LEFT_CLICK =  "Select";
-	
 	/**
 	 * Constructor of WorldView
 	 * @param newController The view's controller
@@ -66,6 +62,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		_model.addObserver(this);
 		_queuedChanges = new LinkedList<Change>();
 		this.setDisplayStatView(false);
+		
 	}
 	
 	/**
@@ -85,7 +82,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		_makeScene();
 
 		// listen for clicks on the canvas
-		setInput();
+		_controller.inputSetUp(inputManager);
 		
 		// Notify our controller that initialisation is done
 		_controller.onViewCreated();
@@ -114,13 +111,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	
 	public InputManager getInputManager(){
 		return inputManager;
-	}
-	
-	private void setInput(){
-		inputManager.addMapping(RIGHT_CLICK, new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
-		inputManager.addMapping(LEFT_CLICK,  new MouseButtonTrigger(MouseInput.BUTTON_LEFT ));
-		inputManager.addListener(_controller, RIGHT_CLICK);
-		inputManager.addListener(_controller, LEFT_CLICK);
 	}
 	
 	/**
