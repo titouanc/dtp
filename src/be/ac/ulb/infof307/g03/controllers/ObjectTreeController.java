@@ -195,4 +195,31 @@ public class ObjectTreeController {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Handles the input of a user who entered a height for a floor, changes the height
+	 * if the input is valid.
+	 * @param floor the floor that will be updated
+	 * @param userInput
+	 */
+	public void setHeight(Floor floor, String userInput){
+		double height = floor.getHeight();
+		try{
+			height = Double.parseDouble(userInput);
+		} catch (NumberFormatException err){
+			JOptionPane.showMessageDialog(_view, "Invalid height "+ err.getMessage());
+			return;
+		}
+		if (height <= 0){
+			JOptionPane.showMessageDialog(_view, "A floor has to have a positive height!");
+			return;
+		}
+		floor.setHeight(height);
+		try{
+			_dao.update(floor);
+			_dao.notifyObservers();
+		} catch (SQLException e){
+			e.printStackTrace();
+		}
+	}
 }
