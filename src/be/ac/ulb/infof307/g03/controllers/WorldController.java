@@ -38,6 +38,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     private CameraModeController _cameraModeController = null;
     private Point _movingPoint = null;
     private List<Point> _inConstruction ;
+    private Floor _currentFloor = null;
     private double _currentHeight;
     
     // Input alias
@@ -56,16 +57,16 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * @throws SQLException 
      */
     public WorldController(AppSettings settings, Project project) throws SQLException{
-        _view = new WorldView(this, project.getGeometryDAO());
+        _view = new WorldView(this, project);
         _view.setSettings(settings);
         _view.createCanvas();
         _cameraModeController = new CameraModeController(project);
         _project = project;
         _inConstruction = new LinkedList <Point>();
-        Floor currentFloor = (Floor) project.getGeometryDAO().getByUID(project.config("floor.current"));
-        if (currentFloor == null)
-        	currentFloor = project.getGeometryDAO().getFloors().get(0);
-        _currentHeight = project.getGeometryDAO().getBaseHeight(currentFloor);
+        _currentFloor = (Floor) project.getGeometryDAO().getByUID(project.config("floor.current"));
+        if (_currentFloor == null)
+        	_currentFloor = project.getGeometryDAO().getFloors().get(0);
+        _currentHeight = project.getGeometryDAO().getBaseHeight(_currentFloor);
         project.addObserver(this);
     }
 
@@ -180,7 +181,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	 * @param p Get coordinates X and Y into Point
 	 */
 	public void getXYForMouse(Point p){
-		Vector2f myVector= getXYForMouse((float) p.getZ());
+		Vector2f myVector = getXYForMouse((float) _currentHeight);
 		p.setX(myVector.getX());
 		p.setY(myVector.getY());
 	}
@@ -202,7 +203,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	        	}
 	            dao.update(grouped);
 	            dao.notifyObservers(grouped);
-	            _project.config("floor.current", grouped.getGroup().getFloor().getUID());
+	            String floorUID = grouped.getGroup().getFloor().getUID();
+	            if (! _project.config("floor.current").equals(floorUID))
+	            	_project.config("floor.current", floorUID);
 	        } catch (SQLException e) {
 	            e.printStackTrace();
 	        }
@@ -213,7 +216,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      */
     public void construct(){
     	Point lastPoint=new Point();
-		lastPoint.setZ(_currentHeight);
+		lastPoint.setZ(0);
 		getXYForMouse(lastPoint);
 		lastPoint.select();
 		
@@ -342,9 +345,12 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	public void update(Observable arg0, Object arg1) {
 		Config changed = (Config) arg1;
 		if (changed.getName().equals("floor.current")){
+			String newUID = changed.getValue();
+			if (newUID.equals(_currentFloor.getUID()))
+				return;
 	        try {
-	        	Floor currentFloor = (Floor) _project.getGeometryDAO().getByUID(changed.getValue());
-				_currentHeight = _project.getGeometryDAO().getBaseHeight(currentFloor);
+	        	_currentFloor = (Floor) _project.getGeometryDAO().getByUID(changed.getValue());
+				_currentHeight = _project.getGeometryDAO().getBaseHeight(_currentFloor);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

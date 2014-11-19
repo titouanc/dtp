@@ -54,6 +54,7 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 	static private final String _HIDE    = "Hide";
 	static private final String _SHOW    = "Show";
 	static private final String _WIDTH   = "Width";
+	static private final String _HEIGHT	 = "Height";
 	
 	/**
 	 * This class implements a ActionListener to be 
@@ -83,6 +84,9 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 			} else if (cmd.equals(_WIDTH)){
 				String userInput = JOptionPane.showInputDialog("Width ?");
 				_controller.setWidth((Wall) clickedItem, userInput);
+			} else if (cmd.equals(_HEIGHT)){
+				String userInput = JOptionPane.showInputDialog("Height ?");
+				_controller.setHeight((Floor) clickedItem, userInput);
 			}
 		}
 
@@ -179,6 +183,11 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 				menuItem.setActionCommand(_WIDTH);
 				res.add(menuItem);
 			}
+		} else if (geo instanceof Floor){
+			menuItem = new JMenuItem(_HEIGHT);
+			menuItem.addActionListener(listener);
+			menuItem.setActionCommand(_HEIGHT);
+			res.add(menuItem);
 		}
 		
 		return res;

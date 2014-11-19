@@ -233,7 +233,8 @@ public class TestGeometry {
 	@Test
 	public void test_ground_as_mesh() throws SQLException {
 		GeometryDAO geo = new GeometryDAO(_db);
-		create_a_room(geo);
+		Floor floor = new Floor(1);
+		geo.addGroupToFloor(floor, create_a_room(geo));
 		Ground gnd = geo.getGround(1);
 		Mesh mesh = geo.getGroundAsMesh(gnd);
 		assertEquals(4, mesh.getVertexCount());
