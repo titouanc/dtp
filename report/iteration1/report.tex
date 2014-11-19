@@ -38,15 +38,11 @@ tous continuer sur les différents aspects du projet dans une architecture propr
 	mode.\\
 
 	Quand on clique sur le bouton 2D/3D, la ToolsBarView notifie son contrôleur
-	d'un event reçu. Le contrôleur utilise alors le DAO pour dire au modèle que
+	d'un event reçu. Le contrôleur utilise alors le DAO pour enregistrer que
 	le mode a été changé. Le modèle a en effet une valeur de configuration qui
 	stocke le mode. Ce dernier notifie alors toutes les vues concernées du 
 	changement (via le pattern Observer), dont l'éditeur principal qui va alors
 	changer son mode d'affichage.\\
-
-	En plus de cela, comme le modèle dispose de la sauvegarde automatique, 
-	si l'utilisateur quitte ce projet en mode 3D, il le retrouvera en mode 3D,
-	s'il le quitte en mode 2D, il le retrouvera en mode 2D.
 
 	\subsubsection{Architecture du modèle}
 
@@ -128,8 +124,11 @@ groupe, comme par exemple le pair programming ou les sprints d'une journée.
 	de "réparer" les quelques erreurs mises en évidence.
 
 	\subsubsection{Continuous integration}
-	L'intégrité de la compilation était assurée par un outil d'intégration 
-	continue (Travis CI) qui utilisait Ant.
+	Nous avons choisi d'utiliser Travis CI\footnote{\url{http://travis-ci.org}}
+	pour tester tous les commits pushés sur le dépôt, et ainsi assurer
+	l'intégrité de la compilation et des tests, et d'être notifiés des erreurs
+	éventuelles. Ant\footnote{\url{http://ant.apache.org/}} nous permet de
+	compiler le projet hors d'Eclipse.
 
 	\subsubsection{Réunions hebdomadaires}
 	Nous avons réussi à tenir notre objectif d'une réunion hebdomadaire. Le 
