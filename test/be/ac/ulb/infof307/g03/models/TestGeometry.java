@@ -223,11 +223,11 @@ public class TestGeometry {
 		
 		Wall wall = geo.getWall(1);
 		assertEquals(room.getId(), wall.getGroup().getId());
-		assertEquals("Wall<room>", wall.toString());
+		assertEquals("Wall", wall.toString());
 		
 		Ground gnd = geo.getGround(1);
 		assertEquals(room.getId(), gnd.getGroup().getId());
-		assertEquals("Ground<room>", gnd.toString());
+		assertEquals("Ground", gnd.toString());
 	}
 	
 	@Test

@@ -134,7 +134,8 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 			for (Grouped grouped : _dao.getGrouped((Group) root))
 				res.add(_createNode(grouped));
 			for (Shape shape : _dao.getShapesForGroup((Group) root))
-				res.add(_createTree(shape));
+				if (shape instanceof Group)
+					res.add(_createTree(shape));
 		}
 		return res;
 	}
@@ -265,21 +266,6 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 				if (node != null){
 					node.setUserObject(changed);
 					updateUI = true;
-				}
-				/* For groups, also update Grouped items (their toString() is different) */
-				if (changed instanceof Group){
-					Group grp = (Group) changed;
-					try {
-						for (Grouped grouped : _dao.getGrouped(grp)){
-							node = _nodes.get(grouped.getUID());
-							if (node != null){
-								node.setUserObject(grouped);
-								updateUI = true;
-							}
-						}
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
 				}
 			}
 			

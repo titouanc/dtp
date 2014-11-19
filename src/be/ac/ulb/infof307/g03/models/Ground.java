@@ -25,7 +25,7 @@ public class Ground extends Grouped {
 
 	@Override
 	protected final String innerToString() {
-		return "Ground" + getGroup().toString();
+		return "Ground";
 	}
 
 	@Override

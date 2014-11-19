@@ -116,8 +116,9 @@ public abstract class Grouped implements Geometric {
 	}
 	
 	public final String toString(){
+		String prefix = isVisible() ? "" : "*";
 		String suffix = isSelected() ? " [S]" : "";
-		return innerToString() + suffix;
+		return prefix + innerToString() + suffix;
 	}
 	
 	protected abstract String innerToString();

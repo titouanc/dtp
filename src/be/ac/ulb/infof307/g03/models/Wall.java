@@ -50,7 +50,7 @@ public class Wall extends Grouped {
 	}
 	
 	protected String innerToString(){
-		return "Wall" + getGroup().toString();
+		return "Wall";
 	}
 
 	@Override
