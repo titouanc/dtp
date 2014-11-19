@@ -1,4 +1,4 @@
-all: report.pdf stories.pdf
+all: report.pdf stories.pdf meetings.pdf
 
 report.pdf: report.tex iteration1 iteration2 pv
 	pdflatex $<
@@ -20,7 +20,11 @@ stories.tex: iteration1 iteration2
 	/bin/echo "\\title{Histoires utilisateur} \\author{Groupe 3} \\begin{document} \\maketitle" >> $@
 	for f in $^; do echo "\section{$$(echo $$f | sed -E 's/iteration([0-9])/Itération \1/')}" >> $@; cat $$f/substories/*.tex >> $@; done
 	/bin/echo "\\end{document}" >> $@
-	
+
+meetings.pdf: meetings.tex pv
+	pdflatex $<
+	pdflatex $<
+
 pv:
 	make -C $@
 
