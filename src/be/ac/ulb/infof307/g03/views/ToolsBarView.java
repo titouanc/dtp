@@ -36,8 +36,9 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
 	private ToolsBarController _controller;
 	private Project _project;
 	private JToggleButton _createButton;
+	private JToggleButton _cursorButton;
 	
-	// buttons actions	
+	// buttons actions
 	static final private String _NEWELEMENT	= "NewElement";
 	
 	static final private String _FLOOR_UP   = "FloorUp";
@@ -76,23 +77,7 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
         _addButtonsFloor();
         _addButtonsDimension();
         _addButtonRotation();
-        _addForms();
  
-    }
-    
-    /**
-     * The private method used for creating buttons for all the form
-     * possible to add on the project
-     */
-    private void _addForms() {
-        
-        //button group
-    	_createButton = new JToggleButton("New Room");
-    	_createButton.setActionCommand(_NEWELEMENT);
-    	_createButton.setToolTipText("Create a new room");
-    	_createButton.addActionListener(this);
-        this.add(_createButton);       
-        this.addSeparator();
     }
 
     /**
@@ -168,22 +153,24 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
     	String dir = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
     	
     	//Gets the images
-    	Icon _cursorImage = new ImageIcon(dir + "cursor.png");
-    	Icon _grabImage = new ImageIcon(dir + "grab.png");
-    	Icon _rotateImage = new ImageIcon(dir + "rotate.png");
+    	Icon cursorImage = new ImageIcon(dir + "cursor.png");
+    	Icon grabImage = new ImageIcon(dir + "grab.png");
+    	Icon rotateImage = new ImageIcon(dir + "rotate.png");
+    	Icon constructImage = new ImageIcon(dir + "pencil.png");
     	
     	//Creates the buttons
-    	JToggleButton rotate = new JToggleButton(_rotateImage);
-    	JToggleButton hand   = new JToggleButton(_grabImage);
-    	JToggleButton cursor = new JToggleButton(_cursorImage);
+    	JToggleButton rotate = new JToggleButton(rotateImage);
+    	JToggleButton hand   = new JToggleButton(grabImage);
+    	_cursorButton = new JToggleButton(cursorImage);
+    	_createButton = new JToggleButton(constructImage);
 
     	//Creates the button group (so that there's only one button "selected" at a time
         ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(rotate);
+        buttonGroup.add(_cursorButton);
+        buttonGroup.add(_createButton);
         buttonGroup.add(hand);
-        buttonGroup.add(cursor);
+        buttonGroup.add(rotate);
         
- 
         
         //Binds the buttons to an action
         rotate.setActionCommand(_ROTATE);
@@ -194,9 +181,13 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
         hand.setToolTipText("Move screen");
         hand.addActionListener(this);
         
-        cursor.setActionCommand(_CURSOR);
-        cursor.setToolTipText("Move screen");
-        cursor.addActionListener(this);
+        _cursorButton.setActionCommand(_CURSOR);
+        _cursorButton.setToolTipText("Move screen");
+        _cursorButton.addActionListener(this);
+        
+        _createButton.setActionCommand(_NEWELEMENT);
+    	_createButton.setToolTipText("Create a new room");
+    	_createButton.addActionListener(this);
         
         // restore mouse mode / restore button selection
         String mouseMode = _project.config("mouse.mode");
@@ -205,12 +196,13 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
         } else if (mouseMode.equals("dragMove")) {
         	hand.setSelected(true);
     	} else {
-    		cursor.setSelected(true);
+    		_cursorButton.setSelected(true);
     	}
 
-        this.add(rotate);
+        this.add(_cursorButton);
+        this.add(_createButton);
         this.add(hand);
-        this.add(cursor);
+        this.add(rotate);
         this.addSeparator();
         
     }
@@ -264,7 +256,6 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
  		Config param = (Config) arg;
  		if (param.getName().equals("mouse.mode")){
  			_createButton.setEnabled (! param.getValue().equals("construct"));
- 			_createButton.setSelected(  param.getValue().equals("construct"));
  		}
  	}
 

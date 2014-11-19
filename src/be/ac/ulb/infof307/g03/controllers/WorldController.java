@@ -260,7 +260,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		_project.config("mouse.mode","dragSelect");
     }
     
     private void mouseMoved(float value) {
