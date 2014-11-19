@@ -10,7 +10,7 @@ import javax.swing.KeyStroke;
 import be.ac.ulb.infof307.g03.controllers.MenuBarController;
 
 /**
- * @author julianschembri
+ * @author julianschembri, brochape
  * based on Oracle examples
  * 
  * This class implement the menu bar for the HomePlans GUI
@@ -28,6 +28,9 @@ public class MenuBarView extends JMenuBar implements ActionListener {
 	static private final String _QUIT = "quit";
 	static private final String _UNDO = "undo";
 	static private final String _REDO = "redo";
+	static private final String _KEYBINDINGS = "keybindings";
+	static private final String _TOOLS = "tools";
+	static private final String _ABOUT = "about";
 	
 	/**
 	 * Constructor of the class MenuBar
@@ -76,6 +79,9 @@ public class MenuBarView extends JMenuBar implements ActionListener {
         
         // Build the Help menu
         menu = new JMenu("Help");
+        menu.add(createMenuItem("Keybindings", KeyEvent.VK_K, _KEYBINDINGS, "Display the keybindings."));
+        menu.add(createMenuItem("Tools", KeyEvent.VK_T, _TOOLS, "Display the help."));
+        menu.add(createMenuItem("About", KeyEvent.VK_H, _ABOUT, "About HomePlans."));
         menu.getAccessibleContext().setAccessibleDescription("Help.");
         this.add(menu);
     }
@@ -103,6 +109,12 @@ public class MenuBarView extends JMenuBar implements ActionListener {
 			_controller.onUndo();
 		} else if (cmd.equals(_REDO)) {
 			_controller.onRedo();
+		} else if(cmd.equals(_KEYBINDINGS)) {
+			_controller.onKeybindings();
+		} else if(cmd.equals(_TOOLS)) {
+			_controller.onTools();
+		}else if(cmd.equals(_ABOUT)) {
+			_controller.onAbout();
 		}
 	}    
 	

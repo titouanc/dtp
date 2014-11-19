@@ -220,6 +220,7 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
         }
         else if (_FLOOR_NEW.equals(cmd)){
         	_controller.onFloorNew();
+        	_controller.onFloorUp();
         }
         else if (_2D.equals(cmd)) {
         	_controller.on2d() ;

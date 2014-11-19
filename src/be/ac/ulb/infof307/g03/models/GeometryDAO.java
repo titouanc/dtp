@@ -204,15 +204,20 @@ public class GeometryDAO extends Observable {
 		if (wall != null)
 			delete(wall);
 			
+		Roof roof = getRoof(grp);
+		if (roof != null)
+			delete(roof);
+		
 		for (Shape shape : getShapesForGroup(grp))
 			delete(shape);
 		
-		Roof roof = getRoof(grp);
-		if (roof !=null)
-			delete(roof);
-		
-		
 		return _groups.delete(grp);
+	}
+	
+	private int deleteFloor(Floor floor) throws SQLException {
+		for (Group grp : getGroups(floor))
+			deleteGroup(grp);
+		return _floors.delete(floor);
 	}
 	
 	/**
@@ -234,7 +239,7 @@ public class GeometryDAO extends Observable {
 		else if (object instanceof Wall)
 			res = _walls.delete((Wall) object);
 		else if (object instanceof Floor)
-			res = _floors.delete((Floor) object);
+			res = deleteFloor((Floor) object);
 		else if (object instanceof Roof)
 			res = _roofs.delete((Roof) object);
 		if (res != 0){
@@ -448,7 +453,14 @@ public class GeometryDAO extends Observable {
 	 * @return a Floor object, or null first floor was given
 	 */
 	public Floor getPreviousFloor(Floor floor){
-		return floor.getPrevious();
+		Floor res = null;
+		if (floor.getPrevious() != null){
+			try {res = getFloor(floor.getPrevious().getId());} 
+			catch (SQLException err){
+				err.printStackTrace();
+			}
+		}
+		return res;
 	}
 	
 	/**
@@ -656,7 +668,7 @@ public class GeometryDAO extends Observable {
 	public double getBaseHeight(Floor floor){
 		if (floor.isFirstFloor())
 			return 0;
-		Floor bottom = floor.getPrevious();
+		Floor bottom = getPreviousFloor(floor);
 		return getBaseHeight(bottom) + bottom.getHeight();
 	}
 	
