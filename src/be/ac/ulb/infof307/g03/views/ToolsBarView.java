@@ -183,8 +183,7 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
         buttonGroup.add(hand);
         buttonGroup.add(cursor);
         
-        //Set the cursor button as currently being used
-        cursor.setSelected(true);
+ 
         
         //Binds the buttons to an action
         rotate.setActionCommand(_ROTATE);
@@ -199,6 +198,15 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
         cursor.setToolTipText("Move screen");
         cursor.addActionListener(this);
         
+        // restore mouse mode / restore button selection
+        String mouseMode = _project.config("mouse.mode");
+        if (mouseMode.equals("dragRotate")) {
+        	rotate.setSelected(true);
+        } else if (mouseMode.equals("dragMove")) {
+        	hand.setSelected(true);
+    	} else {
+    		cursor.setSelected(true);
+    	}
 
         this.add(rotate);
         this.add(hand);
