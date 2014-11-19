@@ -172,9 +172,9 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
     	} else {
     		//TODO WRONG PATH
     		prefix = "../assets/";
-        	rotate = new JToggleButton("Select Tool");
+        	rotate = new JToggleButton("Rotation Tool");
         	hand   = new JToggleButton("Grab Tool");
-        	_cursorButton = new JToggleButton("Rotation Tool");
+        	_cursorButton = new JToggleButton("Select Tool");
         	_createButton = new JToggleButton("Pencil Tool");
     	}
     	System.out.println(prefix);
