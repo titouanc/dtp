@@ -148,21 +148,39 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
      * Those buttons are mutually exclusive
      */  
     private void _addButtonRotation() {
+    	String classPath = getClass().getResource("ToolsBarView.class").toString();
+    	String prefix = "";
+    	System.out.println(classPath.subSequence(0, 3));
+    	Icon cursorImage ;
+    	Icon grabImage ;
+    	Icon rotateImage;
+    	Icon constructImage;
     	
-    	//Stores the path for the assets
-    	String dir = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
+    	JToggleButton rotate;
+    	JToggleButton hand;
     	
-    	//Gets the images
-    	Icon cursorImage = new ImageIcon(dir + "cursor.png");
-    	Icon grabImage = new ImageIcon(dir + "grab.png");
-    	Icon rotateImage = new ImageIcon(dir + "rotate.png");
-    	Icon constructImage = new ImageIcon(dir + "pencil.png");
+    	if(classPath.subSequence(0, 3).equals("rsr")){
+    		prefix = "/";
+        	cursorImage = new ImageIcon(getClass().getResource(prefix + "cursor.png"));
+        	grabImage = new ImageIcon(getClass().getResource(prefix + "grab.png"));
+        	rotateImage = new ImageIcon(getClass().getResource(prefix + "rotate.png"));
+        	constructImage = new ImageIcon(getClass().getResource(prefix + "pencil.png"));
+        	rotate = new JToggleButton(rotateImage);
+        	hand   = new JToggleButton(grabImage);
+        	_cursorButton = new JToggleButton(cursorImage);
+        	_createButton = new JToggleButton();
+    	} else {
+    		//TODO WRONG PATH
+    		prefix = "../assets/";
+        	rotate = new JToggleButton("Select Tool");
+        	hand   = new JToggleButton("Grab Tool");
+        	_cursorButton = new JToggleButton("Rotation Tool");
+        	_createButton = new JToggleButton("Construc Tool");
+    	}
+    	System.out.println(prefix);
+
     	
     	//Creates the buttons
-    	JToggleButton rotate = new JToggleButton(rotateImage);
-    	JToggleButton hand   = new JToggleButton(grabImage);
-    	_cursorButton = new JToggleButton(cursorImage);
-    	_createButton = new JToggleButton(constructImage);
 
     	//Creates the button group (so that there's only one button "selected" at a time
         ButtonGroup buttonGroup = new ButtonGroup();
