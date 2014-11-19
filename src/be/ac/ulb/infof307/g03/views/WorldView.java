@@ -193,7 +193,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			float w = (float) wall.getWidth();
 			Vector2f segment = new Vector2f(b.x-a.x, b.y-a.y);
 			Box box = new Box(	new Vector3f(-w/2,-w/2,elevation), new Vector3f(segment.length()+w/2, 
-																		w/2, elevation+height));
+																		w/2, elevation+height-0.001f));
 			Geometry wallGeometry = new Geometry(wall.getUID(), box);
 			wallGeometry.setMaterial(_makeLightedMaterial(wall.isSelected() ? new ColorRGBA(0f,1.2f,0f, 0.5f) : ColorRGBA.Gray));
 			// 2) Place the wall at the right place
@@ -228,9 +228,10 @@ public class WorldView extends SimpleApplication implements Observer {
 				_drawWall(wall);
 			for (Ground gnd : _dao.getGrounds())
 				_drawGround(gnd);
-			for (Roof roof : _dao.getRoofs())
-				_drawRoof(roof);
-			
+				for (Roof roof : _dao.getRoofs()){
+					roof.hide();
+					_drawRoof(roof);
+				}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

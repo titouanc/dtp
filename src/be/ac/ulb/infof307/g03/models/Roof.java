@@ -13,6 +13,7 @@ public class Roof extends Grouped {
 	 */
 	public Roof() {
 		super();
+		this.hide();
 	}
 
 	/**
@@ -21,6 +22,7 @@ public class Roof extends Grouped {
 	 */
 	public Roof(Group group) {
 		super(group);
+		this.hide();
 	}
 
 	@Override
