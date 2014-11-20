@@ -5,6 +5,9 @@ package be.ac.ulb.infof307.g03.views;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.SplashScreen;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.swing.*;
@@ -37,6 +40,8 @@ public class GUI extends JFrame {
 		super("HomePlans" + (project.isOnDisk() ? " - " + project.getFilename() : "Unsaved"));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
+        
+        LoadingScreen splashScreen = new LoadingScreen();
         // Create the menuBar
         _menuBar = new MenuBarController(project, this);
         this.setJMenuBar(_menuBar.getView());
