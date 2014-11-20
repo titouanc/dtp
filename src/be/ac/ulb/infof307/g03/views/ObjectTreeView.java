@@ -7,9 +7,13 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +41,7 @@ import be.ac.ulb.infof307.g03.models.*;
  * @author pierre, titou
  * 
  */
-public class ObjectTreeView extends JPanel implements TreeSelectionListener, Observer {
+public class ObjectTreeView extends JPanel implements TreeSelectionListener, KeyListener, Observer {
 	/**
 	 * 
 	 */
@@ -237,10 +241,12 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 		 };
 		 // add the mouse listener to the tree
 		 _tree.addMouseListener(ml);
-		 
-		 
+		
+		_tree.addKeyListener(this);
+		
 		// Add the tree pane to this panel.
 		add(_tree);
+		
 	}
 	
 	private Geometric _getGeometric(TreePath path){
@@ -313,4 +319,26 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Obs
 		if (updateUI)
 			_tree.updateUI();
 	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		if (keyCode==KeyEvent.VK_BACK_SPACE) {
+			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
+			Geometric clickedItem = (Geometric) clickedNode.getUserObject();
+			_controller.deselectElement(clickedItem);
+			_controller.deleteNode(clickedItem);
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		
+	}
+
 }
