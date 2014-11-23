@@ -4,16 +4,12 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.awt.Component;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +19,6 @@ import java.util.Observer;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
@@ -41,18 +36,20 @@ import be.ac.ulb.infof307.g03.models.*;
  * @author pierre, titou
  * 
  */
-public class ObjectTreeView extends JPanel implements TreeSelectionListener, KeyListener, Observer {
+public class ObjectTreeView extends JTree implements TreeSelectionListener, MouseListener, KeyListener, Observer {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JTree _tree;
+	
+	// Attribute
 	private ObjectTreeController _controller;
 	private Project _project;
 	private GeometryDAO _dao;
-	private DefaultMutableTreeNode _root = new DefaultMutableTreeNode("Root");
+	private static DefaultMutableTreeNode _root = new DefaultMutableTreeNode("Root");
 	private Map<String,DefaultMutableTreeNode> _nodes = new HashMap<String,DefaultMutableTreeNode>();
 		
+	// Action alias
 	static private final String _RENAME  = "Rename" ;
 	static private final String _DELETE  = "Delete";
 	static private final String _HIDE    = "Hide";
@@ -73,7 +70,7 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Key
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			String cmd = event.getActionCommand();
-			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
+			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
 	        Geometric clickedItem = (Geometric) clickedNode.getUserObject();
 			if (cmd.equals(_RENAME)) {
 				String name = JOptionPane.showInputDialog("New name ?");
@@ -203,7 +200,8 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Key
 	 * Constructor of the main class ObjectTree
 	 */
 	public ObjectTreeView(ObjectTreeController newController, Project project) {
-		super(new GridLayout(1, 0));
+		super(_root);
+		
 		_controller = newController;
 		_project = project;
 		
@@ -216,38 +214,20 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Key
 		}
 		
 		// Create a tree that allows one selection at a time.
-		_tree = new JTree(_root);
-		_tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-		_tree.setCellRenderer(new GeometricRenderer());
+		getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+		setCellRenderer(new GeometricRenderer());
 		
 		// Listen for when the selection changes
-		_tree.addTreeSelectionListener(this);
-		_tree.setRootVisible(false);
-		_tree.setShowsRootHandles(true);
+		addTreeSelectionListener(this);
+		setRootVisible(false);
+		setShowsRootHandles(true);
+
+		// add the mouse listener to the tree
+		addMouseListener(this);
+		// add key listener
+		addKeyListener(this);
 		
-	    // create a mouse listener
-		MouseListener ml = new MouseAdapter() {
-		     public void mousePressed(MouseEvent e) {
-		    	 // if right click
-		    	 if (SwingUtilities.isRightMouseButton(e)) {
-	    		 	// select the closest element near the click on the tree
-	    	        int row = _tree.getClosestRowForLocation(e.getX(), e.getY());
-	    	        _tree.setSelectionRow(row);
-	    	        DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
-	    	        Geometric clickedItem = (Geometric) clickedNode.getUserObject();
-	    	        JPopupMenu menuForItem = _createPopupMenu(clickedItem);
-	    	        if (menuForItem != null) 
-	    	        	menuForItem.show(e.getComponent(), e.getX(), e.getY());
-	    	    }
-		     }
-		 };
-		 // add the mouse listener to the tree
-		 _tree.addMouseListener(ml);
-		
-		_tree.addKeyListener(this);
-		
-		// Add the tree pane to this panel.
-		add(_tree);
+		updateUI();
 		
 	}
 	
@@ -319,7 +299,7 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Key
 		
 		/* Update GUI if needed */
 		if (updateUI)
-			_tree.updateUI();
+			updateUI();
 	}
 	
 	@Override
@@ -331,7 +311,7 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Key
 	public void keyReleased(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 		if (keyCode==KeyEvent.VK_BACK_SPACE) {
-			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
+			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
 			Geometric clickedItem = (Geometric) clickedNode.getUserObject();
 			_controller.deselectElement(clickedItem);
 			_controller.deleteNode(clickedItem);
@@ -340,6 +320,44 @@ public class ObjectTreeView extends JPanel implements TreeSelectionListener, Key
 
 	@Override
 	public void keyTyped(KeyEvent e) {
+		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// if right click
+		if (SwingUtilities.isRightMouseButton(e)) {
+			// select the closest element near the click on the tree
+			int row = getClosestRowForLocation(e.getX(), e.getY());
+			setSelectionRow(row);
+			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+			Geometric clickedItem = (Geometric) clickedNode.getUserObject();
+			JPopupMenu menuForItem = _createPopupMenu(clickedItem);
+			if (menuForItem != null) 
+				menuForItem.show(e.getComponent(), e.getX(), e.getY());
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 
