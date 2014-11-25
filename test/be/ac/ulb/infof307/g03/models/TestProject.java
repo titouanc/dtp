@@ -108,7 +108,7 @@ public class TestProject {
 	public void test_saveAs_changedHandler() throws SQLException {
 		GeometryDAO dao = proj.getGeometryDAO();
 		/* Pre condition: the project is empty */
-		assertEquals(1, dao.getFloors().size());
+		assertEquals(0, dao.getFloors().size());
 		/* Save copy to file */
 		proj.saveAs(FILENAME);
 		/* THEN create a floor */
@@ -119,6 +119,6 @@ public class TestProject {
 		Project copy = new Project();
 		copy.load(FILENAME);
 		/* It should contain the created Floor */
-		assertEquals(2, copy.getGeometryDAO().getFloors().size());
+		assertEquals(1, copy.getGeometryDAO().getFloors().size());
 	}
 }
