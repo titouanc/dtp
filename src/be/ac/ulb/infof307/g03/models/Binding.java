@@ -3,10 +3,13 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.Where;
 
 /**
  * @author Titouan Christophe
@@ -59,5 +62,9 @@ public class Binding extends Ordered {
 	@Override
 	public String getUIDPrefix() {
 		return "bind";
+	}
+	
+	protected <Subtype> Where<Subtype, Integer> getWhereForUniqueness(Where<Subtype, Integer> initialClause) throws SQLException {
+		return initialClause.and().eq("_room_id", _room.getId());
 	}
 }

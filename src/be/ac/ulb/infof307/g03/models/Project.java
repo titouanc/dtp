@@ -4,6 +4,7 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Observable;
 
 import com.j256.ormlite.dao.Dao;
@@ -39,10 +40,6 @@ public class Project extends Observable {
 		load(filename);
 		TableUtils.createTableIfNotExists(_db, Config.class);
 		GeometryDAO.migrate(_db);
-		
-		Floor mainFloor = new Floor();
-		getGeometryDAO().create(mainFloor);
-		config("floor.current", mainFloor.getUID());
 		_filename = filename;
 	}
 

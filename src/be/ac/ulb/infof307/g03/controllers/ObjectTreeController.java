@@ -90,7 +90,7 @@ public class ObjectTreeController {
 			System.out.println("[TreeController] Unselect " + meshable.getUID());
 			meshable.deselect();
 			try {
-				for (Point p : (_dao.getPointsForShape(meshable.getGroup()))){
+				for (Point p : meshable.getPoints()){
 					p.deselect();
 					_dao.update(p);
 				}
@@ -100,9 +100,10 @@ public class ObjectTreeController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (element instanceof Shape){
+		} else if (element instanceof Room){
+			Room room = (Room) element;
 			try {
-				for (Point p : _dao.getPointsForShape((Shape) element)){
+				for (Point p : room.getPoints()){
 					_dao.refresh(p);
 					p.deselect();
 					_dao.update(p);
@@ -129,7 +130,7 @@ public class ObjectTreeController {
 			System.out.println("[TreeController] Select " + meshable.getUID());
 			meshable.select();
 			try {
-				for (Point p : (_dao.getPointsForShape(meshable.getGroup()))){
+				for (Point p : meshable.getPoints()){
 					p.select();
 					_dao.update(p);
 				}
@@ -139,9 +140,10 @@ public class ObjectTreeController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (element instanceof Shape){
+		} else if (element instanceof Room){
 			try {
-				for (Point p : _dao.getPointsForShape((Shape) element)){
+				Room room = (Room) element;
+				for (Point p : room.getPoints()){
 					_dao.refresh(p);
 					p.select();
 					_dao.update(p);

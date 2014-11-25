@@ -409,7 +409,19 @@ public class GeometryDAO extends Observable {
 	public List<Floor> getFloorsAbove(Floor floor) throws SQLException{
 		if (floor == null)
 			return getFloors();
-		return floor.getFollowing(_floors);
+		return _floors.query(floor.getQueryForFollowing(_floors));
+	}
+	
+	public Floor getNextFloor(Floor floor) throws SQLException {
+		if (floor == null)
+			return getFloorsAbove(null).get(0);
+		return _floors.queryForFirst(floor.getQueryForFollowing(_floors));
+	}
+	
+	public Floor getPreviousFloor(Floor floor) throws SQLException {
+		if (floor == null)
+			return getFloorsAbove(null).get(0);
+		return _floors.queryForFirst(floor.getQueryForLast(_floors));
 	}
 	
 	/**
@@ -421,7 +433,16 @@ public class GeometryDAO extends Observable {
 	public List<Floor> getFloorsBelow(Floor floor) throws SQLException{
 		if (floor == null)
 			return getFloors();
-		return floor.getPreceding(_floors);
+		return _floors.query(floor.getQueryForPreceeding(_floors));
+	}
+	
+	public Floor createFloorOnTop(double height) throws SQLException{
+		Floor res = new Floor(height);
+		Floor top = _floors.queryForFirst(res.getQueryForLast(_floors));
+		res.setIndex((top != null) ? top.getIndex()+1 : 0);
+		create(res);
+		_floors.refresh(res);
+		return res;
 	}
 	
 	/**

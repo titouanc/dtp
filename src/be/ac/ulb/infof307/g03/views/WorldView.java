@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
@@ -225,7 +226,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void _drawWall(Wall wall){
 		if (! wall.isVisible())
 			return;
-		Material material = _makeLightedMaterial(wall.isSelected() ? new ColorRGBA(0f,1.2f,0f, 0.5f) : ColorRGBA.Gray);
+		Material material = _makeLightedMaterial(_getColor(wall));
 		rootNode.attachChild(wall.toSpatial(material));
 	}
 	
@@ -265,12 +266,12 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * @throws SQLException 
 	 */
 	private ColorRGBA _getColor(Meshable meshable) {
-		ColorRGBA color;
+		ColorRGBA color = ColorRGBA.Gray;
 		if (meshable.isSelected()){
 			color = new ColorRGBA(0f,1.2f,0f, 0.5f);
 		}
-		else if (meshable instanceof Wall){
-			color = new ColorRGBA(0f, 1.2f, 0f, 0.5f);
+		else if (meshable instanceof Ground) {
+			color = ColorRGBA.LightGray;	
 		}
 		else if (meshable instanceof Roof){
 			Roof roof = (Roof) meshable;
@@ -279,9 +280,6 @@ public class WorldView extends SimpleApplication implements Observer {
 			double g = Math.sin(hash + Math.PI/3)/4 + 0.25;
 			double b = Math.sin(hash + 2*Math.PI/3)/4 + 0.25;
 			color = new ColorRGBA((float)r, (float)g, (float)b, 0.3f);
-		}
-		else{
-			color= ColorRGBA.LightGray;	
 		}
 		return color;
 	}
@@ -306,8 +304,13 @@ public class WorldView extends SimpleApplication implements Observer {
 		    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
 		    rootNode.attachChild(sphere);
 			for (Room room : point.getBoundRooms()){
+				try {
+					_dao.refresh(room);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 				for (Meshable meshable : room.getMeshables())
-				_updateMeshable(Change.update(meshable));
+					_updateMeshable(Change.update(meshable));
 			}
 		}
 	}

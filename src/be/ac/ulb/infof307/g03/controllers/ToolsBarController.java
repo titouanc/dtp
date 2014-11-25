@@ -115,10 +115,7 @@ public class ToolsBarController {
     public void onFloorNew(){
 		try {
 			GeometryDAO dao = _project.getGeometryDAO();
-			List<Floor>floors = dao.getFloors();
-			Floor newFloor = new Floor(7);
-	    	newFloor.setPrevious(floors.get(floors.size() - 1));
-	    	dao.create(newFloor);
+			dao.createFloorOnTop(7);
 	    	dao.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();

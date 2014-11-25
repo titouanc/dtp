@@ -29,37 +29,42 @@ public class Floor extends Ordered {
 		super();
 	}
 	
+	public Floor(double height){
+		super();
+		setHeight(height);
+	}
+	
 	/**
 	 * @param height The height to be set.
 	 */
-	public void setHeight(double height){
+	public final void setHeight(double height){
 		_height = height;
 	}
 	
 	/**
 	 * @return The height of the floor (height between roof and floor)
 	 */
-	public double getHeight(){
+	public final double getHeight(){
 		return _height;
 	}
 	
 	/**
 	 * @return The base height of this floor (absolute elevation of the floor)
 	 */
-	public double getBaseHeight() {
+	public final double getBaseHeight() {
 		return _baseHeight;
 	}
 	
-	public void setBaseHeight(double baseHeight){
+	public final void setBaseHeight(double baseHeight){
 		_baseHeight = baseHeight;
 	}
 	
-	public String toString(){
+	public final String toString(){
 		return String.format("Floor %d", getIndex());
 	}
 
 	@Override
-	public String getUIDPrefix() {
+	public final String getUIDPrefix() {
 		return "flr";
 	}
 	

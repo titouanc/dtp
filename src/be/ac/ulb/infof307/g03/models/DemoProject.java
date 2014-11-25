@@ -29,7 +29,11 @@ public class DemoProject {
 			  d = new Point(0, 12, 0),
 			  e = new Point(-5, -1, 0);
 		
-		Floor groundFloor = (Floor) proj.getGeometryDAO().getByUID("flr-1");
+		Floor groundFloor = new Floor(7);
+		geo.create(groundFloor);
+		geo.refresh(groundFloor);
+		proj.config("floor.current", groundFloor.getUID());
+		
 		createRoom(groundFloor, "Irregular room", a, b, c, d);
 		createRoom(groundFloor, "Triangular room", a, e, d);
 		geo.notifyObservers();
@@ -46,10 +50,10 @@ public class DemoProject {
 	 */
 	public static Room createRoom(Floor floor, String name, Point...points) throws SQLException{
 		Room room = new Room(name);
-		floor.getRooms().add(room);
 		room.setWall(new Wall());
 		room.setGround(new Ground());
 		room.setRoof(new Roof());
+		floor.getRooms().add(room);
 		floor.getRooms().refresh(room);
 		
 		room.addPoints(points);
