@@ -79,9 +79,9 @@ public class ObjectTreeView extends JTree implements TreeSelectionListener, Mous
 				_controller.deselectElement(clickedItem);
 				_controller.deleteNode(clickedItem);
 			} else if (cmd.equals(_SHOW)){
-				_controller.showGrouped((Grouped) clickedItem);
+				_controller.showGrouped((Meshable) clickedItem);
 			} else if (cmd.equals(_HIDE)){
-				_controller.hideGrouped((Grouped) clickedItem);
+				_controller.hideGrouped((Meshable) clickedItem);
 			} else if (cmd.equals(_WIDTH)){
 				String userInput = JOptionPane.showInputDialog("Width ?");
 				_controller.setWidth((Wall) clickedItem, userInput);
@@ -113,8 +113,8 @@ public class ObjectTreeView extends JTree implements TreeSelectionListener, Mous
                 boolean hasFocus){
 			if (value instanceof DefaultMutableTreeNode)
 				value = ((DefaultMutableTreeNode) value).getUserObject();
-			if (value instanceof Grouped){
-				Grouped item = (Grouped) value;
+			if (value instanceof Meshable){
+				Meshable item = (Meshable) value;
 				sel = item.isSelected();
 			} else if (value instanceof Floor){
 				Floor fl = (Floor) value;
@@ -128,19 +128,18 @@ public class ObjectTreeView extends JTree implements TreeSelectionListener, Mous
 	private DefaultMutableTreeNode _createNode(Geometric item){
 		DefaultMutableTreeNode res = new DefaultMutableTreeNode(item.toString());
 		res.setUserObject(item);
-		res.setAllowsChildren(! item.isLeaf());
+		boolean hasChildren = (item instanceof Room || item instanceof Floor);
+		res.setAllowsChildren(hasChildren);
 		_nodes.put(item.getUID(), res);
 		return res;
 	}
 	
 	private DefaultMutableTreeNode _createTree(Geometric root) throws SQLException{
 		DefaultMutableTreeNode res = _createNode(root);
-		if (root instanceof Group){
-			for (Grouped grouped : _dao.getGrouped((Group) root))
-				res.add(_createNode(grouped));
-			for (Shape shape : _dao.getShapesForGroup((Group) root))
-				if (shape instanceof Group)
-					res.add(_createTree(shape));
+		if (root instanceof Room){
+			Room room = (Room) root;
+			for (Meshable meshable : room.getMeshables())
+				res.add(_createNode(meshable));
 		}
 		return res;
 	}
@@ -148,8 +147,8 @@ public class ObjectTreeView extends JTree implements TreeSelectionListener, Mous
 	private void _createTree() throws SQLException{
 		for (Floor floor : _dao.getFloors()){
 			DefaultMutableTreeNode floorNode = _createNode(floor);
-			for (Group group : _dao.getGroups(floor))
-				floorNode.add(_createTree(group));
+			for (Room room : _dao.getRooms(floor))
+				floorNode.add(_createTree(room));
 			_root.add(floorNode);
 		}
 	}
@@ -159,7 +158,7 @@ public class ObjectTreeView extends JTree implements TreeSelectionListener, Mous
 	 * @param item
 	 */
 	private JPopupMenu _createPopupMenu(Geometric geo){
-		if (geo instanceof Line)
+		if (geo instanceof Binding)
 			return null;
 		
 		PopupListener listener = new PopupListener();
@@ -169,13 +168,13 @@ public class ObjectTreeView extends JTree implements TreeSelectionListener, Mous
 		menuItem.setActionCommand(_DELETE);
 		res.add(menuItem);
 		
-		if (geo instanceof Group){
+		if (geo instanceof Room){
 			menuItem = new JMenuItem(_RENAME);
 			menuItem.addActionListener(listener);
 			menuItem.setActionCommand(_RENAME);
 			res.add(menuItem);
-		} else if (geo instanceof Grouped){
-			String action = ((Grouped) geo).isVisible() ? _HIDE : _SHOW;
+		} else if (geo instanceof Meshable){
+			String action = ((Meshable) geo).isVisible() ? _HIDE : _SHOW;
 			menuItem = new JMenuItem(action);
 			menuItem.addActionListener(listener);
 			menuItem.setActionCommand(action);
@@ -282,15 +281,12 @@ public class ObjectTreeView extends JTree implements TreeSelectionListener, Mous
 				if (changed instanceof Floor){
 					_root.add(newNode);
 					updateUI = true;
-				} else if (changed instanceof Grouped){
-					_nodes.get(((Grouped) changed).getGroup().getUID()).add(newNode);
+				} else if (changed instanceof Meshable){
+					_nodes.get(((Meshable) changed).getRoom().getUID()).add(newNode);
 					updateUI = true;
-				} else if (changed instanceof Group){
-					Group grp = (Group) changed;
-					if (grp.getGroup() != null)
-						_nodes.get(grp.getGroup().getUID()).add(newNode);
-					else if (grp.getFloor() != null)
-						_nodes.get(grp.getFloor().getUID()).add(newNode);
+				} else if (changed instanceof Room){
+					Room room = (Room) changed;
+					_nodes.get(room.getFloor().getUID()).add(newNode);
 					updateUI = true;
 				}
 				

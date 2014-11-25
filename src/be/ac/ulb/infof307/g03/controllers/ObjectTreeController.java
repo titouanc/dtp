@@ -49,8 +49,8 @@ public class ObjectTreeController {
 	 * 
 	 */
 	public void renameNode(Object object, String name){
-		if (object instanceof Group) {
-			Group grp = (Group) object;
+		if (object instanceof Room) {
+			Room grp = (Room) object;
 			grp.setName(name);
 			try {
 				_dao.update(grp);
@@ -81,21 +81,21 @@ public class ObjectTreeController {
 	}
 
 	/**
-	 * Unset the select flag of a Grouped element
+	 * Unset the select flag of a Meshable element
 	 * @param element
 	 */
 	public void deselectElement(Object element) {
-		if (element instanceof Grouped){
-			Grouped grouped = (Grouped) element;
-			System.out.println("[TreeController] Unselect " + grouped.getUID());
-			grouped.deselect();
+		if (element instanceof Meshable){
+			Meshable meshable = (Meshable) element;
+			System.out.println("[TreeController] Unselect " + meshable.getUID());
+			meshable.deselect();
 			try {
-				for (Point p : (_dao.getPointsForShape(grouped.getGroup()))){
+				for (Point p : (_dao.getPointsForShape(meshable.getGroup()))){
 					p.deselect();
 					_dao.update(p);
 				}
-				_dao.update(grouped);
-				_dao.notifyObservers(grouped);
+				_dao.update(meshable);
+				_dao.notifyObservers(meshable);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -117,24 +117,24 @@ public class ObjectTreeController {
 	}
 
 	/**
-	 * Set the select flag of a Grouped element
+	 * Set the select flag of a Meshable element
 	 * @param element
 	 */
 	public void selectElement(Object element) {
 		if (element instanceof Floor){
 			Floor current = (Floor) element;
 			_project.config("floor.current", current.getUID());
-		} else if (element instanceof Grouped){
-			Grouped grouped = (Grouped) element;
-			System.out.println("[TreeController] Select " + grouped.getUID());
-			grouped.select();
+		} else if (element instanceof Meshable){
+			Meshable meshable = (Meshable) element;
+			System.out.println("[TreeController] Select " + meshable.getUID());
+			meshable.select();
 			try {
-				for (Point p : (_dao.getPointsForShape(grouped.getGroup()))){
+				for (Point p : (_dao.getPointsForShape(meshable.getGroup()))){
 					p.select();
 					_dao.update(p);
 				}
-				_dao.update(grouped);
-				_dao.notifyObservers(grouped);
+				_dao.update(meshable);
+				_dao.notifyObservers(meshable);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -156,13 +156,13 @@ public class ObjectTreeController {
 	}
 
 	/**
-	 * Unset the visible flag of a Grouped item
-	 * @param grouped
+	 * Unset the visible flag of a Meshable item
+	 * @param meshable
 	 */
-	public void hideGrouped(Grouped grouped){
-		grouped.hide();
+	public void hideGrouped(Meshable meshable){
+		meshable.hide();
 		try {
-			_dao.update(grouped);
+			_dao.update(meshable);
 			_dao.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -170,13 +170,13 @@ public class ObjectTreeController {
 	}
 	
 	/**
-	 * Set the visible flag of a Grouped item
-	 * @param grouped
+	 * Set the visible flag of a Meshable item
+	 * @param meshable
 	 */
-	public void showGrouped(Grouped grouped){
-		grouped.show();
+	public void showGrouped(Meshable meshable){
+		meshable.show();
 		try {
-			_dao.update(grouped);
+			_dao.update(meshable);
 			_dao.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();

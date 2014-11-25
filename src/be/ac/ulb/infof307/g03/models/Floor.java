@@ -3,7 +3,9 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
@@ -11,35 +13,20 @@ import com.j256.ormlite.table.DatabaseTable;
  * @author Titouan Christophe
  */
 @DatabaseTable
-public class Floor implements Geometric {
-	@DatabaseField(generatedId = true)
-	private int _id = 0;
-	@DatabaseField(foreign = true, canBeNull = true, foreignAutoRefresh = true)
-	private Floor _previous = null;
+public class Floor extends Ordered {
 	@DatabaseField
-	double _height = 1.0;
+	private double _height = 1.0;
+	@DatabaseField
+	private double _baseHeight = 0.0;
+	@ForeignCollectionField
+	private ForeignCollection<Room> _rooms;
 	
 	/**
 	 * Constructor of the class Floor.
 	 * The constructor is empty
 	 */
 	public Floor(){
-		
-	}
-	
-	/**
-	 * Constructor of the class Floor.
-	 * @param height The height of the floor.
-	 */
-	public Floor(double height){
-		setHeight(height);
-	}
-	
-	/**
-	 * @return The floor id
-	 */
-	public int getId(){
-		return _id;
+		super();
 	}
 	
 	/**
@@ -50,50 +37,33 @@ public class Floor implements Geometric {
 	}
 	
 	/**
-	 * @return The height of the floor
+	 * @return The height of the floor (height between roof and floor)
 	 */
 	public double getHeight(){
 		return _height;
 	}
 	
 	/**
-	 * Set a given floor as previous (below) this one
-	 * @param prev
+	 * @return The base height of this floor (absolute elevation of the floor)
 	 */
-	public void setPrevious(Floor prev){
-		_previous = prev;
+	public double getBaseHeight() {
+		return _baseHeight;
 	}
 	
-	/**
-	 * @return The previous (below) floor
-	 */
-	public Floor getPrevious(){
-		return _previous;
-	}
-	
-	/**
-	 * @return True if this floor has no floor below
-	 */
-	public Boolean isFirstFloor(){
-		return _previous == null;
-	}
-	
-	@Override
-	public Group getGroup() {
-		return null;
-	}
-
-	@Override
-	public Boolean isLeaf() {
-		return false;
-	}
-
-	@Override
-	public String getUID() {
-		return String.format("flr-%d", getId());
+	public void setBaseHeight(double baseHeight){
+		_baseHeight = baseHeight;
 	}
 	
 	public String toString(){
-		return String.format("Floor %d", getId());
+		return String.format("Floor %d", getIndex());
+	}
+
+	@Override
+	public String getUIDPrefix() {
+		return "flr";
+	}
+	
+	public final ForeignCollection<Room> getRooms(){
+		return _rooms;
 	}
 }

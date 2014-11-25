@@ -39,7 +39,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     private Point _movingPoint = null;
     private List<Point> _inConstruction ;
     private Floor _currentFloor = null;
-    private double _currentHeight;
     
     // Input alias
     static private final String _RIGHTCLICK 	= "WC_SelectObject";
@@ -66,7 +65,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         _currentFloor = (Floor) project.getGeometryDAO().getByUID(project.config("floor.current"));
         if (_currentFloor == null)
         	_currentFloor = project.getGeometryDAO().getFloors().get(0);
-        _currentHeight = project.getGeometryDAO().getBaseHeight(_currentFloor);
         project.addObserver(this);
     }
 
@@ -75,6 +73,10 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      */
     public WorldView getView(){
         return _view;
+    }
+    
+    public Floor getCurrentFloor(){
+    	return _currentFloor;
     }
     
     /**
@@ -181,29 +183,29 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	 * @param p Get coordinates X and Y into Point
 	 */
 	public void getXYForMouse(Point p){
-		Vector2f myVector = getXYForMouse((float) _currentHeight);
+		Vector2f myVector = getXYForMouse((float) _currentFloor.getBaseHeight());
 		p.setX(myVector.getX());
 		p.setY(myVector.getY());
 	}
     
     /**
-     * Toggle selection for a Grouped item, save to database and notify observers
-     * @param grouped The Grouped item to select
+     * Toggle selection for a Meshable item, save to database and notify observers
+     * @param meshable The Meshable item to select
      */
-    public void selectObject(Grouped grouped) {
+    public void selectObject(Meshable meshable) {
 	        try {
-	        	grouped.toggleSelect();
+	        	meshable.toggleSelect();
 	        	GeometryDAO dao = _project.getGeometryDAO();
-	        	for (Point p : dao.getPointsForShape(grouped.getGroup())){
-	        		if (grouped.isSelected())
+	        	for (Point p : meshable.getPoints()){
+	        		if (meshable.isSelected())
 	        			p.select();
 	        		else
 	        			p.deselect();
 	        		dao.update(p);
 	        	}
-	            dao.update(grouped);
-	            dao.notifyObservers(grouped);
-	            String floorUID = grouped.getGroup().getFloor().getUID();
+	            dao.update(meshable);
+	            dao.notifyObservers(meshable);
+	            String floorUID = meshable.getRoom().getFloor().getUID();
 	            if (! _project.config("floor.current").equals(floorUID))
 	            	_project.config("floor.current", floorUID);
 	        } catch (SQLException e) {
@@ -241,26 +243,22 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * Mesh the points together for the walls creation
      */
     public void finalizeConstruct(){
-    	Group room = new Group();
+    	Room room = new Room();
     	GeometryDAO dao;
 		try {
 			dao = _project.getGeometryDAO();
 			dao.create(room);
 			room.setName(room.getUID());
+			room.setWall(new Wall());
+			room.setGround(new Ground());
+			room.setRoof(new Roof());
+			room.getRoof().hide();
 			dao.update(room);
-	    	for (int i=0; i<_inConstruction.size(); i++){
-	    		_inConstruction.get(i).deselect();
-	    		dao.update(_inConstruction.get(i));
-				dao.addShapeToGroup(room, new Line(_inConstruction.get(i), _inConstruction.get((i+1)%_inConstruction.size())));
-	    	}
-	    	dao.create(new Wall(room));
-	    	dao.create(new Ground(room));
-	    	dao.create(new Roof(room));
-	    	dao.addGroupToFloor((Floor) dao.getByUID(_project.config("floor.current")), room);
+			room.addPoints((Point[]) _inConstruction.toArray());
+	    	dao.addRoomToFloor(_currentFloor, room);
 	    	dao.notifyObservers();
 	    	_inConstruction.clear();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -300,9 +298,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         if (clicked == null  )
         	return;
         
-        /* If it is a Grouped (Wall, Ground): select it */
-        if (clicked instanceof Grouped)
-        	selectObject((Grouped) clicked);
+        /* If it is a Meshable (Wall, Ground): select it */
+        if (clicked instanceof Meshable)
+        	selectObject((Meshable) clicked);
         
         /* If it is a Point: initiate drag'n drop */
         else if (clicked instanceof Point)
@@ -350,7 +348,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				return;
 	        try {
 	        	_currentFloor = (Floor) _project.getGeometryDAO().getByUID(changed.getValue());
-				_currentHeight = _project.getGeometryDAO().getBaseHeight(_currentFloor);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

@@ -86,35 +86,6 @@ public class TestProject {
 	}
 	
 	/**
-	 * Test that associations have been kept when
-	 * a project is copied
-	 * @throws SQLException
-	 */
-	@Test
-	public void test_saveAs_associations() throws SQLException {
-		GeometryDAO geo = proj.getGeometryDAO();
-		Group room = new Group("room");
-		Point x = new Point(1, 0, 0),
-		      y = new Point(0, 1, 0),
-		      z = new Point(0, 0, 1);
-		
-		geo.addShapeToGroup(room, new Line(x, y));
-		geo.addShapeToGroup(room, new Line(y, z));
-		geo.addShapeToGroup(room, new Line(z, x));
-		
-		proj.saveAs(FILENAME);
-		Project copy = new Project();
-		copy.load(FILENAME);
-		
-		GeometryDAO dao = copy.getGeometryDAO();
-		Group copyRoom = dao.getGroup("room");
-		assertNotNull(copyRoom);
-		
-		List<Shape> copyRoomContent = dao.getShapesForGroup(copyRoom);
-		assertEquals(3, copyRoomContent.size());
-	}
-	
-	/**
 	 * Test that config values are copied
 	 * @throws SQLException
 	 */
@@ -137,15 +108,17 @@ public class TestProject {
 	public void test_saveAs_changedHandler() throws SQLException {
 		GeometryDAO dao = proj.getGeometryDAO();
 		/* Pre condition: the project is empty */
-		assertEquals(0, dao.getRootNodes().size());
+		assertEquals(1, dao.getFloors().size());
 		/* Save copy to file */
 		proj.saveAs(FILENAME);
-		/* THEN create a group */
-		dao.create(new Group());
+		/* THEN create a floor */
+		Floor newFloor = new Floor();
+		newFloor.setIndex(2);
+		dao.create(newFloor);
 		/* Open the newly created file as a new projet */
 		Project copy = new Project();
 		copy.load(FILENAME);
 		/* It should contain the created Floor */
-		assertEquals(1, copy.getGeometryDAO().getRootNodes().size());
+		assertEquals(2, copy.getGeometryDAO().getFloors().size());
 	}
 }
