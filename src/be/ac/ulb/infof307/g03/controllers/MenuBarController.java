@@ -4,6 +4,8 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JOptionPane;
@@ -16,10 +18,22 @@ import be.ac.ulb.infof307.g03.views.MenuBarView;
  * @author fhennecker, julian, pierre
  * @brief Controller of the MenuBar
  */
-public class MenuBarController {
+public class MenuBarController implements ActionListener {
 	private MenuBarView _view;
 	private FileChooserController _fileController;
 	private GUI _gui; // to dispose when top left red cross is clicked
+	
+	static public final String NEW  = "new" ;
+	static public final String OPEN = "open";
+	static public final String DEMO = "demo";
+	static public final String SAVE = "save";
+	static public final String SAVE_AS = "saveAs";
+	static public final String QUIT = "quit";
+	static public final String UNDO = "undo";
+	static public final String REDO = "redo";
+	static public final String KEYBINDINGS = "keybindings";
+	static public final String TOOLS = "tools";
+	static public final String ABOUT = "about";
 	
 	/**
 	 * Constructor of MenuBarController.
@@ -141,4 +155,36 @@ public class MenuBarController {
 		JOptionPane.showMessageDialog(_view, aboutMessage);
 		
 	}
+	
+	 /**
+     * Inherited method from interface ActionListener
+     * @param event A mouse click
+     */ 
+    @Override
+	public void actionPerformed(ActionEvent event) {
+		String cmd = event.getActionCommand();
+		if (cmd.equals(NEW)) {
+			onNew();
+		} else if (cmd.equals(OPEN)) {
+			onOpen();
+		} else if (cmd.equals(DEMO)) {
+			onDemo();
+		} else if (cmd.equals(SAVE)) {
+			onSave();
+		} else if (cmd.equals(SAVE_AS)) {
+			onSaveAs();
+		} else if (cmd.equals(QUIT)) {
+			onQuit();
+		} else if (cmd.equals(UNDO)) {
+			onUndo();
+		} else if (cmd.equals(REDO)) {
+			onRedo();
+		} else if(cmd.equals(KEYBINDINGS)) {
+			onKeybindings();
+		} else if(cmd.equals(TOOLS)) {
+			onTools();
+		}else if(cmd.equals(ABOUT)) {
+			onAbout();
+		}
+	} 
 }
