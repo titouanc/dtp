@@ -122,7 +122,7 @@ tous continuer sur les différents aspects du projet dans une architecture propr
 
 	\begin{figure}
 		\includegraphics[width=\textwidth]{uml/gui.png}
-		\caption{\label{fig:models:classdiagram} Diagramme de classes de la GUI}
+		\caption{\label{fig:GUI:classdiagram} Diagramme de classes de la GUI}
 	\end{figure}
 
 \subsection{Bonnes pratiques utilisées}
@@ -236,5 +236,9 @@ La fonctionnalité atteinte lors de cette itération est satisfaisante. Il en es
 de même pour la stabilité de la release. Il reste toutefois quelques légers
 problèmes d'expérience utilisateur, et quelques bugs mineurs persistent.\\
 
-Nous avons déjà prévu de commencer l'itération par une revue complète du code et
-par un refactoring en tout cas du modèle.
+Nous avons déjà prévu de commencer l'itération par une revue du code et
+par un refactoring en tout cas du modèle. Nous avions par exemple fait le choix
+de pouvoir imbriquer des groupes dans des groupes (structure récursive), ce qui
+implique une trop grande complexité dans le \texttt{GeometryDAO}, n'est pas
+en adéquation avec les principes d'une base de données relationnelle, et n'est
+pas utilisé.
