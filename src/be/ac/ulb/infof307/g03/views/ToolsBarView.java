@@ -231,11 +231,13 @@ public class ToolsBarView extends JToolBar implements Observer  {
     }
      
     @Override
- 	public void update(Observable o, Object arg) {
- 		Config param = (Config) arg;
- 		if (param.getName().equals("mouse.mode")){
- 			_createButton.setEnabled (! param.getValue().equals("construct"));
- 		}
+ 	public void update(Observable obs, Object arg) {
+    	if (obs instanceof Project) {
+    		Config param = (Config) arg;
+    		if (param.getName().equals("mouse.mode")){
+    			_createButton.setEnabled (! param.getValue().equals("construct"));
+    		}
+    	}
  	}
 
 }

@@ -40,6 +40,11 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     private List<Point> _inConstruction ;
     private Floor _currentFloor = null;
     private double _currentHeight;
+	private String _currentEditionMode;
+    
+    // Edition mode alias
+	static final private String _WORLDMODE = "world";
+	static final private String _OBJECTMODE = "object";
     
     // Input alias
     static private final String _RIGHTCLICK 	= "WC_SelectObject";
@@ -57,18 +62,26 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * @throws SQLException 
      */
     public WorldController(AppSettings settings, Project project) throws SQLException{
+    	
         _view = new WorldView(this, project);
         _view.setSettings(settings);
         _view.createCanvas();
+        
         _cameraModeController = new CameraModeController(project);
         _project = project;
         _inConstruction = new LinkedList <Point>();
+
         _currentFloor = (Floor) project.getGeometryDAO().getByUID(project.config("floor.current"));
         if (_currentFloor == null)
         	if (!project.getGeometryDAO().getFloors().isEmpty())
         		_currentFloor = project.getGeometryDAO().getFloors().get(0);
         if (_currentFloor!=null)
         	_currentHeight = project.getGeometryDAO().getBaseHeight(_currentFloor);
+        
+        _currentEditionMode = project.config("edition.mode");
+        if (_currentEditionMode.equals("")) // set as default for the first time
+        	_currentEditionMode = _WORLDMODE;
+        
         project.addObserver(this);
     }
 
@@ -105,6 +118,27 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      */
     public void startViewCanvas(){
         _view.startCanvas();
+    }
+    
+    
+    /**
+     * Update the screen according to the current edition mode.
+     * @param mode A string who's a valid mode.
+     */
+    public void updateEditionMode() {
+    	if (_currentEditionMode.equals(_WORLDMODE) ){
+    		_view.cleanScene();
+    		_view.makeScene();
+    	} else if (_currentEditionMode.equals(_OBJECTMODE)) {
+    		_view.cleanScene();
+    	}
+	}
+    
+    public void updateEditionMode(String mode) {
+    	if (mode!=_currentEditionMode) {
+    		_currentEditionMode = mode;
+    		updateEditionMode();
+    	}
     }
     
     /**
@@ -344,19 +378,25 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	}
 
 	@Override
-	public void update(Observable arg0, Object arg1) {
-		Config changed = (Config) arg1;
-		if (changed.getName().equals("floor.current")){
-			String newUID = changed.getValue();
-			if (newUID.equals(_currentFloor.getUID()))
-				return;
-	        try {
-	        	_currentFloor = (Floor) _project.getGeometryDAO().getByUID(changed.getValue());
-				_currentHeight = _project.getGeometryDAO().getBaseHeight(_currentFloor);
-			} catch (SQLException e) {
-				e.printStackTrace();
+	public void update(Observable obs, Object msg) {
+		if (obs instanceof Project) {
+			Config config = (Config) msg;
+			if (config.getName().equals("edition.mode")) {
+				updateEditionMode(config.getValue());
+			} else if (config.getName().equals("floor.current")){
+				String newUID = config.getValue();
+				if (newUID.equals(_currentFloor.getUID()))
+					return;
+				try {
+					_currentFloor = (Floor) _project.getGeometryDAO().getByUID(config.getValue());
+					_currentHeight = _project.getGeometryDAO().getBaseHeight(_currentFloor);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		}
+		
+		
 	}
 
 	@Override
