@@ -5,6 +5,8 @@ import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -14,9 +16,24 @@ import javax.swing.JOptionPane;
  * @author fhennecker, pierre, wmoulart
  * @brief Controller of the ToolsBar at the top of the application.
  */
-public class ToolsBarController {
+public class ToolsBarController implements ActionListener {
+	// Attributes
 	private ToolsBarView _view;
 	private Project _project;
+	
+	// Buttons actions alias
+	static final public String NEWELEMENT	= "NewElement";
+
+	static final public String FLOOR_UP   = "FloorUp";
+	static final public String FLOOR_DOWN = "FloorDown";
+	static final public String FLOOR_NEW  = "FloorNew";
+
+	static final public String VIEW2D 		= "2D";
+	static final public String VIEW3D 		= "3D";
+
+	static final public String ROTATE  	= "Rotate";	
+	static final public String HAND 		= "Grab";  
+	static final public String CURSOR		= "Cursor";
 	
 	/**
 	 * Constructor of ToolsBarController.
@@ -181,5 +198,33 @@ public class ToolsBarController {
     	_project.config("mouse.mode", "construct");
     }
     
+    /**
+     * Inherited method from ActionListener abstract class
+     * @param action A mouse click
+     */ @Override
+	public void actionPerformed(ActionEvent action) {
+		String cmd = action.getActionCommand();
+		if (cmd.equals(NEWELEMENT)) {
+        	onConstruction();
+        } else if (cmd.equals(FLOOR_DOWN)) {
+        	onFloorDown() ;
+        } else if (cmd.equals(FLOOR_UP)) {
+        	onFloorUp();
+        } else if (cmd.equals(FLOOR_NEW)){
+        	onFloorNew();
+        	onFloorUp();
+        } else if (cmd.equals(VIEW2D)) {
+        	on2d();
+        } else if (cmd.equals(VIEW3D)) {
+        	on3d();
+        } else if (cmd.equals(ROTATE)){
+        	onDragRotateMode();
+        } else if (cmd.equals(HAND)){
+        	onDragMoveMode();
+        } else if (cmd.equals(CURSOR)){
+        	onDragSelectMode();
+        }
+
+	}
 
 }
