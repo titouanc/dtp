@@ -85,8 +85,8 @@ public class ToolsBarView extends JToolBar implements Observer  {
      * between 2D and 3D. Those buttons are mutually exclusive
      */  
     private void _addButtonsDimension() {
-    	JToggleButton secondDimension = createJToggleButton(ToolsBarController.VIEW2D, "Switch to 2D view");
-    	JToggleButton thirdDimension = createJToggleButton(ToolsBarController.VIEW3D, "Switch to 3D view");
+    	JToggleButton secondDimension = createJToggleButton("2D", ToolsBarController.VIEW2D, "Switch to 2D view");
+    	JToggleButton thirdDimension = createJToggleButton("3D", ToolsBarController.VIEW3D, "Switch to 3D view");
     	
     	// restore mode
     	String worldMode = _project.config("world.mode");
@@ -115,10 +115,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	String classPath = getClass().getResource("ToolsBarView.class").toString();
     	String prefix = "";
 
-    	Icon cursorIcon;
-		Icon grabIcon;
-		Icon rotateIcon;
-		Icon pencilIcon;
+    	Icon cursorIcon, grabIcon, rotateIcon, pencilIcon;
     
     	if(classPath.subSequence(0, 3).equals("rsr")){
     		prefix = "/";
@@ -165,6 +162,13 @@ public class ToolsBarView extends JToolBar implements Observer  {
         
     }
     
+    /**
+     * Create a JButton 
+     * @param label A string to display on the button.
+     * @param action A string who's an action alias.
+     * @param desc A string who describes what appens when the button is pressed.
+     * @return The created button.
+     */
     private JButton createJButton(String label, String action, String desc) {
     	JButton button = new JButton(label);
         button.setActionCommand(action);
@@ -173,14 +177,28 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	return button;
     }
     
-    private JToggleButton createJToggleButton(String action, String desc) {
-    	JToggleButton button = new JToggleButton(action);
+    /**
+     * Create a JToggleButton with a label.
+     * @param label A string who's the label to display on the button.
+     * @param action A string who's the action alias.
+     * @param desc A string who describes what happens when the button is pressed.
+     * @return The created button.
+     */
+    private JToggleButton createJToggleButton(String label, String action, String desc) {
+    	JToggleButton button = new JToggleButton(label);
     	button.setActionCommand(action);
     	button.setToolTipText(desc);
     	button.addActionListener(_controller);
     	return button;
     }
     
+    /**
+    * Create a JToggleButton with an icon.
+    * @param icon An icon who will be displayed on the button.
+    * @param action A string who's the action alias.
+    * @param desc A string who describes what happens when the button is pressed.
+    * @return The created button.
+    */
     private JToggleButton createJToggleButton(Icon icon, String action, String desc) {
     	JToggleButton button = new JToggleButton(icon);
     	button.setActionCommand(action);
