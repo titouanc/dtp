@@ -227,8 +227,6 @@ public class ObjectTreeView extends JTree implements Observer {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 		return (Geometric) node.getUserObject();
 	}
-	
-	
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
