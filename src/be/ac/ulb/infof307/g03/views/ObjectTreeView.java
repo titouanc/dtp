@@ -36,7 +36,7 @@ import be.ac.ulb.infof307.g03.models.*;
  * @author pierre, titou
  * 
  */
-public class ObjectTreeView extends JTree implements TreeSelectionListener, MouseListener, KeyListener, Observer {
+public class ObjectTreeView extends JTree implements Observer {
 	/**
 	 * 
 	 */
@@ -154,43 +154,36 @@ public class ObjectTreeView extends JTree implements TreeSelectionListener, Mous
 		}
 	}
 	
+	private JMenuItem createJMenuItem(String label, String action, PopupListener listener) {
+		JMenuItem menuItem = new JMenuItem(label);
+		menuItem.addActionListener(listener);
+		menuItem.setActionCommand(action);
+		return menuItem;
+	}
+	
 	/**
 	 * Build a contextual menu for a clicked item
-	 * @param item
+	 * @param geo
+	 * @return
 	 */
-	private JPopupMenu _createPopupMenu(Geometric geo){
+	public JPopupMenu createPopupMenu(Geometric geo){
 		if (geo instanceof Line)
 			return null;
 		
 		PopupListener listener = new PopupListener();
 		JPopupMenu res = new JPopupMenu();
-		JMenuItem menuItem = new JMenuItem(_DELETE);
-		menuItem.addActionListener(listener);
-		menuItem.setActionCommand(_DELETE);
-		res.add(menuItem);
 		
+		res.add(createJMenuItem(_DELETE, _DELETE, listener));
 		if (geo instanceof Group){
-			menuItem = new JMenuItem(_RENAME);
-			menuItem.addActionListener(listener);
-			menuItem.setActionCommand(_RENAME);
-			res.add(menuItem);
+			res.add(createJMenuItem(_RENAME, _RENAME, listener));
 		} else if (geo instanceof Grouped){
 			String action = ((Grouped) geo).isVisible() ? _HIDE : _SHOW;
-			menuItem = new JMenuItem(action);
-			menuItem.addActionListener(listener);
-			menuItem.setActionCommand(action);
-			res.add(menuItem);
+			res.add(createJMenuItem(action, action, listener));
 			if (geo instanceof Wall){
-				menuItem = new JMenuItem("Edit width");
-				menuItem.addActionListener(listener);
-				menuItem.setActionCommand(_WIDTH);
-				res.add(menuItem);
+				res.add(createJMenuItem("Edit width", _WIDTH, listener));
 			}
 		} else if (geo instanceof Floor){
-			menuItem = new JMenuItem(_HEIGHT);
-			menuItem.addActionListener(listener);
-			menuItem.setActionCommand(_HEIGHT);
-			res.add(menuItem);
+			res.add(createJMenuItem(_HEIGHT, _HEIGHT, listener));
 		}
 		
 		return res;
@@ -218,33 +211,24 @@ public class ObjectTreeView extends JTree implements TreeSelectionListener, Mous
 		setCellRenderer(new GeometricRenderer());
 		
 		// Listen for when the selection changes
-		addTreeSelectionListener(this);
+		addTreeSelectionListener(_controller);
 		setRootVisible(false);
 		setShowsRootHandles(true);
 
 		// add the mouse listener to the tree
-		addMouseListener(this);
+		addMouseListener(_controller);
 		// add key listener
-		addKeyListener(this);
+		addKeyListener(_controller);
 		
 		updateUI();
-		
 	}
 	
-	private Geometric _getGeometric(TreePath path){
+	public Geometric getGeometric(TreePath path){
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 		return (Geometric) node.getUserObject();
 	}
 	
-	@Override
-	public void valueChanged(TreeSelectionEvent event) {
-		TreePath path = event.getOldLeadSelectionPath();
-		if (path != null)
-			_controller.deselectElement(_getGeometric(path));
-		path = event.getNewLeadSelectionPath();
-		if (path != null)
-			_controller.selectElement(_getGeometric(path));
-	}
+	
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
@@ -302,63 +286,5 @@ public class ObjectTreeView extends JTree implements TreeSelectionListener, Mous
 			updateUI();
 	}
 	
-	@Override
-	public void keyPressed(KeyEvent e) {
-		
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		int keyCode = e.getKeyCode();
-		if (keyCode==KeyEvent.VK_BACK_SPACE) {
-			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-			Geometric clickedItem = (Geometric) clickedNode.getUserObject();
-			_controller.deselectElement(clickedItem);
-			_controller.deleteNode(clickedItem);
-		}
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// if right click
-		if (SwingUtilities.isRightMouseButton(e)) {
-			// select the closest element near the click on the tree
-			int row = getClosestRowForLocation(e.getX(), e.getY());
-			setSelectionRow(row);
-			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-			Geometric clickedItem = (Geometric) clickedNode.getUserObject();
-			JPopupMenu menuForItem = _createPopupMenu(clickedItem);
-			if (menuForItem != null) 
-				menuForItem.show(e.getComponent(), e.getX(), e.getY());
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

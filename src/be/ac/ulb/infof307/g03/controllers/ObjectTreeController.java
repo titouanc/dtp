@@ -3,27 +3,34 @@
  */
 package be.ac.ulb.infof307.g03.controllers;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
-
-
 
 /**
  * @author pierre
  *
  */
-public class ObjectTreeController {
+public class ObjectTreeController implements TreeSelectionListener, MouseListener, KeyListener {
 	private ObjectTreeView _view;
 	private GeometryDAO _dao;
 	private Project _project;
 	
 	/**
 	 * @param project Project object from model
-	 * 
 	 */
 	public ObjectTreeController(Project project) {
 		_view = new ObjectTreeView(this, project);
@@ -46,7 +53,6 @@ public class ObjectTreeController {
 	/**
 	 * @param object 
 	 * @param name 
-	 * 
 	 */
 	public void renameNode(Object object, String name){
 		if (object instanceof Group) {
@@ -229,6 +235,75 @@ public class ObjectTreeController {
 		} catch (SQLException e){
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void valueChanged(TreeSelectionEvent event) {
+		TreePath path = event.getOldLeadSelectionPath();
+		if (path != null)
+			deselectElement(_view.getGeometric(path));
+		path = event.getNewLeadSelectionPath();
+		if (path != null)
+			selectElement(_view.getGeometric(path));
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		if (keyCode==KeyEvent.VK_BACK_SPACE) {
+			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) _view.getLastSelectedPathComponent();
+			Geometric clickedItem = (Geometric) clickedNode.getUserObject();
+			deselectElement(clickedItem);
+			deleteNode(clickedItem);
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// if right click
+		if (SwingUtilities.isRightMouseButton(e)) {
+			// select the closest element near the click on the tree
+			int row = _view.getClosestRowForLocation(e.getX(), e.getY());
+			_view.setSelectionRow(row);
+			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) _view.getLastSelectedPathComponent();
+			Geometric clickedItem = (Geometric) clickedNode.getUserObject();
+			JPopupMenu menuForItem = _view.createPopupMenu(clickedItem);
+			if (menuForItem != null) 
+				menuForItem.show(e.getComponent(), e.getX(), e.getY());
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
