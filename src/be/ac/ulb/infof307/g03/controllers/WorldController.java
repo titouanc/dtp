@@ -243,18 +243,26 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * Mesh the points together for the walls creation
      */
     public void finalizeConstruct(){
-    	if (_inConstruction.size() >= 3){
-			try {
-				GeometryDAO dao = _project.getGeometryDAO();
-				dao.createRoom(_currentFloor, _inConstruction);
+    	try {
+			GeometryDAO dao = _project.getGeometryDAO();
+	    	if (_inConstruction.size() >= 3){
+	    		dao.createRoom(_currentFloor, _inConstruction);
 		    	dao.notifyObservers();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-    	} else {
-    		
-    	}
-		_inConstruction.clear();
+	    	} else {
+	    		for (Point p : _inConstruction){
+	    			if (p.getBindings().size() == 0){
+	    				dao.delete(p);
+	    			} else {
+		    			p.deselect();
+		    			dao.update(p);
+	    			}
+	    		}
+	    		dao.notifyObservers();
+	    	}
+	    	_inConstruction.clear();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     }
     
     private void mouseMoved(float value) {
