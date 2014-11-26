@@ -254,6 +254,12 @@ public class ObjectTreeView extends JTree implements TreeSelectionListener, Mous
 		for (Change change : changes){
 			Geometric changed = change.getItem();
 			
+			try {
+				_dao.refresh(changed);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
 			/* An object has been update: update the linked object in TreeView */
 			if (change.isUpdate()){
 				DefaultMutableTreeNode node = _nodes.get(changed.getUID());

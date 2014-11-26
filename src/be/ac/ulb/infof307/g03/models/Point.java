@@ -184,8 +184,10 @@ public class Point extends Geometric {
 	 */
 	public List<Room> getBoundRooms(){
 		List<Room> res = new LinkedList<Room>();
-		for (Binding b : _bindings)
-			res.add(b.getRoom());
+		if (_bindings != null){
+			for (Binding b : _bindings)
+				res.add(b.getRoom());
+		}
 		return res;
 	}
 

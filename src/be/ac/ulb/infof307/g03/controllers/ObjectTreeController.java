@@ -128,8 +128,9 @@ public class ObjectTreeController {
 		} else if (element instanceof Meshable){
 			Meshable meshable = (Meshable) element;
 			System.out.println("[TreeController] Select " + meshable.getUID());
-			meshable.select();
 			try {
+				_dao.refresh(meshable);
+				meshable.select();
 				for (Point p : meshable.getPoints()){
 					p.select();
 					_dao.update(p);

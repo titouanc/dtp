@@ -472,17 +472,18 @@ public class GeometryDAO extends Observable {
 	/**
 	 * Add a group to a floor in database
 	 * @param floor The Floor to add
-	 * @param grp The Room to put the Floor into
+	 * @param room The Room to put the Floor into
 	 * @throws SQLException
 	 */
-	public void addRoomToFloor(Floor floor, Room grp) throws SQLException {
+	public void addRoomToFloor(Floor floor, Room room) throws SQLException {
 		if (floor.getId() == 0)
 			_floors.create(floor);
-		grp.setFloor(floor);
-		if (grp.getId() != 0)
-			update(grp);
+		room.setFloor(floor);
+		if (room.getId() != 0)
+			update(room);
 		else
-			create(grp);
+			create(room);
+		refresh(room);
 		setChanged();
 	}
 	
@@ -561,5 +562,38 @@ public class GeometryDAO extends Observable {
 			and().ge("_y", ymin).and().le("_y", ymax).
 			and().ge("_z", zmin).and().le("_z", zmax).prepare()
 		);
+	}
+	
+	/**
+	 * Create a room with a Ground, a Wall and a hidden Roof
+	 * @param onFloor Floor on which to create the room
+	 * @param points Points of the room
+	 * @return The newly created room
+	 * @throws SQLException
+	 */
+	public Room createRoom(Floor onFloor, List<Point> points) throws SQLException{
+		Room room = new Room();
+		addRoomToFloor(onFloor, room);
+		room.setName(room.getUID());
+		
+		Wall wall = new Wall();
+		create(wall);
+		room.setWall(wall);
+		Ground gnd = new Ground();
+		create(gnd);
+		room.setGround(gnd);
+		Roof roof = new Roof();
+		roof.hide();
+		create(roof);
+		room.setRoof(roof);
+		
+		for (Point p : points)
+			room.addPoints(p);
+		room.addPoints(points.get(0)); //close polygon
+		
+		update(room);
+		refresh(room);
+		refresh(onFloor);
+		return room;
 	}
 }
