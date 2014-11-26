@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
+import java.util.concurrent.Callable;
 
 import javax.swing.JOptionPane;
 
@@ -219,35 +220,45 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * Redraw the entire 3D scene
 	 */
 	public void makeScene(){
-		//Generates the grid
-		attachGrid();
-		
-		//Generate the axes
-		_attachAxes();
-		
-		// Add a bit of sunlight into our lives
-		_addSun();
-		
-		try {
-			for (Wall wall : _dao.getWalls())
-				_drawWall(wall);
-			for (Ground gnd : _dao.getGrounds())
-				_drawGround(gnd);
-			for (Roof roof : _dao.getRoofs())
-				_drawRoof(roof);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
+		this.enqueue(new Callable<Object>() {
+	        public Object call() {
+	        	//Generates the grid
+	    		attachGrid();
+	    		
+	    		//Generate the axes
+	    		_attachAxes();
+	    		
+	    		// Add a bit of sunlight into our lives
+	    		_addSun();
+	    		
+	    		try {
+	    			for (Wall wall : _dao.getWalls())
+	    				_drawWall(wall);
+	    			for (Ground gnd : _dao.getGrounds())
+	    				_drawGround(gnd);
+	    			for (Roof roof : _dao.getRoofs())
+	    				_drawRoof(roof);
+	    		} catch (SQLException e) {
+	    			e.printStackTrace();
+	    		}
+	            return null;
+	        }
+	    });
 	}
 	
 	/**
 	 * Cleans the entire scene. Removes all children and lights.
 	 */
 	public void cleanScene(){
-		rootNode.detachAllChildren();
-		for (Light light : rootNode.getWorldLightList())
-			rootNode.removeLight(light);
+		enqueue(new Callable<Object>() {
+	        public Object call() {
+	        	rootNode.detachAllChildren();
+	        	for (Light light : rootNode.getWorldLightList()) {
+					rootNode.removeLight(light);
+				}
+	            return null;
+	        }
+	    });
 	}
 
 	/**
@@ -411,7 +422,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	
 	private void _updateFloor(Change change){
 		Floor floor = (Floor) change.getItem();
-		System.out.println("problem");
 		cleanScene();
 		makeScene();
 	}

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Callable;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -145,12 +146,19 @@ public class ObjectTreeView extends JTree implements Observer {
 		return res;
 	}
 	
-	private void _createTree() throws SQLException{
+	public void createTree() throws SQLException{
 		for (Floor floor : _dao.getFloors()){
 			DefaultMutableTreeNode floorNode = _createNode(floor);
 			for (Group group : _dao.getGroups(floor))
 				floorNode.add(_createTree(group));
 			_root.add(floorNode);
+		}
+	}
+	
+	public void clearTree() {
+		for (DefaultMutableTreeNode node : _nodes.values()) {
+			node.removeFromParent();
+			_nodes.remove(node);
 		}
 	}
 	
@@ -200,7 +208,6 @@ public class ObjectTreeView extends JTree implements Observer {
 		
 		try {
 			_dao = project.getGeometryDAO();
-			_createTree();
 			_dao.addObserver(this);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -220,7 +227,6 @@ public class ObjectTreeView extends JTree implements Observer {
 		// add key listener
 		addKeyListener(_controller);
 		
-		updateUI();
 	}
 	
 	public Geometric getGeometric(TreePath path){

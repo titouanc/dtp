@@ -8,6 +8,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -24,10 +26,14 @@ import be.ac.ulb.infof307.g03.views.ObjectTreeView;
  * @author pierre
  *
  */
-public class ObjectTreeController implements TreeSelectionListener, MouseListener, KeyListener {
+public class ObjectTreeController implements TreeSelectionListener, MouseListener, KeyListener, Observer {
 	private ObjectTreeView _view;
 	private GeometryDAO _dao;
 	private Project _project;
+	private String _currentEditionMode;
+	
+	static private final String _WORLDMODE = "world";
+	static private final String _OBJECTMODE = "object";
 	
 	/**
 	 * @param project Project object from model
@@ -41,6 +47,14 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		_currentEditionMode = project.config("edition.mode");
+		if (_currentEditionMode.equals(""))
+			_currentEditionMode = _WORLDMODE;
+		updateEditionMode();
+		
+		_project.addObserver(this);
+		
 	}
 	
 	/**
@@ -50,6 +64,34 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		return _view;
 	}
 	
+	/**
+	 * 
+	 * @param mode
+	 */
+	private void updateEditionMode(String mode) {
+		if (mode!=_currentEditionMode) {
+			_currentEditionMode = mode;
+			updateEditionMode();
+		}
+	}
+	
+	public void updateEditionMode() {
+		if (_currentEditionMode.equals(_WORLDMODE)) {
+			System.out.println("[DEBUG] ObjectTree switched to world edition mode.");
+			_view.clearTree();
+			try {
+				_view.createTree();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if (_currentEditionMode.equals(_OBJECTMODE)) {
+			System.out.println("[DEBUG] ObjectTree switched to object edition mode.");
+			_view.clearTree();
+		}
+		_view.updateUI();
+	}
+
 	/**
 	 * @param object 
 	 * @param name 
@@ -304,6 +346,16 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof Project) {
+			Config config = (Config) arg;
+			if (config.getName().equals("edition.mode")) {
+				updateEditionMode(config.getValue());
+			}
+		}		
 	}
 	
 }
