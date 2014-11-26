@@ -395,8 +395,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				}
 			}
 		}
-		
-		
 	}
 
 	@Override
