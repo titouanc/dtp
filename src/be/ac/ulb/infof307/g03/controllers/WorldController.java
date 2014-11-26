@@ -333,7 +333,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         Geometric clicked = getClickedObject();
         
         /* We're not interested if no object */
-        if (clicked == null  )
+        if (clicked == null)
         	return;
         
         /* If it is a Grouped (Wall, Ground): select it */
