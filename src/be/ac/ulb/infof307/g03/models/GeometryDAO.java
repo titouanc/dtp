@@ -194,6 +194,19 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
+	public int update(Floor floor) throws SQLException {
+		int res = _floors.update(floor);
+		double base = floor.getBaseHeight() + floor.getHeight();
+		for (Floor above : getFloorsAbove(floor)){
+			above.setBaseHeight(base);
+			res += _floors.update(above);
+			_changes.add(Change.update(above));
+			base += above.getHeight();
+		}
+		_changes.add(Change.update(floor));
+		return res;
+	}
+	
 	/**
 	 * Update a shape in database (permanently save in-memory modifications)
 	 * @param object The geometric object to update
@@ -213,10 +226,9 @@ public class GeometryDAO extends Observable {
 		else if (object instanceof Wall)
 			res = _walls.update((Wall) object);
 		else if (object instanceof Floor)
-			res = _floors.update((Floor) object);
-		else if (object instanceof Roof){
+			update((Floor) object);
+		else if (object instanceof Roof)
 			res= _roofs.update((Roof) object);
-		}
 		if (res != 0){
 			setChanged();
 			_changes.add(Change.update(object));

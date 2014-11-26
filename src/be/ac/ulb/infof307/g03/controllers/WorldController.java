@@ -332,7 +332,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		} else if (name.equals(_RIGHTCLICK)) {
 			if (value) { // on click
 				if (_inConstruction.size() > 0) { // We're building a shape, and right-click: finish shape
-					finalizeConstruct(); 
+					finalizeConstruct();
 				}
 			} else { // on release
 				
