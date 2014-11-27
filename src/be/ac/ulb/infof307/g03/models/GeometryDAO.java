@@ -90,10 +90,10 @@ public class GeometryDAO extends Observable {
 		toCopy.addAll(other._floors.queryForAll());
 		toCopy.addAll(other._points.queryForAll());
 		toCopy.addAll(other._bindings.queryForAll());
-		toCopy.addAll(other._rooms.queryForAll());
 		toCopy.addAll(other._walls.queryForAll());
 		toCopy.addAll(other._grounds.queryForAll());
 		toCopy.addAll(other._roofs.queryForAll());
+		toCopy.addAll(other._rooms.queryForAll());
 		int res = 0;
 		for (Geometric g : toCopy)
 			res += create(g);
