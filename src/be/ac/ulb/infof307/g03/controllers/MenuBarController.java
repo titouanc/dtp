@@ -71,7 +71,7 @@ public class MenuBarController implements ActionListener {
 		_gui = gui;
 		_view = new MenuBarView(this);
 		_fileController = new FileChooserController(_view, project, gui);
-		
+		_fileController.run();
 	}
 	
 	/**
