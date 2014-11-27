@@ -6,10 +6,6 @@ package be.ac.ulb.infof307.g03.views;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -21,9 +17,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
@@ -163,8 +156,8 @@ public class ObjectTreeView extends JTree implements Observer {
 	
 	/**
 	 * Build a contextual menu for a clicked item
-	 * @param geo
-	 * @return
+	 * @param geo the geometry to create a menu from
+	 * @return the menu
 	 */
 	public JPopupMenu createPopupMenu(Geometric geo){
 		if (geo instanceof Line)
@@ -191,6 +184,8 @@ public class ObjectTreeView extends JTree implements Observer {
 	
 	/**
 	 * Constructor of the main class ObjectTree
+	 * @param newController 
+	 * @param project 
 	 */
 	public ObjectTreeView(ObjectTreeController newController, Project project) {
 		super(_root);
@@ -223,6 +218,10 @@ public class ObjectTreeView extends JTree implements Observer {
 		updateUI();
 	}
 	
+	/**
+	 * @param path
+	 * @return the object associated to the node
+	 */
 	public Geometric getGeometric(TreePath path){
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 		return (Geometric) node.getUserObject();

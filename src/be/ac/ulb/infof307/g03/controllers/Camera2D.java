@@ -41,10 +41,10 @@ public class Camera2D implements AnalogListener, ActionListener {
     
     // Flags
     private boolean _canMove	= false;
-    private boolean _canRotate	= false;
+    //private boolean _canRotate	= false;
     private boolean _enabled	= true;
     
-    // Carera mode alias
+    // Camera mode alias
 	static private final String _MODE_DRAGROTATE = "dragRotate";
     static private final String _MODE_DRAGSELECT = "dragSelect";
     static private final String _MODE_DRAGMOVE = "dragMove";
@@ -222,7 +222,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	        _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
 	
 			Vector3f pos = _cam.getLocation().clone();
-			pos.setZ(pos.getZ() + (value*_moveSpeed));
+			pos.setZ(pos.getZ() + (value*_zoomSpeed));
 			_cam.setLocation(pos);
 		}
     }
@@ -314,7 +314,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 			if (_mouseMode.equals(_MODE_DRAGMOVE)) {
 				_canMove = value;
 			} else if (_mouseMode.equals(_MODE_DRAGROTATE)){
-				_canRotate = value;
+				//_canRotate = value;
 			}
 		}
 	

@@ -9,10 +9,8 @@ import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 
-import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.Project;
 
-import com.jme3.system.AppSettings;
 
 /**
  * @author fhennecker
@@ -23,6 +21,9 @@ public class TestMainPaneController {
 	private MainPaneController _controller;
 	private Project _project;
 	
+	/**
+	 * @throws SQLException
+	 */
 	@Before
 	public void setUp() throws SQLException{
         _project = new Project();
@@ -31,6 +32,9 @@ public class TestMainPaneController {
         _controller = new MainPaneController(_project);
 	}
 	
+	/**
+	 * 
+	 */
 	@Test
 	public void testCreation(){
 		assertNotNull(_controller.getView());

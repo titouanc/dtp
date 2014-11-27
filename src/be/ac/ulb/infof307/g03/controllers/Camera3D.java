@@ -118,8 +118,6 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 * @param inputManager The new input manager to be set.
 	 */
 	public void setInputManager(InputManager inputManager) {
-		System.out.println("ICI");
-
 		_inputManager = inputManager;
 		inputSetUp();
 	}

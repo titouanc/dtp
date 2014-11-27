@@ -20,8 +20,6 @@ import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -42,6 +40,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
      * Constructor of the class ToolsBar.
      * It add property to the bar: Buttons, not floatable, lay out
      * @param newControler The view's controller
+     * @param project The current project
      */
     public ToolsBarView(ToolsBarController newControler, Project project) {
     	super("HomePlan Toolbox");

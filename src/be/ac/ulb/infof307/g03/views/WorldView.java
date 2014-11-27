@@ -10,15 +10,12 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
-import com.jme3.input.MouseInput;
-import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
@@ -38,7 +35,6 @@ import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -55,7 +51,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	/**
 	 * Constructor of WorldView
 	 * @param newController The view's controller
-	 * @param model The DAO pattern model class
+	 * @param project 
 	 */
 	public WorldView(WorldController newController, Project project){
 		super();
@@ -110,6 +106,9 @@ public class WorldView extends SimpleApplication implements Observer {
 		rootNode.addLight(ambient);
 	}
 	
+	/**
+	 * @return the shapes
+	 */
 	public Vector<Geometry> getShapes(){
 		shapes = new Vector<Geometry>();
 		this.generateShapesList(rootNode);
@@ -405,7 +404,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	private void _updateFloor(Change change){
-		Floor floor = (Floor) change.getItem();
+		//Floor floor = (Floor) change.getItem();
 		_cleanScene();
 		_makeScene();
 	}

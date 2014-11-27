@@ -1,6 +1,6 @@
 package be.ac.ulb.infof307.g03.controllers;
 
-import be.ac.ulb.infof307.g03.views.FileChooserView;
+
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;

@@ -18,7 +18,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import be.ac.ulb.infof307.g03.models.*;
-import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 
 /**
@@ -205,6 +204,11 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		}
 	}
 
+	/**
+	 * Sets a width to a wall
+	 * @param wall Wall 
+	 * @param userInput
+	 */
 	public void setWidth(Wall wall, String userInput){
 		double width = wall.getWidth();
 		try {

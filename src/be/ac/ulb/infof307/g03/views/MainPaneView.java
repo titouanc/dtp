@@ -41,7 +41,7 @@ public class MainPaneView extends JPanel {
 	public MainPaneView(MainPaneController newController, Project project, Canvas canvas){
 		super(new BorderLayout());
 		
-		_controller = newController;
+		setController(newController);
 		
         // Create an object tree
         _objectTree = new ObjectTreeController(project);
@@ -63,6 +63,20 @@ public class MainPaneView extends JPanel {
 		
 		// add the splitpane to the inherited Jpanel
 		this.add(_splitPane);
+	}
+
+	/**
+	 * @return the _controller
+	 */
+	public MainPaneController getController() {
+		return _controller;
+	}
+
+	/**
+	 * @param _controller the controller to set
+	 */
+	public void setController(MainPaneController _controller) {
+		this._controller = _controller;
 	}
 
 }

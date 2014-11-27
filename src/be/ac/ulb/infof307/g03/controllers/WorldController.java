@@ -70,6 +70,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         project.addObserver(this);
     }
     
+    /**
+     *  Create the view
+     */
     public void run(){
     	initView(_project);
         _view.setSettings(_appSettings);
@@ -159,6 +162,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * - Compute final position
      * - Update in database and notify
      * - Set current moving point to null
+     * @param finalDrop 
      */
     public void dropMovingPoint(boolean finalDrop){
     	if (_movingPoint == null)
@@ -286,6 +290,10 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     	}
     }
     
+	/**
+	 * Configures the bindings with the mouse inputs
+	 * @param inputManager
+	 */
 	public void inputSetUp(InputManager inputManager){
 		// Mouse event mapping
 		inputManager.addMapping(_RIGHTCLICK, 	new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));

@@ -583,6 +583,10 @@ public class GeometryDAO extends Observable {
 		setChanged();
 	}
 	
+	/**
+	 * @return the floors
+	 * @throws SQLException
+	 */
 	public List<Floor> getFloors() throws SQLException{
 		return _floors.queryForAll();
 	}
