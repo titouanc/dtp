@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import be.ac.ulb.infof307.g03.controllers.MainPaneController;
+import be.ac.ulb.infof307.g03.controllers.ObjectListController;
 import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.Project;
 
@@ -27,9 +28,11 @@ public class MainPaneView extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private JSplitPane _splitPane;
-	private JScrollPane _listScrollPane;
-	private ObjectTreeController _objectTree;
+	private JSplitPane _hSplitPane, _vSplitPane;
+	private JScrollPane _worldListScrollPane;
+	private JScrollPane _objectListScrollPane;
+	private ObjectTreeController _worldTree;
+	private ObjectListController _objectList;
 	
 	/**
 	 * Constructor of MainPane. It create a splitpane with a tree on
@@ -44,24 +47,38 @@ public class MainPaneView extends JPanel {
 		_controller = newController;
 		
         // Create an object tree
-        _objectTree = new ObjectTreeController(project);
+        _worldTree = new ObjectTreeController(project);
+        
+        // Create the object list
+        _objectList = new ObjectListController(project);
         
         // Create left menu
-        _listScrollPane = new JScrollPane(_objectTree.getView()); 
+        _worldListScrollPane = new JScrollPane(_worldTree.getView()); 
         // Set up resize behavior
-        Dimension listScrollPaneDimension = new Dimension(150,480);
-        _listScrollPane.setMinimumSize(listScrollPaneDimension);
-        _listScrollPane.setPreferredSize(listScrollPaneDimension);
+        Dimension listScrollPaneDimension = new Dimension(150,140);
+        _worldListScrollPane.setMinimumSize(listScrollPaneDimension);
+        _worldListScrollPane.setPreferredSize(listScrollPaneDimension);
+        
+        _objectListScrollPane = new JScrollPane(_objectList.getView());
+        // Set up resize behavior
+        _objectListScrollPane.setMinimumSize(listScrollPaneDimension);
+        _objectListScrollPane.setPreferredSize(listScrollPaneDimension);
+        
+	     // Create split pane
+	     _vSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,_worldListScrollPane,_objectListScrollPane);
+	     // Set up split pane
+	     _vSplitPane.setDividerLocation(240);
+	     _vSplitPane.setBorder(null);
         
         // Create split pane
-		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_listScrollPane,canvas);
+		_hSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_vSplitPane,canvas);
 		// Set up split pane
-		_splitPane.setOneTouchExpandable(true);
-		_splitPane.setDividerLocation(150);
+		_hSplitPane.setDividerLocation(150);
+		_hSplitPane.setBorder(null);
 		
 		
 		// add the splitpane to the inherited Jpanel
-		this.add(_splitPane);
+		this.add(_hSplitPane);
 	}
 
 }

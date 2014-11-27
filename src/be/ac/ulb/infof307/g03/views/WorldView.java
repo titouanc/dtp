@@ -9,8 +9,11 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
+import java.util.concurrent.Callable;
 
 import javax.swing.JOptionPane;
+
+import org.hamcrest.core.IsInstanceOf;
 
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
@@ -43,7 +46,7 @@ import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
- * @author fhennecker, julianschembri, brochape, Titouan,wmoulart
+ * @author fhennecker, julianschembri, brochape, Titouan, wmoulart
  */
 public class WorldView extends SimpleApplication implements Observer {	
 	
@@ -52,9 +55,9 @@ public class WorldView extends SimpleApplication implements Observer {
 	private WorldController _controller; 
 	private LinkedList<Change> _queuedChanges = null;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
-	
+			
 	/**
-	 * Constructor of WorldView
+	 * WorldView's Constructor
 	 * @param newController The view's controller
 	 * @param model The DAO pattern model class
 	 */
@@ -62,14 +65,15 @@ public class WorldView extends SimpleApplication implements Observer {
 		super();
 		_controller = newController;
 		_project = project;
+		_queuedChanges = new LinkedList<Change>();
 		try {
 			_dao= project.getGeometryDAO();
 			_dao.addObserver(this);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		_queuedChanges = new LinkedList<Change>();
 		this.setDisplayStatView(false);
+		_project.addObserver(this);
 	}
 	
 	/**
@@ -79,22 +83,24 @@ public class WorldView extends SimpleApplication implements Observer {
 	public void simpleInitApp() {
 		// !!! cam only exist when this function is called !!!
 		flyCam.setEnabled(false);
+		// Add the attributes to the cameraModeController (only existing at this time)
 		_controller.getCameraModeController().setCamera(cam);
 		_controller.getCameraModeController().setInputManager(inputManager);
 		_controller.getCameraModeController().setWorldView(this);
+		// Update the camera mode
 		_controller.getCameraModeController().updateMode();
 		
-		//Change the default background
-		viewPort.setBackgroundColor(ColorRGBA.White);
+		// Update the edition mode
+		_controller.updateEditionMode();
 		
-		//render the scene
-		_makeScene();
+		// Change the default background
+		viewPort.setBackgroundColor(ColorRGBA.White);
 
 		// listen for clicks on the canvas
 		_controller.inputSetUp(inputManager);
 		
 		// Notify our controller that initialisation is done
-		this.setPauseOnLostFocus(false);
+		setPauseOnLostFocus(false);
 	}
 	
 	/**
@@ -177,40 +183,50 @@ public class WorldView extends SimpleApplication implements Observer {
 	/**
 	 * Redraw the entire 3D scene
 	 */
-	private void _makeScene(){
-		//Generates the grid
-		attachGrid();
-		
-		//Generate the axes
-		_attachAxes();
-		
-		// Add a bit of sunlight into our lives
-		_addSun();
-		
-		try {
-			for (Floor floor : _dao.getFloors()){
-				for (Room room : floor.getRooms()){
-					if (room.getGround() != null)
-						_drawGround(room.getGround());
-					if (room.getWall() != null)
-						_drawWall(room.getWall());
-					if (room.getRoof() != null)
-						_drawRoof(room.getRoof());
+	public void makeScene(){
+		this.enqueue(new Callable<Object>() {
+	        public Object call() {
+	        	//Generates the grid
+	    		attachGrid();
+	    		
+	    		//Generate the axes
+	    		_attachAxes();
+	    		
+	    		// Add a bit of sunlight into our lives
+	    		_addSun();
+	    		
+	    		try {
+					for (Floor floor : _dao.getFloors()){
+						for (Room room : floor.getRooms()){
+							if (room.getGround() != null)
+								_drawGround(room.getGround());
+							if (room.getWall() != null)
+								_drawWall(room.getWall());
+							if (room.getRoof() != null)
+								_drawRoof(room.getRoof());
+						}
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
+	            return null;
+	        }
+	    });
 	}
 	
 	/**
 	 * Cleans the entire scene. Removes all children and lights.
 	 */
-	private void _cleanScene(){
-		rootNode.detachAllChildren();
-		for (Light light : rootNode.getWorldLightList())
-		rootNode.removeLight(light);
+	public void cleanScene(){
+		enqueue(new Callable<Object>() {
+	        public Object call() {
+	        	rootNode.detachAllChildren();
+	        	for (Light light : rootNode.getWorldLightList()) {
+					rootNode.removeLight(light);
+				}
+	            return null;
+	        }
+	    });
 	}
 
 	/**
@@ -345,8 +361,8 @@ public class WorldView extends SimpleApplication implements Observer {
 	
 	private void _updateFloor(Change change){
 		Floor floor = (Floor) change.getItem();
-		_cleanScene();
-		_makeScene();
+		cleanScene();
+		makeScene();
 	}
 	
 	/**
@@ -370,11 +386,13 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * Enqueues Changes, they should be applied in render thread
 	 */
 	@Override
-	public void update(Observable arg0, Object msg) {
+	public void update(Observable obs, Object msg) {
 		if (msg == null)
 			return;
-		synchronized (_queuedChanges) {
-			_queuedChanges.addAll((List<Change>) msg);
+		if (obs instanceof GeometryDAO) {
+			synchronized (_queuedChanges) {
+				_queuedChanges.addAll((List<Change>) msg);
+			}
 		}
 	}
 	
@@ -383,6 +401,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	@Override
 	public void simpleUpdate(float t){
+		
 		synchronized (_queuedChanges){
 			if (_queuedChanges.size() > 0){
 				for (Change change : _queuedChanges){

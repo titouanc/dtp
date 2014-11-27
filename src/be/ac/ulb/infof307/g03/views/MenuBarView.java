@@ -15,22 +15,10 @@ import be.ac.ulb.infof307.g03.controllers.MenuBarController;
  * 
  * This class implement the menu bar for the HomePlans GUI
  */
-public class MenuBarView extends JMenuBar implements ActionListener {
+public class MenuBarView extends JMenuBar {
 	private static final long serialVersionUID = 1L;
 	
 	private MenuBarController _controller;
-	
-	static private final String _NEW  = "new" ;
-	static private final String _OPEN = "open";
-	static private final String _DEMO = "demo";
-	static private final String _SAVE = "save";
-	static private final String _SAVE_AS = "saveAs";
-	static private final String _QUIT = "quit";
-	static private final String _UNDO = "undo";
-	static private final String _REDO = "redo";
-	static private final String _KEYBINDINGS = "keybindings";
-	static private final String _TOOLS = "tools";
-	static private final String _ABOUT = "about";
 	
 	/**
 	 * Constructor of the class MenuBar
@@ -50,73 +38,29 @@ public class MenuBarView extends JMenuBar implements ActionListener {
         this.add(menu);
         
         // Build New action
-        menu.add(createMenuItem("New", KeyEvent.VK_N, _NEW, "Create a new project."));
+        menu.add(createMenuItem("New", KeyEvent.VK_N, MenuBarController.NEW, "Create a new project."));
         // Build Open action
-        menu.add(createMenuItem("Open", KeyEvent.VK_O, _OPEN, "Open a saved project."));
+        menu.add(createMenuItem("Open", KeyEvent.VK_O, MenuBarController.OPEN, "Open a saved project."));
         // Build Open action
-        menu.add(createMenuItem("Demo",KeyEvent.VK_D, _DEMO, "Open the demo of the project."));
+        menu.add(createMenuItem("Demo",KeyEvent.VK_D, MenuBarController.DEMO, "Open the demo of the project."));
         // Separator
         menu.addSeparator();
         // Build Save action
-        menu.add(createMenuItem("Save", KeyEvent.VK_S, _SAVE, "Save the current project."));
-        menu.add(createMenuItem("Save As", KeyEvent.VK_A , _SAVE_AS, "Save the current project as a new file."));
+        menu.add(createMenuItem("Save", KeyEvent.VK_S, MenuBarController.SAVE, "Save the current project."));
+        menu.add(createMenuItem("Save As", KeyEvent.VK_A , MenuBarController.SAVE_AS, "Save the current project as a new file."));
         // Separator
         menu.addSeparator();
         // Build Quit action
-        menu.add(createMenuItem("Quit", KeyEvent.VK_Q, _QUIT, "Quit HomePlans application."));
-        
-        
-        // Build the Edit menu
-//        menu = new JMenu("Edit");
-//        menu.getAccessibleContext().setAccessibleDescription("Edit the project.");
-//        this.add(menu);
-        
-        // Build Undo action
-//        menu.add(createMenuItem("Undo", KeyEvent.VK_Z, _UNDO, "Undo last action."));
-        // Build Redo action
-//        menu.add(createMenuItem("Redo", KeyEvent.VK_Y, _REDO, "Redo last undo action."));
-        
+        menu.add(createMenuItem("Quit", KeyEvent.VK_Q, MenuBarController.QUIT, "Quit HomePlans application."));    
         
         // Build the Help menu
         menu = new JMenu("Help");
-        menu.add(createMenuItem("Keybindings", KeyEvent.VK_K, _KEYBINDINGS, "Display the keybindings."));
-        menu.add(createMenuItem("Tools", KeyEvent.VK_T, _TOOLS, "Display the help."));
-        menu.add(createMenuItem("About", KeyEvent.VK_H, _ABOUT, "About HomePlans."));
+        menu.add(createMenuItem("Keybindings", KeyEvent.VK_K, MenuBarController.KEYBINDINGS, "Display the keybindings."));
+        menu.add(createMenuItem("Tools", KeyEvent.VK_T, MenuBarController.TOOLS, "Display the help."));
+        menu.add(createMenuItem("About", KeyEvent.VK_H, MenuBarController.ABOUT, "About HomePlans."));
         menu.getAccessibleContext().setAccessibleDescription("Help.");
         this.add(menu);
-    }
-    
-    /**
-     * Inherited method from interface ActionListener
-     * @param event A mouse click
-     */ 
-    @Override
-	public void actionPerformed(ActionEvent event) {
-		String cmd = event.getActionCommand();
-		if (cmd.equals(_NEW)) {
-			_controller.onNew();
-		} else if (cmd.equals(_OPEN)) {
-			_controller.onOpen();
-		} else if (cmd.equals(_DEMO)) {
-			_controller.onDemo();
-		} else if (cmd.equals(_SAVE)) {
-			_controller.onSave();
-		} else if (cmd.equals(_SAVE_AS)) {
-			_controller.onSaveAs();
-		} else if (cmd.equals(_QUIT)) {
-			_controller.onQuit();
-		} else if (cmd.equals(_UNDO)) {
-			_controller.onUndo();
-		} else if (cmd.equals(_REDO)) {
-			_controller.onRedo();
-		} else if(cmd.equals(_KEYBINDINGS)) {
-			_controller.onKeybindings();
-		} else if(cmd.equals(_TOOLS)) {
-			_controller.onTools();
-		}else if(cmd.equals(_ABOUT)) {
-			_controller.onAbout();
-		}
-	}    
+    }   
 	
 	/**
 	 * Create a menu item binded with the relative handler
@@ -131,7 +75,7 @@ public class MenuBarView extends JMenuBar implements ActionListener {
     	menuItem = new JMenuItem(label, keyEvent);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(keyEvent, ActionEvent.CTRL_MASK));
         menuItem.getAccessibleContext().setAccessibleDescription(descr);
-        menuItem.addActionListener(this);
+        menuItem.addActionListener(_controller);
         menuItem.setActionCommand(cmd);
     	return menuItem;
     }
