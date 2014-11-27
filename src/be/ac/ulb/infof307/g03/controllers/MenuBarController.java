@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.GUI;
 import be.ac.ulb.infof307.g03.views.MenuBarView;
 
@@ -22,6 +23,7 @@ public class MenuBarController implements ActionListener {
 	private MenuBarView _view;
 	private FileChooserController _fileController;
 	private GUI _gui; // to dispose when top left red cross is clicked
+	private Project _project;
 	
 	/**
 	 * New alias
@@ -67,10 +69,24 @@ public class MenuBarController implements ActionListener {
 	 * @param gui The main gui frame (for .dispose())
 	 */
 	public MenuBarController(Project project,GUI gui){
-		_gui = gui;
+		_gui = gui;	
+	}
+	
+	/**
+	 * @author fhennecker
+	 * Runs the MenuBar GUI
+	 */
+	public void run(){
 		_view = new MenuBarView(this);
-		_fileController = new FileChooserController(_view, project, gui);
-		
+		_fileController = new FileChooserController(_view, _project, _gui);
+		_fileController.run();
+	}
+	
+	/**
+	 * This method initiate the view
+	 */
+	public void initView(){
+		_view = new MenuBarView(this);
 	}
 	
 	/**

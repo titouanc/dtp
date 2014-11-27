@@ -44,6 +44,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     // Edition mode alias
 	static final private String _WORLDMODE = "world";
 	static final private String _OBJECTMODE = "object";
+
+    private double _currentHeight;
+    private AppSettings _appSettings;
     
     // Input alias
     static private final String _RIGHTCLICK 	= "WC_SelectObject";
@@ -61,12 +64,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * @throws SQLException 
      */
     public WorldController(AppSettings settings, Project project) throws SQLException{
-    	
-        _view = new WorldView(this, project);
-        _view.setSettings(settings);
-        _view.createCanvas();
-        
-        _cameraModeController = new CameraModeController(project);
+
+    	_appSettings = settings;
+
         _project = project;
         _inConstruction = new LinkedList <Point>();
 
@@ -79,6 +79,21 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         	_currentEditionMode = _WORLDMODE;
         project.addObserver(this);
     }
+    
+    public void run(){
+    	initView(_project);
+        _view.setSettings(_appSettings);
+        _view.createCanvas();
+        _cameraModeController = new CameraModeController(_project);
+    }
+    
+	/**
+	 * This method initiate the view
+	 * @param project 
+	 */
+	public void initView(Project project){
+		_view = new WorldView(this, project);
+	}
 
 	/**
      * @return the world view.

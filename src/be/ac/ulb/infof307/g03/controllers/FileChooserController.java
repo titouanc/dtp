@@ -34,8 +34,21 @@ public class FileChooserController {
 		_parent = parent;
 		_project = project;
 		_gui = gui;
+	}
+	
+	/**
+	 * @author fhennecker
+	 * Run the FileChooser GUI
+	 */
+	public void run(){
+		initView();
+	}
+	
+	/**
+	 * This method initiate the view
+	 */
+	public void initView(){
 		_view = new FileChooserView(this);
-		
 	}
 	
 	/**
@@ -112,7 +125,7 @@ public class FileChooserController {
 	 */
 	public void newProject(File fileToCreate){
 		System.out.println("[DEBUG] You chose to create a new project named: " + fileToCreate.getName());
-		final String filename = fileToCreate.getAbsolutePath();
+		final String filename = fileToCreate.getAbsolutePath() + ".hpj";
 		_gui.dispose();
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){

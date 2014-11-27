@@ -20,6 +20,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 
 /**
@@ -39,7 +40,6 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * @param project Project object from model
 	 */
 	public ObjectTreeController(Project project) {
-		_view = new ObjectTreeView(this, project);
 		_project = project;
 		try {
 			_dao = project.getGeometryDAO();
@@ -50,11 +50,26 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		
 		_currentEditionMode = project.config("edition.mode");
 		if (_currentEditionMode.equals(""))
-			_currentEditionMode = _WORLDMODE;
-		updateEditionMode();
+			project.config("edition.mode", _WORLDMODE);
 		
 		_project.addObserver(this);
 		
+	}
+	
+	/**
+	 * @author fhennecker
+	 * Run the ObjectTree GUI
+	 */
+	public void run(){
+		initView(_project);
+	}
+	
+	/**
+	 * This method initiate the view
+	 * @param project The main project
+	 */
+	public void initView(Project project){
+		_view = new ObjectTreeView(this, project);
 	}
 	
 	/**

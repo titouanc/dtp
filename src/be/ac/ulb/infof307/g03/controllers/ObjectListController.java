@@ -13,14 +13,31 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import be.ac.ulb.infof307.g03.models.Geometric;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.ObjectListView;
+import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 
 public class ObjectListController implements MouseListener {
 	private ObjectListView _view = null;
 	private Project _project = null;
 	
 	public ObjectListController(Project project) {
-		_view = new ObjectListView(this);
+		_view = new ObjectListView(this,project);
 		_project = project;
+	}
+	
+	/**
+	 * @author fhennecker
+	 * Run the ObjectTree GUI
+	 */
+	public void run(){
+		initView(_project);
+	}
+	
+	/**
+	 * This method initiate the view
+	 * @param project The main project
+	 */
+	public void initView(Project project){
+		_view = new ObjectListView(this, project);
 	}
 	
 	public ObjectListView getView() {

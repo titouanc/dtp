@@ -31,8 +31,8 @@ public class MainPaneView extends JPanel {
 	private JSplitPane _hSplitPane, _vSplitPane;
 	private JScrollPane _worldListScrollPane;
 	private JScrollPane _objectListScrollPane;
-	private ObjectTreeController _worldTree;
 	private ObjectListController _objectList;
+	private ObjectTreeController _objectTree;
 	
 	/**
 	 * Constructor of MainPane. It create a splitpane with a tree on
@@ -45,15 +45,18 @@ public class MainPaneView extends JPanel {
 		super(new BorderLayout());
 		
 		_controller = newController;
-		
-        // Create an object tree
-        _worldTree = new ObjectTreeController(project);
         
         // Create the object list
         _objectList = new ObjectListController(project);
+        _objectList.run();
+
+		// Create an object tree
+        _objectTree = new ObjectTreeController(project);
+        _objectTree.run();
+
         
         // Create left menu
-        _worldListScrollPane = new JScrollPane(_worldTree.getView()); 
+        _worldListScrollPane = new JScrollPane(_objectTree.getView()); 
         // Set up resize behavior
         Dimension listScrollPaneDimension = new Dimension(150,140);
         _worldListScrollPane.setMinimumSize(listScrollPaneDimension);
