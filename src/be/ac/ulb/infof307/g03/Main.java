@@ -1,6 +1,11 @@
 package be.ac.ulb.infof307.g03;
 
 import java.sql.SQLException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import utils.Log;
 
 import com.j256.ormlite.logger.LocalLog;
 
@@ -14,6 +19,7 @@ import be.ac.ulb.infof307.g03.views.*;
  * It's first call at execution
  */
 public class Main {
+	
 
 	/**
 	 * Main entry point of the program
@@ -21,6 +27,13 @@ public class Main {
 	 * @see <a href=" http://hub.jmonkeyengine.org/wiki/doku.php/jme3:advanced:swing_canvas">Jmonkey doc</a>
 	 */
 	public static void main(String[] args) {
+		
+		// logger level and output
+		
+		
+		// first log
+		Log.log(Level.FINE, "The program started");
+		
 		// Mac OS X specific configuration
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");

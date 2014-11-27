@@ -5,8 +5,11 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
+import be.ac.ulb.infof307.g03.Main;
 import be.ac.ulb.infof307.g03.models.DemoProject;
 import be.ac.ulb.infof307.g03.models.Project;
 
@@ -15,6 +18,8 @@ import be.ac.ulb.infof307.g03.models.Project;
  *
  */
 public class BootController {
+
+	
 	static final private String LAST_PROJECT = "LastOpenedProject";
 	private Preferences _prefs;
 	
@@ -47,7 +52,6 @@ public class BootController {
 	 */
 	public Project loadLastProject() throws SQLException{
 		String lastProjectPath = getLastProjectPath(); 
-		System.out.println("[DEBUG] Last project path : " + lastProjectPath);
 		if (lastProjectPath != null){
 			if (new File(lastProjectPath).exists()){
 				Project proj = new Project();
