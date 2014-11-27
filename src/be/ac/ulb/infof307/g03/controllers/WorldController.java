@@ -70,7 +70,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         _project = project;
         _inConstruction = new LinkedList <Point>();
 
-        _currentFloor = (Floor) project.getGeometryDAO().getByUID(project.config("floor.current"));
+        String floorUID = project.config("floor.current");
+        _currentFloor = (Floor) project.getGeometryDAO().getByUID(floorUID);
         if (_currentFloor == null)
         	_currentFloor = project.getGeometryDAO().getFloors().get(0);
         _currentEditionMode = project.config("edition.mode");

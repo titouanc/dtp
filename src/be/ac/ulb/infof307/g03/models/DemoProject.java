@@ -29,9 +29,7 @@ public class DemoProject {
 			  d = new Point(0, 12, 0),
 			  e = new Point(-5, -1, 0);
 		
-		Floor groundFloor = new Floor(7);
-		geo.create(groundFloor);
-		geo.refresh(groundFloor);
+		Floor groundFloor = geo.getFloors().get(0);
 		proj.config("floor.current", groundFloor.getUID());
 		
 		createRoom(groundFloor, "Irregular room", a, b, c, d);

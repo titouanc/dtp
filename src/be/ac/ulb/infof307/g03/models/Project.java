@@ -40,7 +40,12 @@ public class Project extends Observable {
 		load(filename);
 		TableUtils.createTableIfNotExists(_db, Config.class);
 		GeometryDAO.migrate(_db);
+		
+		Floor initialFloor = new Floor(7);
+		getGeometryDAO().create(initialFloor);
+		
 		_filename = filename;
+		config("floor.current", initialFloor.getUID());
 	}
 
 	/**
