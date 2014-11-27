@@ -4,7 +4,9 @@
 package utils;
 
 
+import java.util.Date;
 import java.util.logging.Formatter;
+import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 
@@ -16,9 +18,21 @@ public class LogFormatter extends Formatter {
 
     @Override
     public String format(LogRecord record) {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(record.getMessage());
+        StringBuffer buffer = new StringBuffer(1000);
+        buffer.append(" ");
+        buffer.append(record.getLevel());
+        buffer.append(" ");
+        buffer.append(formatMessage(record));
+        buffer.append("\n");
         return buffer.toString();
     }
+    
+    /**
+     * @return Return the header of the message
+     */
+    public String getHead(Handler h) {
+        return "[Log] " + (new Date());
+      }
+    
 
 }

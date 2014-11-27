@@ -27,7 +27,7 @@ public class Log {
     
     private static Logger getLogger(){
         if(_logger == null){
-        	_logger = Logger.getLogger(Log.class.getName());
+        	new Log();
         }
         return _logger;
     }
@@ -38,6 +38,5 @@ public class Log {
      */
     public static void log(Level level, String msg){
         getLogger().log(level, msg);
-        System.out.println(msg);
     }
 }
