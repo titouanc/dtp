@@ -280,10 +280,17 @@ public class ObjectTreeView extends JTree implements Observer {
 				
 			}
 		}
+		if (updateUI){
+			SwingUtilities.invokeLater(new Runnable(){
+				@Override
+				public void run() {
+					/* Update GUI if needed */
+					updateUI();
+					
+				}
+			});
+		}
 		
-		/* Update GUI if needed */
-		if (updateUI)
-			updateUI();
 	}
 	
 
