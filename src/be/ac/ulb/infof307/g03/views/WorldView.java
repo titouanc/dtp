@@ -13,9 +13,9 @@ import java.util.concurrent.Callable;
 
 
 
-import utils.Log;
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;

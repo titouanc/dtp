@@ -1,5 +1,6 @@
 package be.ac.ulb.infof307.g03.controllers;
 
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
 import be.ac.ulb.infof307.g03.models.Floor;
@@ -13,8 +14,6 @@ import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
-
-import utils.Log;
 
 /**
  * @author fhennecker, pierre, wmoulart

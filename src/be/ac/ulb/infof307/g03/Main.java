@@ -5,12 +5,11 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import utils.Log;
-
 import com.j256.ormlite.logger.LocalLog;
 
 import be.ac.ulb.infof307.g03.controllers.BootController;
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.*;
 
 /**

@@ -1,4 +1,4 @@
-package utils;
+package be.ac.ulb.infof307.g03.utils;
 
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
