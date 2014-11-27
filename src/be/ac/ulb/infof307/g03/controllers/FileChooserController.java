@@ -36,8 +36,14 @@ public class FileChooserController {
 		_parent = parent;
 		_project = project;
 		_gui = gui;
+	}
+	
+	/**
+	 * @author fhennecker
+	 * Run the FileChooser GUI
+	 */
+	public void run(){
 		initView();
-		
 	}
 	
 	/**

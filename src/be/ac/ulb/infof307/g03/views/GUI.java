@@ -39,6 +39,7 @@ public class GUI extends JFrame {
         
         // Create the menuBar
         _menuBar = new MenuBarController(project, this);
+        _menuBar.run();
         this.setJMenuBar(_menuBar.getView());
         
         // Create the main panel
@@ -47,11 +48,13 @@ public class GUI extends JFrame {
         
         // Create the toolbar
         _toolsBar = new ToolsBarController(project);
+        _toolsBar.run();
         contentPane.add(_toolsBar.getView(), BorderLayout.PAGE_START);
      
         // Create the workspace
         // this one contains Jmonkey canvas and the left menu
         _workspace = new MainPaneController(project);
+        _workspace.run();
         contentPane.add(_workspace.getView(), BorderLayout.CENTER);
         
         // Add the workspace to the frame

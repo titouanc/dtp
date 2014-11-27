@@ -33,6 +33,7 @@ public class TestMainPaneController {
 	
 	@Test
 	public void testCreation(){
+		_controller.run();
 		assertNotNull(_controller.getView());
 	}
 }
