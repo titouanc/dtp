@@ -23,18 +23,21 @@ public class ToolsBarController implements ActionListener {
 	private Project _project;
 	
 	// Buttons actions alias
-	static final public String NEWELEMENT	= "NewElement";
+	static final public String NEWELEMENT = "TB_NewElement";
 
-	static final public String FLOOR_UP   = "FloorUp";
-	static final public String FLOOR_DOWN = "FloorDown";
-	static final public String FLOOR_NEW  = "FloorNew";
+	static final public String FLOOR_UP   = "TB_FloorUp";
+	static final public String FLOOR_DOWN = "TB_FloorDown";
+	static final public String FLOOR_NEW  = "TB_FloorNew";
 
-	static final public String VIEW2D 		= "2D";
-	static final public String VIEW3D 		= "3D";
+	static final public String VIEW2D = "TB_2D";
+	static final public String VIEW3D = "TB_3D";
 
-	static final public String ROTATE  	= "Rotate";	
-	static final public String HAND 		= "Grab";  
-	static final public String CURSOR		= "Cursor";
+	static final public String ROTATE = "TB_Rotate";	
+	static final public String HAND = "TB_Grab";  
+	static final public String CURSOR = "TB_Cursor";
+	
+	static final public String WORLD = "TB_World";
+	static final public String OBJECT = "TB_Object";
 	
 	/**
 	 * Constructor of ToolsBarController.
@@ -148,11 +151,7 @@ public class ToolsBarController implements ActionListener {
     public void onFloorNew(){
 		try {
 			GeometryDAO dao = _project.getGeometryDAO();
-			List<Floor>floors = dao.getFloors();
-			Floor newFloor = new Floor(7);
-			if (floors.size()>0) 
-				newFloor.setPrevious(floors.get(floors.size() - 1));
-	    	dao.create(newFloor);
+			dao.createFloorOnTop(7);
 	    	dao.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -239,8 +238,22 @@ public class ToolsBarController implements ActionListener {
         	onDragMoveMode();
         } else if (cmd.equals(CURSOR)){
         	onDragSelectMode();
+        } else if (cmd.equals(WORLD)) {
+        	onWorldMode();
+        } else if (cmd.equals(OBJECT)) {
+        	onObjectMode();
         }
 
+	}
+
+	private void onObjectMode() {
+		System.out.println("[DEBUG] User clicked on : object");
+		_project.config("edition.mode","object");
+	}
+
+	private void onWorldMode() {
+		System.out.println("[DEBUG] User clicked on : world");
+		_project.config("edition.mode", "world");	
 	}
 
 }

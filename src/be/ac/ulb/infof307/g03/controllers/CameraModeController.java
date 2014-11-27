@@ -7,6 +7,7 @@ import java.util.Observer;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.WorldView;
+
 import com.jme3.input.InputManager;
 import com.jme3.renderer.Camera;
 
@@ -27,7 +28,7 @@ public class CameraModeController implements Observer {
 	/**
 	 * This variable contents the current mode.
 	 */
-	private String _currentMode = _VIEW2D;
+	private String _currentMode;
 	/**
 	 * This variable contents the 2D camera controller.
 	 */
@@ -42,8 +43,10 @@ public class CameraModeController implements Observer {
 	 * @param proj
 	 */
 	CameraModeController(Project proj){
-		if (! proj.config("world.mode").equals("")) 
-			_currentMode = proj.config("world.mode");
+		_currentMode = proj.config("world.mode");
+		if (proj.config("world.mode").equals("")) 
+			_currentMode = _VIEW2D;
+		
 		proj.addObserver(this);
 	}
 	
@@ -60,6 +63,16 @@ public class CameraModeController implements Observer {
 			_cam2D.setEnabled(true);
 			_cam3D.setEnabled(false);
 			_cam2D.resetCamera();
+		}
+	}
+	
+	/**
+	 * This method is used to change the actual mode.
+	 */
+	private void updateMode(String value) {
+		if (_currentMode!=value) {
+			_currentMode = value;
+			updateMode();
 		}
 	}
 
@@ -93,12 +106,11 @@ public class CameraModeController implements Observer {
 	/**
 	 * 
 	 */
-	public void update(Observable o, Object arg) {
-		if (arg instanceof Config){
+	public void update(Observable obs, Object arg) {
+		if (obs instanceof Project){
 			Config param = (Config) arg;
 			if (param.getName().equals("world.mode")) {
-				_currentMode = param.getValue();
-				updateMode();
+				updateMode(param.getValue());
 			} else if (param.getName().equals("mouse.mode")){
 				System.out.println("[CameraController] Change mouse mode to " + param.getValue());
 				_cam2D.setMouseMode(param.getValue());
@@ -106,7 +118,7 @@ public class CameraModeController implements Observer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Set the world view 
 	 * @param wv

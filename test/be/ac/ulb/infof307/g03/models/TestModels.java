@@ -5,7 +5,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({TestGeometry.class, TestLine.class, TestPoint.class, TestProject.class})
+@SuiteClasses({
+	TestGeometry.class, TestBinding.class, TestPoint.class, 
+	TestProject.class, TestFloor.class, TestMeshable.class, 
+	TestRoom.class})
 public class TestModels {
 
 }

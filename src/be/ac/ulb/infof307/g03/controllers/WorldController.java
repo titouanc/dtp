@@ -42,6 +42,12 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     private Point _movingPoint = null;
     private List<Point> _inConstruction ;
     private Floor _currentFloor = null;
+	private String _currentEditionMode;
+    
+    // Edition mode alias
+	static final private String _WORLDMODE = "world";
+	static final private String _OBJECTMODE = "object";
+
     private double _currentHeight;
     private AppSettings _appSettings;
     
@@ -61,15 +67,19 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * @throws SQLException 
      */
     public WorldController(AppSettings settings, Project project) throws SQLException{
+
     	_appSettings = settings;
+
         _project = project;
         _inConstruction = new LinkedList <Point>();
-        _currentFloor = (Floor) project.getGeometryDAO().getByUID(project.config("floor.current"));
+
+        String floorUID = project.config("floor.current");
+        _currentFloor = (Floor) project.getGeometryDAO().getByUID(floorUID);
         if (_currentFloor == null)
-        	if (!project.getGeometryDAO().getFloors().isEmpty())
-        		_currentFloor = project.getGeometryDAO().getFloors().get(0);
-        if (_currentFloor!=null)
-        	_currentHeight = project.getGeometryDAO().getBaseHeight(_currentFloor);
+        	_currentFloor = project.getGeometryDAO().getFloors().get(0);
+        _currentEditionMode = project.config("edition.mode");
+        if (_currentEditionMode.equals("")) // set as default for the first time
+        	_currentEditionMode = _WORLDMODE;
         project.addObserver(this);
     }
     
@@ -93,6 +103,10 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      */
     public WorldView getView(){
         return _view;
+    }
+    
+    public Floor getCurrentFloor(){
+    	return _currentFloor;
     }
     
     /**
@@ -121,6 +135,27 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      */
     public void startViewCanvas(){
         _view.startCanvas();
+    }
+    
+    
+    /**
+     * Update the screen according to the current edition mode.
+     * @param mode A string who's a valid mode.
+     */
+    public void updateEditionMode() {
+    	if (_currentEditionMode.equals(_WORLDMODE) ){
+    		_view.cleanScene();
+    		_view.makeScene();
+    	} else if (_currentEditionMode.equals(_OBJECTMODE)) {
+    		_view.cleanScene();
+    	}
+	}
+    
+    public void updateEditionMode(String mode) {
+    	if (mode!=_currentEditionMode) {
+    		_currentEditionMode = mode;
+    		updateEditionMode();
+    	}
     }
     
     /**
@@ -199,29 +234,29 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	 * @param p Get coordinates X and Y into Point
 	 */
 	public void getXYForMouse(Point p){
-		Vector2f myVector = getXYForMouse((float) _currentHeight);
+		Vector2f myVector = getXYForMouse((float) _currentFloor.getBaseHeight());
 		p.setX(myVector.getX());
 		p.setY(myVector.getY());
 	}
     
     /**
-     * Toggle selection for a Grouped item, save to database and notify observers
-     * @param grouped The Grouped item to select
+     * Toggle selection for a Meshable item, save to database and notify observers
+     * @param meshable The Meshable item to select
      */
-    public void selectObject(Grouped grouped) {
+    public void selectObject(Meshable meshable) {
 	        try {
-	        	grouped.toggleSelect();
+	        	meshable.toggleSelect();
 	        	GeometryDAO dao = _project.getGeometryDAO();
-	        	for (Point p : dao.getPointsForShape(grouped.getGroup())){
-	        		if (grouped.isSelected())
+	        	for (Point p : meshable.getPoints()){
+	        		if (meshable.isSelected())
 	        			p.select();
 	        		else
 	        			p.deselect();
 	        		dao.update(p);
 	        	}
-	            dao.update(grouped);
-	            dao.notifyObservers(grouped);
-	            String floorUID = grouped.getGroup().getFloor().getUID();
+	            dao.update(meshable);
+	            dao.notifyObservers(meshable);
+	            String floorUID = meshable.getRoom().getFloor().getUID();
 	            if (! _project.config("floor.current").equals(floorUID))
 	            	_project.config("floor.current", floorUID);
 	        } catch (SQLException e) {
@@ -259,26 +294,24 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * Mesh the points together for the walls creation
      */
     public void finalizeConstruct(){
-    	Group room = new Group();
-    	GeometryDAO dao;
-		try {
-			dao = _project.getGeometryDAO();
-			dao.create(room);
-			room.setName(room.getUID());
-			dao.update(room);
-	    	for (int i=0; i<_inConstruction.size(); i++){
-	    		_inConstruction.get(i).deselect();
-	    		dao.update(_inConstruction.get(i));
-				dao.addShapeToGroup(room, new Line(_inConstruction.get(i), _inConstruction.get((i+1)%_inConstruction.size())));
+    	try {
+			GeometryDAO dao = _project.getGeometryDAO();
+	    	if (_inConstruction.size() >= 3){
+	    		dao.createRoom(_currentFloor, _inConstruction);
+		    	dao.notifyObservers();
+	    	} else {
+	    		for (Point p : _inConstruction){
+	    			if (p.getBindings().size() == 0){
+	    				dao.delete(p);
+	    			} else {
+		    			p.deselect();
+		    			dao.update(p);
+	    			}
+	    		}
+	    		dao.notifyObservers();
 	    	}
-	    	dao.create(new Wall(room));
-	    	dao.create(new Ground(room));
-	    	dao.create(new Roof(room));
-	    	dao.addGroupToFloor((Floor) dao.getByUID(_project.config("floor.current")), room);
-	    	dao.notifyObservers();
 	    	_inConstruction.clear();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -315,12 +348,12 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         Geometric clicked = getClickedObject();
         
         /* We're not interested if no object */
-        if (clicked == null  )
+        if (clicked == null)
         	return;
         
-        /* If it is a Grouped (Wall, Ground): select it */
-        if (clicked instanceof Grouped)
-        	selectObject((Grouped) clicked);
+        /* If it is a Meshable (Wall, Ground): select it */
+        if (clicked instanceof Meshable)
+        	selectObject((Meshable) clicked);
         
         /* If it is a Point: initiate drag'n drop */
         else if (clicked instanceof Point)
@@ -350,13 +383,13 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		} else if (name.equals(_RIGHTCLICK)) {
 			if (value) { // on click
 				if (_inConstruction.size() > 0) { // We're building a shape, and right-click: finish shape
-					finalizeConstruct(); 
+					finalizeConstruct();
 				}
 				else if (mouseMode.equals("dragSelect")){
 					Geometric clicked = getClickedObject();
-					if (clicked instanceof Grouped){
-						System.out.println("OUVRIR LE JPannel");
-					}
+					//if (clicked instanceof Grouped){
+						//System.out.println("OUVRIR LE JPannel");
+					//}
 					// Si il appuie sur une shape
 				}
 			} else { // on release
@@ -367,17 +400,20 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	}
 
 	@Override
-	public void update(Observable arg0, Object arg1) {
-		Config changed = (Config) arg1;
-		if (changed.getName().equals("floor.current")){
-			String newUID = changed.getValue();
-			if (newUID.equals(_currentFloor.getUID()))
-				return;
-	        try {
-	        	_currentFloor = (Floor) _project.getGeometryDAO().getByUID(changed.getValue());
-				_currentHeight = _project.getGeometryDAO().getBaseHeight(_currentFloor);
-			} catch (SQLException e) {
-				e.printStackTrace();
+	public void update(Observable obs, Object msg) {
+		if (obs instanceof Project) {
+			Config config = (Config) msg;
+			if (config.getName().equals("edition.mode")) {
+				updateEditionMode(config.getValue());
+			} else if (config.getName().equals("floor.current")){
+				String newUID = config.getValue();
+				if (newUID.equals(_currentFloor.getUID()))
+					return;
+				try {
+					_currentFloor = (Floor) _project.getGeometryDAO().getByUID(config.getValue());
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

@@ -63,9 +63,32 @@ public class ToolsBarView extends JToolBar implements Observer  {
         _addButtonsFloor();
         _addButtonsDimension();
         _addButtonMouseMode();
+        _addButtonEditionMode();
     }
 
-    /**
+    private void _addButtonEditionMode() {
+    	JToggleButton worldButton = createJToggleButton("world", ToolsBarController.WORLD, "Switch to the world mode.");
+    	JToggleButton objectButton = createJToggleButton("object", ToolsBarController.OBJECT, "Switch to the object mode.");
+    	
+    	// Restore mode
+    	String editionMode = _project.config("edition.mode");
+    	if (editionMode.equals("object")) {
+    		objectButton.setSelected(true);
+    	} else {
+    		worldButton.setSelected(true);
+    	}
+    	
+    	ButtonGroup buttonGroup = new ButtonGroup();
+    	buttonGroup.add(worldButton);
+    	buttonGroup.add(objectButton);
+    	
+    	this.add(worldButton);
+    	this.add(objectButton);
+    	
+    	this.addSeparator();
+	}
+
+	/**
      * The private method used for creating buttons to switch
      * from one floor to another
      */
@@ -208,11 +231,13 @@ public class ToolsBarView extends JToolBar implements Observer  {
     }
      
     @Override
- 	public void update(Observable o, Object arg) {
- 		Config param = (Config) arg;
- 		if (param.getName().equals("mouse.mode")){
- 			_createButton.setEnabled (! param.getValue().equals("construct"));
- 		}
+ 	public void update(Observable obs, Object arg) {
+    	if (obs instanceof Project) {
+    		Config param = (Config) arg;
+    		if (param.getName().equals("mouse.mode")){
+    			_createButton.setEnabled (! param.getValue().equals("construct"));
+    		}
+    	}
  	}
 
 }
