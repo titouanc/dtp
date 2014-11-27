@@ -349,6 +349,13 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				if (_inConstruction.size() > 0) { // We're building a shape, and right-click: finish shape
 					finalizeConstruct(); 
 				}
+				else if (mouseMode.equals("dragSelect")){
+					Geometric clicked = getClickedObject();
+					if (clicked instanceof Grouped){
+						System.out.println("OUVRIR LE JPannel");
+					}
+					// Si il appuie sur une shape
+				}
 			} else { // on release
 				
 			}
