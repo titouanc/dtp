@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import be.ac.ulb.infof307.g03.controllers.WorldController;
+import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.Project;
 
 import com.jme3.system.AppSettings;
@@ -27,7 +28,9 @@ public class TestMainPaneController {
 	public void setUp() throws SQLException{
         _project = new Project();
         _project.create(":memory:");
-        
+        Floor floor = new Floor();
+        _project.getGeometryDAO().create(floor);
+        _project.config("floor.current", floor.getUID());
         _controller = new MainPaneController(_project);
 	}
 	

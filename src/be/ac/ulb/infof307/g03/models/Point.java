@@ -3,8 +3,13 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.jme3.math.Vector3f;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
@@ -12,9 +17,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * @author Titouan Christophe
  */
 @DatabaseTable
-public class Point implements Geometric {
-	@DatabaseField(generatedId = true)
-	private int _id = 0;
+public class Point extends Geometric {
 	@DatabaseField(uniqueCombo = true)
 	private double _x = 0;
 	@DatabaseField(uniqueCombo = true)
@@ -23,6 +26,8 @@ public class Point implements Geometric {
 	private double _z = 0;
 	@DatabaseField
 	private Boolean _selected = false;
+	@ForeignCollectionField(eager = false, orderColumnName = "_room_id")
+    private ForeignCollection<Binding> _bindings;
 	
 	/**
 	 * Create a new (0,0,0) point
@@ -53,13 +58,6 @@ public class Point implements Geometric {
 	}
 
 	/**
-	 * @return Identifier of this point
-	 */
-	int getId() {
-		return this._id;
-	}
-
-	/**
 	 * @return x coordinate
 	 */
 	public double getX() {
@@ -85,7 +83,7 @@ public class Point implements Geometric {
 	 * @param other A point to copy
 	 */
 	public void copyFrom(Point other){
-		this._id = other.getId();
+		setId(other.getId());
 		setX(other.getX());
 		setY(other.getY());
 		setZ(other.getZ());
@@ -155,7 +153,11 @@ public class Point implements Geometric {
 	 * @param other Another point
 	 * @return True if the two points are actually the same
 	 */
-	public Boolean equals(Point other){
+	@Override
+	public boolean equals(Object otherObject){
+		if (otherObject == null || ! (otherObject instanceof Point))
+			return false;
+		Point other = (Point) otherObject;
 		Boolean by_id = true;
 		if (getId() != 0 && other.getId() != 0)
 			by_id = other.getId() == getId();
@@ -170,18 +172,27 @@ public class Point implements Geometric {
 		return new Vector3f((float) _x, (float) _y, (float) _z);
 	}
 	
-	@Override
-	public Boolean isLeaf() {
-		return true;
+	/**
+	 * @return All bindings of this point
+	 */
+	public ForeignCollection<Binding> getBindings(){
+		return _bindings;
 	}
 	
-	@Override
-	public String getUID() {
-		return String.format("pnt-%d", getId());
+	/**
+	 * @return All rooms bound to this point
+	 */
+	public List<Room> getBoundRooms(){
+		List<Room> res = new LinkedList<Room>();
+		if (_bindings != null){
+			for (Binding b : _bindings)
+				res.add(b.getRoom());
+		}
+		return res;
 	}
-	
+
 	@Override
-	public Group getGroup(){
-		return null;
+	public String getUIDPrefix() {
+		return "pnt";
 	}
 }

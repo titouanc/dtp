@@ -29,9 +29,11 @@ public class DemoProject {
 			  d = new Point(0, 12, 0),
 			  e = new Point(-5, -1, 0);
 		
-		Floor groundFloor = (Floor) proj.getGeometryDAO().getByUID("flr-1");
-		geo.addGroupToFloor(groundFloor, createRoom(geo, "Irregular room", a, b, c, d));
-		geo.addGroupToFloor(groundFloor, createRoom(geo, "Triangular room", a, e, d));
+		Floor groundFloor = geo.getFloors().get(0);
+		proj.config("floor.current", groundFloor.getUID());
+		
+		createRoom(groundFloor, "Irregular room", a, b, c, d);
+		createRoom(groundFloor, "Triangular room", a, e, d);
 		geo.notifyObservers();
 		return proj;
 	}
@@ -44,15 +46,17 @@ public class DemoProject {
 	 * @return A group which is a room.
 	 * @throws SQLException
 	 */
-	public static Group createRoom(GeometryDAO dao, String name, Point...points) throws SQLException{
-		Group room = new Group(name);
-		dao.create(room);
-		dao.create(new Wall(room));
-		dao.create(new Ground(room));
-		dao.create(new Roof(room));
+	public static Room createRoom(Floor floor, String name, Point...points) throws SQLException{
+		Room room = new Room(name);
+		room.setWall(new Wall());
+		room.setGround(new Ground());
+		room.setRoof(new Roof());
+		floor.getRooms().add(room);
+		floor.getRooms().refresh(room);
 		
-		for (int i=0; i<points.length; i++)
-			dao.addShapeToGroup(room, new Line(points[i], points[(i+1)%points.length]));
+		room.addPoints(points);
+		room.addPoints(points[0]);
+		floor.getRooms().update(room);
 		return room;
 	}
 }

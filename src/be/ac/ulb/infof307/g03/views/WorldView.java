@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
-import java.util.logging.Level;
+import java.util.concurrent.Callable;
 
-import javax.swing.JOptionPane;
+
 
 import utils.Log;
 import be.ac.ulb.infof307.g03.controllers.WorldController;
@@ -19,8 +19,6 @@ import be.ac.ulb.infof307.g03.models.*;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
-import com.jme3.input.MouseInput;
-import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
@@ -30,21 +28,17 @@ import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Grid;
-import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
- * @author fhennecker, julianschembri, brochape, Titouan,wmoulart
+ * @author fhennecker, julianschembri, brochape, Titouan, wmoulart
  */
 public class WorldView extends SimpleApplication implements Observer {	
 	
@@ -53,9 +47,9 @@ public class WorldView extends SimpleApplication implements Observer {
 	private WorldController _controller; 
 	private LinkedList<Change> _queuedChanges = null;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
-	
+			
 	/**
-	 * Constructor of WorldView
+	 * WorldView's Constructor
 	 * @param newController The view's controller
 	 * @param model The DAO pattern model class
 	 */
@@ -63,14 +57,15 @@ public class WorldView extends SimpleApplication implements Observer {
 		super();
 		_controller = newController;
 		_project = project;
+		_queuedChanges = new LinkedList<Change>();
 		try {
 			_dao= project.getGeometryDAO();
 			_dao.addObserver(this);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		_queuedChanges = new LinkedList<Change>();
 		this.setDisplayStatView(false);
+		_project.addObserver(this);
 	}
 	
 	/**
@@ -80,22 +75,24 @@ public class WorldView extends SimpleApplication implements Observer {
 	public void simpleInitApp() {
 		// !!! cam only exist when this function is called !!!
 		flyCam.setEnabled(false);
+		// Add the attributes to the cameraModeController (only existing at this time)
 		_controller.getCameraModeController().setCamera(cam);
 		_controller.getCameraModeController().setInputManager(inputManager);
 		_controller.getCameraModeController().setWorldView(this);
+		// Update the camera mode
 		_controller.getCameraModeController().updateMode();
 		
-		//Change the default background
-		viewPort.setBackgroundColor(ColorRGBA.White);
+		// Update the edition mode
+		_controller.updateEditionMode();
 		
-		//render the scene
-		_makeScene();
+		// Change the default background
+		viewPort.setBackgroundColor(ColorRGBA.White);
 
 		// listen for clicks on the canvas
 		_controller.inputSetUp(inputManager);
 		
 		// Notify our controller that initialisation is done
-		this.setPauseOnLostFocus(false);
+		setPauseOnLostFocus(false);
 	}
 	
 	/**
@@ -174,77 +171,54 @@ public class WorldView extends SimpleApplication implements Observer {
 		return res;
 	}
 	
-	
-	/**
-	 * Transform a Wall object into a Node containing Boxes (3D object usable in jMonkey)
-	 * @param wall The wall to transform
-	 * @return The Node
-	 * @throws SQLException
-	 */
-	public Node getWallAsNode(Wall wall) throws SQLException{
-		Node res = new Node(wall.getUID());
-		List<Point> allPoints = _dao.getPointsForShape(wall.getGroup());
-		
-		float height = (float) _dao.getFloor(wall.getGroup()).getHeight();
-		float elevation = (float) _dao.getBaseHeight(_dao.getFloor(wall.getGroup()));
-		
-		for (int i=0; i<allPoints.size()-1; i++){
-			// 1) Build a box the right length, width and height
-			Vector3f a = allPoints.get(i).toVector3f();
-			Vector3f b = allPoints.get(i+1).toVector3f();
-			float w = (float) wall.getWidth();
-			Vector2f segment = new Vector2f(b.x-a.x, b.y-a.y);
-			Box box = new Box(	new Vector3f(-w/2,-w/2,elevation), new Vector3f(segment.length()+w/2, 
-																		w/2, elevation+height-0.001f));
-			Geometry wallGeometry = new Geometry(wall.getUID(), box);
-			wallGeometry.setMaterial(_makeLightedMaterial(wall.isSelected() ? new ColorRGBA(0f,1.2f,0f, 0.5f) : ColorRGBA.Gray));
-			// 2) Place the wall at the right place
-			wallGeometry.setLocalTranslation(a);
-			 
-			// 3) Rotate the wall at the right orientation
-			Quaternion rot = new Quaternion();
-			rot.fromAngleAxis(-segment.angleBetween(new Vector2f(1,0)), new Vector3f(0,0,1));
-			wallGeometry.setLocalRotation(rot);
-			
-			// 4) Attach it to the node
-			res.attachChild(wallGeometry);
-		}
-		return res;
-	}
 
 	/**
 	 * Redraw the entire 3D scene
 	 */
-	private void _makeScene(){
-		//Generates the grid
-		attachGrid();
-		
-		//Generate the axes
-		_attachAxes();
-		
-		// Add a bit of sunlight into our lives
-		_addSun();
-		
-		try {
-			for (Wall wall : _dao.getWalls())
-				_drawWall(wall);
-			for (Ground gnd : _dao.getGrounds())
-				_drawGround(gnd);
-			for (Roof roof : _dao.getRoofs())
-				_drawRoof(roof);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
+	public void makeScene(){
+		this.enqueue(new Callable<Object>() {
+	        public Object call() {
+	        	//Generates the grid
+	    		attachGrid();
+	    		
+	    		//Generate the axes
+	    		_attachAxes();
+	    		
+	    		// Add a bit of sunlight into our lives
+	    		_addSun();
+	    		
+	    		try {
+					for (Floor floor : _dao.getFloors()){
+						for (Room room : floor.getRooms()){
+							if (room.getGround() != null)
+								_drawGround(room.getGround());
+							if (room.getWall() != null)
+								_drawWall(room.getWall());
+							if (room.getRoof() != null)
+								_drawRoof(room.getRoof());
+						}
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+	            return null;
+	        }
+	    });
 	}
 	
 	/**
 	 * Cleans the entire scene. Removes all children and lights.
 	 */
-	private void _cleanScene(){
-		rootNode.detachAllChildren();
-		for (Light light : rootNode.getWorldLightList())
-		rootNode.removeLight(light);
+	public void cleanScene(){
+		enqueue(new Callable<Object>() {
+	        public Object call() {
+	        	rootNode.detachAllChildren();
+	        	for (Light light : rootNode.getWorldLightList()) {
+					rootNode.removeLight(light);
+				}
+	            return null;
+	        }
+	    });
 	}
 
 	/**
@@ -264,17 +238,14 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void _drawWall(Wall wall){
 		if (! wall.isVisible())
 			return;
-		try {
-			rootNode.attachChild(getWallAsNode(wall));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Material material = _makeLightedMaterial(_getColor(wall));
+		rootNode.attachChild(wall.toSpatial(material));
 	}
 	
 	private void _drawGround(Ground gnd){
 		if (! gnd.isVisible())
 			return;
+/*<<<<<<< HEAD
 		try {
 			Mesh mesh = _dao.getGroundAsMesh(gnd);
 			Geometry node = new Geometry(gnd.getUID(), mesh);
@@ -291,11 +262,16 @@ public class WorldView extends SimpleApplication implements Observer {
 			Log.log(Level.INFO, "User try to draw a wall with not enough point");
 			//e.printStackTrace();
 		}
+=======*/
+		Material mat = _makeBasicMaterial(_getColor(gnd));
+		rootNode.attachChild(gnd.toSpatial(mat));
+/*>>>>>>> refs/remotes/origin/merge-ref_models*/
 	}
 	
 	private void _drawRoof(Roof roof){
 		if (! roof.isVisible())
 			return;
+/*<<<<<<< HEAD
 		try {
 			Mesh mesh = _dao.getRoofAsMesh(roof);
 			Geometry node = new Geometry(roof.getUID(), mesh);
@@ -310,6 +286,10 @@ public class WorldView extends SimpleApplication implements Observer {
 			// TODO Auto-generated catch block
 			Log.log(Level.INFO, "User tried to create a wall with not enough point");
 		}
+=======*/
+		Material mat = _makeBasicMaterial(_getColor(roof));
+		rootNode.attachChild(roof.toSpatial(mat));
+/*>>>>>>> refs/remotes/origin/merge-ref_models*/
 	}
 	
 	/**
@@ -329,27 +309,25 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	/**
-	 * @param grouped a Grouped item
+	 * @param meshable a Meshable item
 	 * @return The color it should have in 3D view
 	 * @throws SQLException 
 	 */
-	private ColorRGBA _getColor(Grouped grouped) throws SQLException{
-		ColorRGBA color;
-		if (grouped.isSelected()){
+	private ColorRGBA _getColor(Meshable meshable) {
+		ColorRGBA color = ColorRGBA.Gray;
+		if (meshable.isSelected()){
 			color = new ColorRGBA(0f,1.2f,0f, 0.5f);
 		}
-		else if (grouped instanceof Wall){
-			color = new ColorRGBA(0f, 1.2f, 0f, 0.5f);
+		else if (meshable instanceof Ground) {
+			color = ColorRGBA.LightGray;	
 		}
-		else if (grouped instanceof Roof){
-			int hash = grouped.getGroup().getFloor().getId();
+		else if (meshable instanceof Roof){
+			Roof roof = (Roof) meshable;
+			int hash = roof.getRoom().getFloor().getId();
 			double r = Math.sin(hash)/4 + 0.25;
 			double g = Math.sin(hash + Math.PI/3)/4 + 0.25;
 			double b = Math.sin(hash + 2*Math.PI/3)/4 + 0.25;
 			color = new ColorRGBA((float)r, (float)g, (float)b, 0.3f);
-		}
-		else{
-			color= ColorRGBA.LightGray;	
 		}
 		return color;
 	}
@@ -360,7 +338,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	private void _updatePoint(Change change){
 		Point point = (Point) change.getItem();
-		Floor floor = (Floor) _dao.getByUID(_project.config("floor.current"));
+		Floor floor = _controller.getCurrentFloor();
 		rootNode.detachChildNamed(point.getUID());
 		if (point.isSelected()){			
 			Sphere mySphere = new Sphere(32,32, 1.0f);
@@ -371,36 +349,39 @@ public class WorldView extends SimpleApplication implements Observer {
 		    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
 		    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		    sphere.setMaterial(sphereMat);
-		    sphere.setLocalTranslation(point.toVector3f().setZ((float) _dao.getBaseHeight(floor)));
+		    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
 		    rootNode.attachChild(sphere);
-			try {
-				for (Grouped grouped : _dao.getGroupedForPoint(point))
-					_updateGrouped(Change.update(grouped));
-			} catch (SQLException e) {
-				e.printStackTrace();
+			for (Room room : point.getBoundRooms()){
+				try {
+					_dao.refresh(room);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				for (Meshable meshable : room.getMeshables())
+					_updateMeshable(Change.update(meshable));
 			}
 		}
 	}
 	
 	/**
-	 * Update view when a Grouped has changed
+	 * Update view when a Meshable has changed
 	 * @param change
 	 */
-	private void _updateGrouped(Change change){
-		Grouped grouped = (Grouped) change.getItem();
+	private void _updateMeshable(Change change){
+		Meshable meshable = (Meshable) change.getItem();
 		
 		/* 3D object don't exist yet if it is a creation */
 		if (! change.isCreation())
-			rootNode.detachChildNamed(grouped.getUID());
+			rootNode.detachChildNamed(meshable.getUID());
 		
 		/* No need to redraw if it is a deletion */
 		if (! change.isDeletion()){
-			if (grouped instanceof Wall)
-				_drawWall((Wall) grouped);
-			else if (grouped instanceof Ground)
-				_drawGround((Ground) grouped);
-			else if (grouped instanceof Roof)
-				_drawRoof((Roof) grouped);
+			if (meshable instanceof Wall)
+				_drawWall((Wall) meshable);
+			else if (meshable instanceof Ground)
+				_drawGround((Ground) meshable);
+			else if (meshable instanceof Roof)
+				_drawRoof((Roof) meshable);
 		}
 		
 		/* Conclusion: updates will do both (detach & redraw) */
@@ -408,8 +389,8 @@ public class WorldView extends SimpleApplication implements Observer {
 	
 	private void _updateFloor(Change change){
 		Floor floor = (Floor) change.getItem();
-		_cleanScene();
-		_makeScene();
+		cleanScene();
+		makeScene();
 	}
 	
 	/**
@@ -433,11 +414,13 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * Enqueues Changes, they should be applied in render thread
 	 */
 	@Override
-	public void update(Observable arg0, Object msg) {
+	public void update(Observable obs, Object msg) {
 		if (msg == null)
 			return;
-		synchronized (_queuedChanges) {
-			_queuedChanges.addAll((List<Change>) msg);
+		if (obs instanceof GeometryDAO) {
+			synchronized (_queuedChanges) {
+				_queuedChanges.addAll((List<Change>) msg);
+			}
 		}
 	}
 	
@@ -446,11 +429,14 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	@Override
 	public void simpleUpdate(float t){
+		
 		synchronized (_queuedChanges){
 			if (_queuedChanges.size() > 0){
 				for (Change change : _queuedChanges){
-					if (change.getItem() instanceof Grouped)
-						_updateGrouped(change);
+					if (change.isDeletion())
+						rootNode.detachChildNamed(change.getItem().getUID());
+					else if (change.getItem() instanceof Meshable)
+						_updateMeshable(change);
 					else if (change.getItem() instanceof Point)
 						_updatePoint(change);
 					else if (change.getItem() instanceof Floor)
