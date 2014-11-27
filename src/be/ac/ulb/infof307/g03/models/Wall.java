@@ -5,7 +5,7 @@ package be.ac.ulb.infof307.g03.models;
 
 import java.util.logging.Level;
 
-import utils.Log;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.j256.ormlite.field.DatabaseField;
 

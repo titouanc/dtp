@@ -18,8 +18,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import utils.Log;
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 

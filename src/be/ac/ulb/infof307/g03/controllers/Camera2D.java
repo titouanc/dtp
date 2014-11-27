@@ -3,7 +3,7 @@ package be.ac.ulb.infof307.g03.controllers;
 import java.util.Vector;
 import java.util.logging.Level;
 
-import utils.Log;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.input.InputManager;

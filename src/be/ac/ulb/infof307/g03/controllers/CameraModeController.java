@@ -5,9 +5,9 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 
-import utils.Log;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.input.InputManager;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package utils;
+package be.ac.ulb.infof307.g03.utils;
 
 
 import java.util.Date;
@@ -22,7 +22,7 @@ public class LogFormatter extends Formatter {
         buffer.append(" ");
         buffer.append(record.getLevel());
         buffer.append(" ");
-        buffer.append(formatMessage(record));
+        buffer.append(record.getMessage());
         buffer.append("\n");
         return buffer.toString();
     }

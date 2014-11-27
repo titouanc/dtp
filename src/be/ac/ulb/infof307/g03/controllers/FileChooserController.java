@@ -10,9 +10,9 @@ import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 
-import utils.Log;
 import be.ac.ulb.infof307.g03.models.DemoProject;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.GUI;
 
