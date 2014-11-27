@@ -5,6 +5,8 @@ main.tex: substories libs
 	cat intro.tex >> $@
 	/bin/echo "\\section{Librairies introduites}" >> $@
 	cat libs/*.tex >> $@
+	/bin/echo "\\section{Histoires utilisateur}" >> $@
+	cat substories/*.tex >> $@
 	cat report.tex >> $@
 
 .PHONY: pv substories libs clean
