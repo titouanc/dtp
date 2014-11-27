@@ -1,13 +1,66 @@
 package be.ac.ulb.infof307.g03.controllers;
 
-public class TextureController {
+import be.ac.ulb.infof307.g03.views.FileChooserView;
+import be.ac.ulb.infof307.g03.views.TextureView;
+import be.ac.ulb.infof307.g03.views.ToolsBarView;
+import be.ac.ulb.infof307.g03.models.GeometryDAO;
+import be.ac.ulb.infof307.g03.models.Project;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
+/**
+ * @author wmoulart
+ * @brief Controller of the JPannel that will open when user wants to change the texture of a group.
+ */
+public class TextureController implements ActionListener {
+	// Attributes
+	private TextureView _view;
+	private Project _project;
+	
+	static final public String _CHANGETEXTURE	= "Change Texture";
+	
+	
+	
 	/**
-	 * @param args
+	 * @param aProject
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+	public TextureController(Project aProject){	
+		_project = aProject;     
 	}
+	
+	/**
+	 * Run the View
+	 */
+	public void run(){
+		initView(_project);
+		_project.addObserver(_view);
+	}
+	
+	/**
+	 * @param aProject
+	 */
+	public void initView(Project aProject){
+		_view = new TextureView(this,aProject);
+	}
+	
+	/**
+	 * @return The controller view 
+	 */
+	public TextureView getView(){
+		return _view;
+	}
+
+	public void actionPerformed(ActionEvent action) {
+		String cmd = action.getActionCommand();
+		if (cmd.equals(_CHANGETEXTURE)) {
+			System.out.println("fdp");
+		}
+	}
+	
 
 }
