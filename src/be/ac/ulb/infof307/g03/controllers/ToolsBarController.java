@@ -41,11 +41,18 @@ public class ToolsBarController implements ActionListener {
 	 * It creates the ToolsBar view
 	 * @param aProject The main project
 	 */
-	public ToolsBarController(Project aProject){
-		initView(aProject);
-		_project = aProject;
+	public ToolsBarController(Project aProject){	
+		_project = aProject;     
+	}
+	
+	/**
+	 * @author fhennecker
+	 * Run the ToolsBar GUI
+	 */
+	public void run(){
+		initView(_project);
 		_project.addObserver(_view);
-        //Sets the default mode
+		//Sets the default mode
         this.onDragSelectMode();
 	}
 	

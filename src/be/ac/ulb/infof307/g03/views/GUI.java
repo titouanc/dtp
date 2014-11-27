@@ -48,6 +48,7 @@ public class GUI extends JFrame {
         
         // Create the toolbar
         _toolsBar = new ToolsBarController(project);
+        _toolsBar.run();
         contentPane.add(_toolsBar.getView(), BorderLayout.PAGE_START);
      
         // Create the workspace
