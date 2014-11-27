@@ -34,7 +34,6 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * @param project Project object from model
 	 */
 	public ObjectTreeController(Project project) {
-		initView(project);
 		_project = project;
 		try {
 			_dao = project.getGeometryDAO();
@@ -42,6 +41,14 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * @author fhennecker
+	 * Run the ObjectTree GUI
+	 */
+	public void run(){
+		initView(_project);
 	}
 	
 	/**

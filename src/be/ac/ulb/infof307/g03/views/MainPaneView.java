@@ -45,6 +45,7 @@ public class MainPaneView extends JPanel {
 		
         // Create an object tree
         _objectTree = new ObjectTreeController(project);
+        _objectTree.run();
         
         // Create left menu
         _listScrollPane = new JScrollPane(_objectTree.getView()); 
