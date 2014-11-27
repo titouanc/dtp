@@ -138,6 +138,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	}
 	
 	public void createTree() throws SQLException{
+		System.out.println("[DEBUG] createTree");
 		for (Floor floor : _dao.getFloors()){
 			DefaultMutableTreeNode floorNode = _createNode(floor);
 			for (Room room : _dao.getRooms(floor))
@@ -147,6 +148,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	}
 	
 	public void clearTree() {
+		System.out.println("[DEBUG] clearTree");
 		for (DefaultMutableTreeNode node : _nodes.values()) {
 			node.removeFromParent();
 			_nodes.remove(node);

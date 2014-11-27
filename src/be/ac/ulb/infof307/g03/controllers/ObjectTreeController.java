@@ -48,10 +48,6 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			e.printStackTrace();
 		}
 		
-		_currentEditionMode = project.config("edition.mode");
-		if (_currentEditionMode.equals(""))
-			project.config("edition.mode", _WORLDMODE);
-		
 		_project.addObserver(this);
 		
 	}
@@ -62,6 +58,11 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 */
 	public void run(){
 		initView(_project);
+		_currentEditionMode = _project.config("edition.mode");
+		if (_currentEditionMode.equals(""))
+			_project.config("edition.mode",_WORLDMODE);
+		else 
+			updateEditionMode();
 	}
 	
 	/**
