@@ -82,12 +82,12 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			try {
 				_view.createTree();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else if (_currentEditionMode.equals(_OBJECTMODE)) {
 			System.out.println("[DEBUG] ObjectTree switched to object edition mode.");
 			_view.clearTree();
+			// TODO Build the object tree
 		}
 		_view.updateUI();
 	}

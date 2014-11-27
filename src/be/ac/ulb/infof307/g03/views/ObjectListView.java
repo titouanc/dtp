@@ -14,7 +14,6 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectListController;
-import be.ac.ulb.infof307.g03.views.ObjectTreeView.PopupListener;
 
 public class ObjectListView extends JList {
 
@@ -65,9 +64,7 @@ public class ObjectListView extends JList {
 			} else if (cmd.equals(_DELETE)) {
 				_controller.onDeleteAction();
 			}
- 			
 		}
-		
 	}
 	
 	private ObjectListController _controller = null;

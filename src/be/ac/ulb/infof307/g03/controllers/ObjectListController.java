@@ -3,14 +3,10 @@ package be.ac.ulb.infof307.g03.controllers;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultMutableTreeNode;
 
-import be.ac.ulb.infof307.g03.models.Geometric;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.ObjectListView;
 
