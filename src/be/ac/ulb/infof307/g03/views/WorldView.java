@@ -188,12 +188,16 @@ public class WorldView extends SimpleApplication implements Observer {
 		_addSun();
 		
 		try {
-			for (Wall wall : _dao.getWalls())
-				_drawWall(wall);
-			for (Ground gnd : _dao.getGrounds())
-				_drawGround(gnd);
-			for (Roof roof : _dao.getRoofs())
-				_drawRoof(roof);
+			for (Floor floor : _dao.getFloors()){
+				for (Room room : floor.getRooms()){
+					if (room.getGround() != null)
+						_drawGround(room.getGround());
+					if (room.getWall() != null)
+						_drawWall(room.getWall());
+					if (room.getRoof() != null)
+						_drawRoof(room.getRoof());
+				}
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
