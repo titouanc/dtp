@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 
+import utils.Log;
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 
@@ -286,7 +288,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			//JOptionPane.showMessageDialog(null, "Not enough point to draw a ground.", "Error", JOptionPane.WARNING_MESSAGE);
-			System.out.println("[DEBUG] User try to draw a wall with not enough point");
+			Log.log(Level.INFO, "User try to draw a wall with not enough point");
 			//e.printStackTrace();
 		}
 	}
@@ -306,7 +308,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			System.out.println("[DEBUG] User tried to create a wall with not enough point");
+			Log.log(Level.INFO, "User tried to create a wall with not enough point");
 		}
 	}
 	

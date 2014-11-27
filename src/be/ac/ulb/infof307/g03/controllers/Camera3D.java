@@ -1,5 +1,9 @@
 package be.ac.ulb.infof307.g03.controllers;
 
+import java.util.logging.Level;
+
+import utils.Log;
+
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -118,7 +122,6 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 * @param inputManager The new input manager to be set.
 	 */
 	public void setInputManager(InputManager inputManager) {
-		System.out.println("ICI");
 
 		_inputManager = inputManager;
 		inputSetUp();
@@ -128,7 +131,7 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 * Reset the direction toward which the camera looks
 	 */
 	public void resetCamera() {
-		System.out.println("[Camera3D] reset 3D");
+		Log.log(Level.INFO, "[Camera3D] reset to 3D");
         _cam.setParallelProjection(false);
         
         _cam.setLocation(new Vector3f(_cam.getLocation().x,_cam.getLocation().y,_defaultCameraZ));

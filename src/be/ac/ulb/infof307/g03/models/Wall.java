@@ -3,6 +3,10 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
+import java.util.logging.Level;
+
+import utils.Log;
+
 import com.j256.ormlite.field.DatabaseField;
 
 /**
@@ -35,7 +39,7 @@ public class Wall extends Grouped {
 		if (width < 0){
 			_width = 0;
 			// add print otherwise error would be pass under silence
-			System.out.println("[DEBUG] Wall received an incoherent value for width. Value is under 0");
+			Log.log(Level.WARNING, "Wall received an incoherent value for width. Value is under 0");
 		}else{
 			_width = width;
 		}

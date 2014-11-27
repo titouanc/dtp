@@ -7,9 +7,11 @@ package be.ac.ulb.infof307.g03.controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 
+import utils.Log;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.GUI;
@@ -136,14 +138,14 @@ public class MenuBarController implements ActionListener {
 	 * Handler launched when menu item "Undo" is clicked
 	 */
 	public void onUndo() {
-		System.out.println("[DEBUG] User clicked on undo");
+		Log.log(Level.INFO, "User clicked on undo");
 	}
 	
 	/**
 	 * Handler launched when menu item "Redo" is clicked
 	 */
 	public void onRedo() {
-		System.out.println("[DEBUG] User clicked on redo");
+		Log.log(Level.INFO, "User clicked on redo");
 	}
 
 	/**

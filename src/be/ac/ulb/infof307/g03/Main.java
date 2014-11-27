@@ -46,7 +46,7 @@ public class Main {
 					BootController bc = new BootController();
 					Project proj = bc.initProject();
 					if (proj == null)
-						System.out.println("Unable to initialize project !!!");
+						Log.log(Level.SEVERE, "Unable to initialize project");
 					new GUI(proj);
 				} catch (SQLException e) {
 					e.printStackTrace();

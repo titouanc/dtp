@@ -8,6 +8,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -17,6 +18,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import utils.Log;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
@@ -85,7 +87,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		if (object instanceof Geometric){
 			Geometric item = (Geometric) object;
 			try {
-				System.out.println("DELETE " + item.toString());
+				Log.log(Level.INFO, "DELETE " + item.toString());
 				_dao.delete(item);
 				_dao.notifyObservers(item);
 			} catch (SQLException e) {
@@ -102,7 +104,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void deselectElement(Object element) {
 		if (element instanceof Grouped){
 			Grouped grouped = (Grouped) element;
-			System.out.println("[TreeController] Unselect " + grouped.getUID());
+			Log.log(Level.INFO, "[TreeController] Unselect " + grouped.getUID());
 			grouped.deselect();
 			try {
 				for (Point p : (_dao.getPointsForShape(grouped.getGroup()))){
@@ -141,7 +143,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			_project.config("floor.current", current.getUID());
 		} else if (element instanceof Grouped){
 			Grouped grouped = (Grouped) element;
-			System.out.println("[TreeController] Select " + grouped.getUID());
+			Log.log(Level.INFO, "[TreeController] Select " + grouped.getUID());
 			grouped.select();
 			try {
 				for (Point p : (_dao.getPointsForShape(grouped.getGroup()))){

@@ -10,8 +10,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
+
+import utils.Log;
 
 /**
  * @author fhennecker, pierre, wmoulart
@@ -69,7 +72,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void onUndo(){
-    	System.out.println("[DEBUG] User clicked on : undo");
+    	Log.log(Level.INFO, "User clicked on : undo");
         
     }
     
@@ -78,7 +81,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onRedo(){
-    	System.out.println("[DEBUG] User clicked on : redo");
+    	Log.log(Level.INFO, "User clicked on : redo");
     	
     }
     /**
@@ -86,7 +89,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void onLine(){
-    	System.out.println("[DEBUG] User clicked on : line");
+    	Log.log(Level.INFO, "User clicked on : line");
     }
     
     /**
@@ -94,7 +97,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void onGroup(){
-    	System.out.println("[DEBUG] User clicked on : group");
+    	Log.log(Level.INFO, "User clicked on : group");
     }
     
     /**
@@ -157,7 +160,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void on2d(){
-    	System.out.println("[DEBUG] User clicked on : go2D");
+    	Log.log(Level.INFO, "User clicked on : go2D");
     	_project.config("world.mode", CameraModeController._VIEW2D);
   
     }
@@ -167,7 +170,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void on3d() {
-    	System.out.println("[DEBUG] User clicked on : go3D");
+    	Log.log(Level.INFO, "User clicked on : go3D");
     	_project.config("world.mode", CameraModeController._VIEW3D);
     }
     
@@ -176,7 +179,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragRotateMode(){
-    	System.out.println("[DEBUG] User clicked on : rotate");
+    	Log.log(Level.INFO, "User clicked on : rotate");
     	_project.config("mouse.mode", "dragRotate");
     }
 
@@ -185,7 +188,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragSelectMode(){
-    	System.out.println("[DEBUG] User clicked on : cursor");
+    	Log.log(Level.INFO, "User clicked on : cursor");
     	_project.config("mouse.mode", "dragSelect");
     }
     
@@ -194,7 +197,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragMoveMode(){
-    	System.out.println("[DEBUG] User clicked on : hand");
+    	Log.log(Level.INFO, "User clicked on : hand");
     	_project.config("mouse.mode", "dragMove");
     }
     
@@ -203,7 +206,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onConstruction(){
-    	System.out.println("[DEBUG] User clicked on : new Element");
+    	Log.log(Level.INFO, "User clicked on : new Element");
     	_project.config("mouse.mode", "construct");
     }
     

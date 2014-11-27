@@ -1,7 +1,9 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 import java.util.Vector;
+import java.util.logging.Level;
 
+import utils.Log;
 import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.input.InputManager;
@@ -147,7 +149,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 		}
 		/*
 		if (_canRotate) { // TODO
-			System.out.println("Use 'O' and 'P' button to rotate.");
+			Log.log(Level.INFO, "Use 'O' and 'P' button to rotate.");
 		}
 		*/
 	}
@@ -178,7 +180,7 @@ public class Camera2D implements AnalogListener, ActionListener {
 	 * of the user's screen
 	 */
 	public void resetCamera(){
-		System.out.println("[Camera2D] reset 2D");
+		Log.log(Level.INFO, "Camera2D reset to 2D");
 		Vector<Geometry> shapes = _wv.getShapes();
 		  float minX = 0,minY = 0,maxX = 0,maxY = 0,X = 0, Y= 0,Z = 0;
 		  int offset=17;
