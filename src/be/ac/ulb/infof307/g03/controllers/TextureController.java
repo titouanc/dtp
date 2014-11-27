@@ -31,7 +31,6 @@ public class TextureController implements ActionListener {
 	 */
 	public void run(){
 		initView(_project);
-		_project.addObserver(_view);
 	}
 	
 	/**
