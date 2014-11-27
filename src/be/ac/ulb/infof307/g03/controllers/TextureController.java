@@ -1,21 +1,14 @@
 package be.ac.ulb.infof307.g03.controllers;
 
-import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.TextureView;
-import be.ac.ulb.infof307.g03.views.ToolsBarView;
-import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.swing.JOptionPane;
 
 /**
  * @author wmoulart
- * @brief Controller of the JPannel that will open when user wants to change the texture of a group.
+ * @brief Controller of the JPanel that will open when user wants to change the texture of a group.
  */
 public class TextureController implements ActionListener {
 	// Attributes

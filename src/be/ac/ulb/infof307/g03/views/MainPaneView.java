@@ -55,7 +55,11 @@ public class MainPaneView extends JPanel {
         _objectTree = new ObjectTreeController(project);
         _objectTree.run();
         
+        _texture = new TextureController(project);
+        _texture.run();
+        
         Dimension listScrollPaneDimension = new Dimension(150,480);
+        Dimension textureScrollPaneDimension = new Dimension(200,480);
 
        
         // Create left menu
@@ -73,16 +77,20 @@ public class MainPaneView extends JPanel {
         // Create right menu
         
         _textureScrollPane = new JScrollPane (_texture.getView());
-        _textureScrollPane.setMinimumSize(listScrollPaneDimension);
-        _textureScrollPane.setPreferredSize(listScrollPaneDimension); 
+        _textureScrollPane.setMinimumSize(textureScrollPaneDimension);
+        _textureScrollPane.setPreferredSize(textureScrollPaneDimension); 
         //_rightPane
         _rightPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_leftPane,_textureScrollPane);
         _rightPane.setOneTouchExpandable(true);
-        _rightPane.setDividerLocation(150);
+        _rightPane.setDividerLocation(350);
         
         
 		// add the splitpane to the inherited Jpanel
 		this.add(_leftPane);
+		this.add(_rightPane,BorderLayout.EAST);
+		
+		//Remove texture pane
+		//this.remove(_rightPane);
 		
 	}
 

@@ -40,8 +40,8 @@ public class TextureView extends JToolBar implements Observer {
         this.setFloatable(false); 
         JPanel contentPane = new JPanel(new BorderLayout());    
         // Create the toolbar
-        _textureController = new TextureController(project);
-        _textureController.run();
+        //_textureController = new TextureController(project);
+        //_textureController.run();
         
     }
 
