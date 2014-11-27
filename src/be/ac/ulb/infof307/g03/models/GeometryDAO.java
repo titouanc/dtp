@@ -196,14 +196,17 @@ public class GeometryDAO extends Observable {
 	
 	public int update(Floor floor) throws SQLException {
 		int res = _floors.update(floor);
-		double base = floor.getBaseHeight() + floor.getHeight();
-		for (Floor above : getFloorsAbove(floor)){
-			above.setBaseHeight(base);
-			res += _floors.update(above);
-			_changes.add(Change.update(above));
-			base += above.getHeight();
+		if (res != 0){
+			setChanged();
+			_changes.add(Change.update(floor));
+			double base = floor.getBaseHeight() + floor.getHeight();
+			for (Floor above : getFloorsAbove(floor)){
+				above.setBaseHeight(base);
+				res += _floors.update(above);
+				_changes.add(Change.update(above));
+				base += above.getHeight();
+			}
 		}
-		_changes.add(Change.update(floor));
 		return res;
 	}
 	
@@ -237,6 +240,7 @@ public class GeometryDAO extends Observable {
 	}
 	
 	private int delete(Room room) throws SQLException{
+		refresh(room);
 		if (room.getGround() != null)
 			delete(room.getGround());
 		if (room.getWall() != null)
@@ -251,8 +255,9 @@ public class GeometryDAO extends Observable {
 	}
 	
 	private int delete(Floor floor) throws SQLException {
-		for (Room grp : getRooms(floor))
-			delete(grp);
+		for (Room room : getRooms(floor)){
+			delete(room);
+		}
 		int res = _floors.delete(floor);
 		for (Floor above : getFloorsAbove(floor)){
 			above.setBaseHeight(above.getBaseHeight() - floor.getHeight());
