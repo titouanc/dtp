@@ -1,5 +1,6 @@
 package be.ac.ulb.infof307.g03.controllers;
 
+import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
@@ -38,14 +39,22 @@ public class ToolsBarController implements ActionListener {
 	/**
 	 * Constructor of ToolsBarController.
 	 * It creates the ToolsBar view
-	 * @param aProject A project object
+	 * @param aProject The main project
 	 */
 	public ToolsBarController(Project aProject){
-		_view = new ToolsBarView(this,aProject);
+		initView(aProject);
 		_project = aProject;
 		_project.addObserver(_view);
         //Sets the default mode
         this.onDragSelectMode();
+	}
+	
+	/**
+	 * This method initiate the view
+	 * @param aProject The main project
+	 */
+	public void initView(Project aProject){
+		_view = new ToolsBarView(this,aProject);
 	}
 	
 	/**

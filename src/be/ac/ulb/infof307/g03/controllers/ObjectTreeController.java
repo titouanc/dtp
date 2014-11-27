@@ -18,6 +18,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 
 /**
@@ -33,7 +34,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * @param project Project object from model
 	 */
 	public ObjectTreeController(Project project) {
-		_view = new ObjectTreeView(this, project);
+		initView(project);
 		_project = project;
 		try {
 			_dao = project.getGeometryDAO();
@@ -41,6 +42,14 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * This method initiate the view
+	 * @param project The main project
+	 */
+	public void initView(Project project){
+		_view = new ObjectTreeView(this, project);
 	}
 	
 	/**

@@ -57,7 +57,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * @throws SQLException 
      */
     public WorldController(AppSettings settings, Project project) throws SQLException{
-        _view = new WorldView(this, project);
+    	initView(project);
         _view.setSettings(settings);
         _view.createCanvas();
         _cameraModeController = new CameraModeController(project);
@@ -71,6 +71,14 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         	_currentHeight = project.getGeometryDAO().getBaseHeight(_currentFloor);
         project.addObserver(this);
     }
+    
+	/**
+	 * This method initiate the view
+	 * @param project 
+	 */
+	public void initView(Project project){
+		_view = new WorldView(this, project);
+	}
 
 	/**
      * @return the world view.

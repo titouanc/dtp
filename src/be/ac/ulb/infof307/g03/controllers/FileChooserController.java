@@ -34,8 +34,15 @@ public class FileChooserController {
 		_parent = parent;
 		_project = project;
 		_gui = gui;
-		_view = new FileChooserView(this);
+		initView();
 		
+	}
+	
+	/**
+	 * This method initiate the view
+	 */
+	public void initView(){
+		_view = new FileChooserView(this);
 	}
 	
 	/**

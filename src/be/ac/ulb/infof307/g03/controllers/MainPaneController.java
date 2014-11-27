@@ -10,6 +10,7 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.MainPaneView;
 
 /**
@@ -47,8 +48,17 @@ public class MainPaneController {
         _world.startViewCanvas();
         
         // Creating the MainPaneView, with the jMonkey Canvas we just created
-		_view = new MainPaneView(this, project, context.getCanvas());
+		initView(project, context);
 		
+	}
+	
+	/**
+	 * This method initiate the view
+	 * @param project The project to be display on the MainPane
+	 * @param context The jme world context
+	 */
+	public void initView(Project project, JmeCanvasContext context){
+		_view = new MainPaneView(this, project, context.getCanvas());
 	}
 	
 	/**
