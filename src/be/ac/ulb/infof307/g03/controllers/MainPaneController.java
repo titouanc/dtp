@@ -46,6 +46,8 @@ public class MainPaneController {
 	 */
 	public void run(){
 		
+		_world.run();
+		
         // Set up event listener
         JmeCanvasContext context = (JmeCanvasContext) _world.getViewContext();
         context.setSystemListener(_world.getView());

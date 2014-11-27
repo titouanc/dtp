@@ -40,6 +40,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     private List<Point> _inConstruction ;
     private Floor _currentFloor = null;
     private double _currentHeight;
+    private AppSettings _appSettings;
     
     // Input alias
     static private final String _RIGHTCLICK 	= "WC_SelectObject";
@@ -57,10 +58,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * @throws SQLException 
      */
     public WorldController(AppSettings settings, Project project) throws SQLException{
-    	initView(project);
-        _view.setSettings(settings);
-        _view.createCanvas();
-        _cameraModeController = new CameraModeController(project);
+    	_appSettings = settings;
         _project = project;
         _inConstruction = new LinkedList <Point>();
         _currentFloor = (Floor) project.getGeometryDAO().getByUID(project.config("floor.current"));
@@ -70,6 +68,13 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         if (_currentFloor!=null)
         	_currentHeight = project.getGeometryDAO().getBaseHeight(_currentFloor);
         project.addObserver(this);
+    }
+    
+    public void run(){
+    	initView(_project);
+        _view.setSettings(_appSettings);
+        _view.createCanvas();
+        _cameraModeController = new CameraModeController(_project);
     }
     
 	/**
