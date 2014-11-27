@@ -112,7 +112,7 @@ public class FileChooserController {
 	 */
 	public void newProject(File fileToCreate){
 		System.out.println("[DEBUG] You chose to create a new project named: " + fileToCreate.getName());
-		final String filename = fileToCreate.getAbsolutePath();
+		final String filename = fileToCreate.getAbsolutePath() + ".hpj";
 		_gui.dispose();
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){
