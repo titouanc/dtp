@@ -77,7 +77,7 @@ public class TextureView extends JPanel implements ItemListener {
         JPanel comboBoxPane = new JPanel(); 
         comboBoxPane.setLayout(new GridLayout(0,1));
         String comboBoxItems[] = { COLORPANEL, TEXTURESPANEL };
-        JComboBox<String> cb = new JComboBox<String>(comboBoxItems);
+        JComboBox cb = new JComboBox(comboBoxItems);
         cb.setEditable(false);
         cb.addItemListener(this);
         
