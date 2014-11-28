@@ -34,7 +34,8 @@ public class TextureView extends JPanel implements ItemListener {
 	private Project _project;
 	
 	private GridBagLayout _paneLayout;
-	private String[] data = {"Red","Blue","Green"};
+	private String[] colorData = {"Red","Blue","Green"};
+	private String[] textureData = {"Brick","Grass"};
 	
 	final static String COLORPANEL = "Colors";
     final static String TEXTURESPANEL = "Textures";
@@ -100,23 +101,22 @@ public class TextureView extends JPanel implements ItemListener {
 	 */
 	public void addMaterialChoice(){
         //Creates the "cards".
-        JPanel colorPanel = new JPanel();
-        colorPanel.setLayout(new FlowLayout());
-        colorPanel.add(new JButton("Button 1"));
-        colorPanel.add(new JButton("Button 2"));
-        colorPanel.add(new JButton("Button 3"));
-        colorPanel.add(new JButton("Button 4"));
+        JPanel texturesPanel = new JPanel();
+        JList textureList = new JList(textureData);
+        textureList.setCellRenderer(new ColorCellRenderer());
+        texturesPanel.add(textureList);
+        texturesPanel.setLayout(new GridLayout(0,1));
          
-        JPanel texturePanel = new JPanel();
-        JList colorList = new JList(data);
+        JPanel colorsPanel = new JPanel();
+        JList colorList = new JList(colorData);
         colorList.setCellRenderer(new ColorCellRenderer());
-        texturePanel.add(colorList);
-        texturePanel.setLayout(new GridLayout(0,1));
+        colorsPanel.add(colorList);
+        colorsPanel.setLayout(new GridLayout(0,1));
          
         //Creates the panel that contains the switching panes.
         cards = new JPanel(new CardLayout());
-        cards.add(texturePanel, COLORPANEL);
-        cards.add(colorPanel, TEXTURESPANEL);
+        cards.add(colorsPanel, COLORPANEL);
+        cards.add(texturesPanel, TEXTURESPANEL);
 
         GridBagConstraints c = new GridBagConstraints();
 
