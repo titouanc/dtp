@@ -1,5 +1,8 @@
 package be.ac.ulb.infof307.g03.views;
 
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -10,6 +13,8 @@ import be.ac.ulb.infof307.g03.controllers.TextureController;
 import be.ac.ulb.infof307.g03.models.Project;
 
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -29,7 +34,7 @@ public class TextureView extends JPanel implements ItemListener {
 	private Project _project;
 	
 	private GridBagLayout _paneLayout;
-	private String[] data = {"one", "two", "three", "four"};
+	private String[] data = {"Red","Blue","Green"};
 	
 	final static String COLORPANEL = "Colors";
     final static String TEXTURESPANEL = "Textures";
@@ -103,13 +108,15 @@ public class TextureView extends JPanel implements ItemListener {
         colorPanel.add(new JButton("Button 4"));
          
         JPanel texturePanel = new JPanel();
-        texturePanel.add(new JList(data));
+        JList colorList = new JList(data);
+        colorList.setCellRenderer(new ColorCellRenderer());
+        texturePanel.add(colorList);
         texturePanel.setLayout(new GridLayout(0,1));
          
         //Creates the panel that contains the switching panes.
         cards = new JPanel(new CardLayout());
-        cards.add(colorPanel, COLORPANEL);
-        cards.add(texturePanel, TEXTURESPANEL);
+        cards.add(texturePanel, COLORPANEL);
+        cards.add(colorPanel, TEXTURESPANEL);
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -131,6 +138,55 @@ public class TextureView extends JPanel implements ItemListener {
         CardLayout cl = (CardLayout)(cards.getLayout());
         cl.show(cards, (String)evt.getItem());
 		
+	}
+	
+	class ColorCellRenderer extends DefaultListCellRenderer {
+
+	    private static final long serialVersionUID = -7799441088157759804L;
+	    private JLabel label;
+	    private Color textSelectionColor = Color.BLACK;
+	    private Color backgroundSelectionColor = Color.LIGHT_GRAY;
+	    private Color textNonSelectionColor = Color.BLACK;
+	    private Color backgroundNonSelectionColor = Color.WHITE;
+
+	    ColorCellRenderer() {
+	        label = new JLabel();
+	        label.setOpaque(true);
+	    }
+
+	    @Override
+	    public Component getListCellRendererComponent(
+	            JList list,
+	            Object value,
+	            int index,
+	            boolean selected,
+	            boolean expanded) {
+
+
+	    	String classPath = getClass().getResource("TextureView.class").toString();
+	    	String prefix = "";
+	    	Icon redIcon;
+	    	if(classPath.subSequence(0, 3).equals("rsr")){
+	    		prefix = "/";
+	    		redIcon = new ImageIcon(getClass().getResource(prefix + value.toString()+".png"));
+	    	} else {
+	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
+	    		redIcon = new ImageIcon(prefix + value.toString() +".png");
+	    	}
+	        label.setIcon(redIcon);
+	        label.setText(value.toString());
+	        //label.setToolTipText();
+
+	        if (selected) {
+	            label.setBackground(backgroundSelectionColor);
+	            label.setForeground(textSelectionColor);
+	        } else {
+	            label.setBackground(backgroundNonSelectionColor);
+	            label.setForeground(textNonSelectionColor);
+	        }
+
+	        return label;
+	    }
 	}
 
 }
