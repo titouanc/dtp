@@ -28,9 +28,6 @@ public class TestMainPaneController {
 	public void setUp() throws SQLException{
         _project = new Project();
         _project.create(":memory:");
-        Floor floor = new Floor();
-        _project.getGeometryDAO().create(floor);
-        _project.config("floor.current", floor.getUID());
         _controller = new MainPaneController(_project);
 	}
 	

@@ -1,9 +1,7 @@
 package be.ac.ulb.infof307.g03;
 
 import java.sql.SQLException;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.j256.ormlite.logger.LocalLog;
 
