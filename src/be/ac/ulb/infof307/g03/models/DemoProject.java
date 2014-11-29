@@ -12,8 +12,7 @@ import java.sql.SQLException;
 public class DemoProject {
 	
 	/**
-	 * Create a basic irregular 4-sided polygon and a triangle,
-	 * build a wall and a ground on them,
+	 * Create a basic house
 	 * in a demo project (not saved on disk)
 	 * @return The created project
 	 * @throws SQLException
@@ -22,7 +21,7 @@ public class DemoProject {
 		Project proj = new Project();
 		proj.create(":memory:");
 		
-		GeometryDAO geo = proj.getGeometryDAO();
+		GeometryDAO dao = proj.getGeometryDAO();
 		Point a = new Point(0, 0, 0),
 			  b = new Point(8, 0, 0),
 			  c = new Point(8, 8, 0),
@@ -37,14 +36,23 @@ public class DemoProject {
 			  l = new Point(8, 14, 0),
 			  m = new Point(-8, 14, 0);
 		
-		Floor groundFloor = geo.getFloors().get(0);
+		Floor groundFloor = dao.getFloors().get(0);
 		proj.config("floor.current", groundFloor.getUID());
-		
 		createRoom(groundFloor, "Square room", a, e, f, d);
 		createRoom(groundFloor, "Irregular room", a, d, c, c, g,k, i,j, h);
 		createRoom(groundFloor, "Rectangular room", f, d, c, l, m);
-		//createRoom(groundFloor, "Irregular room", g,k, i,j, h);
-		geo.notifyObservers();
+		
+		dao.createFloorOnTop(7);
+		String currentFloorUID = proj.config("floor.current");
+		Floor floor = (Floor) dao.getByUID(currentFloorUID);
+    	Floor firstFloor = dao.getNextFloor(floor);
+    	firstFloor.setHeight(3);
+    	
+		//createRoom(firstFloor, "Square room 2", a, e, f, d);
+		createRoom(firstFloor, "Irregular room 2", a, d, c, c, g,k, i,j, h);
+		createRoom(firstFloor, "Rectangular room 2 ", f, d, c, l, m);
+		
+		dao.notifyObservers();
 		return proj;
 	}
 	
