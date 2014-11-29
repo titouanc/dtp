@@ -122,7 +122,6 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				_dao.update(grp);
 				_dao.notifyObservers(object);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -140,7 +139,6 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				_dao.delete(item);
 				_dao.notifyObservers(item);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -163,7 +161,6 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				_dao.update(meshable);
 				_dao.notifyObservers(meshable);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else if (element instanceof Room){
