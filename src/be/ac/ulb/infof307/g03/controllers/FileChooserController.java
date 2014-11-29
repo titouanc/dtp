@@ -115,7 +115,7 @@ public class FileChooserController {
 					bc.saveCurrentProjectPath(filename);
 					new GUI(prj);
 					
-				}catch (SQLException e) {
+				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(_parent, "Unable to open project named " + filename + ": " + e.toString());
 				}
 			}

@@ -144,20 +144,6 @@ public class MenuBarController implements ActionListener {
 	public void onQuit() {
 		_gui.dispatchEvent(new WindowEvent(_gui, WindowEvent.WINDOW_CLOSING));
 	}
-	
-	/**
-	 * Handler launched when menu item "Undo" is clicked
-	 */
-	public void onUndo() {
-		Log.log(Level.INFO, "User clicked on undo");
-	}
-	
-	/**
-	 * Handler launched when menu item "Redo" is clicked
-	 */
-	public void onRedo() {
-		Log.log(Level.INFO, "User clicked on redo");
-	}
 
 	/**
 	 * Handler launched when menu item "Keybindings" is clicked

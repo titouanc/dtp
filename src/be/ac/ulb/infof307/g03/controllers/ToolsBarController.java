@@ -85,39 +85,6 @@ public class ToolsBarController implements ActionListener, Observer {
 	public ToolsBarView getView(){
 		return _view;
 	}
-	
-	/**
-     * The private method is called when the button undo
-     * is clicked. It will communicate with the controller
-     */
-    public void onUndo(){
-    	Log.log(Level.INFO, "User clicked on : undo");
-        
-    }
-    
-    /**
-     * The private method is called when the button redo
-     * is clicked. It will communicate with the controller
-     */ 
-    public void onRedo(){
-    	Log.log(Level.INFO, "User clicked on : redo");
-    	
-    }
-    /**
-     * The private method is called when the button line
-     * is clicked. It will communicate with the controller
-     */
-    public void onLine(){
-    	Log.log(Level.INFO, "User clicked on : line");
-    }
-    
-    /**
-     * The private method is called when the button group
-     * is clicked. It will communicate with the controller
-     */
-    public void onGroup(){
-    	Log.log(Level.INFO, "User clicked on : group");
-    }
     
     /**
      * The private method is called when the button floor up
