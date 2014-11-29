@@ -10,7 +10,6 @@ import java.awt.event.MouseListener;
 import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -22,7 +21,6 @@ import javax.swing.tree.TreePath;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 
 /**
@@ -122,7 +120,6 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				_dao.update(grp);
 				_dao.notifyObservers(object);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -136,11 +133,10 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		if (object instanceof Geometric){
 			Geometric item = (Geometric) object;
 			try {
-				Log.log(Level.INFO, "DELETE " + item.toString());
+				Log.info("DELETE %s", item.toString());
 				_dao.delete(item);
 				_dao.notifyObservers(item);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -153,7 +149,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void deselectElement(Object element) {
 		if (element instanceof Meshable){
 			Meshable meshable = (Meshable) element;
-			Log.log(Level.INFO, "[TreeController] Unselect " + meshable.getUID());
+			Log.debug("Unselect %s", meshable.getUID());
 			meshable.deselect();
 			try {
 				for (Point p : meshable.getPoints()){
@@ -163,7 +159,6 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				_dao.update(meshable);
 				_dao.notifyObservers(meshable);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else if (element instanceof Room){
@@ -193,7 +188,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			_project.config("floor.current", current.getUID());
 		} else if (element instanceof Meshable){
 			Meshable meshable = (Meshable) element;
-			Log.log(Level.INFO, "[TreeController] Select " + meshable.getUID());
+			Log.debug("Select %s", meshable.getUID());
 			try {
 				_dao.refresh(meshable);
 				meshable.select();

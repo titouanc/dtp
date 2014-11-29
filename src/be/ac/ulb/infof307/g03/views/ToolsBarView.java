@@ -26,9 +26,9 @@ import be.ac.ulb.infof307.g03.utils.Log;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
 
 
 /**
@@ -282,12 +282,12 @@ public class ToolsBarView extends JToolBar implements Observer  {
     }
     
     public void setWorldModeSelected() {
-    	Log.log(Level.FINEST, "[DEBUG] world button setSelected");
+		Log.debug("Switch to world mode");
     	_navigationModule._worldButton.setSelected(true);
     }
     
     public void setObjectModeSelected() {
-    	Log.log(Level.FINEST, "[DEBUG] object button setSelected");
+    	Log.debug("Switch to object mode");
     	_navigationModule._objectButton.setSelected(true);
     }
 

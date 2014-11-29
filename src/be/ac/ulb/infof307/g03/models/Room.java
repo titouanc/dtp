@@ -44,10 +44,17 @@ public class Room extends Geometric {
 		setName(name);
 	}
 	
+	/**
+	 * @param floor The floor containing the room
+	 */
 	public Room(Floor floor){
 		setFloor(floor);
 	}
 	
+	/**
+	 * @param name The name of the floor
+	 * @param floor The floor containing the room
+	 */
 	public Room(String name, Floor floor){
 		setName(name);
 		setFloor(floor);

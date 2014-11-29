@@ -15,7 +15,6 @@ import java.util.concurrent.Callable;
 
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
-import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
@@ -246,51 +245,15 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void _drawGround(Ground gnd){
 		if (! gnd.isVisible())
 			return;
-/*<<<<<<< HEAD
-		try {
-			Mesh mesh = _dao.getGroundAsMesh(gnd);
-			Geometry node = new Geometry(gnd.getUID(), mesh);
-			Material mat;
-			mat=_makeBasicMaterial(_getColor(gnd));
-			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-			node.setMaterial(mat);
-			rootNode.attachChild(node);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			//JOptionPane.showMessageDialog(null, "Not enough point to draw a ground.", "Error", JOptionPane.WARNING_MESSAGE);
-			Log.log(Level.INFO, "User try to draw a wall with not enough point");
-			//e.printStackTrace();
-		}
-=======*/
 		Material mat = _makeBasicMaterial(_getColor(gnd));
 		rootNode.attachChild(gnd.toSpatial(mat));
-/*>>>>>>> refs/remotes/origin/merge-ref_models*/
 	}
 	
 	private void _drawRoof(Roof roof){
 		if (! roof.isVisible())
 			return;
-/*<<<<<<< HEAD
-		try {
-			Mesh mesh = _dao.getRoofAsMesh(roof);
-			Geometry node = new Geometry(roof.getUID(), mesh);
-			Material mat = _makeBasicMaterial(_getColor(roof));
-			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-			node.setMaterial(mat);
-			rootNode.attachChild(node);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			Log.log(Level.INFO, "User tried to create a wall with not enough point");
-		}
-=======*/
 		Material mat = _makeBasicMaterial(_getColor(roof));
 		rootNode.attachChild(roof.toSpatial(mat));
-/*>>>>>>> refs/remotes/origin/merge-ref_models*/
 	}
 	
 	/**
