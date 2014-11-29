@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import be.ac.ulb.infof307.g03.controllers.WorldController;
+import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.Project;
 
 import com.jme3.system.AppSettings;
@@ -29,12 +30,15 @@ public class TestWorldController {
         settings.setFrameRate(60);
         _project = new Project();
         _project.create(":memory:");
-        
+        Floor floor = new Floor();
+        _project.getGeometryDAO().create(floor);
+        _project.config("floor.current", floor.getUID());
         _world = new WorldController(settings, _project);
 	}
 	
 	@Test
 	public void testCreation(){
+		_world.run();
 		assertNotNull(_world.getView());
 		assertEquals(_world.getProject(), _project);
 	}

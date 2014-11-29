@@ -10,6 +10,7 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.MainPaneView;
 
 /**
@@ -20,6 +21,7 @@ import be.ac.ulb.infof307.g03.views.MainPaneView;
 public class MainPaneController {
 	private MainPaneView _view;
 	private WorldController _world;
+	private Project _project;
 	
 	/**
 	 * Constructor of MainPaneController.
@@ -27,6 +29,7 @@ public class MainPaneController {
 	 * @throws SQLException 
 	 */
 	public MainPaneController(Project project) throws SQLException{
+		_project = project;
 		// Set up jme3 canvas' settings
         AppSettings settings = new AppSettings(true);
         settings.setFrameRate(60);
@@ -35,6 +38,16 @@ public class MainPaneController {
         settings.setSamples(4); // enables antialiasing
         // Create jme3 canvas
         _world = new WorldController(settings, project);
+	}
+	
+	/**
+	 * @author fhennecker
+	 * Runs the MainPane GUI
+	 */
+	public void run(){
+		
+		_world.run();
+		
         // Set up event listener
         JmeCanvasContext context = (JmeCanvasContext) _world.getViewContext();
         context.setSystemListener(_world.getView());
@@ -46,9 +59,17 @@ public class MainPaneController {
         // Start jme3 canvas
         _world.startViewCanvas();
         
-        // Creating the MainPaneView, with the jMonkey Canvas we just created
+		// Creating the MainPaneView, with the jMonkey Canvas we just created
+		initView(_project, context);
+	}
+	
+	/**
+	 * This method initiate the view
+	 * @param project The project to be display on the MainPane
+	 * @param context The jme world context
+	 */
+	public void initView(Project project, JmeCanvasContext context){
 		_view = new MainPaneView(this, project, context.getCanvas());
-		
 	}
 	
 	public WorldController getWc(){

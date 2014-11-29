@@ -19,38 +19,25 @@ import javax.swing.JButton;
 import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
 
 
 /**
  * This class implement a toolbar for the HomePlan GUI
  * It extend JToolBar
  */
-public class ToolsBarView extends JToolBar implements ActionListener, Observer  {
+public class ToolsBarView extends JToolBar implements Observer  {
 	private static final long serialVersionUID = 1L;
 	
 	private ToolsBarController _controller;
 	private Project _project;
-	private JToggleButton _createButton;
-	private JToggleButton _cursorButton;
-	
-	// buttons actions
-	static final private String _NEWELEMENT	= "NewElement";
-	
-	static final private String _FLOOR_UP   = "FloorUp";
-	static final private String _FLOOR_DOWN = "FloorDown";
-	static final private String _FLOOR_NEW  = "FloorNew";
-	
-	static final private String _2D 		= "2D";
-	static final private String _3D 		= "3D";
-	
-	static final private String _ROTATE  	= "Rotate";	
-	static final private String _HAND 		= "Grab";  
-	static final private String _CURSOR		= "Cursor";
+	private JToggleButton _createButton, _cursorButton, _worldButton, _objectButton;
 
     /**
      * Constructor of the class ToolsBar.
@@ -69,6 +56,16 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
         _addButons();
         
     }
+    
+    public void setWorldModeSelected() {
+    	Log.log(Level.FINEST, "[DEBUG] world button setSelected");
+    	_worldButton.setSelected(true);
+    }
+    
+    public void setObjectModeSelected() {
+    	Log.log(Level.FINEST, "[DEBUG] object button setSelected");
+    	_objectButton.setSelected(true);
+    }
 
 	/**
      * The private method used for creating all the buttons 
@@ -76,35 +73,44 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
     private void _addButons(){
         _addButtonsFloor();
         _addButtonsDimension();
-        _addButtonRotation();
- 
+        _addButtonMouseMode();
+        _addButtonEditionMode();
     }
 
-    /**
+    private void _addButtonEditionMode() {
+    	_worldButton = createJToggleButton("world", ToolsBarController.WORLD, "Switch to the world mode.");
+    	_objectButton = createJToggleButton("object", ToolsBarController.OBJECT, "Switch to the object mode.");
+    	
+    	// Restore mode
+    	String editionMode = _project.config("edition.mode");
+    	if (editionMode.equals("object")) {
+    		_objectButton.setSelected(true);
+    	} else {
+    		_worldButton.setSelected(true);
+    	}
+    	
+    	ButtonGroup buttonGroup = new ButtonGroup();
+    	buttonGroup.add(_worldButton);
+    	buttonGroup.add(_objectButton);
+    	
+    	this.add(_worldButton);
+    	this.add(_objectButton);
+    	
+    	this.addSeparator();
+	}
+
+	/**
      * The private method used for creating buttons to switch
      * from one floor to another
      */
     private void _addButtonsFloor() {
     	// button floor up
-        JButton buttonUp = new JButton("up");
-        buttonUp.setActionCommand(_FLOOR_UP);
-        buttonUp.setToolTipText("This will increase the floor seen");
-        buttonUp.addActionListener(this);
-        this.add(buttonUp);
-        
+        this.add(createJButton("up", ToolsBarController.FLOOR_UP, "This will increase the floor seen"));
         // button floor down
-        JButton buttonDown = new JButton("down");
-        buttonDown.setActionCommand(_FLOOR_DOWN);
-        buttonDown.setToolTipText("This will decrease the floor seen");
-        buttonDown.addActionListener(this);
-        this.add(buttonDown);
-        
-        JButton buttonNew = new JButton("new Floor");
-        buttonNew.setActionCommand(_FLOOR_NEW);
-        buttonNew.setToolTipText("Create a new floor...");
-        buttonNew.addActionListener(this);
-        this.add(buttonNew);
-
+        this.add(createJButton("down", ToolsBarController.FLOOR_DOWN, "This will decrease the floor seen"));
+        // button new floor
+        this.add(createJButton("new Floor", ToolsBarController.FLOOR_NEW, "Create a new floor."));
+        // separator
         this.addSeparator();
     }
     
@@ -113,8 +119,8 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
      * between 2D and 3D. Those buttons are mutually exclusive
      */  
     private void _addButtonsDimension() {
-    	JToggleButton secondDimension = new JToggleButton(_2D);
-    	JToggleButton thirdDimension = new JToggleButton(_3D);
+    	JToggleButton secondDimension = createJToggleButton("2D", ToolsBarController.VIEW2D, "Switch to 2D view");
+    	JToggleButton thirdDimension = createJToggleButton("3D", ToolsBarController.VIEW3D, "Switch to 3D view");
     	
     	// restore mode
     	String worldMode = _project.config("world.mode");
@@ -128,14 +134,6 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(secondDimension);
         buttonGroup.add(thirdDimension);
-        
-        secondDimension.setActionCommand(_2D);
-        secondDimension.setToolTipText("Switch to 2D view");
-        secondDimension.addActionListener(this);
-        
-        thirdDimension.setActionCommand(_3D);
-        thirdDimension.setToolTipText("Switch to 3D view");
-        thirdDimension.addActionListener(this);
 
         this.add(secondDimension);
         this.add(thirdDimension);
@@ -147,40 +145,31 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
      * The private method used for creating rotation buttons.
      * Those buttons are mutually exclusive
      */  
-    private void _addButtonRotation() {
+    private void _addButtonMouseMode() {
     	String classPath = getClass().getResource("ToolsBarView.class").toString();
     	String prefix = "";
-    	System.out.println(classPath.subSequence(0, 3));
-    	Icon cursorImage ;
-    	Icon grabImage ;
-    	Icon rotateImage;
-    	Icon pencilImage;
-    	
-    	JToggleButton rotate;
-    	JToggleButton hand;
-    	
+
+    	Icon cursorIcon, grabIcon, rotateIcon, pencilIcon;
+    
     	if(classPath.subSequence(0, 3).equals("rsr")){
     		prefix = "/";
-        	cursorImage = new ImageIcon(getClass().getResource(prefix + "cursor.png"));
-        	grabImage = new ImageIcon(getClass().getResource(prefix + "grab.png"));
-        	rotateImage = new ImageIcon(getClass().getResource(prefix + "rotate.png"));
-        	pencilImage = new ImageIcon(getClass().getResource(prefix + "pencil.png"));
-        	rotate = new JToggleButton(rotateImage);
-        	hand   = new JToggleButton(grabImage);
-        	_cursorButton = new JToggleButton(cursorImage);
-        	_createButton = new JToggleButton(pencilImage);
+    		cursorIcon = new ImageIcon(getClass().getResource(prefix + "cursor.png"));
+    		grabIcon = new ImageIcon(getClass().getResource(prefix + "grab.png"));
+    		rotateIcon = new ImageIcon(getClass().getResource(prefix + "rotate.png"));
+    		pencilIcon = new ImageIcon(getClass().getResource(prefix + "pencil.png"));
     	} else {
-    		//TODO WRONG PATH
-    		prefix = "../assets/";
-        	rotate = new JToggleButton("Rotation Tool");
-        	hand   = new JToggleButton("Grab Tool");
-        	_cursorButton = new JToggleButton("Select Tool");
-        	_createButton = new JToggleButton("Pencil Tool");
+    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
+    		cursorIcon = new ImageIcon(prefix + "cursor.png");
+    		grabIcon   = new ImageIcon(prefix + "grab.png");
+    		rotateIcon = new ImageIcon(prefix + "rotate.png");
+    		pencilIcon = new ImageIcon(prefix + "pencil.png");
     	}
-    	System.out.println(prefix);
-
     	
     	//Creates the buttons
+    	_cursorButton = createJToggleButton(cursorIcon, ToolsBarController.CURSOR, "Move element") ;
+    	JToggleButton hand = createJToggleButton(grabIcon, ToolsBarController.HAND, "Move screen"); 
+    	JToggleButton rotate = createJToggleButton(rotateIcon, ToolsBarController.ROTATE, "Rotate the screen");
+    	_createButton = createJToggleButton(pencilIcon, ToolsBarController.NEWELEMENT, "Create a new room");
 
     	//Creates the button group (so that there's only one button "selected" at a time
         ButtonGroup buttonGroup = new ButtonGroup();
@@ -188,24 +177,6 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
         buttonGroup.add(_createButton);
         buttonGroup.add(hand);
         buttonGroup.add(rotate);
-        
-        
-        //Binds the buttons to an action
-        rotate.setActionCommand(_ROTATE);
-        rotate.setToolTipText("Rotate the screen");
-        rotate.addActionListener(this);
-        
-        hand.setActionCommand(_HAND);
-        hand.setToolTipText("Move screen");
-        hand.addActionListener(this);
-        
-        _cursorButton.setActionCommand(_CURSOR);
-        _cursorButton.setToolTipText("Move screen");
-        _cursorButton.addActionListener(this);
-        
-        _createButton.setActionCommand(_NEWELEMENT);
-    	_createButton.setToolTipText("Create a new room");
-    	_createButton.addActionListener(this);
         
         // restore mouse mode / restore button selection
         String mouseMode = _project.config("mouse.mode");
@@ -226,55 +197,58 @@ public class ToolsBarView extends JToolBar implements ActionListener, Observer  
     }
     
     /**
-     * @return a JToggleButton
+     * Create a JButton 
+     * @param label A string to display on the button.
+     * @param action A string who's an action alias.
+     * @param desc A string who describes what appens when the button is pressed.
+     * @return The created button.
      */
-    public JToggleButton getCreateButton(){
-    	return _createButton ;
+    private JButton createJButton(String label, String action, String desc) {
+    	JButton button = new JButton(label);
+        button.setActionCommand(action);
+        button.setToolTipText(desc);
+        button.addActionListener(_controller);
+    	return button;
+    }
+    
+    /**
+     * Create a JToggleButton with a label.
+     * @param label A string who's the label to display on the button.
+     * @param action A string who's the action alias.
+     * @param desc A string who describes what happens when the button is pressed.
+     * @return The created button.
+     */
+    private JToggleButton createJToggleButton(String label, String action, String desc) {
+    	JToggleButton button = new JToggleButton(label);
+    	button.setActionCommand(action);
+    	button.setToolTipText(desc);
+    	button.addActionListener(_controller);
+    	return button;
+    }
+    
+    /**
+    * Create a JToggleButton with an icon.
+    * @param icon An icon who will be displayed on the button.
+    * @param action A string who's the action alias.
+    * @param desc A string who describes what happens when the button is pressed.
+    * @return The created button.
+    */
+    private JToggleButton createJToggleButton(Icon icon, String action, String desc) {
+    	JToggleButton button = new JToggleButton(icon);
+    	button.setActionCommand(action);
+    	button.setToolTipText(desc);
+    	button.addActionListener(_controller);
+    	return button;
     }
      
-    /**
-     * Inherited method from ActionListener abstract class
-     * @param action A mouse click
-     */ @Override
-	public void actionPerformed(ActionEvent action) {
-		String cmd = action.getActionCommand();
-		if (_NEWELEMENT.equals(cmd)) {
-        	_controller.onConstruction();
-        } 		
-        else if (_FLOOR_DOWN.equals(cmd)) {
-        	_controller.onFloorDown() ;
-        }
-        else if (_FLOOR_UP.equals(cmd)) {
-        	_controller.onFloorUp();
-        }
-        else if (_FLOOR_NEW.equals(cmd)){
-        	_controller.onFloorNew();
-        	_controller.onFloorUp();
-        }
-        else if (_2D.equals(cmd)) {
-        	_controller.on2d() ;
-        }
-        else if (_3D.equals(cmd)) {
-        	_controller.on3d();
-        }
-        else if (_ROTATE.equals(cmd)){
-        	_controller.onDragRotateMode();
-        }
-        else if (_HAND.equals(cmd)){
-        	_controller.onDragMoveMode();
-        }
-        else if (_CURSOR.equals(cmd)){
-        	_controller.onDragSelectMode();
-        }
-
-	}
-     
-     @Override
- 	public void update(Observable o, Object arg) {
- 		Config param = (Config) arg;
- 		if (param.getName().equals("mouse.mode")){
- 			_createButton.setEnabled (! param.getValue().equals("construct"));
- 		}
+    @Override
+ 	public void update(Observable obs, Object arg) {
+    	if (obs instanceof Project) {
+    		Config param = (Config) arg;
+    		if (param.getName().equals("mouse.mode")){
+    			_createButton.setEnabled (! param.getValue().equals("construct"));
+    		}
+    	}
  	}
 
 }

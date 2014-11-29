@@ -42,7 +42,7 @@ public class GUI extends JFrame {
 	public GUI(Project project) throws SQLException {
 		
 		// Create and set up the window
-		super("HomePlans" + (project.isOnDisk() ? " - " + project.getFilename() : "Unsaved"));
+		super("HomePlans - " + (project.isOnDisk() ? project.getFilename() : "Unsaved"));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		//Sets up the loading screen
@@ -50,6 +50,7 @@ public class GUI extends JFrame {
    
         // Create the menuBar
         _menuBar = new MenuBarController(project, this);
+        _menuBar.run();
         this.setJMenuBar(_menuBar.getView());
         
         // Create the main panel
@@ -58,11 +59,13 @@ public class GUI extends JFrame {
         
         // Create the toolbar
         _toolsBar = new ToolsBarController(project);
+        _toolsBar.run();
         contentPane.add(_toolsBar.getView(), BorderLayout.PAGE_START);
      
         // Create the workspace
         // this one contains Jmonkey canvas and the left menu
         _workspace = new MainPaneController(project);
+        _workspace.run();
         contentPane.add(_workspace.getView(), BorderLayout.CENTER);
         
         // Add the workspace to the frame
