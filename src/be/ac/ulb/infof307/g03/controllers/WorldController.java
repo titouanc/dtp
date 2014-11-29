@@ -3,14 +3,11 @@
  */
 package be.ac.ulb.infof307.g03.controllers;
 
-import java.awt.BorderLayout;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-
-import javax.swing.JPanel;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.views.WorldView;
@@ -374,7 +371,12 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 					construct();
 				} else if (mouseMode.equals("dragSelect")) {
 					dragSelectHandler();
+				} else if(mouseMode.equals("sphere")){
+					
+				} else if(mouseMode.equals("cube")){
+					
 				}
+				
 			} else { // on release
 				if (_movingPoint != null) { // We're moving a point, and mouse button up: stop the point here
 					dropMovingPoint(true);

@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 
@@ -40,6 +41,9 @@ public class ToolsBarController implements ActionListener, Observer {
 	
 	static final public String WORLD = "TB_World";
 	static final public String OBJECT = "TB_Object";
+
+	static final public String CUBE = "TB_Cube";
+	static final public String SPHERE = "TB_Sphere";
 	
 	// Edition mode alias
 	static final private String _WORLDMODE = "world";
@@ -193,8 +197,12 @@ public class ToolsBarController implements ActionListener, Observer {
 		if (_currentObjectMode!=value)  {
 			if (value.equals(_WORLDMODE)) {
 				_view.setWorldModeSelected();
+				_view.setWorldEditionModuleVisible(true);
+				_view.setObjectEditionModuleVisible(false);
 			} else if (value.equals(_OBJECTMODE)) {
 				_view.setObjectModeSelected();
+				_view.setWorldEditionModuleVisible(false);
+				_view.setObjectEditionModuleVisible(true);
 			}
 			_currentObjectMode = value;
 		}
@@ -229,18 +237,32 @@ public class ToolsBarController implements ActionListener, Observer {
         	onWorldMode();
         } else if (cmd.equals(OBJECT)) {
         	onObjectMode();
+        } else if (cmd.equals(CUBE)) {
+        	onCubeCreation();
+        } else if (cmd.equals(SPHERE)) {
+        	onSphereCreation();
         }
 
 	}
 
 	private void onObjectMode() {
-		System.out.println("[DEBUG] User clicked on : object");
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : object");
 		_project.config("edition.mode","object");
 	}
 
 	private void onWorldMode() {
-		System.out.println("[DEBUG] User clicked on : world");
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : world");
 		_project.config("edition.mode", "world");	
+	}
+	
+	private void onCubeCreation() {
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : cube");
+		_project.config("mouse.mode", "cube");	
+	}
+	
+	private void onSphereCreation() {
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : sphere");
+		_project.config("mouse.mode", "sphere");	
 	}
 
 	@Override
@@ -250,7 +272,6 @@ public class ToolsBarController implements ActionListener, Observer {
 			if (config.getName().equals("edition.mode")) {
 				updateEditionMode(config.getValue());
 			}
-				
 		}
 		
 	}
