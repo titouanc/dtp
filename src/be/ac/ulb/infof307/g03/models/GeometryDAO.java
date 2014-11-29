@@ -91,7 +91,7 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
-	public int create(Point p) throws SQLException{
+	public int create(Point p) throws SQLException {
 		int res = 0;
 		try {res=_points.create(p);}
 		catch (SQLException err){
@@ -105,7 +105,7 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
-	public int create(Binding bind) throws SQLException{
+	public int create(Binding bind) throws SQLException {
 		if (bind.getPoint().getId() == 0)
 			create(bind.getPoint());
 		int res = _bindings.create(bind);
@@ -116,7 +116,7 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
-	public int create(Floor floor) throws SQLException{
+	public int create(Floor floor) throws SQLException {
 		double base = 0;
 		for (Floor f : getFloorsBelow(floor))
 			base += f.getHeight();
@@ -416,7 +416,7 @@ public class GeometryDAO extends Observable {
 	/**
 	 * Get all floors above this one
 	 * @param floor The reference floor
-	 * @return 
+	 * @return a list of floors (might be empty)
 	 * @throws SQLException
 	 */
 	public List<Floor> getFloorsAbove(Floor floor) throws SQLException{
@@ -425,12 +425,24 @@ public class GeometryDAO extends Observable {
 		return _floors.query(floor.getQueryForFollowing(_floors));
 	}
 	
+	/**
+	 * Return the floor just above a given one
+	 * @param floor The floor
+	 * @return The floor above, or null if it is the last floor
+	 * @throws SQLException
+	 */
 	public Floor getNextFloor(Floor floor) throws SQLException {
 		if (floor == null)
 			return getFloorsAbove(null).get(0);
 		return _floors.queryForFirst(floor.getQueryForFollowing(_floors));
 	}
 	
+	/**
+	 * Return the floor just below a given one
+	 * @param floor The floor
+	 * @return The floor below, or null if it is the first floor
+	 * @throws SQLException
+	 */
 	public Floor getPreviousFloor(Floor floor) throws SQLException {
 		if (floor == null)
 			return getFloorsAbove(null).get(0);
@@ -439,8 +451,8 @@ public class GeometryDAO extends Observable {
 	
 	/**
 	 * Get all floors below this one
-	 * @param floor
-	 * @return
+	 * @param floor The floor
+	 * @return The list of floors below (might be empty)
 	 * @throws SQLException
 	 */
 	public List<Floor> getFloorsBelow(Floor floor) throws SQLException{
@@ -449,6 +461,12 @@ public class GeometryDAO extends Observable {
 		return _floors.query(floor.getQueryForPreceeding(_floors));
 	}
 	
+	/**
+	 * Create a new Floor on top of the building
+	 * @param height The height for the new floor
+	 * @return the newly created floor
+	 * @throws SQLException
+	 */
 	public Floor createFloorOnTop(double height) throws SQLException{
 		Floor res = new Floor(height);
 		Floor top = _floors.queryForFirst(res.getQueryForLast(_floors));
@@ -612,5 +630,27 @@ public class GeometryDAO extends Observable {
 		refresh(room);
 		refresh(onFloor);
 		return room;
+	}
+
+	/**
+	 * Get all selected Meshables
+	 * @return A (possibly empty) list of all selected Meshables
+	 * @throws SQLException
+	 */
+	public List<Meshable> getSelectedMeshables() throws SQLException {
+		List<Meshable> res = new ArrayList<Meshable>();
+		res.addAll(_walls.queryForEq("_selected", true));
+		res.addAll(_grounds.queryForEq("_selected", true));
+		res.addAll(_roofs.queryForEq("_selected", true));
+		return res;
+	}
+
+	/**
+	 * Get all selected points
+	 * @return A (possibly empty) list of all selected Points
+	 * @throws SQLException
+	 */
+	public List<Point> getSelectedPoints() throws SQLException {
+		return _points.queryForEq("_selected", true);
 	}
 }
