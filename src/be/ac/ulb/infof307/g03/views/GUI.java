@@ -77,15 +77,16 @@ public class GUI extends JFrame {
         this.setPreferredSize(windowDimension);
         
         this.pack();
-        while(!_workspace.getWc().getView().isCreated()){
-        	try {
-	            Thread.sleep(2000);
+        if(_screen != null){
+	        while(!_workspace.getWc().getView().isCreated()){
+	        	try {
+		            Thread.sleep(2000);
+		        }
+		        	catch(InterruptedException e) {
+		        }
 	        }
-	        	catch(InterruptedException e) {
-	        }
+	        _screen.close();
         }
-        _screen.close();
-        
         // Display the window
         this.setVisible(true);
 	}
