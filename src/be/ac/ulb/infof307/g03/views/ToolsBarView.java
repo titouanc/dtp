@@ -79,8 +79,22 @@ public class ToolsBarView extends JToolBar implements Observer  {
     }
 
     private void _addButtonEditionMode() {
-    	_worldButton = createJToggleButton("world", ToolsBarController.WORLD, "Switch to the world mode.");
-    	_objectButton = createJToggleButton("object", ToolsBarController.OBJECT, "Switch to the object mode.");
+    	
+    	Icon worldIcon,objectIcon;
+    	String prefix;
+    	String classPath = getClass().getResource("ToolsBarView.class").toString();
+    	
+    	if(classPath.subSequence(0, 3).equals("rsr")){
+    		prefix = "/";
+    		worldIcon = new ImageIcon(getClass().getResource(prefix + "world.png"));
+    		objectIcon = new ImageIcon(getClass().getResource(prefix + "object.png"));
+    	} else {
+    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
+    		worldIcon = new ImageIcon(prefix + "world.png");
+    		objectIcon   = new ImageIcon(prefix + "object.png");
+    	}
+    	_worldButton = createJToggleButton(worldIcon, ToolsBarController.WORLD, "Switch to the world mode.");
+    	_objectButton = createJToggleButton(objectIcon, ToolsBarController.OBJECT, "Switch to the object mode.");
     	
     	// Restore mode
     	String editionMode = _project.config("edition.mode");

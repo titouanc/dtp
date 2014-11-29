@@ -269,21 +269,31 @@ public class ToolsBarController implements ActionListener, Observer {
         } else if (cmd.equals(OBJECT)) {
         	onObjectMode();
         } else if (cmd.equals(CUBE)) {
-        	
+        	onCubeCreation();
         } else if (cmd.equals(SPHERE)) {
-        	
+        	onSphereCreation();
         }
 
 	}
 
 	private void onObjectMode() {
-		System.out.println("[DEBUG] User clicked on : object");
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : object");
 		_project.config("edition.mode","object");
 	}
 
 	private void onWorldMode() {
-		System.out.println("[DEBUG] User clicked on : world");
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : world");
 		_project.config("edition.mode", "world");	
+	}
+	
+	private void onCubeCreation() {
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : cube");
+		_project.config("mouse.mode", "cube");	
+	}
+	
+	private void onSphereCreation() {
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : sphere");
+		_project.config("mouse.mode", "sphere");	
 	}
 
 	@Override
