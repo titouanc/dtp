@@ -23,6 +23,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.jme3.material.Material;
+
 import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.*;
 
@@ -85,9 +87,19 @@ public class ObjectTreeView extends JTree implements Observer {
 				_controller.setHeight((Floor) clickedItem, userInput);
 			}
 			else if (cmd.equals(_CHANGETEXTURE)){
-				//
+				String currentTexture=_project.config("texture.selected");
+				// On va assigner à l'objet cliqué la texture sélectionnée
+				System.out.println(currentTexture);
+				if (clickedItem instanceof Meshable){
+					try {
+						_controller.setTexture((Meshable)clickedItem,currentTexture);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
+				
 			}
+		}
 
 	}
 

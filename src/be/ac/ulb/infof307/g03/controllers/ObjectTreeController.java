@@ -368,6 +368,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		// TODO Auto-generated method stub
 		
 	}
+	
+	// PUBLI VOIS MESHABLE , update(meshable) + notify
 
 	@Override
 	public void update(Observable o, Object arg) {
@@ -377,6 +379,17 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				updateEditionMode(config.getValue());
 			}
 		}		
+	}
+
+	/**
+	 * @param clickedItem
+	 * @param newTexture
+	 * @throws SQLException 
+	 */
+	public void setTexture(Meshable clickedItem,String newTexture) throws SQLException {
+		clickedItem.setTexture(newTexture);
+		_dao.update(clickedItem);
+		_dao.notifyObservers();
 	}
 	
 }

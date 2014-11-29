@@ -167,20 +167,35 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	/**
-	 * This creates a basic colored material which is going to be affected by lighting
-	 * @param color
-	 * @return The material created
+	 * Create the materials with their texture
+	 * @param mesh
+	 * @param texture
+	 * @return
 	 */
-	private Material _makeLightedMaterial(ColorRGBA color){
-		Material res = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		res.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		res.setBoolean("UseMaterialColors", true);
-		res.setColor("Diffuse", color);
-		res.setColor("Ambient", color);
-		res.setColor("Specular", color);
+	private Material _makeMaterial(Meshable mesh,String texture){	
+		 Material res;
+		 if (mesh instanceof Ground || mesh instanceof Roof){
+			res = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+			 if (mesh.isSelected()){
+					res.setColor("Color",new ColorRGBA(0f,1.2f,0f, 0.5f));
+				}
+			res.setTexture("ColorMap",assetManager.loadTexture(texture+".png"));
+		 }
+		 else{
+			res= new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+			res.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+			res.setBoolean("UseMaterialColors", true);
+			ColorRGBA color = new ColorRGBA(ColorRGBA.Gray);
+			res.setColor("Diffuse", color);
+			res.setColor("Ambient", color);
+			res.setColor("Specular",color); 
+			 if (mesh.isSelected()){
+					res.setColor("Diffuse",new ColorRGBA(0f,1.2f,0f, 0.5f));
+				}
+			res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
+		 }
 		return res;
-	}
-	
+	 }
 
 	/**
 	 * Redraw the entire 3D scene
@@ -245,64 +260,25 @@ public class WorldView extends SimpleApplication implements Observer {
 		_attachAxis(origin, zAxis,ColorRGBA.Blue);
 	}
 	
-	
 	private void _drawWall(Wall wall){
 		if (! wall.isVisible())
 			return;
-		Material material = _makeLightedMaterial(_getColor(wall));
-		Texture red = assetManager.loadTexture("PineFull.png");	
-        material.setTexture("DiffuseMap",red); 
+		Material material = _makeMaterial(wall,wall.getTexture());
 		rootNode.attachChild(wall.toSpatial(material));
 	}
 	
 	private void _drawGround(Ground gnd){
 		if (! gnd.isVisible())
 			return;
-/*<<<<<<< HEAD
-		try {
-			Mesh mesh = _dao.getGroundAsMesh(gnd);
-			Geometry node = new Geometry(gnd.getUID(), mesh);
-			Material mat;
-			mat=_makeBasicMaterial(_getColor(gnd));
-			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-			node.setMaterial(mat);
-			rootNode.attachChild(node);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			//JOptionPane.showMessageDialog(null, "Not enough point to draw a ground.", "Error", JOptionPane.WARNING_MESSAGE);
-			Log.log(Level.INFO, "User try to draw a wall with not enough point");
-			//e.printStackTrace();
-		}
-=======*/
-		Material mat = _makeBasicMaterial(_getColor(gnd));
-		rootNode.attachChild(gnd.toSpatial(mat));
-/*>>>>>>> refs/remotes/origin/merge-ref_models*/
+		Material material = _makeMaterial(gnd,gnd.getTexture());
+		rootNode.attachChild(gnd.toSpatial(material));
 	}
 	
 	private void _drawRoof(Roof roof){
 		if (! roof.isVisible())
 			return;
-/*<<<<<<< HEAD
-		try {
-			Mesh mesh = _dao.getRoofAsMesh(roof);
-			Geometry node = new Geometry(roof.getUID(), mesh);
-			Material mat = _makeBasicMaterial(_getColor(roof));
-			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-			node.setMaterial(mat);
-			rootNode.attachChild(node);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			Log.log(Level.INFO, "User tried to create a wall with not enough point");
-		}
-=======*/
-		Material mat = _makeBasicMaterial(_getColor(roof));
-		rootNode.attachChild(roof.toSpatial(mat));
-/*>>>>>>> refs/remotes/origin/merge-ref_models*/
+		Material material = _makeMaterial(roof,roof.getTexture());
+		rootNode.attachChild(roof.toSpatial(material));
 	}
 	
 	/**
