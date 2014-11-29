@@ -3,6 +3,7 @@ package be.ac.ulb.infof307.g03.controllers;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
+import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -11,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
@@ -19,7 +22,7 @@ import javax.swing.JOptionPane;
  * @author fhennecker, pierre, wmoulart
  * @brief Controller of the ToolsBar at the top of the application.
  */
-public class ToolsBarController implements ActionListener {
+public class ToolsBarController implements ActionListener, Observer {
 	// Attributes
 	private ToolsBarView _view;
 	private Project _project;
@@ -41,13 +44,20 @@ public class ToolsBarController implements ActionListener {
 	static final public String WORLD = "TB_World";
 	static final public String OBJECT = "TB_Object";
 	
+	// Edition mode alias
+	static final private String _WORLDMODE = "world";
+	static final private String _OBJECTMODE = "object";
+	
+	private String _currentObjectMode = null;
+	
 	/**
 	 * Constructor of ToolsBarController.
 	 * It creates the ToolsBar view
 	 * @param aProject The main project
 	 */
 	public ToolsBarController(Project aProject){	
-		_project = aProject;     
+		_project = aProject;  
+		aProject.addObserver(this);
 	}
 	
 	/**
@@ -215,6 +225,17 @@ public class ToolsBarController implements ActionListener {
     	_project.config("mouse.mode", "construct");
     }
     
+	private void updateEditionMode(String value) {
+		if (_currentObjectMode!=value)  {
+			if (value.equals(_WORLDMODE)) {
+				_view.setWorldModeSelected();
+			} else if (value.equals(_OBJECTMODE)) {
+				_view.setObjectModeSelected();
+			}
+			_currentObjectMode = value;
+		}
+	}
+    
     /**
      * Inherited method from ActionListener abstract class
      * @param action A mouse click
@@ -256,6 +277,18 @@ public class ToolsBarController implements ActionListener {
 	private void onWorldMode() {
 		System.out.println("[DEBUG] User clicked on : world");
 		_project.config("edition.mode", "world");	
+	}
+
+	@Override
+	public void update(Observable obs, Object obj) {
+		if (obs instanceof Project) {
+			Config config = (Config) obj;
+			if (config.getName().equals("edition.mode")) {
+				updateEditionMode(config.getValue());
+			}
+				
+		}
+		
 	}
 
 }
