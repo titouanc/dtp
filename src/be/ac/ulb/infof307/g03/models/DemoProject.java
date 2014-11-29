@@ -40,7 +40,7 @@ public class DemoProject {
 	
 	/**
 	 * Create a room in a project
-	 * @param dao A geometric Data Access Object.
+	 * @param floor Floor where rooms will be added
 	 * @param name The name of this room.
 	 * @param points Contour of this room, in order
 	 * @return A group which is a room.

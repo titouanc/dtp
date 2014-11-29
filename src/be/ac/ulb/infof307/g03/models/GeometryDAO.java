@@ -185,6 +185,11 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
+	/**
+	 * @param floor The floor to be updated
+	 * @return A int saying if the floor has been updated
+	 * @throws SQLException
+	 */
 	public int update(Floor floor) throws SQLException {
 		int res = _floors.update(floor);
 		if (res != 0){
@@ -495,6 +500,10 @@ public class GeometryDAO extends Observable {
 		setChanged();
 	}
 	
+	/**
+	 * @return All the floors
+	 * @throws SQLException
+	 */
 	public List<Floor> getFloors() throws SQLException{
 		return _floors.queryForAll();
 	}

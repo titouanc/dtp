@@ -5,11 +5,7 @@ package be.ac.ulb.infof307.g03.views;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.LayoutManager;
-
-import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -34,7 +30,6 @@ public class MainPaneView extends JPanel {
 	
 
 	private JSplitPane _rightPane;
-	private JScrollPane _listScrollPane;
 	private JScrollPane _textureScrollPane;
 
 	private JSplitPane _hSplitPane, _vSplitPane;
