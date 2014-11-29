@@ -51,6 +51,10 @@ public class MainPaneController {
 		
 	}
 	
+	public WorldController getWc(){
+		return _world;
+	}
+	
 	/**
 	 * @return The controller's view
 	 */
