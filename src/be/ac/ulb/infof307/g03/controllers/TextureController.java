@@ -120,7 +120,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {			
-			if (_view.getCurrentMode().equals("Color")){
+			if (_view.getCurrentMode().equals("Colors")){
 				System.out.println(_view.getSelectedColor());
 			}
 			else{
