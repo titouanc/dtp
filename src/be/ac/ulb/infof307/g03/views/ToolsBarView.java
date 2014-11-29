@@ -8,12 +8,9 @@ package be.ac.ulb.infof307.g03.views;
  * @brief GUI's toolbar View
  */
 
-
-import javax.print.attribute.standard.JobImpressionsCompleted;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
@@ -23,13 +20,8 @@ import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import java.util.Observable;
 import java.util.Observer;
-
 
 /**
  * This class implement a toolbar for the HomePlan GUI
@@ -42,7 +34,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		public JToggleButton _worldButton, _objectButton, _cursorButton;
+		public JToggleButton _worldButton, _objectButton, _cursorButton, _handButton, _rotateButton;
 		
 		NavigationModule() {
 			super();
@@ -138,28 +130,28 @@ public class ToolsBarView extends JToolBar implements Observer  {
 	    	
 	    	//Creates the buttons
 	    	_cursorButton = createJToggleButton(cursorIcon, ToolsBarController.CURSOR, "Move element") ;
-	    	JToggleButton hand = createJToggleButton(grabIcon, ToolsBarController.HAND, "Move screen"); 
-	    	JToggleButton rotate = createJToggleButton(rotateIcon, ToolsBarController.ROTATE, "Rotate the screen");
+	    	_handButton = createJToggleButton(grabIcon, ToolsBarController.HAND, "Move screen"); 
+	    	_rotateButton = createJToggleButton(rotateIcon, ToolsBarController.ROTATE, "Rotate the screen");
 
 	    	//Creates the button group (so that there's only one button "selected" at a time
 	        ButtonGroup buttonGroup = new ButtonGroup();
 	        buttonGroup.add(_cursorButton);
-	        buttonGroup.add(hand);
-	        buttonGroup.add(rotate);
+	        buttonGroup.add(_handButton);
+	        buttonGroup.add(_rotateButton);
 	        
 	        // restore mouse mode / restore button selection
 	        String mouseMode = _project.config("mouse.mode");
 	        if (mouseMode.equals("dragRotate")) {
-	        	rotate.setSelected(true);
+	        	_rotateButton.setSelected(true);
 	        } else if (mouseMode.equals("dragMove")) {
-	        	hand.setSelected(true);
+	        	_handButton.setSelected(true);
 	    	} else {
 	    		_cursorButton.setSelected(true);
 	    	}
 
 	        add(_cursorButton);
-	        add(hand);
-	        add(rotate);
+	        add(_handButton);
+	        add(_rotateButton);
 	        addSeparator();
 	    }
 		
@@ -221,6 +213,8 @@ public class ToolsBarView extends JToolBar implements Observer  {
 		 */
 		private static final long serialVersionUID = 1L;
 
+		JToggleButton _cubeButton, _sphereButton;
+		
 		public ObjectEditionModule() {
 			super();
 			
@@ -242,15 +236,11 @@ public class ToolsBarView extends JToolBar implements Observer  {
 		    		sphereIcon   = new ImageIcon(prefix + "sphere.png");
 		    	}
 
-		    	JToggleButton cubeButton = createJToggleButton(cubeIcon, ToolsBarController.CUBE, "Add a new cube");
-		    	JToggleButton sphereButton = createJToggleButton(sphereIcon, ToolsBarController.SPHERE, "Add a new sphere");
-
-		        ButtonGroup buttonGroup = new ButtonGroup();
-		        buttonGroup.add(cubeButton);
-		        buttonGroup.add(sphereButton);
-		    	
-		    	add(cubeButton);
-		    	add(sphereButton);
+		    	_cubeButton = createJToggleButton(cubeIcon, ToolsBarController.CUBE, "Add a new cube");
+		    	_sphereButton = createJToggleButton(sphereIcon, ToolsBarController.SPHERE, "Add a new sphere");
+	
+		    	add(_cubeButton);
+		    	add(_sphereButton);
 		 }
 		
 	}
@@ -277,8 +267,19 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	// define if toolsbar can move
         this.setFloatable(false); 
         // add buttons
-        _addButons();
+        addButons();
         
+        groupMouseAction();
+    }
+    
+    private void groupMouseAction() {
+    	ButtonGroup bg = new ButtonGroup();
+    	bg.add(_objectEditionModule._cubeButton);
+    	bg.add(_objectEditionModule._sphereButton);
+    	bg.add(_worldEditionModule._createButton);
+    	bg.add(_navigationModule._cursorButton);
+    	bg.add(_navigationModule._handButton);
+    	bg.add(_navigationModule._rotateButton);
     }
     
     public void setWorldModeSelected() {
@@ -294,7 +295,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
 	/**
      * The private method used for creating all the buttons 
      */
-    private void _addButons(){
+    private void addButons(){
     	_navigationModule = new NavigationModule();
     	add(_navigationModule);
     	_worldEditionModule = new WorldEditionModule();
