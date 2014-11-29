@@ -369,8 +369,6 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		
 	}
 	
-	// PUBLI VOIS MESHABLE , update(meshable) + notify
-
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof Project) {

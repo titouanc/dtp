@@ -388,8 +388,13 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				else if (mouseMode.equals("dragSelect")){
 					Geometric clicked = getClickedObject();
 					if (clicked instanceof Meshable){
-						System.out.println("OUVRIR LE JPannel");
-						_project.config("texture.mode","shown");
+						try {
+							setTexture((Meshable)clicked,_project.config("texture.selected"));
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
 					}
 				}
 			} else { // on release
@@ -399,6 +404,17 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		
 	}
 
+	/**
+	 * @param clickedItem
+	 * @param newTexture
+	 * @throws SQLException 
+	 */
+	public void setTexture(Meshable clickedItem,String newTexture) throws SQLException {
+		clickedItem.setTexture(newTexture);
+		_project.getGeometryDAO().update(clickedItem);
+		_project.getGeometryDAO().notifyObservers();
+	}
+    
 	@Override
 	public void update(Observable obs, Object msg) {
 		if (obs instanceof Project) {

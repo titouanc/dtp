@@ -190,7 +190,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			res.setColor("Ambient", color);
 			res.setColor("Specular",color); 
 			 if (mesh.isSelected()){
-					res.setColor("Diffuse",new ColorRGBA(0f,1.2f,0f, 0.5f));
+					res.setColor("Ambient",new ColorRGBA(0f,1.2f,0f, 0.5f));
 				}
 			res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		 }
@@ -296,31 +296,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		mat.setColor("Color", color);
 		rootNode.attachChild(axisGeo);
 	}
-	
-	/**
-	 * @param meshable a Meshable item
-	 * @return The color it should have in 3D view
-	 * @throws SQLException 
-	 */
-	private ColorRGBA _getColor(Meshable meshable) {
-		ColorRGBA color = ColorRGBA.Gray;
-		if (meshable.isSelected()){
-			color = new ColorRGBA(0f,1.2f,0f, 0.5f);
-		}
-		else if (meshable instanceof Ground) {
-			color = ColorRGBA.LightGray;	
-		}
-		else if (meshable instanceof Roof){
-			Roof roof = (Roof) meshable;
-			int hash = roof.getRoom().getFloor().getId();
-			double r = Math.sin(hash)/4 + 0.25;
-			double g = Math.sin(hash + Math.PI/3)/4 + 0.25;
-			double b = Math.sin(hash + 2*Math.PI/3)/4 + 0.25;
-			color = new ColorRGBA((float)r, (float)g, (float)b, 0.3f);
-		}
-		return color;
-	}
-	
+		
 	/**
 	 * Update view when a Point has changed
 	 * @param change
