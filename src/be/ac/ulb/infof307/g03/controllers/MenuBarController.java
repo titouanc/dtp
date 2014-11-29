@@ -71,7 +71,8 @@ public class MenuBarController implements ActionListener {
 	 * @param gui The main gui frame (for .dispose())
 	 */
 	public MenuBarController(Project project,GUI gui){
-		_gui = gui;	
+		_gui = gui;
+		_project = project;
 	}
 	
 	/**
