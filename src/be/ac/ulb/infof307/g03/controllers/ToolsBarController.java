@@ -150,7 +150,7 @@ public class ToolsBarController implements ActionListener, Observer {
      */
     public void on2d(){
     	Log.info("Switch to 2D mode");
-    	_project.config("world.mode", CameraModeController._VIEW2D);
+    	_project.config("camera.mode", "2D");
   
     }
     
@@ -160,7 +160,7 @@ public class ToolsBarController implements ActionListener, Observer {
      */
     public void on3d() {
     	Log.info("Switch to 3D mode");
-    	_project.config("world.mode", CameraModeController._VIEW3D);
+    	_project.config("camera.mode", "3D");
     }
     
     /**

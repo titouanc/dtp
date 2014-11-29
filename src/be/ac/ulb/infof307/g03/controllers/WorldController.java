@@ -35,7 +35,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	// Attributes
     private WorldView _view;
     private Project _project;
-    private CameraModeController _cameraModeController = null;
+    private CameraContext _cameraContext = null;
     private Point _movingPoint = null;
     private List<Point> _inConstruction ;
     private Floor _currentFloor = null;
@@ -84,7 +84,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     	initView(_project);
         _view.setSettings(_appSettings);
         _view.createCanvas();
-        _cameraModeController = new CameraModeController(_project);
     }
     
 	/**
@@ -123,8 +122,12 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     /** 
      * @return The camera mode controller.
      */
-    public CameraModeController getCameraModeController() {
-        return _cameraModeController;
+    public CameraContext getCameraModeController() {
+        return _cameraContext;
+    }
+    
+    public void setCameraContext(CameraContext cameraContext) {
+    	_cameraContext = cameraContext;
     }
     
     /**

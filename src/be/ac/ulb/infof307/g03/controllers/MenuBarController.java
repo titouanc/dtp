@@ -7,13 +7,10 @@ package be.ac.ulb.infof307.g03.controllers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.GUI;
 import be.ac.ulb.infof307.g03.views.MenuBarView;
 

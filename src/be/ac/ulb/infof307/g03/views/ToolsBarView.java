@@ -88,10 +88,10 @@ public class ToolsBarView extends JToolBar implements Observer  {
 	    	JToggleButton thirdDimension = createJToggleButton("3D", ToolsBarController.VIEW3D, "Switch to 3D view");
 	    	
 	    	// restore mode
-	    	String worldMode = _project.config("world.mode");
-	    	if (worldMode.equals("2D")) {
+	    	String cameraMode = _project.config("camera.mode");
+	    	if (cameraMode.equals("2D")) {
 	    		secondDimension.setSelected(true);
-	    	} else if (worldMode.equals("3D")) {
+	    	} else if (cameraMode.equals("3D")) {
 	    		thirdDimension.setSelected(true);
 	    	}
 	    	
