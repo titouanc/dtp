@@ -39,4 +39,40 @@ public class Log {
     public static void log(Level level, String msg){
         getLogger().log(level, msg);
     }
+    
+    /**
+     * Shortcut for Log.log(Level.FINE, String.format(msg, args...))
+     * @param msg The message printf-like format string
+     * @param args The arguments for format string
+     */
+    public static void debug(String msg, Object...args){
+    	getLogger().log(Level.FINE, String.format(msg, args));
+    }
+    
+    /**
+     * Shortcut for Log.log(Level.INFO, String.format(msg, args...))
+     * @param msg The message printf-like format string
+     * @param args The arguments for format string
+     */
+    public static void info(String msg, Object...args){
+    	getLogger().log(Level.INFO, String.format(msg, args));
+    }
+    
+    /**
+     * Shortcut for Log.log(Level.WARNING, String.format(msg, args...))
+     * @param msg The message printf-like format string
+     * @param args The arguments for format string
+     */
+    public static void warn(String msg, Object...args){
+    	getLogger().log(Level.WARNING, String.format(msg, args));
+    }
+    
+    /**
+     * Shortcut for Log.log(Level.SEVERE, String.format(msg, args...))
+     * @param msg The message printf-like format string
+     * @param args The arguments for format string
+     */
+    public static void error(String msg, Object...args){
+    	getLogger().log(Level.SEVERE, String.format(msg, args));
+    }
 }

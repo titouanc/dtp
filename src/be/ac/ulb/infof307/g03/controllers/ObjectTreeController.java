@@ -135,7 +135,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		if (object instanceof Geometric){
 			Geometric item = (Geometric) object;
 			try {
-				Log.log(Level.INFO, "DELETE " + item.toString());
+				Log.info("[TreeController] DELETE %s", item.toString());
 				_dao.delete(item);
 				_dao.notifyObservers(item);
 			} catch (SQLException e) {
@@ -151,7 +151,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void deselectElement(Object element) {
 		if (element instanceof Meshable){
 			Meshable meshable = (Meshable) element;
-			Log.log(Level.INFO, "[TreeController] Unselect " + meshable.getUID());
+			Log.debug("[TreeController] Unselect %s", meshable.getUID());
 			meshable.deselect();
 			try {
 				for (Point p : meshable.getPoints()){
