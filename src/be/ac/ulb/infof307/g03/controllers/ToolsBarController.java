@@ -43,6 +43,9 @@ public class ToolsBarController implements ActionListener, Observer {
 	
 	static final public String WORLD = "TB_World";
 	static final public String OBJECT = "TB_Object";
+
+	static final public String CUBE = "TB_Cube";
+	static final public String SPHERE = "TB_Sphere";
 	
 	// Edition mode alias
 	static final private String _WORLDMODE = "world";
@@ -265,6 +268,10 @@ public class ToolsBarController implements ActionListener, Observer {
         	onWorldMode();
         } else if (cmd.equals(OBJECT)) {
         	onObjectMode();
+        } else if (cmd.equals(CUBE)) {
+        	
+        } else if (cmd.equals(SPHERE)) {
+        	
         }
 
 	}

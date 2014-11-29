@@ -75,6 +75,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
         _addButtonsDimension();
         _addButtonMouseMode();
         _addButtonEditionMode();
+        addButtonsObject();
     }
 
     private void _addButtonEditionMode() {
@@ -194,6 +195,38 @@ public class ToolsBarView extends JToolBar implements Observer  {
         this.add(rotate);
         this.addSeparator();
         
+    }
+    
+    private void addButtonsObject(){
+
+    	Icon cubeIcon,sphereIcon;
+    	String prefix;
+    	String classPath = getClass().getResource("ToolsBarView.class").toString();
+    	
+    	if(classPath.subSequence(0, 3).equals("rsr")){
+    		prefix = "/";
+    		cubeIcon = new ImageIcon(getClass().getResource(prefix + "cube.png"));
+    		sphereIcon = new ImageIcon(getClass().getResource(prefix + "sphere.png"));
+    	} else {
+    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
+    		cubeIcon = new ImageIcon(prefix + "cube.png");
+    		sphereIcon   = new ImageIcon(prefix + "sphere.png");
+    	}
+
+    	JToggleButton cubeButton = createJToggleButton(cubeIcon, ToolsBarController.CUBE, "Add a new cube");
+    	JToggleButton sphereButton = createJToggleButton(sphereIcon, ToolsBarController.SPHERE, "Add a new sphere");
+
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(cubeButton);
+        buttonGroup.add(sphereButton);
+    	
+    	this.add(cubeButton);
+    	this.add(sphereButton);
+    	
+    	this.addSeparator();
+        
+    	
+    	
     }
     
     /**
