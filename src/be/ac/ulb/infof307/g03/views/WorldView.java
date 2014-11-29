@@ -38,6 +38,7 @@ import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.Texture;
+import com.jme3.texture.Texture.WrapMode;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -100,7 +101,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		// Notify our controller that initialisation is done
 		this.setPauseOnLostFocus(false);
 		this.setCreated();
-		this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/asset/", FileLocator.class);
+		this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/assets/", FileLocator.class);
 
 	}
 	
@@ -249,7 +250,10 @@ public class WorldView extends SimpleApplication implements Observer {
 		if (! wall.isVisible())
 			return;
 		Material material = _makeLightedMaterial(_getColor(wall));
-		//material.setTexture("red", background);
+		
+		Texture red = assetManager.loadTexture("PineFull.png");	
+        material.setTexture("DiffuseMap",red); 
+        
 		rootNode.attachChild(wall.toSpatial(material));
 	}
 	

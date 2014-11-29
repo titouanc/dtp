@@ -35,7 +35,7 @@ public class TextureView extends JPanel implements ItemListener {
 	
 	private GridBagLayout _paneLayout;
 	private String[] colorData = {"Red","Blue","Green","Gray","Brown","Yellow"};
-	private String[] textureData = {"Brick","Grass","Wood","Parquet"};
+	private String[] textureData = {"Brick","Grass","Wood","Parquet","Pine","Leopard"};
 	
 	final static String COLORPANEL = "Colors";
     final static String TEXTURESPANEL = "Textures";
