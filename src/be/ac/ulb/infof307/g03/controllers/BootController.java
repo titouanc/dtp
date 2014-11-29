@@ -5,7 +5,6 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.logging.Level;
 import java.util.prefs.Preferences;
 import be.ac.ulb.infof307.g03.models.DemoProject;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -68,8 +67,8 @@ public class BootController {
 		Project proj = null;
 		try {
 			proj = loadLastProject();
-		}catch(SQLException e){
-			Log.log(Level.WARNING, "Unable to load last project");
+		} catch(SQLException e){
+			Log.warn("Unable to load last project %s", getLastProjectPath());
 		}
 		
 		if (proj == null)

@@ -1,7 +1,5 @@
 package be.ac.ulb.infof307.g03.controllers;
 
-import java.util.logging.Level;
-
 import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.jme3.input.InputManager;
@@ -131,7 +129,7 @@ public class Camera3D implements AnalogListener, ActionListener {
 	 * Reset the direction toward which the camera looks
 	 */
 	public void resetCamera() {
-		Log.log(Level.INFO, "[Camera3D] reset to 3D");
+		Log.info("Reset 3D camera direction");
         _cam.setParallelProjection(false);
         
         _cam.setLocation(new Vector3f(_cam.getLocation().x,_cam.getLocation().y,_defaultCameraZ));

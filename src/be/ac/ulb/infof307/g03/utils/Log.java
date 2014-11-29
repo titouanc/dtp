@@ -10,13 +10,14 @@ import java.util.logging.Logger;
  *
  */
 public class Log {
+	private static Level _level = Level.ALL;
     static Logger _logger;
     private ConsoleHandler _consoleHandler;
     private LogFormatter _plainTextFormatter;
 
     private Log() {
     	_logger = Logger.getLogger(Log.class.getName());
-    	_logger.setLevel(Level.ALL);
+    	_logger.setLevel(_level);
         _consoleHandler = new ConsoleHandler();
         _plainTextFormatter = new LogFormatter();
         _consoleHandler.setFormatter(_plainTextFormatter);
@@ -30,6 +31,14 @@ public class Log {
         	new Log();
         }
         return _logger;
+    }
+    
+    /**
+     * Set the logging level for the program
+     * @param lvl The logging level
+     */
+    public static void setLevel(Level lvl){
+    	_level = lvl;
     }
     
     /**
