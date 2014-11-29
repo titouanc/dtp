@@ -69,6 +69,7 @@ public class TextureView extends JPanel implements ItemListener {
 	/**
 	 * Adds the combobox to the main pane
 	 */
+	@SuppressWarnings("unchecked")
 	public void addTypeSelection(){
 		//Simple Label
 		JLabel typeLabel = new JLabel("Type : ");
@@ -77,7 +78,8 @@ public class TextureView extends JPanel implements ItemListener {
         JPanel comboBoxPane = new JPanel(); 
         comboBoxPane.setLayout(new GridLayout(0,1));
         String comboBoxItems[] = { COLORPANEL, TEXTURESPANEL };
-        JComboBox cb = new JComboBox(comboBoxItems);
+        @SuppressWarnings("rawtypes")
+		JComboBox cb = new JComboBox(comboBoxItems);
         cb.setEditable(false);
         cb.addItemListener(this);
         
