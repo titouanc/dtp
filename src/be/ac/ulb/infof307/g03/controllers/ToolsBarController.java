@@ -286,7 +286,6 @@ public class ToolsBarController implements ActionListener, Observer {
 			if (config.getName().equals("edition.mode")) {
 				updateEditionMode(config.getValue());
 			}
-				
 		}
 		
 	}
