@@ -18,6 +18,8 @@ import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetLocator;
+import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -35,6 +37,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.texture.Texture;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -48,6 +51,8 @@ public class WorldView extends SimpleApplication implements Observer {
 	private LinkedList<Change> _queuedChanges = null;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	private boolean _isCreated = false;
+	
+	
 	/**
 	 * WorldView's Constructor
 	 * @param newController The view's controller
@@ -66,6 +71,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		}
 		this.setDisplayStatView(false);
 		_project.addObserver(this);
+
 	}
 	
 	/**
@@ -94,6 +100,8 @@ public class WorldView extends SimpleApplication implements Observer {
 		// Notify our controller that initialisation is done
 		this.setPauseOnLostFocus(false);
 		this.setCreated();
+		this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/asset/", FileLocator.class);
+
 	}
 	
 	/**
@@ -236,10 +244,12 @@ public class WorldView extends SimpleApplication implements Observer {
 		_attachAxis(origin, zAxis,ColorRGBA.Blue);
 	}
 	
+	
 	private void _drawWall(Wall wall){
 		if (! wall.isVisible())
 			return;
 		Material material = _makeLightedMaterial(_getColor(wall));
+		//material.setTexture("red", background);
 		rootNode.attachChild(wall.toSpatial(material));
 	}
 	

@@ -172,7 +172,7 @@ public class TextureView extends JPanel implements ItemListener {
 	    		prefix = "/";
 	    		redIcon = new ImageIcon(getClass().getResource(prefix + value.toString()+".png"));
 	    	} else {
-	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
+	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/";
 	    		redIcon = new ImageIcon(prefix + value.toString() +".png");
 	    	}
 	        label.setIcon(redIcon);
