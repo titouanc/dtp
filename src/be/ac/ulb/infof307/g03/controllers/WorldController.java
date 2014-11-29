@@ -374,7 +374,12 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 					construct();
 				} else if (mouseMode.equals("dragSelect")) {
 					dragSelectHandler();
+				} else if(mouseMode.equals("sphere")){
+					
+				} else if(mouseMode.equals("cube")){
+					
 				}
+				
 			} else { // on release
 				if (_movingPoint != null) { // We're moving a point, and mouse button up: stop the point here
 					dropMovingPoint(true);

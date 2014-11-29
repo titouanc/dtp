@@ -110,6 +110,7 @@ public class FileChooserController {
 				try{
 					Project prj = new Project();
 					prj.load(filename);
+					// save the path of the current project to the BootController
 					BootController bc = new BootController();
 					bc.saveCurrentProjectPath(filename);
 					new GUI(prj);
@@ -134,6 +135,7 @@ public class FileChooserController {
 				try{
 					Project prj = new Project();
 					prj.create(filename);
+					// save the path of the current project to the BootController
 					BootController bc = new BootController();
 					bc.saveCurrentProjectPath(filename);
 					new GUI(prj);
@@ -155,6 +157,7 @@ public class FileChooserController {
 		String filename = fileToSave.getAbsolutePath() + ".hpj";
 		try {
 			_project.saveAs(filename);
+			// save the path of the current project to the BootController
 			BootController bc = new BootController();
 			bc.saveCurrentProjectPath(filename);
 		} catch (SQLException e) {

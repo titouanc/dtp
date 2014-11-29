@@ -9,6 +9,7 @@ package be.ac.ulb.infof307.g03.views;
  */
 
 
+import javax.print.attribute.standard.JobImpressionsCompleted;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -52,8 +53,22 @@ public class ToolsBarView extends JToolBar implements Observer  {
 		}
 		
 		private void addButtonEditionMode() {
-	    	_worldButton = createJToggleButton("world", ToolsBarController.WORLD, "Switch to the world mode.");
-	    	_objectButton = createJToggleButton("object", ToolsBarController.OBJECT, "Switch to the object mode.");
+	    	String classPath = getClass().getResource("ToolsBarView.class").toString();
+	    	Icon worldIcon, objectIcon;
+	    	String prefix = "";
+	    	
+	    	if(classPath.subSequence(0, 3).equals("rsr")){
+	    		prefix = "/";
+	    		worldIcon = new ImageIcon(getClass().getResource(prefix + "world.png"));
+	    		objectIcon = new ImageIcon(getClass().getResource(prefix + "object.png"));
+	    	} else {
+	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
+	    		worldIcon = new ImageIcon(prefix + "world.png");
+	    		objectIcon   = new ImageIcon(prefix + "object.png");
+	    	}
+	    	
+	    	_worldButton = createJToggleButton(worldIcon, ToolsBarController.WORLD, "Switch to the world mode.");
+	    	_objectButton = createJToggleButton(objectIcon, ToolsBarController.OBJECT, "Switch to the object mode.");
 	    	
 	    	// Restore mode
 	    	String editionMode = _project.config("edition.mode");
@@ -162,8 +177,6 @@ public class ToolsBarView extends JToolBar implements Observer  {
 			
 			addButtonsFloor();
 			addButtonWallEdition();
-			
-			
 		}
 		
 		/**
@@ -203,10 +216,42 @@ public class ToolsBarView extends JToolBar implements Observer  {
 	}
 	
 	private class ObjectEditionModule extends JToolBar {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public ObjectEditionModule() {
 			super();
 			
+	        addButtonsObject();
 		}
+		
+		 private void addButtonsObject(){
+		    	Icon cubeIcon,sphereIcon;
+		    	String prefix;
+		    	String classPath = getClass().getResource("ToolsBarView.class").toString();
+		    	
+		    	if(classPath.subSequence(0, 3).equals("rsr")){
+		    		prefix = "/";
+		    		cubeIcon = new ImageIcon(getClass().getResource(prefix + "cube.png"));
+		    		sphereIcon = new ImageIcon(getClass().getResource(prefix + "sphere.png"));
+		    	} else {
+		    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
+		    		cubeIcon = new ImageIcon(prefix + "cube.png");
+		    		sphereIcon   = new ImageIcon(prefix + "sphere.png");
+		    	}
+
+		    	JToggleButton cubeButton = createJToggleButton(cubeIcon, ToolsBarController.CUBE, "Add a new cube");
+		    	JToggleButton sphereButton = createJToggleButton(sphereIcon, ToolsBarController.SPHERE, "Add a new sphere");
+
+		        ButtonGroup buttonGroup = new ButtonGroup();
+		        buttonGroup.add(cubeButton);
+		        buttonGroup.add(sphereButton);
+		    	
+		    	add(cubeButton);
+		    	add(sphereButton);
+		 }
 		
 	}
 	
@@ -255,9 +300,9 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	_worldEditionModule = new WorldEditionModule();
     	add(_worldEditionModule);
     	_objectEditionModule = new ObjectEditionModule();
-    	add(_worldEditionModule);
-    	_worldEditionModule.setVisible(false);
-    	
+    	add(_objectEditionModule);
+    	//_worldEditionModule.setVisible(false);
+
     }
     
     /**
@@ -310,7 +355,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	if (obs instanceof Project) {
     		Config param = (Config) arg;
     		if (param.getName().equals("mouse.mode")){
-    			//_createButton.setEnabled (! param.getValue().equals("construct"));
+    			_worldEditionModule._createButton.setEnabled (! param.getValue().equals("construct"));
     		}
     	}
  	}

@@ -6,16 +6,14 @@ package be.ac.ulb.infof307.g03.controllers;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-
-import be.ac.ulb.infof307.g03.Main;
 import be.ac.ulb.infof307.g03.models.DemoProject;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author pierre
- *
+ * This class will try to open the last projet.
  */
 public class BootController {
 
@@ -24,14 +22,14 @@ public class BootController {
 	private Preferences _prefs;
 	
 	/**
-	 * 
+	 * Constructor of the class Bootcontroller
 	 */
 	public BootController(){
 		 _prefs = Preferences.userRoot().node("HomePlans");
 	}
 	
 	/**
-	 * @param path 
+	 * @param path Save the path of the current project to path
 	 * 
 	 */
 	public void saveCurrentProjectPath(String path){
@@ -63,13 +61,16 @@ public class BootController {
 	}
 
 	/**
-	 * @return a
+	 * @return The project to be opened by the program
 	 * @throws SQLException
 	 */
 	public Project initProject() throws SQLException {
 		Project proj = null;
-		try {proj = loadLastProject();}
-		catch(SQLException e){}
+		try {
+			proj = loadLastProject();
+		}catch(SQLException e){
+			Log.log(Level.WARNING, "Unable to load last project");
+		}
 		
 		if (proj == null)
 			proj = DemoProject.create();
