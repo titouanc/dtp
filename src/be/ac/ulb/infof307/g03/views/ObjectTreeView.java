@@ -85,7 +85,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				_controller.setHeight((Floor) clickedItem, userInput);
 			}
 			else if (cmd.equals(_CHANGETEXTURE)){
-				// Ouvrir le nouveau pannel 
+				//
 				}
 			}
 

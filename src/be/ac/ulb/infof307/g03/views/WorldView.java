@@ -250,10 +250,8 @@ public class WorldView extends SimpleApplication implements Observer {
 		if (! wall.isVisible())
 			return;
 		Material material = _makeLightedMaterial(_getColor(wall));
-		
 		Texture red = assetManager.loadTexture("PineFull.png");	
         material.setTexture("DiffuseMap",red); 
-        
 		rootNode.attachChild(wall.toSpatial(material));
 	}
 	

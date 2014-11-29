@@ -20,8 +20,10 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.TextField;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.List;
 
 /**
  * @author Walter, brochape
@@ -30,7 +32,7 @@ import java.awt.event.ItemListener;
 public class TextureView extends JPanel implements ItemListener {
 
 	private static final long serialVersionUID = 1L;
-	private TextureController _textureController;
+	private TextureController _controller;
 	private Project _project;
 	
 	private GridBagLayout _paneLayout;
@@ -39,6 +41,13 @@ public class TextureView extends JPanel implements ItemListener {
 	
 	final static String COLORPANEL = "Colors";
     final static String TEXTURESPANEL = "Textures";
+    static String CURRENTMODE ="" ;
+    
+    @SuppressWarnings("rawtypes")
+    static private JList _textureList = new JList();
+	@SuppressWarnings("rawtypes")
+	static private JList _colorList   = new JList();
+    
     JPanel cards; //a panel that uses CardLayout
 
 	/**
@@ -49,7 +58,7 @@ public class TextureView extends JPanel implements ItemListener {
 		//Builds a JPane based on a CardLayout, which is a layout that mages 2+ panes using the same display space
     	super(new CardLayout());  	
     	
-    	_textureController = newControler;
+    	_controller = newControler;
     	_project = project;
         
     	//Uses the GridbagConstraints
@@ -62,9 +71,12 @@ public class TextureView extends JPanel implements ItemListener {
     	
 		this.addTypeSelection();
 		this.addMaterialChoice();
-    	System.out.println(this.getPreferredSize());
+		CURRENTMODE=COLORPANEL; // Mode du début
+		
+    	//System.out.println(this.getPreferredSize());
         
     }
+	
 	
 	/**
 	 * Adds the combobox to the main pane
@@ -99,20 +111,44 @@ public class TextureView extends JPanel implements ItemListener {
 	}
 	
 	/**
+	 * @return the color List
+	 */
+	@SuppressWarnings("rawtypes")
+	public String getSelectedColor(){
+		return _colorList.getSelectedValue().toString();
+	}
+	
+	/**
+	 * @return the texture List
+	 */
+	@SuppressWarnings("rawtypes")
+	public String getSelectedTexture(){
+		return _textureList.getSelectedValue().toString();
+	}
+	
+	/**
+	 * @return current mode between texture and colors
+	 */
+	public String getCurrentMode(){
+		return CURRENTMODE;
+	}
+	
+	/**
 	 * Adds the 2 switching panes
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addMaterialChoice(){
         //Creates the "cards".
         JPanel texturesPanel = new JPanel();
-        JList textureList = new JList(textureData);
-        textureList.setCellRenderer(new ColorCellRenderer());
-        texturesPanel.add(textureList);
+        _textureList = new JList(textureData);
+        _textureList.setCellRenderer(new ColorCellRenderer());
+        texturesPanel.add(_textureList);
         texturesPanel.setLayout(new GridLayout(0,1));
          
         JPanel colorsPanel = new JPanel();
-        JList colorList = new JList(colorData);
-        colorList.setCellRenderer(new ColorCellRenderer());
-        colorsPanel.add(colorList);
+        _colorList = new JList(colorData);
+        _colorList.setCellRenderer(new ColorCellRenderer());
+        colorsPanel.add(_colorList);
         colorsPanel.setLayout(new GridLayout(0,1));
          
         //Creates the panel that contains the switching panes.
@@ -121,7 +157,6 @@ public class TextureView extends JPanel implements ItemListener {
         cards.add(texturesPanel, TEXTURESPANEL);
 
         GridBagConstraints c = new GridBagConstraints();
-
 		c.fill = GridBagConstraints.BOTH;
 	    c.anchor = GridBagConstraints.PAGE_END; //bottom of space;
 	    c.weightx = 1;
@@ -129,6 +164,8 @@ public class TextureView extends JPanel implements ItemListener {
 		c.gridx = 0;
 		c.gridy = 1;
 		
+		_textureList.addMouseListener(_controller);
+		_colorList.addMouseListener(_controller);
         this.add(cards, c);
 
 		//c.ipady = 200;
@@ -139,7 +176,7 @@ public class TextureView extends JPanel implements ItemListener {
 	public void itemStateChanged(ItemEvent evt) {
         CardLayout cl = (CardLayout)(cards.getLayout());
         cl.show(cards, (String)evt.getItem());
-		
+        CURRENTMODE=(String) evt.getItem();
 	}
 	
 	class ColorCellRenderer extends DefaultListCellRenderer {
@@ -167,15 +204,15 @@ public class TextureView extends JPanel implements ItemListener {
 
 	    	String classPath = getClass().getResource("TextureView.class").toString();
 	    	String prefix = "";
-	    	Icon redIcon;
+	    	Icon imageIcon;
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
 	    		prefix = "/";
-	    		redIcon = new ImageIcon(getClass().getResource(prefix + value.toString()+".png"));
+	    		imageIcon = new ImageIcon(getClass().getResource(prefix + value.toString()+".png"));
 	    	} else {
 	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/";
-	    		redIcon = new ImageIcon(prefix + value.toString() +".png");
+	    		imageIcon = new ImageIcon(prefix + value.toString() +".png");
 	    	}
-	        label.setIcon(redIcon);
+	        label.setIcon(imageIcon);
 	        label.setText(value.toString());
 	        //label.setToolTipText();
 
