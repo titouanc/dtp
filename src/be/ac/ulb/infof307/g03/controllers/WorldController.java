@@ -387,10 +387,10 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				}
 				else if (mouseMode.equals("dragSelect")){
 					Geometric clicked = getClickedObject();
-					//if (clicked instanceof Grouped){
-						//System.out.println("OUVRIR LE JPannel");
-					//}
-					// Si il appuie sur une shape
+					if (clicked instanceof Meshable){
+						System.out.println("OUVRIR LE JPannel");
+						_project.config("texture.mode","shown");
+					}
 				}
 			} else { // on release
 				

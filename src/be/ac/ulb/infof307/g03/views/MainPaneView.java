@@ -109,11 +109,7 @@ public class MainPaneView extends JPanel {
         
 		// add the splitpane to the inherited Jpanel
 
-		this.add(_rightPane,BorderLayout.EAST);
-		
-		//Remove texture pane
-		//this.remove(_rightPane);
-		
+		this.add(_rightPane,BorderLayout.EAST);		
 		this.add(_hSplitPane);
 	}
 
