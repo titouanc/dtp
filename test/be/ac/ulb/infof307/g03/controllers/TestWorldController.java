@@ -30,9 +30,6 @@ public class TestWorldController {
         settings.setFrameRate(60);
         _project = new Project();
         _project.create(":memory:");
-        Floor floor = new Floor();
-        _project.getGeometryDAO().create(floor);
-        _project.config("floor.current", floor.getUID());
         _world = new WorldController(settings, _project);
 	}
 	
