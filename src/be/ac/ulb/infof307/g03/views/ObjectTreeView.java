@@ -44,12 +44,13 @@ public class ObjectTreeView extends JTree implements Observer {
 	private Map<String,DefaultMutableTreeNode> _nodes = new HashMap<String,DefaultMutableTreeNode>();
 		
 	// Action alias
-	static private final String _RENAME  = "Rename" ;
-	static private final String _DELETE  = "Delete";
-	static private final String _HIDE    = "Hide";
-	static private final String _SHOW    = "Show";
-	static private final String _WIDTH   = "Width";
-	static private final String _HEIGHT	 = "Height";
+	static private final String _RENAME  		 = "Rename" ;
+	static private final String _DELETE 		 = "Delete";
+	static private final String _HIDE   		 = "Hide";
+	static private final String _SHOW   		 = "Show";
+	static private final String _WIDTH   		 = "Width";
+	static private final String _HEIGHT	 		 = "Height";
+	static private final String _CHANGETEXTURE	 = "Change Texture";
 	
 	/**
 	 * This class implements a ActionListener to be 
@@ -83,7 +84,10 @@ public class ObjectTreeView extends JTree implements Observer {
 				String userInput = JOptionPane.showInputDialog("Height ?");
 				_controller.setHeight((Floor) clickedItem, userInput);
 			}
-		}
+			else if (cmd.equals(_CHANGETEXTURE)){
+				// Ouvrir le nouveau pannel 
+				}
+			}
 
 	}
 
@@ -184,6 +188,7 @@ public class ObjectTreeView extends JTree implements Observer {
 			if (geo instanceof Wall){
 				res.add(createJMenuItem("Edit width", _WIDTH, listener));
 			}
+			res.add(createJMenuItem("Change Texture",_CHANGETEXTURE,listener));
 		} else if (geo instanceof Floor){
 			res.add(createJMenuItem(_HEIGHT, _HEIGHT, listener));
 		}

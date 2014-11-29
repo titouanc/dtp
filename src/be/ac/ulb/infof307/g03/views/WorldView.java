@@ -47,7 +47,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	private WorldController _controller; 
 	private LinkedList<Change> _queuedChanges = null;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
-			
+	private boolean _isCreated = false;
 	/**
 	 * WorldView's Constructor
 	 * @param newController The view's controller
@@ -92,7 +92,8 @@ public class WorldView extends SimpleApplication implements Observer {
 		_controller.inputSetUp(inputManager);
 		
 		// Notify our controller that initialisation is done
-		setPauseOnLostFocus(false);
+		this.setPauseOnLostFocus(false);
+		this.setCreated();
 	}
 	
 	/**
@@ -393,6 +394,14 @@ public class WorldView extends SimpleApplication implements Observer {
 		makeScene();
 	}
 	
+	public boolean isCreated() {
+		return _isCreated;
+	}
+
+	public void setCreated() {
+		this._isCreated = !this._isCreated;
+	}
+	
 	/**
 	 * @param node
 	 */
@@ -446,4 +455,5 @@ public class WorldView extends SimpleApplication implements Observer {
 			}
 		}
 	}
+
 }

@@ -72,6 +72,10 @@ public class MainPaneController {
 		_view = new MainPaneView(this, project, context.getCanvas());
 	}
 	
+	public WorldController getWc(){
+		return _world;
+	}
+	
 	/**
 	 * @return The controller's view
 	 */
