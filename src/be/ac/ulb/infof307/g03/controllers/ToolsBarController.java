@@ -70,6 +70,12 @@ public class ToolsBarController implements ActionListener, Observer {
 		_project.addObserver(_view);
 		//Sets the default mode
         this.onDragSelectMode();
+        
+        _currentObjectMode = _project.config("edition.mode");
+        if (_currentObjectMode.equals(""))
+        	_currentObjectMode = _WORLDMODE;
+        else
+        	updateEditionMode();
 	}
 	
 	/**
@@ -195,16 +201,20 @@ public class ToolsBarController implements ActionListener, Observer {
     
 	private void updateEditionMode(String value) {
 		if (_currentObjectMode!=value)  {
-			if (value.equals(_WORLDMODE)) {
-				_view.setWorldModeSelected();
-				_view.setWorldEditionModuleVisible(true);
-				_view.setObjectEditionModuleVisible(false);
-			} else if (value.equals(_OBJECTMODE)) {
-				_view.setObjectModeSelected();
-				_view.setWorldEditionModuleVisible(false);
-				_view.setObjectEditionModuleVisible(true);
-			}
 			_currentObjectMode = value;
+			updateEditionMode();
+		}
+	}
+	
+	private void updateEditionMode() {
+		if (_currentObjectMode.equals(_WORLDMODE)) {
+			_view.setWorldModeSelected();
+			_view.setWorldEditionModuleVisible(true);
+			_view.setObjectEditionModuleVisible(false);
+		} else if (_currentObjectMode.equals(_OBJECTMODE)) {
+			_view.setObjectModeSelected();
+			_view.setWorldEditionModuleVisible(false);
+			_view.setObjectEditionModuleVisible(true);
 		}
 	}
     
