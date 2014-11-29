@@ -232,8 +232,12 @@ public class ToolsBarController implements ActionListener, Observer {
 		if (_currentObjectMode!=value)  {
 			if (value.equals(_WORLDMODE)) {
 				_view.setWorldModeSelected();
+				_view.setWorldEditionModuleVisible(true);
+				_view.setObjectEditionModuleVisible(false);
 			} else if (value.equals(_OBJECTMODE)) {
 				_view.setObjectModeSelected();
+				_view.setWorldEditionModuleVisible(false);
+				_view.setObjectEditionModuleVisible(true);
 			}
 			_currentObjectMode = value;
 		}

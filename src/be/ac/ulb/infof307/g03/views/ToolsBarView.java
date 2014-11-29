@@ -301,8 +301,6 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	add(_worldEditionModule);
     	_objectEditionModule = new ObjectEditionModule();
     	add(_objectEditionModule);
-    	//_worldEditionModule.setVisible(false);
-
     }
     
     /**
@@ -349,7 +347,15 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	button.addActionListener(_controller);
     	return button;
     }
-     
+    
+    public void setWorldEditionModuleVisible(boolean visible) {
+    	_worldEditionModule.setVisible(visible);
+    }
+    
+    public void setObjectEditionModuleVisible(boolean visible) {
+    	_objectEditionModule.setVisible(visible);
+    }
+    
     @Override
  	public void update(Observable obs, Object arg) {
     	if (obs instanceof Project) {
