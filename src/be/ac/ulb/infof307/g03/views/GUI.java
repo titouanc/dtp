@@ -73,7 +73,7 @@ public class GUI extends JFrame {
         this.setMinimumSize(windowDimension);
         this.setPreferredSize(windowDimension);
         
-        
+        this.pack();
         while(!_workspace.getWc().getView().isCreated()){
         	try {
 	            Thread.sleep(2000);
@@ -84,7 +84,6 @@ public class GUI extends JFrame {
         _screen.close();
         
         // Display the window
-        this.pack();
         this.setVisible(true);
 	}
 	
