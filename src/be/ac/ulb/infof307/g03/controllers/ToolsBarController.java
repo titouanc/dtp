@@ -1,7 +1,9 @@
 package be.ac.ulb.infof307.g03.controllers;
 
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
+import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -10,6 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 
@@ -17,7 +22,7 @@ import javax.swing.JOptionPane;
  * @author fhennecker, pierre, wmoulart
  * @brief Controller of the ToolsBar at the top of the application.
  */
-public class ToolsBarController implements ActionListener {
+public class ToolsBarController implements ActionListener, Observer {
 	// Attributes
 	private ToolsBarView _view;
 	private Project _project;
@@ -39,13 +44,20 @@ public class ToolsBarController implements ActionListener {
 	static final public String WORLD = "TB_World";
 	static final public String OBJECT = "TB_Object";
 	
+	// Edition mode alias
+	static final private String _WORLDMODE = "world";
+	static final private String _OBJECTMODE = "object";
+	
+	private String _currentObjectMode = null;
+	
 	/**
 	 * Constructor of ToolsBarController.
 	 * It creates the ToolsBar view
 	 * @param aProject The main project
 	 */
 	public ToolsBarController(Project aProject){	
-		_project = aProject;     
+		_project = aProject;  
+		aProject.addObserver(this);
 	}
 	
 	/**
@@ -79,7 +91,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void onUndo(){
-    	System.out.println("[DEBUG] User clicked on : undo");
+    	Log.log(Level.INFO, "User clicked on : undo");
         
     }
     
@@ -88,7 +100,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onRedo(){
-    	System.out.println("[DEBUG] User clicked on : redo");
+    	Log.log(Level.INFO, "User clicked on : redo");
     	
     }
     /**
@@ -96,7 +108,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void onLine(){
-    	System.out.println("[DEBUG] User clicked on : line");
+    	Log.log(Level.INFO, "User clicked on : line");
     }
     
     /**
@@ -104,7 +116,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void onGroup(){
-    	System.out.println("[DEBUG] User clicked on : group");
+    	Log.log(Level.INFO, "User clicked on : group");
     }
     
     /**
@@ -163,7 +175,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void on2d(){
-    	System.out.println("[DEBUG] User clicked on : go2D");
+    	Log.log(Level.INFO, "User clicked on : go2D");
     	_project.config("world.mode", CameraModeController._VIEW2D);
   
     }
@@ -173,7 +185,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void on3d() {
-    	System.out.println("[DEBUG] User clicked on : go3D");
+    	Log.log(Level.INFO, "User clicked on : go3D");
     	_project.config("world.mode", CameraModeController._VIEW3D);
     }
     
@@ -182,7 +194,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragRotateMode(){
-    	System.out.println("[DEBUG] User clicked on : rotate");
+    	Log.log(Level.INFO, "User clicked on : rotate");
     	_project.config("mouse.mode", "dragRotate");
     }
 
@@ -191,7 +203,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragSelectMode(){
-    	System.out.println("[DEBUG] User clicked on : cursor");
+    	Log.log(Level.INFO, "User clicked on : cursor");
     	_project.config("mouse.mode", "dragSelect");
     }
     
@@ -200,7 +212,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragMoveMode(){
-    	System.out.println("[DEBUG] User clicked on : hand");
+    	Log.log(Level.INFO, "User clicked on : hand");
     	_project.config("mouse.mode", "dragMove");
     }
     
@@ -209,9 +221,20 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onConstruction(){
-    	System.out.println("[DEBUG] User clicked on : new Element");
+    	Log.log(Level.INFO, "User clicked on : new Element");
     	_project.config("mouse.mode", "construct");
     }
+    
+	private void updateEditionMode(String value) {
+		if (_currentObjectMode!=value)  {
+			if (value.equals(_WORLDMODE)) {
+				_view.setWorldModeSelected();
+			} else if (value.equals(_OBJECTMODE)) {
+				_view.setObjectModeSelected();
+			}
+			_currentObjectMode = value;
+		}
+	}
     
     /**
      * Inherited method from ActionListener abstract class
@@ -254,6 +277,18 @@ public class ToolsBarController implements ActionListener {
 	private void onWorldMode() {
 		System.out.println("[DEBUG] User clicked on : world");
 		_project.config("edition.mode", "world");	
+	}
+
+	@Override
+	public void update(Observable obs, Object obj) {
+		if (obs instanceof Project) {
+			Config config = (Config) obj;
+			if (config.getName().equals("edition.mode")) {
+				updateEditionMode(config.getValue());
+			}
+				
+		}
+		
 	}
 
 }

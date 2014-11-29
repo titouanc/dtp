@@ -17,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
@@ -285,10 +286,16 @@ public class ObjectTreeView extends JTree implements Observer {
 				
 			}
 		}
-		
-		/* Update GUI if needed */
-		if (updateUI)
-			updateUI();
+		if (updateUI){
+			SwingUtilities.invokeLater(new Runnable(){
+				@Override
+				public void run() {
+					/* Update GUI if needed */
+					updateUI();
+					
+				}
+			});
+		}
 	}
 	
 

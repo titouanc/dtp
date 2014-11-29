@@ -38,6 +38,7 @@ public class TestWorldController {
 	
 	@Test
 	public void testCreation(){
+		_world.run();
 		assertNotNull(_world.getView());
 		assertEquals(_world.getProject(), _project);
 	}

@@ -3,9 +3,11 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
 
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.input.InputManager;
@@ -54,7 +56,7 @@ public class CameraModeController implements Observer {
 	 * This method is used to change the actual mode.
 	 */
 	public void updateMode() {
-		System.out.println("[CameraController] Change view mode to " + _currentMode);
+		Log.log(Level.INFO, "[CameraController] Change view mode to " + _currentMode);
 		if (_currentMode.equals(_VIEW3D)){
 			_cam2D.setEnabled(false);
 			_cam3D.setEnabled(true);
@@ -112,7 +114,7 @@ public class CameraModeController implements Observer {
 			if (param.getName().equals("world.mode")) {
 				updateMode(param.getValue());
 			} else if (param.getName().equals("mouse.mode")){
-				System.out.println("[CameraController] Change mouse mode to " + param.getValue());
+				Log.log(Level.INFO,"[CameraController] Change mouse mode to " + param.getValue());
 				_cam2D.setMouseMode(param.getValue());
 				_cam3D.setMouseMode(param.getValue());
 			}

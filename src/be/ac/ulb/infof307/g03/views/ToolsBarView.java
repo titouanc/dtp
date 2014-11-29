@@ -19,11 +19,13 @@ import javax.swing.JButton;
 import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
 
 
 /**
@@ -35,8 +37,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
 	
 	private ToolsBarController _controller;
 	private Project _project;
-	private JToggleButton _createButton;
-	private JToggleButton _cursorButton;
+	private JToggleButton _createButton, _cursorButton, _worldButton, _objectButton;
 
     /**
      * Constructor of the class ToolsBar.
@@ -55,6 +56,16 @@ public class ToolsBarView extends JToolBar implements Observer  {
         _addButons();
         
     }
+    
+    public void setWorldModeSelected() {
+    	Log.log(Level.FINEST, "[DEBUG] world button setSelected");
+    	_worldButton.setSelected(true);
+    }
+    
+    public void setObjectModeSelected() {
+    	Log.log(Level.FINEST, "[DEBUG] object button setSelected");
+    	_objectButton.setSelected(true);
+    }
 
 	/**
      * The private method used for creating all the buttons 
@@ -67,23 +78,23 @@ public class ToolsBarView extends JToolBar implements Observer  {
     }
 
     private void _addButtonEditionMode() {
-    	JToggleButton worldButton = createJToggleButton("world", ToolsBarController.WORLD, "Switch to the world mode.");
-    	JToggleButton objectButton = createJToggleButton("object", ToolsBarController.OBJECT, "Switch to the object mode.");
+    	_worldButton = createJToggleButton("world", ToolsBarController.WORLD, "Switch to the world mode.");
+    	_objectButton = createJToggleButton("object", ToolsBarController.OBJECT, "Switch to the object mode.");
     	
     	// Restore mode
     	String editionMode = _project.config("edition.mode");
     	if (editionMode.equals("object")) {
-    		objectButton.setSelected(true);
+    		_objectButton.setSelected(true);
     	} else {
-    		worldButton.setSelected(true);
+    		_worldButton.setSelected(true);
     	}
     	
     	ButtonGroup buttonGroup = new ButtonGroup();
-    	buttonGroup.add(worldButton);
-    	buttonGroup.add(objectButton);
+    	buttonGroup.add(_worldButton);
+    	buttonGroup.add(_objectButton);
     	
-    	this.add(worldButton);
-    	this.add(objectButton);
+    	this.add(_worldButton);
+    	this.add(_objectButton);
     	
     	this.addSeparator();
 	}

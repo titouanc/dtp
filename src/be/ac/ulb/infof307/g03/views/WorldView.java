@@ -11,18 +11,14 @@ import java.util.Observer;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 
-import javax.swing.JOptionPane;
 
-import org.hamcrest.core.IsInstanceOf;
 
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
-import com.jme3.input.MouseInput;
-import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
@@ -32,17 +28,13 @@ import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Grid;
-import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.util.TangentBinormalGenerator;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -253,15 +245,51 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void _drawGround(Ground gnd){
 		if (! gnd.isVisible())
 			return;
+/*<<<<<<< HEAD
+		try {
+			Mesh mesh = _dao.getGroundAsMesh(gnd);
+			Geometry node = new Geometry(gnd.getUID(), mesh);
+			Material mat;
+			mat=_makeBasicMaterial(_getColor(gnd));
+			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+			node.setMaterial(mat);
+			rootNode.attachChild(node);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			//JOptionPane.showMessageDialog(null, "Not enough point to draw a ground.", "Error", JOptionPane.WARNING_MESSAGE);
+			Log.log(Level.INFO, "User try to draw a wall with not enough point");
+			//e.printStackTrace();
+		}
+=======*/
 		Material mat = _makeBasicMaterial(_getColor(gnd));
 		rootNode.attachChild(gnd.toSpatial(mat));
+/*>>>>>>> refs/remotes/origin/merge-ref_models*/
 	}
 	
 	private void _drawRoof(Roof roof){
 		if (! roof.isVisible())
 			return;
+/*<<<<<<< HEAD
+		try {
+			Mesh mesh = _dao.getRoofAsMesh(roof);
+			Geometry node = new Geometry(roof.getUID(), mesh);
+			Material mat = _makeBasicMaterial(_getColor(roof));
+			mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+			node.setMaterial(mat);
+			rootNode.attachChild(node);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			Log.log(Level.INFO, "User tried to create a wall with not enough point");
+		}
+=======*/
 		Material mat = _makeBasicMaterial(_getColor(roof));
 		rootNode.attachChild(roof.toSpatial(mat));
+/*>>>>>>> refs/remotes/origin/merge-ref_models*/
 	}
 	
 	/**

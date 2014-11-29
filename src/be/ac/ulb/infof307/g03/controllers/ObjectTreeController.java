@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -20,6 +21,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 
@@ -134,7 +136,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		if (object instanceof Geometric){
 			Geometric item = (Geometric) object;
 			try {
-				System.out.println("DELETE " + item.toString());
+				Log.log(Level.INFO, "DELETE " + item.toString());
 				_dao.delete(item);
 				_dao.notifyObservers(item);
 			} catch (SQLException e) {
@@ -151,7 +153,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void deselectElement(Object element) {
 		if (element instanceof Meshable){
 			Meshable meshable = (Meshable) element;
-			System.out.println("[TreeController] Unselect " + meshable.getUID());
+			Log.log(Level.INFO, "[TreeController] Unselect " + meshable.getUID());
 			meshable.deselect();
 			try {
 				for (Point p : meshable.getPoints()){
@@ -191,7 +193,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			_project.config("floor.current", current.getUID());
 		} else if (element instanceof Meshable){
 			Meshable meshable = (Meshable) element;
-			System.out.println("[TreeController] Select " + meshable.getUID());
+			Log.log(Level.INFO, "[TreeController] Select " + meshable.getUID());
 			try {
 				_dao.refresh(meshable);
 				meshable.select();
