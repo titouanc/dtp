@@ -172,11 +172,14 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	private Material _makeMaterial(Meshable mesh,String texture){	
 		 Material res;
+		 if (texture.equals("Gray")){
+				texture="Colors/Gray";
+			}
 		 if (mesh instanceof Ground || mesh instanceof Roof){
 			res = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 			if (mesh.isSelected()){
 				res.setColor("Color",new ColorRGBA(0f,1.2f,0f, 0.5f));
-			}
+			}			
 			res.setTexture("ColorMap",assetManager.loadTexture(texture+".png"));
 		 }
 		 else{

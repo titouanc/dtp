@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -128,7 +129,12 @@ public class TextureController implements ActionListener,MouseListener, Observer
 					_project.config("texture.selected",_view.getSelectedTexture());
 				}
 				else{
-					_view.addNewTexture();
+					try {
+						_view.addNewTexture();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 		}

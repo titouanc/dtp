@@ -1,5 +1,6 @@
 package be.ac.ulb.infof307.g03.views;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -7,9 +8,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JButton;
 
 import be.ac.ulb.infof307.g03.controllers.TextureController;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -18,19 +17,17 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.TextField;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+
 
 /**
  * @author Walter, brochape
@@ -56,6 +53,9 @@ public class TextureView extends JPanel implements ItemListener {
 	static private JList _colorList   = new JList();
 	static private JPanel texturesPanel = new JPanel();
     
+	private final static int IMG_WIDTH = 20;
+	private final static int IMG_HEIGHT = 20;
+	
     JPanel cards; //a panel that uses CardLayout
 
 	/**
@@ -165,30 +165,54 @@ public class TextureView extends JPanel implements ItemListener {
 
 	/**
 	 * Add a new texture 
+	 * @throws IOException 
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void addNewTexture(){
+	public void addNewTexture() throws IOException{
 		final JFileChooser fc = new JFileChooser();
 	    fc.showOpenDialog(this);
 	    try{
 			File fileToMove = fc.getSelectedFile();
-			File destination = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/");
+			File destination = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToMove.getName());
 			String filename=fileToMove.getName();
 			if (!(filename).equals("Add a new File...") && (filename.contains(".png"))){
-				filename=filename.replace(".png","");
-				fileToMove.renameTo(destination); 
-				textureFiles.add(textureFiles.size()-1,filename.toString());
-				_textureList = new JList(textureFiles.toArray());
-		        _textureList.setCellRenderer(new ColorCellRenderer());	
-		        texturesPanel.remove(0); // Remove atual panel to add the new one
-		        texturesPanel.add(_textureList);
-				texturesPanel.updateUI();
+				if(fileToMove.renameTo(destination)){
+					System.out.println("Your image has been added with success.");
+					fileToMove.renameTo(destination);
+					reScale(destination); // Set image to 20x20 format
+					filename=filename.replace(".png","");
+					textureFiles.add(textureFiles.size()-1,filename);
+					_textureList = new JList(textureFiles.toArray());
+			        _textureList.setCellRenderer(new ColorCellRenderer());	
+			        texturesPanel.removeAll();
+			        texturesPanel.add(_textureList);
+					texturesPanel.updateUI();
+				}
+				else{
+					System.out.println("The new texture has not been imported. Error.");
+				}
 			}
 	    }
 	    catch (NullPointerException e){
 	    	// L'utilisateur a clické sur closed, on ne fait rien 	
 	    }
 	}
+	
+	private static void reScale(File file) throws IOException{				// Set the image to 20x20
+		BufferedImage originalImage = ImageIO.read(file);
+		int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+		BufferedImage resizeImagePng = resizeImage(originalImage, type);
+		ImageIO.write(resizeImagePng, "png",file);
+	}
+	
+    private static BufferedImage resizeImage(BufferedImage originalImage, int type){
+	BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, type);
+	Graphics2D g = resizedImage.createGraphics();
+	g.drawImage(originalImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
+	g.dispose();
+	return resizedImage;
+    }
+ 
 	/**
 	 * Adds the 2 switching panes
 	 */
