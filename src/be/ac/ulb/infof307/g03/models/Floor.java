@@ -29,6 +29,9 @@ public class Floor extends Ordered {
 		super();
 	}
 	
+	/**
+	 * @param height of the floor
+	 */
 	public Floor(double height){
 		super();
 		setHeight(height);
@@ -55,6 +58,9 @@ public class Floor extends Ordered {
 		return _baseHeight;
 	}
 	
+	/**
+	 * @param baseHeight
+	 */
 	public final void setBaseHeight(double baseHeight){
 		_baseHeight = baseHeight;
 	}
@@ -68,6 +74,9 @@ public class Floor extends Ordered {
 		return "flr";
 	}
 	
+	/**
+	 * @return All the rooms of the floor
+	 */
 	public final ForeignCollection<Room> getRooms(){
 		return _rooms;
 	}

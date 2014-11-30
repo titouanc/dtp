@@ -1,7 +1,6 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Floor;
@@ -11,10 +10,8 @@ import be.ac.ulb.infof307.g03.models.Project;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 
@@ -85,39 +82,6 @@ public class ToolsBarController implements ActionListener, Observer {
 	public ToolsBarView getView(){
 		return _view;
 	}
-	
-	/**
-     * The private method is called when the button undo
-     * is clicked. It will communicate with the controller
-     */
-    public void onUndo(){
-    	Log.log(Level.INFO, "User clicked on : undo");
-        
-    }
-    
-    /**
-     * The private method is called when the button redo
-     * is clicked. It will communicate with the controller
-     */ 
-    public void onRedo(){
-    	Log.log(Level.INFO, "User clicked on : redo");
-    	
-    }
-    /**
-     * The private method is called when the button line
-     * is clicked. It will communicate with the controller
-     */
-    public void onLine(){
-    	Log.log(Level.INFO, "User clicked on : line");
-    }
-    
-    /**
-     * The private method is called when the button group
-     * is clicked. It will communicate with the controller
-     */
-    public void onGroup(){
-    	Log.log(Level.INFO, "User clicked on : group");
-    }
     
     /**
      * The private method is called when the button floor up
@@ -175,7 +139,7 @@ public class ToolsBarController implements ActionListener, Observer {
      * is clicked. It will communicate with the controller
      */
     public void on2d(){
-    	Log.log(Level.INFO, "User clicked on : go2D");
+    	Log.info("Switch to 2D mode");
     	_project.config("world.mode", CameraModeController._VIEW2D);
   
     }
@@ -185,7 +149,7 @@ public class ToolsBarController implements ActionListener, Observer {
      * is clicked. It will communicate with the controller
      */
     public void on3d() {
-    	Log.log(Level.INFO, "User clicked on : go3D");
+    	Log.info("Switch to 3D mode");
     	_project.config("world.mode", CameraModeController._VIEW3D);
     }
     
@@ -194,7 +158,7 @@ public class ToolsBarController implements ActionListener, Observer {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragRotateMode(){
-    	Log.log(Level.INFO, "User clicked on : rotate");
+    	Log.info("Switch to rotate mode");
     	_project.config("mouse.mode", "dragRotate");
     }
 
@@ -203,7 +167,7 @@ public class ToolsBarController implements ActionListener, Observer {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragSelectMode(){
-    	Log.log(Level.INFO, "User clicked on : cursor");
+    	Log.info("Switch to drag-select mode");
     	_project.config("mouse.mode", "dragSelect");
     }
     
@@ -212,7 +176,7 @@ public class ToolsBarController implements ActionListener, Observer {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragMoveMode(){
-    	Log.log(Level.INFO, "User clicked on : hand");
+    	Log.info("Switch to drag-move mode");
     	_project.config("mouse.mode", "dragMove");
     }
     
@@ -221,7 +185,7 @@ public class ToolsBarController implements ActionListener, Observer {
      * is clicked. It will communicate with the controller
      */ 
     public void onConstruction(){
-    	Log.log(Level.INFO, "User clicked on : new Element");
+    	Log.info("Switch to construction mode");
     	_project.config("mouse.mode", "construct");
     }
     

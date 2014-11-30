@@ -3,9 +3,6 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
-import java.util.logging.Level;
-
-
 import java.util.List;
 import be.ac.ulb.infof307.g03.utils.Log;
 
@@ -41,7 +38,7 @@ public class Wall extends Meshable {
 		if (width < 0){
 			_width = 0;
 			// add print otherwise error would be pass under silence
-			Log.log(Level.WARNING, "Wall received an incoherent value for width. Value is under 0");
+			Log.warn("Wall received an incoherent value for width. Value is under 0");
 		}else{
 			_width = width;
 		}

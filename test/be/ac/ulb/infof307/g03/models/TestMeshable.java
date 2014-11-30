@@ -68,4 +68,28 @@ public class TestMeshable extends DAOTest {
 		ground.toggleSelect();
 		assertFalse(ground.isSelected());
 	}
+	
+	@Test
+	public void test_retrieve_selected() throws SQLException {
+		Ground gnd = new Ground();
+		dao.create(gnd);
+		Wall wall = new Wall();
+		dao.create(wall);
+		Roof roof = new Roof();
+		dao.create(roof);
+
+		assertTrue(dao.getSelectedMeshables().isEmpty());
+		
+		wall.select();
+		dao.update(wall);
+		assertEquals(1, dao.getSelectedMeshables().size());
+		
+		roof.select();
+		dao.update(roof);
+		assertEquals(2, dao.getSelectedMeshables().size());
+		
+		wall.deselect();
+		dao.update(wall);
+		assertEquals(1, dao.getSelectedMeshables().size());
+	}
 }

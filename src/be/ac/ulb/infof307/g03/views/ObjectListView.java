@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -15,8 +14,11 @@ import javax.swing.ListSelectionModel;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectListController;
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.views.ObjectTreeView.PopupListener;
 
+/**
+ * @author titouan
+ *
+ */
 public class ObjectListView extends JList {
 
 	class MyCellRenderer extends JLabel implements ListCellRenderer {

@@ -1,9 +1,7 @@
 package be.ac.ulb.infof307.g03;
 
 import java.sql.SQLException;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.j256.ormlite.logger.LocalLog;
 
@@ -26,12 +24,11 @@ public class Main {
 	 * @see <a href=" http://hub.jmonkeyengine.org/wiki/doku.php/jme3:advanced:swing_canvas">Jmonkey doc</a>
 	 */
 	public static void main(String[] args) {
-		
-		// logger level and output
-		
+		/* Configure log level (should not be above INFO in production) */
+		Log.setLevel(Level.ALL);
 		
 		// first log
-		Log.log(Level.FINE, "The program started");
+		Log.debug("The program started");
 		
 		// Mac OS X specific configuration
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -45,7 +42,7 @@ public class Main {
 					BootController bc = new BootController();
 					Project proj = bc.initProject();
 					if (proj == null)
-						Log.log(Level.SEVERE, "Unable to initialize project");
+						Log.error("Unable to initialize project !");
 					new GUI(proj);
 				} catch (SQLException e) {
 					e.printStackTrace();
