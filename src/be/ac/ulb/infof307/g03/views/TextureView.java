@@ -77,7 +77,7 @@ public class TextureView extends JPanel implements ItemListener {
     	
     	// Get filenames
 		getAllFiles();
-		
+		textureFiles.add("Add a new File...");
 		this.addTypeSelection();
 		this.addMaterialChoice();
 		CURRENTMODE=COLORPANEL; // Mode du début
@@ -159,7 +159,7 @@ public class TextureView extends JPanel implements ItemListener {
 		return CURRENTMODE;
 	}
 
-	public void addTexture(){
+	public void addNewTexture(){
 		final JFileChooser fc = new JFileChooser();
 	    fc.showOpenDialog(this);
         try {
