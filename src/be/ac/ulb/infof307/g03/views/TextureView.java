@@ -4,8 +4,10 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 
@@ -23,7 +25,12 @@ import java.awt.GridLayout;
 import java.awt.TextField;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * @author Walter, brochape
@@ -36,8 +43,8 @@ public class TextureView extends JPanel implements ItemListener {
 	private Project _project;
 	
 	private GridBagLayout _paneLayout;
-	private String[] colorData = {"Red","Blue","Green","Gray","Brown","Yellow"};
-	private String[] textureData = {"Brick","Grass","Wood","Parquet","Pine","Leopard"};
+	private ArrayList<String> colorFiles=   new ArrayList <String>();
+	private ArrayList<String> textureFiles= new ArrayList <String>();
 	
 	final static String COLORPANEL = "Colors";
     final static String TEXTURESPANEL = "Textures";
@@ -68,14 +75,33 @@ public class TextureView extends JPanel implements ItemListener {
     	//Fixes the width of the pane
     	this.setPreferredSize(new Dimension(this.getHeight(),100));
     	
-    	
+    	// Get filenames
+		getAllFiles();
+		
 		this.addTypeSelection();
 		this.addMaterialChoice();
 		CURRENTMODE=COLORPANEL; // Mode du début
-		
-    	//System.out.println(this.getPreferredSize());
+
         
     }
+	
+	/**
+	 * Get all files from a directory
+	 */
+	public void getAllFiles(){
+		File[] files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Colors/").listFiles(); 
+		for (File file : files) {
+		    if (file.isFile()) {
+		    	colorFiles.add(file.getName().replace(".png", ""));
+		    }
+		}
+		files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/").listFiles(); 
+		for (File file : files) {
+		    if (file.isFile() && !(file.getName().contains("Full"))) {
+		    	textureFiles.add(file.getName().replace(".png", ""));
+		    }
+		}
+	}
 	
 	
 	/**
@@ -115,7 +141,7 @@ public class TextureView extends JPanel implements ItemListener {
 	 */
 	@SuppressWarnings("rawtypes")
 	public String getSelectedColor(){
-		return _colorList.getSelectedValue().toString();
+		return ("Colors/"+_colorList.getSelectedValue().toString());
 	}
 	
 	/**
@@ -123,7 +149,7 @@ public class TextureView extends JPanel implements ItemListener {
 	 */
 	@SuppressWarnings("rawtypes")
 	public String getSelectedTexture(){
-		return _textureList.getSelectedValue().toString();
+		return ("Textures/Full/"+_textureList.getSelectedValue().toString());
 	}
 	
 	/**
@@ -132,7 +158,18 @@ public class TextureView extends JPanel implements ItemListener {
 	public String getCurrentMode(){
 		return CURRENTMODE;
 	}
-	
+
+	public void addTexture(){
+		final JFileChooser fc = new JFileChooser();
+	    fc.showOpenDialog(this);
+        try {
+			Scanner reader = new Scanner(fc.getSelectedFile());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+	}
 	/**
 	 * Adds the 2 switching panes
 	 */
@@ -140,13 +177,13 @@ public class TextureView extends JPanel implements ItemListener {
 	public void addMaterialChoice(){
         //Creates the "cards".
         JPanel texturesPanel = new JPanel();
-        _textureList = new JList(textureData);
+        _textureList = new JList(textureFiles.toArray());
         _textureList.setCellRenderer(new ColorCellRenderer());
         texturesPanel.add(_textureList);
         texturesPanel.setLayout(new GridLayout(0,1));
          
         JPanel colorsPanel = new JPanel();
-        _colorList = new JList(colorData);
+        _colorList = new JList(colorFiles.toArray());
         _colorList.setCellRenderer(new ColorCellRenderer());
         colorsPanel.add(_colorList);
         colorsPanel.setLayout(new GridLayout(0,1));
@@ -208,19 +245,21 @@ public class TextureView extends JPanel implements ItemListener {
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
 	    		prefix = "/";
 	    		if (list.equals(_textureList)){
-	    			imageIcon = new ImageIcon(getClass().getResource(prefix + value.toString()+".png"));
+	    			imageIcon = new ImageIcon(getClass().getResource(prefix + value.toString()));
 	    		}
 	    		else{
-	    			imageIcon = new ImageIcon(getClass().getResource(prefix + value.toString()+"Full.png"));
+	    			imageIcon = new ImageIcon(getClass().getResource(prefix + value.toString()));
 
 	    		}
 	    	} else {
 	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/";
 	    		if (list.equals(_textureList)){
-	    			imageIcon = new ImageIcon(prefix + value.toString() +".png");
+	    			prefix=prefix.concat("Textures/");
+	    			imageIcon = new ImageIcon(prefix + value.toString()+".png" );
 	    		}
 	    		else{
-	    			imageIcon = new ImageIcon(prefix + value.toString() +"Full.png");
+	    			prefix=prefix.concat("Colors/");
+	    			imageIcon = new ImageIcon(prefix + value.toString()+".png");
 	    		}
 	    		
 	    	}
@@ -239,6 +278,5 @@ public class TextureView extends JPanel implements ItemListener {
 	        return label;
 	    }
 	}
-
-
+	
 }

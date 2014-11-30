@@ -179,7 +179,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			if (mesh.isSelected()){
 				res.setColor("Color",new ColorRGBA(0f,1.2f,0f, 0.5f));
 			}
-			res.setTexture("ColorMap",assetManager.loadTexture(texture+"Full.png"));
+			res.setTexture("ColorMap",assetManager.loadTexture(texture+".png"));
 		 }
 		 else{
 			res= new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
@@ -192,7 +192,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			 if (mesh.isSelected()){
 					res.setColor("Ambient",new ColorRGBA(0f,1.2f,0f, 0.5f));
 				}
-			res.setTexture("DiffuseMap",assetManager.loadTexture(texture+"Full.png"));
+			res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		 }
 		return res;
 	 }

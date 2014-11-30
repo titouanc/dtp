@@ -158,7 +158,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
     		rotateIcon = new ImageIcon(getClass().getResource(prefix + "rotate.png"));
     		pencilIcon = new ImageIcon(getClass().getResource(prefix + "pencil.png"));
     	} else {
-    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/";
+    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Tools/";
     		cursorIcon = new ImageIcon(prefix + "cursor.png");
     		grabIcon   = new ImageIcon(prefix + "grab.png");
     		rotateIcon = new ImageIcon(prefix + "rotate.png");
