@@ -13,6 +13,8 @@ import java.util.concurrent.Callable;
 
 
 
+
+import be.ac.ulb.infof307.g03.controllers.CameraContext;
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 
@@ -81,12 +83,9 @@ public class WorldView extends SimpleApplication implements Observer {
 	public void simpleInitApp() {
 		// !!! cam only exist when this function is called !!!
 		flyCam.setEnabled(false);
-		// Add the attributes to the cameraModeController (only existing at this time)
-		_controller.getCameraModeController().setCamera(cam);
-		_controller.getCameraModeController().setInputManager(inputManager);
-		_controller.getCameraModeController().setWorldView(this);
+		
 		// Update the camera mode
-		_controller.getCameraModeController().updateMode();
+		_controller.setCameraContext(new CameraContext(_project,cam,inputManager, this));
 		
 		// Update the edition mode
 		_controller.updateEditionMode();

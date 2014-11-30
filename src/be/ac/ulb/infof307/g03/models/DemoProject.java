@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
 
+
 /**
  * @author pierre
  *
@@ -23,7 +24,6 @@ public class DemoProject {
 		
 		GeometryDAO dao = proj.getGeometryDAO();
 		Point a = new Point(0, 0, 0),
-			  b = new Point(8, 0, 0),
 			  c = new Point(8, 8, 0),
 			  d = new Point(0, 8, 0),
 			  e = new Point(-8, 0, 0),
@@ -38,7 +38,10 @@ public class DemoProject {
 		
 		Floor groundFloor = dao.getFloors().get(0);
 		proj.config("floor.current", groundFloor.getUID());
-		createRoom(groundFloor, "Square room", a, e, f, d);
+		
+		Room r = createRoom(groundFloor, "Square room", a, e, f, d);
+		showRoof(r,dao); // nothing on the top of this room
+		
 		createRoom(groundFloor, "Irregular room", a, d, c, c, g,k, i,j, h);
 		createRoom(groundFloor, "Rectangular room", f, d, c, l, m);
 		
@@ -50,10 +53,22 @@ public class DemoProject {
     	
 		//createRoom(firstFloor, "Square room 2", a, e, f, d);
 		createRoom(firstFloor, "Irregular room 2", a, d, c, c, g,k, i,j, h);
+
 		createRoom(firstFloor, "Rectangular room 2 ", f, d, c, l, m);
+
+		dao.refresh(firstFloor);
+		for	(Room room : firstFloor.getRooms()){
+			showRoof(room,dao); // nothing on the top of this room
+		}
 		
 		dao.notifyObservers();
 		return proj;
+	}
+	
+	private static void showRoof(Room room,GeometryDAO dao) throws SQLException{
+		Roof roof = room.getRoof();
+		roof.show();
+		dao.update(roof);
 	}
 	
 	/**
@@ -64,7 +79,7 @@ public class DemoProject {
 	 * @return A group which is a room.
 	 * @throws SQLException
 	 */
-	public static Room createRoom(Floor floor, String name, Point...points) throws SQLException{
+	private static Room createRoom(Floor floor, String name, Point...points) throws SQLException{
 		Room room = new Room(name);
 		room.setWall(new Wall());
 		room.setGround(new Ground());

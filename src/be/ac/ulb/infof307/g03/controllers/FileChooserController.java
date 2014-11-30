@@ -6,7 +6,6 @@ package be.ac.ulb.infof307.g03.controllers;
 import java.awt.Component;
 import java.io.File;
 import java.sql.SQLException;
-import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 
