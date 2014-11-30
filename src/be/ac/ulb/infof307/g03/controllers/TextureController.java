@@ -124,7 +124,12 @@ public class TextureController implements ActionListener,MouseListener, Observer
 				_project.config("texture.selected",_view.getSelectedColor());
 			}
 			else{
-				_project.config("texture.selected",_view.getSelectedTexture());
+				if(!(_view.getSelectedTexture()==null)){
+					_project.config("texture.selected",_view.getSelectedTexture());
+				}
+				else{
+					_view.addNewTexture();
+				}
 			}
 		}
 		

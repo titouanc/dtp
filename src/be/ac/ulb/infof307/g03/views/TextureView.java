@@ -139,7 +139,6 @@ public class TextureView extends JPanel implements ItemListener {
 	/**
 	 * @return the color List
 	 */
-	@SuppressWarnings("rawtypes")
 	public String getSelectedColor(){
 		return ("Colors/"+_colorList.getSelectedValue().toString());
 	}
@@ -147,9 +146,13 @@ public class TextureView extends JPanel implements ItemListener {
 	/**
 	 * @return the texture List
 	 */
-	@SuppressWarnings("rawtypes")
 	public String getSelectedTexture(){
-		return ("Textures/Full/"+_textureList.getSelectedValue().toString());
+		if (_textureList.getSelectedValue().toString().equals("Add a new File...")){
+			return null;
+		}
+		else{
+			return ("Textures/Full/"+_textureList.getSelectedValue().toString());
+		}
 	}
 	
 	/**
@@ -159,16 +162,22 @@ public class TextureView extends JPanel implements ItemListener {
 		return CURRENTMODE;
 	}
 
+	/**
+	 * Add a new texture 
+	 */
+	@SuppressWarnings("unchecked")
 	public void addNewTexture(){
 		final JFileChooser fc = new JFileChooser();
 	    fc.showOpenDialog(this);
-        try {
-			Scanner reader = new Scanner(fc.getSelectedFile());
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		File fileToMove = fc.getSelectedFile();
+		File destination = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/");
+		String filename=fileToMove.getName();
+		if (!(filename).equals("Add a new File...") && (filename.contains(".png"))){
+			filename=filename.replace(".png","");
+			fileToMove.renameTo(destination); 
+			textureFiles.add(textureFiles.size()-1,filename.toString());
+			_textureList.setCellRenderer(new ColorCellRenderer());
 		}
-        
 	}
 	/**
 	 * Adds the 2 switching panes
