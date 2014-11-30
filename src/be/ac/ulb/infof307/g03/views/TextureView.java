@@ -1,6 +1,10 @@
 package be.ac.ulb.infof307.g03.views;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -25,7 +29,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 
@@ -173,13 +181,17 @@ public class TextureView extends JPanel implements ItemListener {
 	    fc.showOpenDialog(this);
 	    try{
 			File fileToMove = fc.getSelectedFile();
-			File destination = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToMove.getName());
+			File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToMove.getName());
+			File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToMove.getName());
+
+			copyImage(fileToMove,destinationFull); // On récupère l'image avec sa taille originale
+			
 			String filename=fileToMove.getName();
 			if (!(filename).equals("Add a new File...") && (filename.contains(".png"))){
-				if(fileToMove.renameTo(destination)){
+				if(fileToMove.renameTo(destinationMini)){
 					System.out.println("Your image has been added with success.");
-					fileToMove.renameTo(destination);
-					reScale(destination); // Set image to 20x20 format
+					fileToMove.renameTo(destinationMini);
+					reScale(destinationMini); // Set image to 20x20 format
 					filename=filename.replace(".png","");
 					textureFiles.add(textureFiles.size()-1,filename);
 					_textureList = new JList(textureFiles.toArray());
@@ -198,18 +210,30 @@ public class TextureView extends JPanel implements ItemListener {
 	    }
 	}
 	
-	private static void reScale(File file) throws IOException{				// Set the image to 20x20
-		BufferedImage originalImage = ImageIO.read(file);
-		int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-		BufferedImage resizeImagePng = resizeImage(originalImage, type);
-		ImageIO.write(resizeImagePng, "png",file);
+	private static void copyImage(File toBeCopied,File destination)throws IOException {			    
+		 ImageInputStream input = new FileImageInputStream(toBeCopied);
+		 ImageOutputStream output = new FileImageOutputStream(destination);
+		 byte[] buffer = new byte[1024];
+		 int len;
+		 while ((len = input.read(buffer)) > 0) {
+			 output.write(buffer, 0, len);
+		 }
+		 input.close();
+		 output.close();
 	}
 	
-    private static BufferedImage resizeImage(BufferedImage originalImage, int type){
+	private static void reScale(File file) throws IOException{
+		BufferedImage originalImage = ImageIO.read(file);
+		int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+		BufferedImage resizeImagePng = rescaleImage(originalImage, type);
+		ImageIO.write(resizeImagePng,"png",file);
+	}
+	
+    private static BufferedImage rescaleImage(BufferedImage originalImage, int type){
 	BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, type);
-	Graphics2D g = resizedImage.createGraphics();
-	g.drawImage(originalImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
-	g.dispose();
+	Graphics2D image = resizedImage.createGraphics();
+	image.drawImage(originalImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
+	image.dispose();
 	return resizedImage;
     }
  
