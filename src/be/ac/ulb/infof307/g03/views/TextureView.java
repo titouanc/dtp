@@ -54,6 +54,7 @@ public class TextureView extends JPanel implements ItemListener {
     static private JList _textureList = new JList();
 	@SuppressWarnings("rawtypes")
 	static private JList _colorList   = new JList();
+	static private JPanel texturesPanel = new JPanel();
     
     JPanel cards; //a panel that uses CardLayout
 
@@ -165,19 +166,28 @@ public class TextureView extends JPanel implements ItemListener {
 	/**
 	 * Add a new texture 
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addNewTexture(){
 		final JFileChooser fc = new JFileChooser();
 	    fc.showOpenDialog(this);
-		File fileToMove = fc.getSelectedFile();
-		File destination = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/");
-		String filename=fileToMove.getName();
-		if (!(filename).equals("Add a new File...") && (filename.contains(".png"))){
-			filename=filename.replace(".png","");
-			fileToMove.renameTo(destination); 
-			textureFiles.add(textureFiles.size()-1,filename.toString());
-			_textureList.setCellRenderer(new ColorCellRenderer());
-		}
+	    try{
+			File fileToMove = fc.getSelectedFile();
+			File destination = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/");
+			String filename=fileToMove.getName();
+			if (!(filename).equals("Add a new File...") && (filename.contains(".png"))){
+				filename=filename.replace(".png","");
+				fileToMove.renameTo(destination); 
+				textureFiles.add(textureFiles.size()-1,filename.toString());
+				_textureList = new JList(textureFiles.toArray());
+		        _textureList.setCellRenderer(new ColorCellRenderer());	
+		        texturesPanel.remove(0); // Remove atual panel to add the new one
+		        texturesPanel.add(_textureList);
+				texturesPanel.updateUI();
+			}
+	    }
+	    catch (NullPointerException e){
+	    	// L'utilisateur a clické sur closed, on ne fait rien 	
+	    }
 	}
 	/**
 	 * Adds the 2 switching panes
@@ -185,7 +195,6 @@ public class TextureView extends JPanel implements ItemListener {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addMaterialChoice(){
         //Creates the "cards".
-        JPanel texturesPanel = new JPanel();
         _textureList = new JList(textureFiles.toArray());
         _textureList.setCellRenderer(new ColorCellRenderer());
         texturesPanel.add(_textureList);
