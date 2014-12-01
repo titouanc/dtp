@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 
 import be.ac.ulb.infof307.g03.controllers.TextureController;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -55,9 +56,9 @@ public class TextureView extends JPanel implements ItemListener {
     final static String TEXTURESPANEL = "Textures";
     static String CURRENTMODE ="" ;
     
-    @SuppressWarnings("rawtypes")
+
     static private JList _textureList = new JList();
-	@SuppressWarnings("rawtypes")
+
 	static private JList _colorList   = new JList();
 	static private JPanel texturesPanel = new JPanel();
     
@@ -116,7 +117,6 @@ public class TextureView extends JPanel implements ItemListener {
 	/**
 	 * Adds the combobox to the main pane
 	 */
-	@SuppressWarnings("unchecked")
 	public void addTypeSelection(){
 		//Simple Label
 		JLabel typeLabel = new JLabel("Type : ");
@@ -125,7 +125,7 @@ public class TextureView extends JPanel implements ItemListener {
         JPanel comboBoxPane = new JPanel(); 
         comboBoxPane.setLayout(new GridLayout(0,1));
         String comboBoxItems[] = { COLORPANEL, TEXTURESPANEL };
-        @SuppressWarnings("rawtypes")
+
 		JComboBox cb = new JComboBox(comboBoxItems);
         cb.setEditable(false);
         cb.addItemListener(this);
@@ -175,7 +175,6 @@ public class TextureView extends JPanel implements ItemListener {
 	 * Add a new texture 
 	 * @throws IOException 
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addNewTexture() throws IOException{
 		final JFileChooser fc = new JFileChooser();
 	    fc.showOpenDialog(this);
@@ -206,6 +205,8 @@ public class TextureView extends JPanel implements ItemListener {
 			}
 	    }
 	    catch (NullPointerException e){
+	    	Log.warn("NullPointerException catched.");
+	    	e.printStackTrace();
 	    	// L'utilisateur a clické sur closed, on ne fait rien 	
 	    }
 	}
@@ -240,7 +241,6 @@ public class TextureView extends JPanel implements ItemListener {
 	/**
 	 * Adds the 2 switching panes
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addMaterialChoice(){
         //Creates the "cards".
         _textureList = new JList(textureFiles.toArray());
