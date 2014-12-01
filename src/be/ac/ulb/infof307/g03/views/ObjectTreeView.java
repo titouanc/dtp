@@ -25,6 +25,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author pierre, titou
@@ -143,7 +144,8 @@ public class ObjectTreeView extends JTree implements Observer {
 	}
 	
 	public void createTree() throws SQLException{
-		System.out.println("[DEBUG] createTree");
+		Log.debug("createTree");
+		_root.removeAllChildren();
 		for (Floor floor : _dao.getFloors()){
 			DefaultMutableTreeNode floorNode = _createNode(floor);
 			for (Room room : _dao.getRooms(floor))
@@ -153,7 +155,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	}
 	
 	public void clearTree() {
-		System.out.println("[DEBUG] clearTree");
+		Log.debug("clearTree");
 		for (DefaultMutableTreeNode node : _nodes.values()) {
 			node.removeFromParent();
 			_nodes.remove(node);
@@ -198,6 +200,8 @@ public class ObjectTreeView extends JTree implements Observer {
 	
 	/**
 	 * Constructor of the main class ObjectTree
+	 * @param newController 
+	 * @param project 
 	 */
 	public ObjectTreeView(ObjectTreeController newController, Project project) {
 		super(_root);
@@ -228,6 +232,10 @@ public class ObjectTreeView extends JTree implements Observer {
 		
 	}
 	
+	/**
+	 * @param path
+	 * @return
+	 */
 	public Geometric getGeometric(TreePath path){
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 		return (Geometric) node.getUserObject();
