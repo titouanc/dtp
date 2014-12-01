@@ -20,6 +20,7 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -244,7 +245,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		/* Flag: do we need to update GUI ? */
-		boolean updateUI = false;
+		boolean mustUpdateUI = false;
 		List<Change> changes = (List<Change>) arg1;
 		
 		for (Change change : changes){
@@ -261,7 +262,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				DefaultMutableTreeNode node = _nodes.get(changed.getUID());
 				if (node != null){
 					node.setUserObject(changed);
-					updateUI = true;
+					mustUpdateUI = true;
 				}
 			}
 			
@@ -271,7 +272,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				if (node != null){
 					node.removeFromParent();
 					_nodes.remove(node);
-					updateUI = true;
+					mustUpdateUI = true;
 				}
 			}
 			/* Creation: insert in right place in tree */
@@ -282,27 +283,20 @@ public class ObjectTreeView extends JTree implements Observer {
 				
 				if (changed instanceof Floor){
 					_root.add(newNode);
-					updateUI = true;
+					mustUpdateUI = true;
 				} else if (changed instanceof Meshable){
 					_nodes.get(((Meshable) changed).getRoom().getUID()).add(newNode);
-					updateUI = true;
+					mustUpdateUI = true;
 				} else if (changed instanceof Room){
 					Room room = (Room) changed;
 					_nodes.get(room.getFloor().getUID()).add(newNode);
-					updateUI = true;
+					mustUpdateUI = true;
 				}
 				
 			}
 		}
-		if (updateUI){
-			SwingUtilities.invokeLater(new Runnable(){
-				@Override
-				public void run() {
-					/* Update GUI if needed */
-					updateUI();
-					
-				}
-			});
+		if (mustUpdateUI){
+			((DefaultTreeModel) treeModel).reload();
 		}
 	}
 	
