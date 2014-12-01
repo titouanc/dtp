@@ -28,8 +28,6 @@ public class MainPaneView extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	
-
-	private JSplitPane _rightPane;
 	private JScrollPane _textureScrollPane;
 
 	private JSplitPane _hSplitPane, _vSplitPane;
@@ -66,7 +64,7 @@ public class MainPaneView extends JPanel {
         _texture.run();
         
         Dimension listScrollPaneDimension = new Dimension(150,480);
-        Dimension textureScrollPaneDimension = new Dimension(200,480);
+        Dimension textureScrollPaneDimension = new Dimension(150,480);
 
         _worldListScrollPane = new JScrollPane(_objectTree.getView()); 
         // Set up resize behavior
@@ -90,22 +88,14 @@ public class MainPaneView extends JPanel {
 		_hSplitPane.setDividerLocation(150);
 		_hSplitPane.setBorder(null);
 		
-		
         // Create right menu
-        
         _textureScrollPane = new JScrollPane (_texture.getView());
         _textureScrollPane.setMinimumSize(textureScrollPaneDimension);
-        _textureScrollPane.setPreferredSize(textureScrollPaneDimension); 
-        //_rightPane
-        _rightPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_hSplitPane,_textureScrollPane);
-        _rightPane.setOneTouchExpandable(true);
-        _rightPane.setDividerLocation(350);
-        
+        _textureScrollPane.setPreferredSize(textureScrollPaneDimension);
         
 		// add the splitpane to the inherited Jpanel
-
-		this.add(_rightPane,BorderLayout.EAST);		
-		this.add(_hSplitPane);
+		add(_hSplitPane);
+		add(_textureScrollPane, BorderLayout.EAST);
 	}
 
 }

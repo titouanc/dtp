@@ -46,6 +46,9 @@ public class Project extends Observable {
 		
 		_filename = filename;
 		config("floor.current", initialFloor.getUID());
+		config("edition.mode", "world");
+		config("camera.mode", "2D");
+		config("mouse.mode", "dragSelect");
 	}
 
 	/**

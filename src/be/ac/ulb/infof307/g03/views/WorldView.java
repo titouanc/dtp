@@ -11,12 +11,7 @@ import java.util.Observer;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 
-
-
-
-
-import java.util.logging.Level;
-
+import be.ac.ulb.infof307.g03.controllers.CameraContext;
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
@@ -32,6 +27,7 @@ import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -80,12 +76,9 @@ public class WorldView extends SimpleApplication implements Observer {
 	public void simpleInitApp() {
 		// !!! cam only exist when this function is called !!!
 		flyCam.setEnabled(false);
-		// Add the attributes to the cameraModeController (only existing at this time)
-		_controller.getCameraModeController().setCamera(cam);
-		_controller.getCameraModeController().setInputManager(inputManager);
-		_controller.getCameraModeController().setWorldView(this);
+		
 		// Update the camera mode
-		_controller.getCameraModeController().updateMode();
+		_controller.setCameraContext(new CameraContext(_project,cam,inputManager, this));
 		
 		// Update the edition mode
 		_controller.updateEditionMode();
@@ -222,6 +215,14 @@ public class WorldView extends SimpleApplication implements Observer {
 	        	for (Light light : rootNode.getWorldLightList()) {
 					rootNode.removeLight(light);
 				}
+	        	//Generates the grid
+	    		attachGrid();
+	    		
+	    		//Generate the axes
+	    		_attachAxes();
+	    		
+	    		// Add a bit of sunlight into our lives
+	    		_addSun();
 	            return null;
 	        }
 	    });
