@@ -86,6 +86,7 @@ public class TextureView extends JPanel implements ItemListener {
     	this.setPreferredSize(new Dimension(this.getHeight(),100));
     	
     	// Get filenames
+    	_texturesPanel.removeAll();
 		addAllFiles();
 		_textureFiles.add("Add a new File...");
 		this.addTypeSelection();
