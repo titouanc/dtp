@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import be.ac.ulb.infof307.g03.models.*;
@@ -105,7 +106,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			System.out.println("[DEBUG] ObjectTree switched to object edition mode.");
 			_view.clearTree();
 		}
-		_view.updateUI();
+		((DefaultTreeModel) _view.getModel()).reload();
 	}
 
 	/**

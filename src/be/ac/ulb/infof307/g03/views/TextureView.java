@@ -7,22 +7,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import be.ac.ulb.infof307.g03.controllers.TextureController;
-import be.ac.ulb.infof307.g03.models.Binding;
-import be.ac.ulb.infof307.g03.models.Floor;
-import be.ac.ulb.infof307.g03.models.Geometric;
-import be.ac.ulb.infof307.g03.models.Meshable;
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.models.Room;
-import be.ac.ulb.infof307.g03.models.Wall;
-import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.views.ObjectTreeView.PopupListener;
-
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -35,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 	

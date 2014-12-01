@@ -176,12 +176,28 @@ public class ToolsBarView extends JToolBar implements Observer  {
 	     * from one floor to another
 	     */
 	    private void addButtonsFloor() {
+	    	Icon upFloorIcon,downFloorIcon,plusFloorIcon;
+	    	String classPath = getClass().getResource("ToolsBarView.class").toString();
+	    	String prefix = "";
+
+
+	    	if(classPath.subSequence(0, 3).equals("rsr")){
+	    		prefix = "/";
+	    		upFloorIcon = new ImageIcon(getClass().getResource(prefix + "upFloor.png"));
+	    		downFloorIcon = new ImageIcon(getClass().getResource(prefix + "downFloor.png"));
+	    		plusFloorIcon = new ImageIcon(getClass().getResource(prefix + "plusFloor.png"));
+	    	} else {
+	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/asset/";
+	    		upFloorIcon = new ImageIcon(prefix + "upFloor.png");
+	    		downFloorIcon = new ImageIcon(prefix + "downFloor.png");
+	    		plusFloorIcon = new ImageIcon(prefix + "plusFloor.png");
+	    	}
 	    	// button floor up
-	        add(createJButton("up", ToolsBarController.FLOOR_UP, "This will increase the floor seen"));
+	        add(createJButton(upFloorIcon, ToolsBarController.FLOOR_UP, "This will increase the floor seen"));
 	        // button floor down
-	        add(createJButton("down", ToolsBarController.FLOOR_DOWN, "This will decrease the floor seen"));
+	        add(createJButton(downFloorIcon, ToolsBarController.FLOOR_DOWN, "This will decrease the floor seen"));
 	        // button new floor
-	        add(createJButton("new Floor", ToolsBarController.FLOOR_NEW, "Create a new floor."));
+	        add(createJButton(plusFloorIcon, ToolsBarController.FLOOR_NEW, "Create a new floor."));
 	        // separator
 	        addSeparator();
 	    }
@@ -314,6 +330,21 @@ public class ToolsBarView extends JToolBar implements Observer  {
      */
     private JButton createJButton(String label, String action, String desc) {
     	JButton button = new JButton(label);
+        button.setActionCommand(action);
+        button.setToolTipText(desc);
+        button.addActionListener(_controller);
+    	return button;
+    }
+    
+    /**
+     * Create a JButton 
+     * @param icon An icon to be displayed on the button.
+     * @param action A string who's an action alias.
+     * @param desc A string who describes what happens when the button is pressed.
+     * @return The created button.
+     */
+    private JButton createJButton(Icon icon, String action, String desc) {
+    	JButton button = new JButton(icon);
         button.setActionCommand(action);
         button.setToolTipText(desc);
         button.addActionListener(_controller);

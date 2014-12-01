@@ -17,9 +17,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -27,6 +27,7 @@ import com.jme3.material.Material;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author pierre, titou
@@ -154,7 +155,8 @@ public class ObjectTreeView extends JTree implements Observer {
 	}
 	
 	public void createTree() throws SQLException{
-		System.out.println("[DEBUG] createTree");
+		Log.debug("createTree");
+		_root.removeAllChildren();
 		for (Floor floor : _dao.getFloors()){
 			DefaultMutableTreeNode floorNode = _createNode(floor);
 			for (Room room : _dao.getRooms(floor))
@@ -164,7 +166,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	}
 	
 	public void clearTree() {
-		System.out.println("[DEBUG] clearTree");
+		Log.debug("clearTree");
 		for (DefaultMutableTreeNode node : _nodes.values()) {
 			node.removeFromParent();
 			_nodes.remove(node);
@@ -209,6 +211,8 @@ public class ObjectTreeView extends JTree implements Observer {
 	
 	/**
 	 * Constructor of the main class ObjectTree
+	 * @param newController 
+	 * @param project 
 	 */
 	public ObjectTreeView(ObjectTreeController newController, Project project) {
 		super(_root);
@@ -239,6 +243,10 @@ public class ObjectTreeView extends JTree implements Observer {
 		
 	}
 	
+	/**
+	 * @param path
+	 * @return
+	 */
 	public Geometric getGeometric(TreePath path){
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 		return (Geometric) node.getUserObject();
@@ -247,7 +255,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		/* Flag: do we need to update GUI ? */
-		boolean updateUI = false;
+		boolean mustUpdateUI = false;
 		List<Change> changes = (List<Change>) arg1;
 		
 		for (Change change : changes){
@@ -264,7 +272,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				DefaultMutableTreeNode node = _nodes.get(changed.getUID());
 				if (node != null){
 					node.setUserObject(changed);
-					updateUI = true;
+					mustUpdateUI = true;
 				}
 			}
 			
@@ -274,7 +282,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				if (node != null){
 					node.removeFromParent();
 					_nodes.remove(node);
-					updateUI = true;
+					mustUpdateUI = true;
 				}
 			}
 			/* Creation: insert in right place in tree */
@@ -285,27 +293,20 @@ public class ObjectTreeView extends JTree implements Observer {
 				
 				if (changed instanceof Floor){
 					_root.add(newNode);
-					updateUI = true;
+					mustUpdateUI = true;
 				} else if (changed instanceof Meshable){
 					_nodes.get(((Meshable) changed).getRoom().getUID()).add(newNode);
-					updateUI = true;
+					mustUpdateUI = true;
 				} else if (changed instanceof Room){
 					Room room = (Room) changed;
 					_nodes.get(room.getFloor().getUID()).add(newNode);
-					updateUI = true;
+					mustUpdateUI = true;
 				}
 				
 			}
 		}
-		if (updateUI){
-			SwingUtilities.invokeLater(new Runnable(){
-				@Override
-				public void run() {
-					/* Update GUI if needed */
-					updateUI();
-					
-				}
-			});
+		if (mustUpdateUI){
+			((DefaultTreeModel) treeModel).reload();
 		}
 	}
 	
