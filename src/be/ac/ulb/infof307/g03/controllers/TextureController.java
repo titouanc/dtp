@@ -6,7 +6,6 @@ import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -23,7 +22,6 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.JFileChooser;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 /**
@@ -39,7 +37,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	private final static int _IMG_WIDTH = 20;
 	private final static int _IMG_HEIGHT = 20;
 	
-	static final public String _CHANGETEXTURE	= "Change Texture";
+	private final static String _CHANGETEXTURE	= "Change Texture";
 	
 	
 	
@@ -71,21 +69,14 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	public TextureView getView(){
 		return _view;
 	}
-/*
-	public void actionPerformed(ActionEvent action) {
-		String cmd = action.getActionCommand();
-		if (cmd.equals(_CHANGETEXTURE)) {
-			Log.debug("fdp");
-		}
-	}
-*/
+
 	@Override
 	public void update(Observable obs, Object arg) {
 		Log.debug("UPDATE");
 		if (obs instanceof Project){
 			Config conf = (Config) arg ;
 			if (conf.getName().equals("texture.mode") ){
-				//updateTextureMode(conf.getValue());
+				//TODO updateTextureMode(conf.getValue());
 			}
 		}
 		
@@ -121,9 +112,9 @@ public class TextureController implements ActionListener,MouseListener, Observer
 				File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToImport.getName());
 				File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToImport.getName());
 	
-				copyImage(fileToImport,destinationFull); // On récupère l'image avec sa taille originale
+				copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
 				
-				String filename=fileToImport.getName();
+				String filename = fileToImport.getName();
 				if (!(filename).equals(_view.getAddFile()) && (filename.contains(".png"))){
 					if(fileToImport.renameTo(destinationMini)){
 						reScale(destinationMini); // Set image to 20x20 format
@@ -155,7 +146,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	
 	private static void reScale(File file) throws IOException{
 		BufferedImage originalImage = ImageIO.read(file);
-		int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+		int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 		BufferedImage resizeImagePng = rescaleImage(originalImage, type);
 		ImageIO.write(resizeImagePng,"png",file);
 	}

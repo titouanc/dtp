@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 
 import be.ac.ulb.infof307.g03.controllers.TextureController;
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.utils.Log;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -39,10 +38,10 @@ public class TextureView extends JPanel implements ItemListener {
 	private ArrayList<String> _colorFiles=   new ArrayList <String>();
 	private ArrayList<String> _textureFiles= new ArrayList <String>();
 	
-	final static String _COLORPANEL = "Colors";
-    final static String _TEXTURESPANEL = "Textures";
-    final static String _ADDTEXTURE= "Add a new Texture...";
-    static String _CURRENTMODE ="" ;
+	private final static String _COLORPANEL = "Colors";
+	private final static String _TEXTURESPANEL = "Textures";
+	private final static String _ADDTEXTURE= "Add a new Texture...";
+    private static String _CURRENTMODE ="" ;
     
 
     static private JList _textureList = new JList();
@@ -72,7 +71,7 @@ public class TextureView extends JPanel implements ItemListener {
     	
     	// Get filenames
     	_texturesPanel.removeAll();
-		addAllFiles();
+		this.addAllFiles();
 		_textureFiles.add(_ADDTEXTURE);
 		this.addTypeSelection();
 		this.addMaterialChoice();
@@ -114,22 +113,22 @@ public class TextureView extends JPanel implements ItemListener {
         comboBoxPane.setLayout(new GridLayout(0,1));
         String comboBoxItems[] = { _COLORPANEL, _TEXTURESPANEL };
 
-		JComboBox cb = new JComboBox(comboBoxItems);
-        cb.setEditable(false);
-        cb.addItemListener(this);
+		JComboBox comboBox = new JComboBox(comboBoxItems);
+        comboBox.setEditable(false);
+        comboBox.addItemListener(this);
         
         //Adds the label and the pulldown menu to the Panel
         comboBoxPane.add(typeLabel);
-        comboBoxPane.add(cb);
+        comboBoxPane.add(comboBox);
         
         //Creates the constraints to be applied on this panel
-        GridBagConstraints c = new GridBagConstraints();
+        GridBagConstraints gridBagCons = new GridBagConstraints();
 
-		c.fill = GridBagConstraints.BOTH;
-	    c.anchor = GridBagConstraints.PAGE_START; 
+		gridBagCons.fill = GridBagConstraints.BOTH;
+	    gridBagCons.anchor = GridBagConstraints.PAGE_START; 
 	    
 	    //Sets the constraints to the pane
-        this.add(comboBoxPane, c);
+        this.add(comboBoxPane, gridBagCons);
 		
 	}
 	
@@ -144,7 +143,7 @@ public class TextureView extends JPanel implements ItemListener {
 	 * @return the color List
 	 */
 	public String getSelectedColorAsString(){
-		return ("Colors/"+_colorList.getSelectedValue().toString());
+		return ("Colors/" + _colorList.getSelectedValue().toString());
 	}
 	
 	/**
@@ -155,7 +154,7 @@ public class TextureView extends JPanel implements ItemListener {
 			return _ADDTEXTURE;
 		}
 		else{
-			return ("Textures/Full/"+_textureList.getSelectedValue().toString());
+			return ("Textures/Full/" + _textureList.getSelectedValue().toString());
 		}
 	}
 	
@@ -198,17 +197,17 @@ public class TextureView extends JPanel implements ItemListener {
         _cards.add(colorsPanel, _COLORPANEL);
         _cards.add(_texturesPanel, _TEXTURESPANEL);
 
-        GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.BOTH;
-	    c.anchor = GridBagConstraints.PAGE_END; //bottom of space;
-	    c.weightx = 1;
-	    c.weighty = 1;
-		c.gridx = 0;
-		c.gridy = 1;
+        GridBagConstraints gridBagCons = new GridBagConstraints();
+		gridBagCons.fill = GridBagConstraints.BOTH;
+	    gridBagCons.anchor = GridBagConstraints.PAGE_END; //bottom of space;
+	    gridBagCons.weightx = 1;
+	    gridBagCons.weighty = 1;
+		gridBagCons.gridx = 0;
+		gridBagCons.gridy = 1;
 		
 		_textureList.addMouseListener(_controller);
 		_colorList.addMouseListener(_controller);
-        this.add(_cards, c);
+        this.add(_cards, gridBagCons);
 
 		//c.ipady = 200;
 		
@@ -216,9 +215,9 @@ public class TextureView extends JPanel implements ItemListener {
 	
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
-        CardLayout cl = (CardLayout)(_cards.getLayout());
-        cl.show(_cards, (String)evt.getItem());
-        _CURRENTMODE=(String) evt.getItem();
+        CardLayout cl = (CardLayout) _cards.getLayout();
+        cl.show(_cards, (String) evt.getItem());
+        _CURRENTMODE = (String) evt.getItem();
 	}
 	
 	class ColorCellRenderer extends DefaultListCellRenderer {
@@ -259,11 +258,11 @@ public class TextureView extends JPanel implements ItemListener {
 	    	} else {
 	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/";
 	    		if (list.equals(_textureList)){
-	    			prefix=prefix.concat("Textures/");
+	    			prefix = prefix.concat("Textures/");
 	    			imageIcon = new ImageIcon(prefix + value.toString()+".png" );
 	    		}
 	    		else{
-	    			prefix=prefix.concat("Colors/");
+	    			prefix = prefix.concat("Colors/");
 	    			imageIcon = new ImageIcon(prefix + value.toString()+".png");
 	    		}
 	    		
