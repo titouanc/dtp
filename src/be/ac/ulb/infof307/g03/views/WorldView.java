@@ -170,31 +170,23 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * @param texture
 	 * @return
 	 */
-	private Material _makeMaterial(Meshable mesh,String texture){	
-		 Material res;
+	private Material _makeMaterial(Meshable mesh){	
+		 String texture=mesh.getTexture();
 		 if (texture.equals("Gray")){
-				texture="Colors/Gray";
+			texture="Colors/Gray";
+		}
+		Material res= new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		res.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		res.setBoolean("UseMaterialColors", true);
+		ColorRGBA color = new ColorRGBA(ColorRGBA.Gray);
+		res.setColor("Diffuse", color);
+		res.setColor("Ambient", color);
+		res.setColor("Specular",color); 
+		 if (mesh.isSelected()){
+				res.setColor("Ambient",new ColorRGBA(0f,1.2f,0f, 0.5f));
 			}
-		 if (mesh instanceof Ground || mesh instanceof Roof){
-			res = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-			if (mesh.isSelected()){
-				res.setColor("Color",new ColorRGBA(0f,1.2f,0f, 0.5f));
-			}			
-			res.setTexture("ColorMap",assetManager.loadTexture(texture+".png"));
-		 }
-		 else{
-			res= new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-			res.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-			res.setBoolean("UseMaterialColors", true);
-			ColorRGBA color = new ColorRGBA(ColorRGBA.Gray);
-			res.setColor("Diffuse", color);
-			res.setColor("Ambient", color);
-			res.setColor("Specular",color); 
-			 if (mesh.isSelected()){
-					res.setColor("Ambient",new ColorRGBA(0f,1.2f,0f, 0.5f));
-				}
-			res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
-		 }
+		res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		return res;
 	 }
 
@@ -264,21 +256,21 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void _drawWall(Wall wall){
 		if (! wall.isVisible())
 			return;
-		Material material = _makeMaterial(wall,wall.getTexture());
+		Material material = _makeMaterial(wall);
 		rootNode.attachChild(wall.toSpatial(material));
 	}
 	
 	private void _drawGround(Ground gnd){
 		if (! gnd.isVisible())
 			return;
-		Material material = _makeMaterial(gnd,gnd.getTexture());
+		Material material = _makeMaterial(gnd);
 		rootNode.attachChild(gnd.toSpatial(material));
 	}
 	
 	private void _drawRoof(Roof roof){
 		if (! roof.isVisible())
 			return;
-		Material material = _makeMaterial(roof,roof.getTexture());
+		Material material = _makeMaterial(roof);
 		rootNode.attachChild(roof.toSpatial(material));
 	}
 	

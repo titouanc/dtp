@@ -6,6 +6,7 @@ package be.ac.ulb.infof307.g03.models;
 import java.util.List;
 
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
