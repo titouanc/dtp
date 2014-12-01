@@ -49,12 +49,12 @@ public class TextureView extends JPanel implements ItemListener {
 	private Project _project;
 	
 	private GridBagLayout _paneLayout;
-	private ArrayList<String> colorFiles=   new ArrayList <String>();
-	private ArrayList<String> textureFiles= new ArrayList <String>();
+	private ArrayList<String> _colorFiles=   new ArrayList <String>();
+	private ArrayList<String> _textureFiles= new ArrayList <String>();
 	
-	final static String COLORPANEL = "Colors";
-    final static String TEXTURESPANEL = "Textures";
-    static String CURRENTMODE ="" ;
+	final static String _COLORPANEL = "Colors";
+    final static String _TEXTURESPANEL = "Textures";
+    static String _CURRENTMODE ="" ;
     
 
     static private JList _textureList = new JList();
@@ -62,10 +62,10 @@ public class TextureView extends JPanel implements ItemListener {
 	static private JList _colorList   = new JList();
 	static private JPanel texturesPanel = new JPanel();
     
-	private final static int IMG_WIDTH = 20;
-	private final static int IMG_HEIGHT = 20;
+	private final static int _IMG_WIDTH = 20;
+	private final static int _IMG_HEIGHT = 20;
 	
-    JPanel cards; //a panel that uses CardLayout
+    private JPanel _cards; //a panel that uses CardLayout
 
 	/**
 	 * @param newControler
@@ -87,10 +87,10 @@ public class TextureView extends JPanel implements ItemListener {
     	
     	// Get filenames
 		getAllFiles();
-		textureFiles.add("Add a new File...");
+		_textureFiles.add("Add a new File...");
 		this.addTypeSelection();
 		this.addMaterialChoice();
-		CURRENTMODE=COLORPANEL; // Mode du début
+		_CURRENTMODE=_COLORPANEL; // Mode du début
 
         
     }
@@ -102,13 +102,13 @@ public class TextureView extends JPanel implements ItemListener {
 		File[] files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Colors/").listFiles(); 
 		for (File file : files) {
 		    if (file.isFile()) {
-		    	colorFiles.add(file.getName().replace(".png", ""));
+		    	_colorFiles.add(file.getName().replace(".png", ""));
 		    }
 		}
 		files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/").listFiles(); 
 		for (File file : files) {
 		    if (file.isFile() && !(file.getName().contains("Full"))) {
-		    	textureFiles.add(file.getName().replace(".png", ""));
+		    	_textureFiles.add(file.getName().replace(".png", ""));
 		    }
 		}
 	}
@@ -124,7 +124,7 @@ public class TextureView extends JPanel implements ItemListener {
 		//Pulldown menu
         JPanel comboBoxPane = new JPanel(); 
         comboBoxPane.setLayout(new GridLayout(0,1));
-        String comboBoxItems[] = { COLORPANEL, TEXTURESPANEL };
+        String comboBoxItems[] = { _COLORPANEL, _TEXTURESPANEL };
 
 		JComboBox cb = new JComboBox(comboBoxItems);
         cb.setEditable(false);
@@ -168,7 +168,7 @@ public class TextureView extends JPanel implements ItemListener {
 	 * @return current mode between texture and colors
 	 */
 	public String getCurrentMode(){
-		return CURRENTMODE;
+		return _CURRENTMODE;
 	}
 
 	/**
@@ -192,8 +192,8 @@ public class TextureView extends JPanel implements ItemListener {
 					fileToMove.renameTo(destinationMini);
 					reScale(destinationMini); // Set image to 20x20 format
 					filename=filename.replace(".png","");
-					textureFiles.add(textureFiles.size()-1,filename);
-					_textureList = new JList(textureFiles.toArray());
+					_textureFiles.add(_textureFiles.size()-1,filename);
+					_textureList = new JList(_textureFiles.toArray());
 			        _textureList.setCellRenderer(new ColorCellRenderer());	
 			        texturesPanel.removeAll();
 			        texturesPanel.add(_textureList);
@@ -231,11 +231,11 @@ public class TextureView extends JPanel implements ItemListener {
 	}
 	
     private static BufferedImage rescaleImage(BufferedImage originalImage, int type){
-	BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, type);
-	Graphics2D image = resizedImage.createGraphics();
-	image.drawImage(originalImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
-	image.dispose();
-	return resizedImage;
+		BufferedImage resizedImage = new BufferedImage(_IMG_WIDTH, _IMG_HEIGHT, type);
+		Graphics2D image = resizedImage.createGraphics();
+		image.drawImage(originalImage, 0, 0, _IMG_WIDTH, _IMG_HEIGHT, null);
+		image.dispose();
+		return resizedImage;
     }
  
 	/**
@@ -243,21 +243,21 @@ public class TextureView extends JPanel implements ItemListener {
 	 */
 	public void addMaterialChoice(){
         //Creates the "cards".
-        _textureList = new JList(textureFiles.toArray());
+        _textureList = new JList(_textureFiles.toArray());
         _textureList.setCellRenderer(new ColorCellRenderer());
         texturesPanel.add(_textureList);
         texturesPanel.setLayout(new GridLayout(0,1));
          
         JPanel colorsPanel = new JPanel();
-        _colorList = new JList(colorFiles.toArray());
+        _colorList = new JList(_colorFiles.toArray());
         _colorList.setCellRenderer(new ColorCellRenderer());
         colorsPanel.add(_colorList);
         colorsPanel.setLayout(new GridLayout(0,1));
          
         //Creates the panel that contains the switching panes.
-        cards = new JPanel(new CardLayout());
-        cards.add(colorsPanel, COLORPANEL);
-        cards.add(texturesPanel, TEXTURESPANEL);
+        _cards = new JPanel(new CardLayout());
+        _cards.add(colorsPanel, _COLORPANEL);
+        _cards.add(texturesPanel, _TEXTURESPANEL);
 
         GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
@@ -269,7 +269,7 @@ public class TextureView extends JPanel implements ItemListener {
 		
 		_textureList.addMouseListener(_controller);
 		_colorList.addMouseListener(_controller);
-        this.add(cards, c);
+        this.add(_cards, c);
 
 		//c.ipady = 200;
 		
@@ -277,9 +277,9 @@ public class TextureView extends JPanel implements ItemListener {
 	
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
-        CardLayout cl = (CardLayout)(cards.getLayout());
-        cl.show(cards, (String)evt.getItem());
-        CURRENTMODE=(String) evt.getItem();
+        CardLayout cl = (CardLayout)(_cards.getLayout());
+        cl.show(_cards, (String)evt.getItem());
+        _CURRENTMODE=(String) evt.getItem();
 	}
 	
 	class ColorCellRenderer extends DefaultListCellRenderer {
