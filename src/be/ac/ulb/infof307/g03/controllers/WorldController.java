@@ -19,10 +19,17 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Sphere;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 
@@ -40,6 +47,11 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     private List<Point> _inConstruction ;
     private Floor _currentFloor = null;
 	private String _currentEditionMode;
+	private String _mouseMode;
+	
+	private Vector2f _savedCenter = null;
+	private boolean _leftClickPressed = false;
+	private Geometry _builtGeometric = null;
     
     // Edition mode alias
 	static final private String _WORLDMODE = "world";
@@ -316,9 +328,30 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		}
     }
     
+    private void updateShapeDisplay() {
+    	if (_mouseMode.equals("cube")) {
+    		Vector2f currPos = getXYForMouse(0);
+    		float dist = currPos.distance(_savedCenter);
+    		float d = dist / FastMath.sqr(2);
+    		Vector3f center = new Vector3f(_savedCenter.x-d,_savedCenter.y-d,dist/2);
+    		_builtGeometric.setLocalTranslation(center);
+    		_builtGeometric.setLocalScale(dist); // h^2 = 2a^2 <=> h = sqrt(2) a <=> a = h/sqrt(2)
+    	} else if (_mouseMode.equals("sphere")) {
+    		Vector2f currPos = getXYForMouse(0);
+    		float dist = currPos.distance(_savedCenter);
+    		Vector3f center = new Vector3f(_savedCenter.x,_savedCenter.y,dist);
+    		_builtGeometric.setLocalTranslation(center);
+    		_builtGeometric.setLocalScale(dist);
+    	}
+    	
+    }
+    
     private void mouseMoved(float value) {
     	if (_movingPoint != null) {
     		dropMovingPoint(false);
+    	} else if (_savedCenter != null) {
+    		if (_leftClickPressed)
+    			updateShapeDisplay();
     	}
     }
     
@@ -360,24 +393,49 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     		_movingPoint = (Point) clicked;
     }
     
+    public void initSphere() {
+    	_savedCenter = getXYForMouse(0f);
+		Sphere sphere = new Sphere(32,32,1f);
+		_builtGeometric = new Geometry("plop", sphere);
+		sphere.setTextureMode(Sphere.TextureMode.Projected);
+		Material sphereMat = new Material(_view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
+		sphereMat.setBoolean("UseMaterialColors",true);    
+		sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
+		sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		_builtGeometric.setMaterial(sphereMat);
+		_builtGeometric.setLocalScale(0);
+		_view.getRootNode().attachChild(_builtGeometric);
+    }
+    
+    public void initCube() {
+    	_savedCenter = getXYForMouse(0f);
+    	Box box = new Box(0.5f,0.5f,0.5f);
+    	_builtGeometric = new Geometry("plop", box);
+		Material boxMat = new Material(_view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
+		boxMat.setBoolean("UseMaterialColors",true);    
+		boxMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
+		boxMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		_builtGeometric.setMaterial(boxMat);
+		_builtGeometric.setLocalScale(0);
+		_view.getRootNode().attachChild(_builtGeometric);
+    }
+    
     /**
      * Handle click
      */
     @Override
-	public void onAction(String name, boolean value, float tpf) {
-    	// TODO check if it's not better to keep this in an attribute updated when it's modified with observer/observable
-    	String mouseMode = _project.config("mouse.mode");
-		
+	public void onAction(String name, boolean value, float tpf) {	
 		if (name.equals(_LEFTCLICK)) {
+	    	_leftClickPressed = value;
 			if (value) { // on click
-				if (mouseMode.equals("construct")) { /* We're in construct mode and left-click: add a point */
+				if (_mouseMode.equals("construct")) { /* We're in construct mode and left-click: add a point */
 					construct();
-				} else if (mouseMode.equals("dragSelect")) {
+				} else if (_mouseMode.equals("dragSelect")) {
 					dragSelectHandler();
-				} else if(mouseMode.equals("sphere")){
-					
-				} else if(mouseMode.equals("cube")){
-					
+				} else if(_mouseMode.equals("sphere")){
+					initSphere();
+				} else if(_mouseMode.equals("cube")){
+					initCube();
 				}
 				
 			} else { // on release
@@ -390,7 +448,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				if (_inConstruction.size() > 0) { // We're building a shape, and right-click: finish shape
 					finalizeConstruct();
 				}
-				else if (mouseMode.equals("dragSelect")){
+				else if (_mouseMode.equals("dragSelect")){
 					Geometric clicked = getClickedObject();
 					if (clicked instanceof Meshable){
 						System.out.println("OUVRIR LE JPannel");
@@ -419,6 +477,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
+			} else if (config.getName().equals("mouse.mode")) {
+				_mouseMode = config.getValue();
 			}
 		}
 	}

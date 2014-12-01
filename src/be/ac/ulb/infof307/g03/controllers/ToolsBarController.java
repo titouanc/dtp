@@ -267,12 +267,12 @@ public class ToolsBarController implements ActionListener, Observer {
 	
 	private void onCubeCreation() {
 		Log.log(Level.FINEST,"[DEBUG] User clicked on : cube");
-		_project.config("mouse.mode", "cube");	
+		_project.config("mouse.mode", "cube");
 	}
 	
 	private void onSphereCreation() {
 		Log.log(Level.FINEST,"[DEBUG] User clicked on : sphere");
-		_project.config("mouse.mode", "sphere");	
+		_project.config("mouse.mode", "sphere");
 	}
 
 	@Override

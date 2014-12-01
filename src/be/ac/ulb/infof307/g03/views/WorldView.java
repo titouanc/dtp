@@ -14,9 +14,12 @@ import java.util.concurrent.Callable;
 
 
 
+
+
 import be.ac.ulb.infof307.g03.controllers.CameraContext;
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
@@ -29,6 +32,7 @@ import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -215,6 +219,14 @@ public class WorldView extends SimpleApplication implements Observer {
 	        	for (Light light : rootNode.getWorldLightList()) {
 					rootNode.removeLight(light);
 				}
+	        	//Generates the grid
+	    		attachGrid();
+	    		
+	    		//Generate the axes
+	    		_attachAxes();
+	    		
+	    		// Add a bit of sunlight into our lives
+	    		_addSun();
 	            return null;
 	        }
 	    });
