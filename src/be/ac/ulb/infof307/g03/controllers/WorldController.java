@@ -329,7 +329,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		}
     }
     
-    private void updateShapeDisplay() {
+    private void updateShapeDisplay(boolean finalUpdate) {
     	if (_mouseMode.equals("cube")) {
     		Vector2f currPos = getXYForMouse(0);
     		float dist = currPos.distance(_savedCenter);
@@ -344,7 +344,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     		_builtGeometric.setLocalTranslation(center);
     		_builtGeometric.setLocalScale(dist);
     	}
-    	
+    	if (finalUpdate){
+    		_builtGeometric =null;
+    	}
     }
     
     private void mouseMoved(float value) {
@@ -352,7 +354,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     		dropMovingPoint(false);
     	} else if (_savedCenter != null) {
     		if (_leftClickPressed)
-    			updateShapeDisplay();
+    			updateShapeDisplay(false);
     	}
     }
     
@@ -442,6 +444,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			} else { // on release
 				if (_movingPoint != null) { // We're moving a point, and mouse button up: stop the point here
 					dropMovingPoint(true);
+				} else if (_builtGeometric != null) {
+	    			updateShapeDisplay(true);
+					
 				}
 			}
 		} else if (name.equals(_RIGHTCLICK)) {
@@ -463,20 +468,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		
 	}
 
-	private void addCube() {
-		if(_currentEditionMode.equals(_OBJECTMODE)){//Should always be the case since otherwise buttons are hidden
-			_view.addCube();
-		}
-		
-		
-	}
 
-	private void addSphere() {
-		if(_currentEditionMode.equals(_OBJECTMODE)){//Should always be the case since otherwise buttons are hidden
-			_view.addSphere();
-		}
-		
-	}
 
 	@Override
 	public void update(Observable obs, Object msg) {

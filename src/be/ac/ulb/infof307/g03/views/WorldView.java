@@ -373,38 +373,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	/**
-	 * Adds a cube in the object pane
-	 */
-	public void addCube(){
-		this.enqueue(new Callable<Object>() {
-	        public Object call() {
-				Log.log(Level.FINE, "Adding a cube");
-				Box cube = new Box(0.5f,0.5f,0.5f);
-			    Geometry cubeGeo = new Geometry("Cube", cube);
-			    Material cubeMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		
-			    
-			    cubeGeo.setMaterial(cubeMat);
-			    rootNode.attachChild(cubeGeo);
-			    //TODO : update les modeles
-			    return null;
-	        }
-		});
-	}
-
-	public void addSphere() {
-		Sphere sphere = new Sphere(32,32,0.5f);
-	    Geometry sphereGeo = new Geometry("Sphere", sphere);
-	    Material sphereMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-
-	    
-	    sphereGeo.setMaterial(sphereMat);
-	    rootNode.attachChild(sphereGeo);
-	    //TODO : update les modeles
-		
-		
-	}
-	/**
 	 * @param node
 	 */
 	public void generateShapesList(Node node){
