@@ -27,7 +27,7 @@ public class GeometryDAO extends Observable {
 	private Dao<Point, Integer> _points = null;
 	private Dao<Floor, Integer> _floors = null;
 	private Dao<Roof,  Integer> _roofs = null;
-	private Dao<Entity,  Integer> _entities = null;
+	private Dao<Primitive,  Integer> _primitives = null;
 	private List<Change> _changes = null;
 	
 	/**
@@ -43,7 +43,7 @@ public class GeometryDAO extends Observable {
 		TableUtils.createTableIfNotExists(database, Wall.class);
 		TableUtils.createTableIfNotExists(database, Floor.class);
 		TableUtils.createTableIfNotExists(database, Roof.class);
-		TableUtils.createTableIfNotExists(database, Entity.class);
+		TableUtils.createTableIfNotExists(database, Primitive.class);
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class GeometryDAO extends Observable {
 		_points = DaoManager.createDao(database, Point.class);
 		_floors = DaoManager.createDao(database, Floor.class);
 		_roofs = DaoManager.createDao(database, Roof.class);
-		_entities = DaoManager.createDao(database, Entity.class);
+		_primitives = DaoManager.createDao(database, Primitive.class);
 		_changes = new LinkedList<Change>();
 	}
 	
@@ -88,7 +88,7 @@ public class GeometryDAO extends Observable {
 		toCopy.addAll(other._grounds.queryForAll());
 		toCopy.addAll(other._roofs.queryForAll());
 		toCopy.addAll(other._rooms.queryForAll());
-		toCopy.addAll(other._entities.queryForAll());
+		toCopy.addAll(other._primitives.queryForAll());
 		int res = 0;
 		for (Geometric g : toCopy)
 			res += create(g);
@@ -153,11 +153,10 @@ public class GeometryDAO extends Observable {
 			res = _walls.create((Wall) object);
 		else if (object instanceof Floor)
 			create((Floor) object);
-		else if (object instanceof Roof){
+		else if (object instanceof Roof)
 			res = _roofs.create((Roof) object);
-		}
-		else if (object instanceof Entity)
-			res = _entities.create((Entity) object);
+		else if (object instanceof Primitive)
+			res = _primitives.create((Primitive) object);
 		if (res != 0){
 			setChanged();
 			_changes.add(Change.create(object));
@@ -185,11 +184,10 @@ public class GeometryDAO extends Observable {
 			res = _walls.refresh((Wall) object);
 		else if (object instanceof Floor)
 			res = _floors.refresh((Floor) object);
-		else if (object instanceof Roof){
+		else if (object instanceof Roof)
 			res= _roofs.refresh((Roof)object);
-		}
-		else if (object instanceof Entity){
-			res= _entities.refresh((Entity)object);
+		else if (object instanceof Primitive){
+			res= _primitives.refresh((Primitive)object);
 		}
 		return res;
 	}
@@ -237,6 +235,8 @@ public class GeometryDAO extends Observable {
 			update((Floor) object);
 		else if (object instanceof Roof)
 			res= _roofs.update((Roof) object);
+		else if (object instanceof Primitive)
+			res= _primitives.update((Primitive) object);
 		if (res != 0){
 			setChanged();
 			_changes.add(Change.update(object));
@@ -294,8 +294,8 @@ public class GeometryDAO extends Observable {
 			res = delete((Floor) object);
 		else if (object instanceof Roof)
 			res = _roofs.delete((Roof) object);
-		else if (object instanceof Entity)
-			res = _entities.delete((Entity) object);
+		else if (object instanceof Primitive)
+			res = _primitives.delete((Primitive) object);
 		if (res != 0){
 			setChanged();
 			_changes.add(Change.delete(object));
@@ -329,7 +329,7 @@ public class GeometryDAO extends Observable {
 					res = getFloor(id);
 				else if (prefix.equals(new Roof().getUIDPrefix()))
 					res = getRoof(id);
-				else if (prefix.equals(new Entity().getUIDPrefix()))
+				else if (prefix.equals(new Primitive().getUIDPrefix()))
 					res = getEntity(id);
 			}
 		} catch (SQLException e){
@@ -431,8 +431,8 @@ public class GeometryDAO extends Observable {
 	 * @return The line
 	 * @throws SQLException
 	 */
-	public Entity getEntity(int entity_id) throws SQLException{
-		return _entities.queryForId(entity_id);
+	public Primitive getEntity(int entity_id) throws SQLException{
+		return _primitives.queryForId(entity_id);
 	}
 	
 	

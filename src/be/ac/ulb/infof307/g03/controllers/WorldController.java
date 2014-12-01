@@ -19,10 +19,12 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.material.Material;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 
@@ -372,9 +374,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				} else if (mouseMode.equals("dragSelect")) {
 					dragSelectHandler();
 				} else if(mouseMode.equals("sphere")){
-					
+					addSphere();
 				} else if(mouseMode.equals("cube")){
-					
+					addCube();
 				}
 				
 			} else { // on release
@@ -397,6 +399,21 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			} else { // on release
 				
 			}
+		}
+		
+	}
+
+	private void addCube() {
+		if(_currentEditionMode.equals(_OBJECTMODE)){//Should always be the case since otherwise buttons are hidden
+			_view.addCube();
+		}
+		
+		
+	}
+
+	private void addSphere() {
+		if(_currentEditionMode.equals(_OBJECTMODE)){//Should always be the case since otherwise buttons are hidden
+			_view.addSphere();
 		}
 		
 	}

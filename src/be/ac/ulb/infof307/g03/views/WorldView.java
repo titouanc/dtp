@@ -13,8 +13,13 @@ import java.util.concurrent.Callable;
 
 
 
+
+
+import java.util.logging.Level;
+
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
@@ -32,6 +37,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Grid;
+import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
 
@@ -365,6 +371,38 @@ public class WorldView extends SimpleApplication implements Observer {
 		this._isCreated = !this._isCreated;
 	}
 	
+	/**
+	 * Adds a cube in the object pane
+	 */
+	public void addCube(){
+		this.enqueue(new Callable<Object>() {
+	        public Object call() {
+				Log.log(Level.FINE, "Adding a cube");
+				Box cube = new Box(0.5f,0.5f,0.5f);
+			    Geometry cubeGeo = new Geometry("Cube", cube);
+			    Material cubeMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		
+			    
+			    cubeGeo.setMaterial(cubeMat);
+			    rootNode.attachChild(cubeGeo);
+			    //TODO : update les modeles
+			    return null;
+	        }
+		});
+	}
+
+	public void addSphere() {
+		Sphere sphere = new Sphere(32,32,0.5f);
+	    Geometry sphereGeo = new Geometry("Sphere", sphere);
+	    Material sphereMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+
+	    
+	    sphereGeo.setMaterial(sphereMat);
+	    rootNode.attachChild(sphereGeo);
+	    //TODO : update les modeles
+		
+		
+	}
 	/**
 	 * @param node
 	 */
