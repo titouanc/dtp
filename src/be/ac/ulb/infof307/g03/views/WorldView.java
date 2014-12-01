@@ -378,7 +378,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	public void addCube(){
 		this.enqueue(new Callable<Object>() {
 	        public Object call() {
-				Log.log(Level.FINE, "Adding a cube");
+				Log.debug("Adding a cube");
 				Box cube = new Box(0.5f,0.5f,0.5f);
 			    Geometry cubeGeo = new Geometry("Cube", cube);
 			    Material cubeMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
