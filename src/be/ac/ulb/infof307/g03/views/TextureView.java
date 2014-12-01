@@ -60,7 +60,7 @@ public class TextureView extends JPanel implements ItemListener {
     static private JList _textureList = new JList();
 
 	static private JList _colorList   = new JList();
-	static private JPanel texturesPanel = new JPanel();
+	static private JPanel _texturesPanel = new JPanel();
     
 	private final static int _IMG_WIDTH = 20;
 	private final static int _IMG_HEIGHT = 20;
@@ -197,9 +197,9 @@ public class TextureView extends JPanel implements ItemListener {
 					_textureFiles.add(_textureFiles.size()-1,filename);
 					_textureList = new JList(_textureFiles.toArray());
 			        _textureList.setCellRenderer(new ColorCellRenderer());	
-			        texturesPanel.removeAll();
-			        texturesPanel.add(_textureList);
-					texturesPanel.updateUI();
+			        _texturesPanel.removeAll();
+			        _texturesPanel.add(_textureList);
+					_texturesPanel.updateUI();
 				}
 				else{
 					Log.debug("The new texture has not been imported. Error.");
@@ -247,8 +247,8 @@ public class TextureView extends JPanel implements ItemListener {
         //Creates the "cards".
         _textureList = new JList(_textureFiles.toArray());
         _textureList.setCellRenderer(new ColorCellRenderer());
-        texturesPanel.add(_textureList);
-        texturesPanel.setLayout(new GridLayout(0,1));
+        _texturesPanel.add(_textureList);
+        _texturesPanel.setLayout(new GridLayout(0,1));
          
         JPanel colorsPanel = new JPanel();
         _colorList = new JList(_colorFiles.toArray());
@@ -259,7 +259,7 @@ public class TextureView extends JPanel implements ItemListener {
         //Creates the panel that contains the switching panes.
         _cards = new JPanel(new CardLayout());
         _cards.add(colorsPanel, _COLORPANEL);
-        _cards.add(texturesPanel, _TEXTURESPANEL);
+        _cards.add(_texturesPanel, _TEXTURESPANEL);
 
         GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
