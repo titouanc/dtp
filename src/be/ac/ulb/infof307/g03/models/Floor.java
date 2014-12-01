@@ -3,7 +3,9 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
@@ -11,89 +13,71 @@ import com.j256.ormlite.table.DatabaseTable;
  * @author Titouan Christophe
  */
 @DatabaseTable
-public class Floor implements Geometric {
-	@DatabaseField(generatedId = true)
-	private int _id = 0;
-	@DatabaseField(foreign = true, canBeNull = true, foreignAutoRefresh = true)
-	private Floor _previous = null;
+public class Floor extends Ordered {
 	@DatabaseField
-	double _height = 1.0;
+	private double _height = 1.0;
+	@DatabaseField
+	private double _baseHeight = 0.0;
+	@ForeignCollectionField
+	private ForeignCollection<Room> _rooms;
 	
 	/**
 	 * Constructor of the class Floor.
 	 * The constructor is empty
 	 */
 	public Floor(){
-		
+		super();
 	}
 	
 	/**
-	 * Constructor of the class Floor.
-	 * @param height The height of the floor.
+	 * @param height of the floor
 	 */
 	public Floor(double height){
+		super();
 		setHeight(height);
-	}
-	
-	/**
-	 * @return The floor id
-	 */
-	public int getId(){
-		return _id;
 	}
 	
 	/**
 	 * @param height The height to be set.
 	 */
-	public void setHeight(double height){
+	public final void setHeight(double height){
 		_height = height;
 	}
 	
 	/**
-	 * @return The height of the floor
+	 * @return The height of the floor (height between roof and floor)
 	 */
-	public double getHeight(){
+	public final double getHeight(){
 		return _height;
 	}
 	
 	/**
-	 * Set a given floor as previous (below) this one
-	 * @param prev
+	 * @return The base height of this floor (absolute elevation of the floor)
 	 */
-	public void setPrevious(Floor prev){
-		_previous = prev;
+	public final double getBaseHeight() {
+		return _baseHeight;
 	}
 	
 	/**
-	 * @return The previous (below) floor
+	 * @param baseHeight
 	 */
-	public Floor getPrevious(){
-		return _previous;
+	public final void setBaseHeight(double baseHeight){
+		_baseHeight = baseHeight;
+	}
+	
+	public final String toString(){
+		return String.format("Floor %d", getIndex());
+	}
+
+	@Override
+	public final String getUIDPrefix() {
+		return "flr";
 	}
 	
 	/**
-	 * @return True if this floor has no floor below
+	 * @return All the rooms of the floor
 	 */
-	public Boolean isFirstFloor(){
-		return _previous == null;
-	}
-	
-	@Override
-	public Group getGroup() {
-		return null;
-	}
-
-	@Override
-	public Boolean isLeaf() {
-		return false;
-	}
-
-	@Override
-	public String getUID() {
-		return String.format("flr-%d", getId());
-	}
-	
-	public String toString(){
-		return String.format("Floor %d", getId());
+	public final ForeignCollection<Room> getRooms(){
+		return _rooms;
 	}
 }

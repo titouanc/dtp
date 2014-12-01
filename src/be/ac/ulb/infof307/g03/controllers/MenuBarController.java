@@ -11,7 +11,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.GUI;
 import be.ac.ulb.infof307.g03.views.MenuBarView;
 
@@ -69,7 +68,8 @@ public class MenuBarController implements ActionListener {
 	 * @param gui The main gui frame (for .dispose())
 	 */
 	public MenuBarController(Project project,GUI gui){
-		_gui = gui;	
+		_gui = gui;
+		_project = project;
 	}
 	
 	/**
@@ -122,8 +122,10 @@ public class MenuBarController implements ActionListener {
 	 * Handler launched when menu item "Save" is clicked
 	 */
 	public void onSave() {
-		// TODO define if this is a violation of MVC ?
-		JOptionPane.showMessageDialog(_view,"Project saved. (auto-save is enabled)", "Information", JOptionPane.PLAIN_MESSAGE);
+		if (_project.isOnDisk())
+			JOptionPane.showMessageDialog(_view,"Project saved. (auto-save is enabled)", "Information", JOptionPane.PLAIN_MESSAGE);
+		else
+			onSaveAs();
 	}
 	
 	/**
@@ -138,20 +140,6 @@ public class MenuBarController implements ActionListener {
 	 */
 	public void onQuit() {
 		_gui.dispatchEvent(new WindowEvent(_gui, WindowEvent.WINDOW_CLOSING));
-	}
-	
-	/**
-	 * Handler launched when menu item "Undo" is clicked
-	 */
-	public void onUndo() {
-		System.out.println("[DEBUG] User clicked on undo");
-	}
-	
-	/**
-	 * Handler launched when menu item "Redo" is clicked
-	 */
-	public void onRedo() {
-		System.out.println("[DEBUG] User clicked on redo");
 	}
 
 	/**

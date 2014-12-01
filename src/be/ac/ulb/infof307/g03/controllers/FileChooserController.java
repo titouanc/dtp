@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.DemoProject;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.GUI;
 
@@ -100,7 +101,7 @@ public class FileChooserController {
 	 * @param fileToOpen The file to be opened
 	 */
 	public void openProject(File fileToOpen){
-		System.out.println("[DEBUG] You chose to open: " + fileToOpen.getName());
+		Log.info("Open %s", fileToOpen.getName());
 		final String filename = fileToOpen.getAbsolutePath();
 		_gui.dispose();
 		java.awt.EventQueue.invokeLater(new Runnable() {
@@ -108,11 +109,12 @@ public class FileChooserController {
 				try{
 					Project prj = new Project();
 					prj.load(filename);
+					// save the path of the current project to the BootController
 					BootController bc = new BootController();
 					bc.saveCurrentProjectPath(filename);
 					new GUI(prj);
 					
-				}catch (SQLException e) {
+				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(_parent, "Unable to open project named " + filename + ": " + e.toString());
 				}
 			}
@@ -124,7 +126,7 @@ public class FileChooserController {
 	 * @param fileToCreate The new project file to be created
 	 */
 	public void newProject(File fileToCreate){
-		System.out.println("[DEBUG] You chose to create a new project named: " + fileToCreate.getName());
+		Log.info("New project %s", fileToCreate.getName());
 		final String filename = fileToCreate.getAbsolutePath() + ".hpj";
 		_gui.dispose();
 		java.awt.EventQueue.invokeLater(new Runnable() {
@@ -132,6 +134,7 @@ public class FileChooserController {
 				try{
 					Project prj = new Project();
 					prj.create(filename);
+					// save the path of the current project to the BootController
 					BootController bc = new BootController();
 					bc.saveCurrentProjectPath(filename);
 					new GUI(prj);
@@ -149,10 +152,11 @@ public class FileChooserController {
 	 * @param fileToSave The File to be saved as a new file
 	 */
 	public void saveAsProject(File fileToSave) {
-		System.out.println("[DEBUG] You chose to save as a new file: " + fileToSave.getName());
+		Log.info("Save as %s", fileToSave.getName());
 		String filename = fileToSave.getAbsolutePath() + ".hpj";
 		try {
 			_project.saveAs(filename);
+			// save the path of the current project to the BootController
 			BootController bc = new BootController();
 			bc.saveCurrentProjectPath(filename);
 		} catch (SQLException e) {

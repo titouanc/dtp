@@ -3,8 +3,12 @@
  */
 package be.ac.ulb.infof307.g03.views;
 
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.SplashScreen;
 import java.sql.SQLException;
 
 import javax.swing.*;
@@ -24,6 +28,7 @@ public class GUI extends JFrame {
 	private MenuBarController _menuBar;
 	private ToolsBarController _toolsBar;
 	private MainPaneController _workspace;
+	private SplashScreen _screen;
 	
 	/**
 	 * Constructor of GUI.
@@ -33,10 +38,14 @@ public class GUI extends JFrame {
 	 * @throws SQLException 
 	 */
 	public GUI(Project project) throws SQLException {
+		
 		// Create and set up the window
-		super("HomePlans" + (project.isOnDisk() ? " - " + project.getFilename() : "Unsaved"));
+		super("HomePlans - " + (project.isOnDisk() ? project.getFilename() : "Unsaved"));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+		
+		//Sets up the loading screen
+        _screen = SplashScreen.getSplashScreen();
+   
         // Create the menuBar
         _menuBar = new MenuBarController(project, this);
         _menuBar.run();
@@ -65,9 +74,28 @@ public class GUI extends JFrame {
         this.setMinimumSize(windowDimension);
         this.setPreferredSize(windowDimension);
         
-        // Display the window
         this.pack();
+        if(_screen != null){
+	        while(!_workspace.getWc().getView().isCreated()){
+	        	try {
+		            Thread.sleep(2000);
+		        }
+		        	catch(InterruptedException e) {
+		        }
+	        }
+	        _screen.close();
+        }
+        // Display the window
         this.setVisible(true);
 	}
+	
+    static void renderSplashFrame(Graphics2D g, int frame) {
+        final String[] comps = {"foo", "bar", "baz"};
+        g.setComposite(AlphaComposite.Clear);
+        g.fillRect(120,140,200,40);
+        g.setPaintMode();
+        g.setColor(Color.BLACK);
+        g.drawString("Loading "+comps[(frame/5)%3]+"...", 120, 150);
+    }
 
 }

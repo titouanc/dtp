@@ -1,7 +1,8 @@
 package be.ac.ulb.infof307.g03.controllers;
 
-import be.ac.ulb.infof307.g03.views.FileChooserView;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
+import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -9,7 +10,9 @@ import be.ac.ulb.infof307.g03.models.Project;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 
@@ -17,24 +20,36 @@ import javax.swing.JOptionPane;
  * @author fhennecker, pierre, wmoulart
  * @brief Controller of the ToolsBar at the top of the application.
  */
-public class ToolsBarController implements ActionListener {
+public class ToolsBarController implements ActionListener, Observer {
 	// Attributes
 	private ToolsBarView _view;
 	private Project _project;
 	
 	// Buttons actions alias
-	static final public String NEWELEMENT	= "NewElement";
+	static final public String NEWELEMENT = "TB_NewElement";
 
-	static final public String FLOOR_UP   = "FloorUp";
-	static final public String FLOOR_DOWN = "FloorDown";
-	static final public String FLOOR_NEW  = "FloorNew";
+	static final public String FLOOR_UP   = "TB_FloorUp";
+	static final public String FLOOR_DOWN = "TB_FloorDown";
+	static final public String FLOOR_NEW  = "TB_FloorNew";
 
-	static final public String VIEW2D 		= "2D";
-	static final public String VIEW3D 		= "3D";
+	static final public String VIEW2D = "TB_2D";
+	static final public String VIEW3D = "TB_3D";
 
-	static final public String ROTATE  	= "Rotate";	
-	static final public String HAND 		= "Grab";  
-	static final public String CURSOR		= "Cursor";
+	static final public String ROTATE = "TB_Rotate";	
+	static final public String HAND = "TB_Grab";  
+	static final public String CURSOR = "TB_Cursor";
+	
+	static final public String WORLD = "TB_World";
+	static final public String OBJECT = "TB_Object";
+
+	static final public String CUBE = "TB_Cube";
+	static final public String SPHERE = "TB_Sphere";
+	
+	// Edition mode alias
+	static final private String _WORLDMODE = "world";
+	static final private String _OBJECTMODE = "object";
+	
+	private String _currentObjectMode = null;
 	
 	/**
 	 * Constructor of ToolsBarController.
@@ -42,7 +57,8 @@ public class ToolsBarController implements ActionListener {
 	 * @param aProject The main project
 	 */
 	public ToolsBarController(Project aProject){	
-		_project = aProject;     
+		_project = aProject;  
+		aProject.addObserver(this);
 	}
 	
 	/**
@@ -54,6 +70,12 @@ public class ToolsBarController implements ActionListener {
 		_project.addObserver(_view);
 		//Sets the default mode
         this.onDragSelectMode();
+        
+        _currentObjectMode = _project.config("edition.mode");
+        if (_currentObjectMode.equals(""))
+        	_currentObjectMode = _WORLDMODE;
+        else
+        	updateEditionMode();
 	}
 	
 	/**
@@ -70,39 +92,6 @@ public class ToolsBarController implements ActionListener {
 	public ToolsBarView getView(){
 		return _view;
 	}
-	
-	/**
-     * The private method is called when the button undo
-     * is clicked. It will communicate with the controller
-     */
-    public void onUndo(){
-    	System.out.println("[DEBUG] User clicked on : undo");
-        
-    }
-    
-    /**
-     * The private method is called when the button redo
-     * is clicked. It will communicate with the controller
-     */ 
-    public void onRedo(){
-    	System.out.println("[DEBUG] User clicked on : redo");
-    	
-    }
-    /**
-     * The private method is called when the button line
-     * is clicked. It will communicate with the controller
-     */
-    public void onLine(){
-    	System.out.println("[DEBUG] User clicked on : line");
-    }
-    
-    /**
-     * The private method is called when the button group
-     * is clicked. It will communicate with the controller
-     */
-    public void onGroup(){
-    	System.out.println("[DEBUG] User clicked on : group");
-    }
     
     /**
      * The private method is called when the button floor up
@@ -148,11 +137,7 @@ public class ToolsBarController implements ActionListener {
     public void onFloorNew(){
 		try {
 			GeometryDAO dao = _project.getGeometryDAO();
-			List<Floor>floors = dao.getFloors();
-			Floor newFloor = new Floor(7);
-			if (floors.size()>0) 
-				newFloor.setPrevious(floors.get(floors.size() - 1));
-	    	dao.create(newFloor);
+			dao.createFloorOnTop(7);
 	    	dao.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -164,8 +149,8 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void on2d(){
-    	System.out.println("[DEBUG] User clicked on : go2D");
-    	_project.config("world.mode", CameraModeController._VIEW2D);
+    	Log.info("Switch to 2D mode");
+    	_project.config("camera.mode", "2D");
   
     }
     
@@ -174,8 +159,8 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */
     public void on3d() {
-    	System.out.println("[DEBUG] User clicked on : go3D");
-    	_project.config("world.mode", CameraModeController._VIEW3D);
+    	Log.info("Switch to 3D mode");
+    	_project.config("camera.mode", "3D");
     }
     
     /**
@@ -183,7 +168,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragRotateMode(){
-    	System.out.println("[DEBUG] User clicked on : rotate");
+    	Log.info("Switch to rotate mode");
     	_project.config("mouse.mode", "dragRotate");
     }
 
@@ -192,7 +177,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragSelectMode(){
-    	System.out.println("[DEBUG] User clicked on : cursor");
+    	Log.info("Switch to drag-select mode");
     	_project.config("mouse.mode", "dragSelect");
     }
     
@@ -201,7 +186,7 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onDragMoveMode(){
-    	System.out.println("[DEBUG] User clicked on : hand");
+    	Log.info("Switch to drag-move mode");
     	_project.config("mouse.mode", "dragMove");
     }
     
@@ -210,9 +195,28 @@ public class ToolsBarController implements ActionListener {
      * is clicked. It will communicate with the controller
      */ 
     public void onConstruction(){
-    	System.out.println("[DEBUG] User clicked on : new Element");
+    	Log.info("Switch to construction mode");
     	_project.config("mouse.mode", "construct");
     }
+    
+	private void updateEditionMode(String value) {
+		if (_currentObjectMode!=value)  {
+			_currentObjectMode = value;
+			updateEditionMode();
+		}
+	}
+	
+	private void updateEditionMode() {
+		if (_currentObjectMode.equals(_WORLDMODE)) {
+			_view.setWorldModeSelected();
+			_view.setWorldEditionModuleVisible(true);
+			_view.setObjectEditionModuleVisible(false);
+		} else if (_currentObjectMode.equals(_OBJECTMODE)) {
+			_view.setObjectModeSelected();
+			_view.setWorldEditionModuleVisible(false);
+			_view.setObjectEditionModuleVisible(true);
+		}
+	}
     
     /**
      * Inherited method from ActionListener abstract class
@@ -239,8 +243,47 @@ public class ToolsBarController implements ActionListener {
         	onDragMoveMode();
         } else if (cmd.equals(CURSOR)){
         	onDragSelectMode();
+        } else if (cmd.equals(WORLD)) {
+        	onWorldMode();
+        } else if (cmd.equals(OBJECT)) {
+        	onObjectMode();
+        } else if (cmd.equals(CUBE)) {
+        	onCubeCreation();
+        } else if (cmd.equals(SPHERE)) {
+        	onSphereCreation();
         }
 
+	}
+
+	private void onObjectMode() {
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : object");
+		_project.config("edition.mode","object");
+	}
+
+	private void onWorldMode() {
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : world");
+		_project.config("edition.mode", "world");	
+	}
+	
+	private void onCubeCreation() {
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : cube");
+		_project.config("mouse.mode", "cube");	
+	}
+	
+	private void onSphereCreation() {
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : sphere");
+		_project.config("mouse.mode", "sphere");	
+	}
+
+	@Override
+	public void update(Observable obs, Object obj) {
+		if (obs instanceof Project) {
+			Config config = (Config) obj;
+			if (config.getName().equals("edition.mode")) {
+				updateEditionMode(config.getValue());
+			}
+		}
+		
 	}
 
 }

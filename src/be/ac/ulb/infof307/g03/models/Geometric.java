@@ -1,27 +1,41 @@
 package be.ac.ulb.infof307.g03.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 /**
  * Interface for all objects managed by GeometryDAO
  * @author Titouan Christophe
  */
-public interface Geometric {
-	/**
-	 * Every Geometric object is part of a tree. 
-	 * What's the parent of this one ?
-	 * @return The parent group, or null if it is a root
-	 */
-	public Group getGroup();
+@DatabaseTable
+public abstract class Geometric {
+	@DatabaseField(generatedId = true)
+	private int _id = 0;
 	
 	/**
-	 * Every Geometric object is part of a tree. 
-	 * Does this one have children ?
-	 * @return True if this node has no child
+	 * @return The UID of the Geometric
 	 */
-	public Boolean isLeaf();
+	public abstract String getUIDPrefix();
+	
+	/**
+	 * @return The geometric ID
+	 */
+	public final int getId(){
+		return _id;
+	}
+	
+	/**
+	 * @param id The new if of the geometric
+	 */
+	public final void setId(int id){
+		_id = id;
+	}
 	
 	/**
 	 * Every Geometric object has a unique identifier.
 	 * @return The Unique identifier (UID) of the Geometric
 	 */
-	public String getUID();
+	public final String getUID(){
+		return String.format("%s-%d", getUIDPrefix(), getId());
+	}
 }

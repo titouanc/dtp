@@ -8,6 +8,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -18,17 +20,21 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import be.ac.ulb.infof307.g03.models.*;
-import be.ac.ulb.infof307.g03.views.FileChooserView;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 
 /**
  * @author pierre
  *
  */
-public class ObjectTreeController implements TreeSelectionListener, MouseListener, KeyListener {
+public class ObjectTreeController implements TreeSelectionListener, MouseListener, KeyListener, Observer {
 	private ObjectTreeView _view;
 	private GeometryDAO _dao;
 	private Project _project;
+	private String _currentEditionMode;
+	
+	static private final String _WORLDMODE = "world";
+	static private final String _OBJECTMODE = "object";
 	
 	/**
 	 * @param project Project object from model
@@ -41,6 +47,9 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		_project.addObserver(this);
+		
 	}
 	
 	/**
@@ -49,6 +58,11 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 */
 	public void run(){
 		initView(_project);
+		_currentEditionMode = _project.config("edition.mode");
+		if (_currentEditionMode.equals(""))
+			_project.config("edition.mode",_WORLDMODE);
+		else 
+			updateEditionMode();
 	}
 	
 	/**
@@ -67,18 +81,45 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	}
 	
 	/**
+	 * 
+	 * @param mode
+	 */
+	private void updateEditionMode(String mode) {
+		if (mode!=_currentEditionMode) {
+			_currentEditionMode = mode;
+			updateEditionMode();
+		}
+	}
+	
+	public void updateEditionMode() {
+		if (_currentEditionMode.equals(_WORLDMODE)) {
+			System.out.println("[DEBUG] ObjectTree switched to world edition mode.");
+			_view.clearTree();
+			try {
+				_view.createTree();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if (_currentEditionMode.equals(_OBJECTMODE)) {
+			System.out.println("[DEBUG] ObjectTree switched to object edition mode.");
+			_view.clearTree();
+		}
+		_view.updateUI();
+	}
+
+	/**
 	 * @param object 
 	 * @param name 
 	 */
 	public void renameNode(Object object, String name){
-		if (object instanceof Group) {
-			Group grp = (Group) object;
+		if (object instanceof Room) {
+			Room grp = (Room) object;
 			grp.setName(name);
 			try {
 				_dao.update(grp);
 				_dao.notifyObservers(object);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -92,39 +133,38 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		if (object instanceof Geometric){
 			Geometric item = (Geometric) object;
 			try {
-				System.out.println("DELETE " + item.toString());
+				Log.info("DELETE %s", item.toString());
 				_dao.delete(item);
 				_dao.notifyObservers(item);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 
 	/**
-	 * Unset the select flag of a Grouped element
+	 * Unset the select flag of a Meshable element
 	 * @param element
 	 */
 	public void deselectElement(Object element) {
-		if (element instanceof Grouped){
-			Grouped grouped = (Grouped) element;
-			System.out.println("[TreeController] Unselect " + grouped.getUID());
-			grouped.deselect();
+		if (element instanceof Meshable){
+			Meshable meshable = (Meshable) element;
+			Log.debug("Unselect %s", meshable.getUID());
+			meshable.deselect();
 			try {
-				for (Point p : (_dao.getPointsForShape(grouped.getGroup()))){
+				for (Point p : meshable.getPoints()){
 					p.deselect();
 					_dao.update(p);
 				}
-				_dao.update(grouped);
-				_dao.notifyObservers(grouped);
+				_dao.update(meshable);
+				_dao.notifyObservers(meshable);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (element instanceof Shape){
+		} else if (element instanceof Room){
+			Room room = (Room) element;
 			try {
-				for (Point p : _dao.getPointsForShape((Shape) element)){
+				for (Point p : room.getPoints()){
 					_dao.refresh(p);
 					p.deselect();
 					_dao.update(p);
@@ -139,31 +179,33 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	}
 
 	/**
-	 * Set the select flag of a Grouped element
+	 * Set the select flag of a Meshable element
 	 * @param element
 	 */
 	public void selectElement(Object element) {
 		if (element instanceof Floor){
 			Floor current = (Floor) element;
 			_project.config("floor.current", current.getUID());
-		} else if (element instanceof Grouped){
-			Grouped grouped = (Grouped) element;
-			System.out.println("[TreeController] Select " + grouped.getUID());
-			grouped.select();
+		} else if (element instanceof Meshable){
+			Meshable meshable = (Meshable) element;
+			Log.debug("Select %s", meshable.getUID());
 			try {
-				for (Point p : (_dao.getPointsForShape(grouped.getGroup()))){
+				_dao.refresh(meshable);
+				meshable.select();
+				for (Point p : meshable.getPoints()){
 					p.select();
 					_dao.update(p);
 				}
-				_dao.update(grouped);
-				_dao.notifyObservers(grouped);
+				_dao.update(meshable);
+				_dao.notifyObservers(meshable);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (element instanceof Shape){
+		} else if (element instanceof Room){
 			try {
-				for (Point p : _dao.getPointsForShape((Shape) element)){
+				Room room = (Room) element;
+				for (Point p : room.getPoints()){
 					_dao.refresh(p);
 					p.select();
 					_dao.update(p);
@@ -178,13 +220,13 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	}
 
 	/**
-	 * Unset the visible flag of a Grouped item
-	 * @param grouped
+	 * Unset the visible flag of a Meshable item
+	 * @param meshable
 	 */
-	public void hideGrouped(Grouped grouped){
-		grouped.hide();
+	public void hideGrouped(Meshable meshable){
+		meshable.hide();
 		try {
-			_dao.update(grouped);
+			_dao.update(meshable);
 			_dao.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -192,13 +234,13 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	}
 	
 	/**
-	 * Set the visible flag of a Grouped item
-	 * @param grouped
+	 * Set the visible flag of a Meshable item
+	 * @param meshable
 	 */
-	public void showGrouped(Grouped grouped){
-		grouped.show();
+	public void showGrouped(Meshable meshable){
+		meshable.show();
 		try {
-			_dao.update(grouped);
+			_dao.update(meshable);
 			_dao.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -320,6 +362,16 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof Project) {
+			Config config = (Config) arg;
+			if (config.getName().equals("edition.mode")) {
+				updateEditionMode(config.getValue());
+			}
+		}		
 	}
 	
 }
