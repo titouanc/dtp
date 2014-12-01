@@ -373,6 +373,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	/**
+
 	 * @param node
 	 */
 	public void generateShapesList(Node node){
