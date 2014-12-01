@@ -86,7 +86,7 @@ public class TextureView extends JPanel implements ItemListener {
     	this.setPreferredSize(new Dimension(this.getHeight(),100));
     	
     	// Get filenames
-		getAllFiles();
+		addAllFiles();
 		_textureFiles.add("Add a new File...");
 		this.addTypeSelection();
 		this.addMaterialChoice();
@@ -98,7 +98,7 @@ public class TextureView extends JPanel implements ItemListener {
 	/**
 	 * Get all files from a directory
 	 */
-	public void getAllFiles(){
+	private void addAllFiles(){
 		File[] files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Colors/").listFiles(); 
 		for (File file : files) {
 		    if (file.isFile()) {
@@ -107,8 +107,10 @@ public class TextureView extends JPanel implements ItemListener {
 		}
 		files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/").listFiles(); 
 		for (File file : files) {
-		    if (file.isFile() && !(file.getName().contains("Full"))) {
-		    	_textureFiles.add(file.getName().replace(".png", ""));
+		    if (file.isFile()) {
+		    	if(!(file.getName().contains("Full"))){
+		    		_textureFiles.add(file.getName().replace(".png", ""));	
+		    	}
 		    }
 		}
 	}
@@ -117,7 +119,7 @@ public class TextureView extends JPanel implements ItemListener {
 	/**
 	 * Adds the combobox to the main pane
 	 */
-	public void addTypeSelection(){
+	private void addTypeSelection(){
 		//Simple Label
 		JLabel typeLabel = new JLabel("Type : ");
 		
@@ -148,7 +150,7 @@ public class TextureView extends JPanel implements ItemListener {
 	/**
 	 * @return the color List
 	 */
-	public String getSelectedColor(){
+	public String getSelectedColorAsString(){
 		return ("Colors/"+_colorList.getSelectedValue().toString());
 	}
 	
