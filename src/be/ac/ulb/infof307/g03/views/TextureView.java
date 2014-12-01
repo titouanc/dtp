@@ -1,15 +1,9 @@
 package be.ac.ulb.infof307.g03.views;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.FileImageInputStream;
-import javax.imageio.stream.FileImageOutputStream;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -22,19 +16,12 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 
@@ -54,6 +41,7 @@ public class TextureView extends JPanel implements ItemListener {
 	
 	final static String _COLORPANEL = "Colors";
     final static String _TEXTURESPANEL = "Textures";
+    final static String _ADDTEXTURE= "Add a new Texture...";
     static String _CURRENTMODE ="" ;
     
 
@@ -61,9 +49,6 @@ public class TextureView extends JPanel implements ItemListener {
 
 	static private JList _colorList   = new JList();
 	static private JPanel _texturesPanel = new JPanel();
-    
-	private final static int _IMG_WIDTH = 20;
-	private final static int _IMG_HEIGHT = 20;
 	
     private JPanel _cards; //a panel that uses CardLayout
 
@@ -88,7 +73,7 @@ public class TextureView extends JPanel implements ItemListener {
     	// Get filenames
     	_texturesPanel.removeAll();
 		addAllFiles();
-		_textureFiles.add("Add a new File...");
+		_textureFiles.add(_ADDTEXTURE);
 		this.addTypeSelection();
 		this.addMaterialChoice();
 		_CURRENTMODE=_COLORPANEL; // Mode du début
@@ -149,6 +134,13 @@ public class TextureView extends JPanel implements ItemListener {
 	}
 	
 	/**
+	 * @return add tetxture
+	 */
+	public String getAddFile(){
+		return _ADDTEXTURE;
+	}
+	
+	/**
 	 * @return the color List
 	 */
 	public String getSelectedColorAsString(){
@@ -159,8 +151,8 @@ public class TextureView extends JPanel implements ItemListener {
 	 * @return the texture List
 	 */
 	public String getSelectedTexture(){
-		if (_textureList.getSelectedValue().toString().equals("Add a new File...")){
-			return null;
+		if (_textureList.getSelectedValue().toString().equals(_ADDTEXTURE)){
+			return _ADDTEXTURE;
 		}
 		else{
 			return ("Textures/Full/"+_textureList.getSelectedValue().toString());
@@ -173,74 +165,17 @@ public class TextureView extends JPanel implements ItemListener {
 	public String getCurrentMode(){
 		return _CURRENTMODE;
 	}
-
-	/**
-	 * Add a new texture 
-	 * @throws IOException 
-	 */
-	public void addNewTexture() throws IOException{
-		final JFileChooser fc = new JFileChooser();
-	    fc.showOpenDialog(this);
-	    try{
-			File fileToMove = fc.getSelectedFile();
-			File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToMove.getName());
-			File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToMove.getName());
-
-			copyImage(fileToMove,destinationFull); // On récupère l'image avec sa taille originale
-			
-			String filename=fileToMove.getName();
-			if (!(filename).equals("Add a new File...") && (filename.contains(".png"))){
-				if(fileToMove.renameTo(destinationMini)){
-					Log.debug("Your image has been added with success.");
-					fileToMove.renameTo(destinationMini);
-					reScale(destinationMini); // Set image to 20x20 format
-					filename=filename.replace(".png","");
-					_textureFiles.add(_textureFiles.size()-1,filename);
-					_textureList = new JList(_textureFiles.toArray());
-			        _textureList.setCellRenderer(new ColorCellRenderer());	
-			        _texturesPanel.removeAll();
-			        _texturesPanel.add(_textureList);
-					_texturesPanel.updateUI();
-					_textureList.addMouseListener(_controller);
-				}
-				else{
-					Log.debug("The new texture has not been imported. Error.");
-				}
-			}
-	    }
-	    catch (NullPointerException e){
-	    	Log.warn("NullPointerException catched.");
-	    	e.printStackTrace();
-	    	// L'utilisateur a clické sur closed, on ne fait rien 	
-	    }
-	}
 	
-	private static void copyImage(File toBeCopied,File destination)throws IOException {			    
-		 ImageInputStream input = new FileImageInputStream(toBeCopied);
-		 ImageOutputStream output = new FileImageOutputStream(destination);
-		 byte[] buffer = new byte[1024];
-		 int len;
-		 while ((len = input.read(buffer)) > 0) {
-			 output.write(buffer, 0, len);
-		 }
-		 input.close();
-		 output.close();
+	public void updatePanel(String filename){
+		filename=filename.replace(".png","");
+		_textureFiles.add(_textureFiles.size()-1,filename);
+		_textureList = new JList(_textureFiles.toArray());
+        _textureList.setCellRenderer(new ColorCellRenderer());	
+        _texturesPanel.removeAll();
+        _texturesPanel.add(_textureList);
+		_texturesPanel.updateUI();
+		_textureList.addMouseListener(_controller);
 	}
-	
-	private static void reScale(File file) throws IOException{
-		BufferedImage originalImage = ImageIO.read(file);
-		int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-		BufferedImage resizeImagePng = rescaleImage(originalImage, type);
-		ImageIO.write(resizeImagePng,"png",file);
-	}
-	
-    private static BufferedImage rescaleImage(BufferedImage originalImage, int type){
-		BufferedImage resizedImage = new BufferedImage(_IMG_WIDTH, _IMG_HEIGHT, type);
-		Graphics2D image = resizedImage.createGraphics();
-		image.drawImage(originalImage, 0, 0, _IMG_WIDTH, _IMG_HEIGHT, null);
-		image.dispose();
-		return resizedImage;
-    }
  
 	/**
 	 * Adds the 2 switching panes
