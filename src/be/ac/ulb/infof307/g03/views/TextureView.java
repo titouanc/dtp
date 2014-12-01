@@ -201,6 +201,7 @@ public class TextureView extends JPanel implements ItemListener {
 			        _texturesPanel.removeAll();
 			        _texturesPanel.add(_textureList);
 					_texturesPanel.updateUI();
+					_textureList.addMouseListener(_controller);
 				}
 				else{
 					Log.debug("The new texture has not been imported. Error.");
