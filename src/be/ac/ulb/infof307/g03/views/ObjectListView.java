@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 
 import javax.swing.JLabel;
@@ -16,6 +18,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectListController;
+import be.ac.ulb.infof307.g03.models.Change;
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -25,7 +28,7 @@ import be.ac.ulb.infof307.g03.utils.Log;
  * @author titouan
  *
  */
-public class ObjectListView extends JList {
+public class ObjectListView extends JList implements Observer {
 
 	class MyCellRenderer extends JLabel implements ListCellRenderer {
 	     //final static ImageIcon longIcon = new ImageIcon("long.gif");
@@ -63,16 +66,17 @@ public class ObjectListView extends JList {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String cmd = e.getActionCommand();
+			Entity selectedEntity = (Entity) getSelectedValue();
 			if (cmd.equals(_NEW)) {
 				String name = JOptionPane.showInputDialog("New object name ?");
 				_controller.onNewAction(name);
 			} else if (cmd.equals(_RENAME)) {
 				String name = JOptionPane.showInputDialog("New object name ?");
-				_controller.onRenameAction();
+				_controller.onRenameAction(selectedEntity, name);
 			} else if (cmd.equals(_EDIT)) {
-				_controller.onEditAction(/*TODO*/);
+				_controller.onEditAction(selectedEntity);
 			} else if (cmd.equals(_DELETE)) {
-				_controller.onDeleteAction();
+				_controller.onDeleteAction(selectedEntity);
 			}
  			
 		}
@@ -101,6 +105,7 @@ public class ObjectListView extends JList {
 			e.printStackTrace();
 		}
 		addMouseListener(_controller);
+		_dao.addObserver(this);
 		createList();
 	}
 	
@@ -112,6 +117,7 @@ public class ObjectListView extends JList {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	public JPopupMenu createPopupMenu(){
@@ -131,4 +137,18 @@ public class ObjectListView extends JList {
 		return menuItem;
 	}
 	
+	@Override
+	public void update(Observable obs, Object arg) {
+		List<Change> changes = (List<Change>) arg;
+		boolean mustRedraw = false;
+		for (Change change : changes) {
+			if (change.getItem() instanceof Entity) {
+				mustRedraw = true;
+			}
+		}
+		
+		if (mustRedraw) {
+			createList();
+		}
+	}
 }

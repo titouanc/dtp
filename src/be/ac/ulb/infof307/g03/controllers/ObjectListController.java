@@ -3,6 +3,7 @@ package be.ac.ulb.infof307.g03.controllers;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -10,7 +11,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Geometric;
+import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.ObjectListView;
 import be.ac.ulb.infof307.g03.views.ObjectTreeView;
@@ -18,10 +21,17 @@ import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 public class ObjectListController implements MouseListener {
 	private ObjectListView _view = null;
 	private Project _project = null;
+	private GeometryDAO _dao = null;
 	
 	public ObjectListController(Project project) {
 		_view = new ObjectListView(this,project);
 		_project = project;
+		try {
+			_dao = project.getGeometryDAO();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -45,21 +55,48 @@ public class ObjectListController implements MouseListener {
 	}
 	
 	public void onNewAction(String name) {
-		// notity model
+		Entity entity = new Entity(name);
+		try {
+			_dao.create(entity);
+			_dao.notifyObservers();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		_project.config("entity.current", entity.getUID());
 		_project.config("edition.mode", "object");
+
 	}
 	
-	public void onDeleteAction() {
-		// notify model
+	public void onDeleteAction(Entity entity) {
+		if (_project.config("edition.mode").equals("object")) {
+			if (_project.config("entity.current").equals(entity.getUID())) {
+				_project.config("edition.mode","world");
+			}
+		}
+		try {
+			_dao.delete(entity);
+			_dao.notifyObservers();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public void onRenameAction() {
-		// notify model
+	public void onRenameAction(Entity entity, String newName) {
+		entity.setName(newName);
+		try {
+			_dao.update(entity);
+			_dao.notifyObservers();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	public void onEditAction() {
-		// notify model
+	public void onEditAction(Entity entity) {
 		_project.config("edition.mode", "object");
+		_project.config("entity.current", entity.getUID());
 	}
 	
 	@Override
