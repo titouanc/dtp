@@ -287,15 +287,15 @@ public class TextureView extends JPanel implements ItemListener {
 	class ColorCellRenderer extends DefaultListCellRenderer {
 
 	    private static final long serialVersionUID = -7799441088157759804L;
-	    private JLabel label;
-	    private Color textSelectionColor = Color.BLACK;
-	    private Color backgroundSelectionColor = Color.LIGHT_GRAY;
-	    private Color textNonSelectionColor = Color.BLACK;
-	    private Color backgroundNonSelectionColor = Color.WHITE;
+	    private JLabel _label;
+	    private Color _textSelectionColor = Color.BLACK;
+	    private Color _backgroundSelectionColor = Color.LIGHT_GRAY;
+	    private Color _textNonSelectionColor = Color.BLACK;
+	    private Color _backgroundNonSelectionColor = Color.WHITE;
 
 	    ColorCellRenderer() {
-	        label = new JLabel();
-	        label.setOpaque(true);
+	        _label = new JLabel();
+	        _label.setOpaque(true);
 	    }
 
 	    @Override
@@ -331,19 +331,19 @@ public class TextureView extends JPanel implements ItemListener {
 	    		}
 	    		
 	    	}
-	        label.setIcon(imageIcon);
-	        label.setText(value.toString());
+	        _label.setIcon(imageIcon);
+	        _label.setText(value.toString());
 	        //label.setToolTipText();
 
 	        if (selected) {
-	            label.setBackground(backgroundSelectionColor);
-	            label.setForeground(textSelectionColor);
+	            _label.setBackground(_backgroundSelectionColor);
+	            _label.setForeground(_textSelectionColor);
 	        } else {
-	            label.setBackground(backgroundNonSelectionColor);
-	            label.setForeground(textNonSelectionColor);
+	            _label.setBackground(_backgroundNonSelectionColor);
+	            _label.setForeground(_textNonSelectionColor);
 	        }
 
-	        return label;
+	        return _label;
 	    }
 	}
 	
