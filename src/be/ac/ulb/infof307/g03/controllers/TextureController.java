@@ -114,28 +114,30 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	 */
 	public void addNewTexture() throws IOException{
 		final JFileChooser fc = new JFileChooser();
-	    fc.showOpenDialog(_view);
-	    try{
-			File fileToMove = fc.getSelectedFile();
-			File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToMove.getName());
-			File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToMove.getName());
-
-			copyImage(fileToMove,destinationFull); // On récupère l'image avec sa taille originale
-			
-			String filename=fileToMove.getName();
-			if (!(filename).equals(_view.getAddFile()) && (filename.contains(".png"))){
-				if(fileToMove.renameTo(destinationMini)){
-					reScale(destinationMini); // Set image to 20x20 format
-					_view.updatePanel(filename);
+		int returnVal = fc.showOpenDialog(_view);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+		    try{
+				File fileToImport = fc.getSelectedFile();
+				File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToImport.getName());
+				File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToImport.getName());
+	
+				copyImage(fileToImport,destinationFull); // On récupère l'image avec sa taille originale
+				
+				String filename=fileToImport.getName();
+				if (!(filename).equals(_view.getAddFile()) && (filename.contains(".png"))){
+					if(fileToImport.renameTo(destinationMini)){
+						reScale(destinationMini); // Set image to 20x20 format
+						_view.updatePanel(filename);
+					}
+					else{
+						Log.debug("The new texture has not been imported. Error.");
+					}
 				}
-				else{
-					Log.debug("The new texture has not been imported. Error.");
-				}
-			}
-	    }
-	    catch (NullPointerException e){
-	    	Log.warn("NullPointerException catched.");
-	    	//e.printStackTrace();	
+		    }
+		    catch (NullPointerException e){
+		    	Log.warn("NullPointerException catched.");
+		    	e.printStackTrace();	
+		    }   
 	    }
 	}
 	
