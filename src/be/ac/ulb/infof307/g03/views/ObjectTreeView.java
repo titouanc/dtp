@@ -89,7 +89,6 @@ public class ObjectTreeView extends JTree implements Observer {
 			else if (cmd.equals(_CHANGETEXTURE)){
 				String currentTexture=_project.config("texture.selected");
 				// On va assigner à l'objet cliqué la texture sélectionnée
-				System.out.println(currentTexture);
 				if (clickedItem instanceof Meshable){
 					try {
 						_controller.setTexture((Meshable)clickedItem,currentTexture);

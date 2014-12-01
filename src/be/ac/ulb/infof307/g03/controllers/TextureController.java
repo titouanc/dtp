@@ -22,6 +22,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.JFileChooser;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 /**
@@ -37,7 +38,8 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	private final static int _IMG_WIDTH = 20;
 	private final static int _IMG_HEIGHT = 20;
 	
-	private final static String _CHANGETEXTURE	= "Change Texture";
+	//private final static String _CHANGETEXTURE	= "Change Texture";
+	private static String fileToDelete= new String();
 	
 	
 	
@@ -111,7 +113,6 @@ public class TextureController implements ActionListener,MouseListener, Observer
 				File fileToImport = fc.getSelectedFile();
 				File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToImport.getName());
 				File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToImport.getName());
-	
 				copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
 				
 				String filename = fileToImport.getName();
@@ -133,15 +134,15 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	}
 	
 	private static void copyImage(File toBeCopied,File destination)throws IOException {			    
-		 ImageInputStream input = new FileImageInputStream(toBeCopied);
-		 ImageOutputStream output = new FileImageOutputStream(destination);
-		 byte[] buffer = new byte[1024];
-		 int len;
-		 while ((len = input.read(buffer)) > 0) {
-			 output.write(buffer, 0, len);
-		 }
-		 input.close();
-		 output.close();
+		ImageInputStream input = new FileImageInputStream(toBeCopied);
+		ImageOutputStream output = new FileImageOutputStream(destination);
+		byte[] buffer = new byte[1024];
+		int len;
+		while ((len = input.read(buffer)) > 0) {
+		output.write(buffer, 0, len);
+			}
+		input.close();
+		output.close();
 	}
 	
 	private static void reScale(File file) throws IOException{
@@ -157,6 +158,19 @@ public class TextureController implements ActionListener,MouseListener, Observer
 		image.drawImage(originalImage, 0, 0, _IMG_WIDTH, _IMG_HEIGHT, null);
 		image.dispose();
 		return resizedImage;
+   }
+   
+   /**
+ * @return the name of the file to be deleted
+ */
+   public String deleteFile(){
+	   File fullDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
+	   fullDimension.delete();
+	   fileToDelete=fileToDelete.replace("Textures/Full/", "Textures/");
+	   File miniDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
+	   miniDimension.delete();
+	   fileToDelete =fileToDelete.replace("Textures/", "");
+	   return fileToDelete;
    }
 	
 	@Override
@@ -203,11 +217,23 @@ public class TextureController implements ActionListener,MouseListener, Observer
 				}
 			}
 		}
-		
+		else if (SwingUtilities.isRightMouseButton(e)){
+			if((_view.getCurrentMode().equals("Textures"))){
+				if(!(_view.getSelectedTexture().equals(_view.getAddFile()))){
+					JPopupMenu PopupMenu = _view.createPopupMenu();
+					fileToDelete=_view.getSelectedTexture(); // On a le nom comme Textures/Full/xxx
+					if (PopupMenu != null) {
+						PopupMenu.show(e.getComponent(), e.getX(), e.getY());
+					}					
+				}
+				
+			}		
+		}			
 	}
+		
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
+	public void actionPerformed(ActionEvent event) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -6,10 +6,22 @@ import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import be.ac.ulb.infof307.g03.controllers.TextureController;
+import be.ac.ulb.infof307.g03.models.Binding;
+import be.ac.ulb.infof307.g03.models.Floor;
+import be.ac.ulb.infof307.g03.models.Geometric;
+import be.ac.ulb.infof307.g03.models.Meshable;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.models.Room;
+import be.ac.ulb.infof307.g03.models.Wall;
+import be.ac.ulb.infof307.g03.utils.Log;
+import be.ac.ulb.infof307.g03.views.ObjectTreeView.PopupListener;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -18,12 +30,15 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-
+	
 /**
  * @author Walter, brochape
  * @brief view of the panel that ill open when user wants to change texture
@@ -43,6 +58,8 @@ public class TextureView extends JPanel implements ItemListener {
 	private final static String _ADDTEXTURE= "Add a new Texture...";
     private static String _CURRENTMODE ="" ;
     
+    // Action alias
+    static private final String _DELETE = "Delete";
 
     static private JList _textureList = new JList();
 
@@ -50,6 +67,28 @@ public class TextureView extends JPanel implements ItemListener {
 	static private JPanel _texturesPanel = new JPanel();
 	
     private JPanel _cards; //a panel that uses CardLayout
+    
+    /**
+	 * This class implements a ActionListener to be 
+	 * used with a popup menu
+	 */
+	class PopupListener implements ActionListener {
+
+		/**
+		 * This method is called when user click on a menu
+		 * @param event click on menu
+		 */
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			String cmd = event.getActionCommand();
+			if (cmd.equals(_DELETE)) {
+				String toDelete=_controller.deleteFile();
+				_textureFiles.remove(toDelete);
+				update();
+				
+			}
+		}
+	}
 
 	/**
 	 * @param newControler
@@ -165,15 +204,26 @@ public class TextureView extends JPanel implements ItemListener {
 		return _CURRENTMODE;
 	}
 	
-	public void updatePanel(String filename){
-		filename=filename.replace(".png","");
-		_textureFiles.add(_textureFiles.size()-1,filename);
+	/**
+	 * Update the JPanel : refresh it 
+	 */
+	private void update(){
 		_textureList = new JList(_textureFiles.toArray());
         _textureList.setCellRenderer(new ColorCellRenderer());	
         _texturesPanel.removeAll();
         _texturesPanel.add(_textureList);
 		_texturesPanel.updateUI();
 		_textureList.addMouseListener(_controller);
+	}
+	
+	/**
+	 * @param filename
+	 * Update the panel 
+	 */
+	public void updatePanel(String filename){
+		filename=filename.replace(".png","");
+		_textureFiles.add(_textureFiles.size()-1,filename);
+		this.update();
 	}
  
 	/**
@@ -213,11 +263,39 @@ public class TextureView extends JPanel implements ItemListener {
 		
 	}
 	
+	/**
+	 * Set the layout if we are in texture mode or color mode
+	 */
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
         CardLayout cl = (CardLayout) _cards.getLayout();
         cl.show(_cards, (String) evt.getItem());
         _CURRENTMODE = (String) evt.getItem();
+	}
+	
+	/**
+	 * 
+	 * @param label
+	 * @param action
+	 * @param listener
+	 * @return the menuItem
+	 */
+	private JMenuItem createJMenuItem(String label, String action, PopupListener listener) {
+		JMenuItem menuItem = new JMenuItem(label);
+		menuItem.addActionListener(listener);
+		menuItem.setActionCommand(action);
+		return menuItem;
+	}
+	
+	/**
+	 * Build a contextual menu for a clicked item
+	 * @return the popup
+	 */
+	public JPopupMenu createPopupMenu(){	
+		PopupListener listener = new PopupListener();
+		JPopupMenu res = new JPopupMenu();
+		res.add(createJMenuItem(_DELETE, _DELETE, listener));
+		return res;
 	}
 	
 	class ColorCellRenderer extends DefaultListCellRenderer {
@@ -282,5 +360,7 @@ public class TextureView extends JPanel implements ItemListener {
 	        return _label;
 	    }
 	}
-	
+		
 }
+
+
