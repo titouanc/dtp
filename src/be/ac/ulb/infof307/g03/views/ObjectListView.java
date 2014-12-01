@@ -3,6 +3,9 @@ package be.ac.ulb.infof307.g03.views;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -13,7 +16,10 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectListController;
+import be.ac.ulb.infof307.g03.models.Entity;
+import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author titouan
@@ -74,27 +80,38 @@ public class ObjectListView extends JList {
 	}
 	
 	private ObjectListController _controller = null;
-	private static String[] data = {"one", "two", "three", "four"};
+	private GeometryDAO _dao = null;
 	
 	private static final String _NEW = "PAL_new";
 	private static final String _RENAME = "PAL_rename";
 	private static final String _EDIT = "PAL_edit";
 	private static final String _DELETE = "PAL_delete";
 	
-	public ObjectListView(ObjectListController controller, Project projet) {
-		super(data);
+	public ObjectListView(ObjectListController controller, Project project) {
+		super();
 		_controller = controller;
-		createList();
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setLayoutOrientation(JList.VERTICAL_WRAP);
 		setVisibleRowCount(-1);
 		setCellRenderer(new MyCellRenderer());
-		
+		try {
+			_dao = project.getGeometryDAO();
+			Log.debug("DAO is %s", _dao.toString());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		addMouseListener(_controller);
-	} 
+		createList();
+	}
 	
-	private void createList() { 
-		
+	private void createList() {
+		try {
+			List<Entity> entities = _dao.getEntities();
+			Log.debug("Entities: %s", entities.toString());
+			setListData(new Vector<Entity>(entities));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public JPopupMenu createPopupMenu(){

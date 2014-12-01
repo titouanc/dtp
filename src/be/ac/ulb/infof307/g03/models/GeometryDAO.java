@@ -439,6 +439,15 @@ public class GeometryDAO extends Observable {
 	}
 	
 	/**
+	 * Get all entities in database
+	 * @return A (possibly empty) list of all entities
+	 * @throws SQLException
+	 */
+	public List<Entity> getEntities() throws SQLException{
+		return _entities.queryForAll();
+	}
+	
+	/**
 	 * Get a line object from the database
 	 * @param line_id The line identifier
 	 * @return The line

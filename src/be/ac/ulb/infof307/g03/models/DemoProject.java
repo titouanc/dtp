@@ -53,8 +53,12 @@ public class DemoProject {
     	
 		//createRoom(firstFloor, "Square room 2", a, e, f, d);
 		createRoom(firstFloor, "Irregular room 2", a, d, c, c, g,k, i,j, h);
-
 		createRoom(firstFloor, "Rectangular room 2 ", f, d, c, l, m);
+		
+		Entity entity = new Entity("Cube");
+		dao.create(entity);
+		Primitive prim = new Primitive(entity, Primitive.CUBE);
+		dao.create(prim);
 
 		dao.refresh(firstFloor);
 		for	(Room room : firstFloor.getRooms()){

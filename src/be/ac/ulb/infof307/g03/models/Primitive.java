@@ -7,8 +7,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.jme3.math.Vector3f;
 
 /**
- * @author brochape
- *
+ * A primitive shape used to build objects
+ * @author brochape, Titouan
  */
 public class Primitive extends Geometric {
 	public static String CUBE = "cube";
@@ -29,6 +29,12 @@ public class Primitive extends Geometric {
 	@DatabaseField
 	private double _rotationz = 0;
 	@DatabaseField
+	private double _scalex = 1;
+	@DatabaseField
+	private double _scaley = 1;
+	@DatabaseField
+	private double _scalez = 1;
+	@DatabaseField
 	private String _type = "";
 	
 	public Primitive(){
@@ -48,7 +54,17 @@ public class Primitive extends Geometric {
 	public final void setEntity(Entity ent){
 		_entity = ent;
 	}
-
+	
+	public final void setScale(Vector3f scale){
+		_scalex = scale.getX();
+		_scaley = scale.getY();
+		_scalez = scale.getZ();
+	}
+	
+	public final Vector3f getScale(){
+		return new Vector3f((float) _scalex, (float) _scaley, (float) _scalez);
+	}
+	
 	@Override
 	public String getUIDPrefix() {
 		return "prim";
