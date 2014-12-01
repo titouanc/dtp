@@ -188,7 +188,7 @@ public class TextureView extends JPanel implements ItemListener {
 			String filename=fileToMove.getName();
 			if (!(filename).equals("Add a new File...") && (filename.contains(".png"))){
 				if(fileToMove.renameTo(destinationMini)){
-					System.out.println("Your image has been added with success.");
+					Log.debug("Your image has been added with success.");
 					fileToMove.renameTo(destinationMini);
 					reScale(destinationMini); // Set image to 20x20 format
 					filename=filename.replace(".png","");
@@ -200,7 +200,7 @@ public class TextureView extends JPanel implements ItemListener {
 					texturesPanel.updateUI();
 				}
 				else{
-					System.out.println("The new texture has not been imported. Error.");
+					Log.debug("The new texture has not been imported. Error.");
 				}
 			}
 	    }

@@ -1,5 +1,6 @@
 package be.ac.ulb.infof307.g03.controllers;
 
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.TextureView;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -61,13 +62,13 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	public void actionPerformed(ActionEvent action) {
 		String cmd = action.getActionCommand();
 		if (cmd.equals(_CHANGETEXTURE)) {
-			System.out.println("fdp");
+			Log.debug("fdp");
 		}
 	}
 */
 	@Override
 	public void update(Observable obs, Object arg) {
-		System.out.println("UPDATE");
+		Log.debug("UPDATE");
 		if (obs instanceof Project){
 			Config conf = (Config) arg ;
 			if (conf.getName().equals("texture.mode") ){
@@ -82,10 +83,10 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	private void updateTextureMode(String value) {
 		if (value.equals("shown")){
 			_view.show();
-			System.out.println("SHOW");
+			Log.debug("SHOW");
 		}
 		else{
-			System.out.println("HIDE");
+			Log.debug("HIDE");
 
 			_view.hide();
 		}
