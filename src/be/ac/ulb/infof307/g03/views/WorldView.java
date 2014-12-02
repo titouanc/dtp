@@ -226,12 +226,8 @@ public class WorldView extends SimpleApplication implements Observer {
 	public void makeScene(final Entity entity) {
 		enqueue(new Callable<Object>() {
 	        public Object call() {
-	        	ForeignCollection<Primitive> primitives = entity.getPrimitives();
-	    		for (Primitive primitive : primitives) {
-	    			Log.debug("[DEBUG] Loading primitive");
-	    			Material mat = _makeBasicMaterial(ColorRGBA.Cyan/*_getColor(primitive)*/);
-	    			rootNode.attachChild(primitive.toSpatial(mat));
-	    		}
+	        	Material mat = _makeBasicMaterial(ColorRGBA.Cyan);
+	        	rootNode.attachChild(entity.toSpacial(mat));
 	            return null;
 	        }
 	    });
@@ -293,6 +289,13 @@ public class WorldView extends SimpleApplication implements Observer {
 			return;
 		Material material = _makeMaterial(roof);
 		rootNode.attachChild(roof.toSpatial(material));
+	}
+	
+	private void _drawPrimitive(Primitive primitive) {
+		if (! primitive.isVisible()) 
+			return;
+		Material mat = _makeMaterial(primitive);
+		rootNode.attachChild(primitive.toSpatial(mat));
 	}
 	
 	/**
@@ -361,6 +364,8 @@ public class WorldView extends SimpleApplication implements Observer {
 				_drawGround((Ground) meshable);
 			else if (meshable instanceof Roof)
 				_drawRoof((Roof) meshable);
+			else if (meshable instanceof Primitive)
+				_drawPrimitive((Primitive) meshable);
 		}
 		
 		/* Conclusion: updates will do both (detach & redraw) */
@@ -423,7 +428,7 @@ public class WorldView extends SimpleApplication implements Observer {
 				for (Change change : this.queuedChanges){
 					if (change.isDeletion())
 						rootNode.detachChildNamed(change.getItem().getUID());
-					else if (change.getItem() instanceof Area)
+					else if (change.getItem() instanceof Meshable)
 						_updateMeshable(change);
 					else if (change.getItem() instanceof Point)
 						_updatePoint(change);
