@@ -10,6 +10,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.collision.CollisionResults;
@@ -200,7 +201,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
                 // Get associated Geometric from database
                 return dao.getByUID(selected.getName());
             } catch (SQLException e1) {
-            	e1.printStackTrace();
+            	Log.exception(e1);
             }
         }
         return null;
@@ -225,7 +226,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         		this.movingPoint = null;
         	dao.notifyObservers();
         } catch (SQLException err){
-        	err.printStackTrace();
+        	Log.exception(err);
         }
     }
     
@@ -273,8 +274,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	            String floorUID = meshable.getRoom().getFloor().getUID();
 	            if (! this.project.config("floor.current").equals(floorUID))
 	            	this.project.config("floor.current", floorUID);
-	        } catch (SQLException e) {
-	            e.printStackTrace();
+	        } catch (SQLException ex) {
+	        	Log.exception(ex);
 	        }
 	    }
 
@@ -299,7 +300,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         	}
         	dao.notifyObservers();
         } catch (SQLException err){
-        	err.printStackTrace();
+        	Log.exception(err);
         }
 		this.inConstruction.add(lastPoint);
     }
@@ -325,8 +326,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	    		dao.notifyObservers();
 	    	}
 	    	this.inConstruction.clear();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
     }
     
@@ -351,9 +352,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			primitive.setScale(this.builtGeometric.getLocalScale());
 			primitive.setTranslation(this.builtGeometric.getLocalTranslation());
 			dao.update(primitive);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
     	
     	
@@ -416,9 +416,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			Primitive primitive = new Primitive(this.currentEntity,Primitive.SPHERE);
 			dao.create(primitive);
 			this.builtGeometric = new Geometry(primitive.getUID(), sphere);
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
     	this.savedCenter = getXYForMouse(0f);
 		
@@ -439,9 +438,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			Primitive primitive = new Primitive(this.currentEntity,Primitive.CUBE);
 			dao.create(primitive);
 			this.builtGeometric = new Geometry(primitive.getUID(), box);
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
     	
     	this.savedCenter = getXYForMouse(0f);
@@ -490,9 +488,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 					if (clicked instanceof Meshable){
 						try {
 							setTexture((Meshable)clicked,this.project.config("texture.selected"));
-						} catch (SQLException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						} catch (SQLException ex) {
+							Log.exception(ex);
 						}
 						
 					}
@@ -527,17 +524,16 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 					return;
 				try {
 					this.currentFloor = (Floor) this.project.getGeometryDAO().getByUID(config.getValue());
-				} catch (SQLException e) {
-					e.printStackTrace();
+				} catch (SQLException ex) {
+					Log.exception(ex);
 				}
 			} else if (config.getName().equals("mouse.mode")) {
 				this.mouseMode = config.getValue();
 			} else if (config.getName().equals("entity.current")) {
 				try {
 					this.currentEntity = (Entity) this.project.getGeometryDAO().getByUID(config.getValue());
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (SQLException ex) {
+					Log.exception(ex);
 				}
 			}
 		}
