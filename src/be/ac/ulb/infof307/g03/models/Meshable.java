@@ -1,7 +1,11 @@
 package be.ac.ulb.infof307.g03.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
+import com.jme3.material.RenderState.FaceCullMode;
+import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Spatial;
 
 public abstract class Meshable extends Geometric {
@@ -92,10 +96,39 @@ public abstract class Meshable extends Geometric {
 	protected abstract String innerToString();
 
 	/**
-	 * @param material TODO
-	 * @return Return a new Spatial object, that could be attached to a jMonkey context.
+	 * Convert a meshable object into a jmonkey mesh-like
+	 * @param material The material to be applied to the result mesh
+	 * @return A new Spatial object, that could be attached to a jMonkey context.
 	 * @note The Spatial name is the Meshable UID.
 	 */
 	public abstract Spatial toSpatial(Material material);
+	
+	private final Material loadTexture(AssetManager assetManager){
+		if (texture.equals("Gray")){
+			texture = "Colors/Gray";
+		}
+		Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		mat.setBoolean("UseMaterialColors", true);
+		ColorRGBA color = new ColorRGBA(ColorRGBA.Gray);
+		mat.setColor("Diffuse", color);
+		mat.setColor("Ambient", color);
+		mat.setColor("Specular",color); 
+		if (isSelected()){
+			mat.setColor("Ambient",new ColorRGBA(0f, 1.2f, 0f, 0.33f));
+		}
+		mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
+		return mat;
+	}
+	
+	/**
+	 * Load texture, then toSpatial(Material)
+	 * @param assetManager an assetManager to load textures
+	 * @return A new Spatial object, that could be attached to a jMonkey context.
+	 */
+	public Spatial toSpatial(AssetManager assetManager){
+		return this.toSpatial(loadTexture(assetManager));
+	}
 
 }
