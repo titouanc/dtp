@@ -211,6 +211,9 @@ public class WorldView extends SimpleApplication implements Observer {
 							if (room.getRoof() != null)
 								_drawRoof(room.getRoof());
 						}
+						for (Item item : floor.getItems()){
+							_drawItem(item);
+						}
 					}
 				} catch (SQLException ex) {
 					Log.exception(ex);
@@ -223,7 +226,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	public void makeScene(final Entity entity) {
 		enqueue(new Callable<Object>() {
 	        public Object call() {
-	        	drawEntity(entity);
+	        	_drawEntity(entity);
 	            return null;
 	        }
 	    });
@@ -266,6 +269,13 @@ public class WorldView extends SimpleApplication implements Observer {
 		_attachAxis(origin, zAxis,ColorRGBA.Blue);
 	}
 	
+	private void _drawItem(Item item) {
+		Node asNode = createEntityNode(item.getEntity());
+		asNode.setLocalTranslation(item.getAbsolutePositionVector());
+		rootNode.attachChild(asNode);
+		Log.debug("Draw Item %s", item.getUID());
+	}
+	
 	private void _drawWall(Wall wall){
 		if (! wall.isVisible())
 			return;
@@ -287,13 +297,23 @@ public class WorldView extends SimpleApplication implements Observer {
 		rootNode.attachChild(roof.toSpatial(material));
 	}
 	
-	private void drawEntity(Entity entity) {
-		Node ent = new Node(entity.getUID());
+	private Node createEntityNode(Entity entity){
+		try {
+			dao.refresh(entity);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		Node res = new Node(entity.getUID());
 		for (Primitive primitive : entity.getPrimitives()) {
 			Material mat = _makeMaterial(primitive);
-			ent.attachChild(primitive.toSpatial(mat));
+			res.attachChild(primitive.toSpatial(mat));
 		}
-		rootNode.attachChild(ent);
+		return res;
+	}
+	
+	private void _drawEntity(Entity entity) {
+		rootNode.attachChild(createEntityNode(entity));
+		Log.debug("Draw Entity %s", entity.getUID());
 	}
 	
 	private void drawPrimitive(Primitive primitive) {
