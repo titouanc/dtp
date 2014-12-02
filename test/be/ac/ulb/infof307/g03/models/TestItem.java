@@ -33,7 +33,7 @@ public class TestItem extends DAOTest {
 
 	@Test(expected=SQLException.class)
 	public void test_notnull_constraint() throws SQLException{
-		Item item = new Item();
+		Item item = new Item(null, ent);
 		dao.create(item);
 	}
 	
