@@ -107,8 +107,8 @@ public class ToolsBarController implements ActionListener, Observer {
 	    		_project.config("floor.current", nextFloor.getUID());
 	    	else
 	    		JOptionPane.showMessageDialog(_view, "No floor above");
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
     }
     
@@ -126,8 +126,8 @@ public class ToolsBarController implements ActionListener, Observer {
 	    		_project.config("floor.current", prevFloor.getUID());
 	    	else
 	    		JOptionPane.showMessageDialog(_view, "No floor below");
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
     }
     
@@ -139,8 +139,8 @@ public class ToolsBarController implements ActionListener, Observer {
 			GeometryDAO dao = _project.getGeometryDAO();
 			dao.createFloorOnTop(7);
 	    	dao.notifyObservers();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
     }
     

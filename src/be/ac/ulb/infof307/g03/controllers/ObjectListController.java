@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.ObjectListView;
 
 /**
@@ -30,9 +31,8 @@ public class ObjectListController implements MouseListener {
 		this.project = project;
 		try {
 			this.dao = project.getGeometryDAO();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
 	}
 	
@@ -62,9 +62,8 @@ public class ObjectListController implements MouseListener {
 			try {
 				this.dao.create(entity);
 				this.dao.notifyObservers();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (SQLException ex) {
+				Log.exception(ex);
 			}
 			this.project.config("entity.current", entity.getUID());
 			this.project.config("edition.mode", "object");
@@ -80,9 +79,8 @@ public class ObjectListController implements MouseListener {
 		try {
 			this.dao.delete(entity);
 			this.dao.notifyObservers();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
 	}
 	
@@ -92,9 +90,8 @@ public class ObjectListController implements MouseListener {
 			try {
 				this.dao.update(entity);
 				this.dao.notifyObservers();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (SQLException ex) {
+				Log.exception(ex);
 			}
 		}
 	}

@@ -45,7 +45,7 @@ public class Main {
 				try {
 					new GUI(proj);
 				} catch (SQLException sqlEx) {
-					Log.exception(sqlEx,"SQLException in GUI");
+					Log.exception(sqlEx);
 				}
 			}
 		});
