@@ -25,7 +25,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 	
 /**
@@ -54,7 +58,7 @@ public class TextureView extends JPanel implements ItemListener {
 
 	static private JList colorList   = new JList();
 	static private JPanel texturesPanel = new JPanel();
-	private String classPath= getClass().getResource("WorldView.class").toString();
+	private String classPath= getClass().getResource("TextureView.class").toString();
 	
     private JPanel cards; //a panel that uses CardLayout 
     
@@ -109,22 +113,39 @@ public class TextureView extends JPanel implements ItemListener {
         
     }
 	
+    private static String process(Object obj) {
+        JarEntry entry = (JarEntry)obj;
+        String name = entry.getName();
+        return name;
+      }
 	/**
 	 * Get all files from a directory
 	 */
 	private void addAllFiles(){
-		if(classPath.subSequence(0, 3).equals("rsr")){			
-    		File[] files = new File("/").listFiles(); 
-    		for (File file : files) {
-    		    if (file.isFile()) {
-    		    	if (file.toString().contains("Color")){
-    		    		this.colorFiles.add(file.getName().replace(".png", ""));
+		if(classPath.subSequence(0, 3).equals("rsr")){	
+			JarFile jarFile;
+			String filename;
+			try {
+				String file;
+				jarFile = new JarFile("HomePlans.jar");
+			    Enumeration ta = jarFile.entries();
+			    while (ta.hasMoreElements()) {
+			    	file=process(ta.nextElement());
+			    	if (file.contains("Color") && !(file.contains("/"))){
+			    		filename=file.replace(".png", "");
+			    		filename=filename.replace("Color", "");
+    		    		this.colorFiles.add(filename);    		    		
     		    	}
-    		    	else if(file.toString().contains("Full")){
-    		    		this.textureFiles.add(file.getName().replace(".png", ""));
+    		    	else if(file.contains("Full")){
+    		    		filename=file.replace("Full","");
+    		    		filename=filename.replace(".png", "");
+    		    		this.textureFiles.add(filename);
     		    	}
-    		    }
-    		}
+			     }			  
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		    
     	} else {
     		File[] files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Colors/").listFiles(); 
     		for (File file : files) {
@@ -337,26 +358,35 @@ public class TextureView extends JPanel implements ItemListener {
 	            int index,
 	            boolean selected,
 	            boolean expanded) {
-	    	String prefix = "";
+	    	String prefix = "/";
 	    	Icon imageIcon;
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
-	    		prefix = "/";
 	    		if (list.equals(textureList)){
-	    			imageIcon = new ImageIcon(prefix +value.toString());
+	    			if (!(value.toString()==ADDTEXTURE)){
+	    				imageIcon = new ImageIcon(getClass().getResource(prefix+value.toString()+".png"));
+	    			}
+	    			else{
+	    				imageIcon = new ImageIcon(getClass().getResource(prefix+"addFile.png"));
+	    			}
 	    		}
 	    		else{
-	    			imageIcon = new ImageIcon(prefix +value.toString());
-
+	    			imageIcon = new ImageIcon(getClass().getResource(prefix+value.toString()+"Color.png"));
 	    		}
 	    	} else {
 	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/";
-	    		if (list.equals(textureList)){
-	    			prefix = prefix.concat("Textures/");
-	    			imageIcon = new ImageIcon(prefix + value.toString()+".png" );
+	    		if (list.equals(textureList)){	    			
+	    			if (!(value.toString()==ADDTEXTURE)){
+	    				prefix = prefix+"Textures/";
+		    			imageIcon = new ImageIcon(prefix+value.toString()+".png" );
+	    			}
+	    			else{
+	    				prefix=prefix+"Tools/";
+		    			imageIcon = new ImageIcon(prefix+"addFile.png" );
+	    			}
 	    		}
 	    		else{
-	    			prefix = prefix.concat("Colors/");
-	    			imageIcon = new ImageIcon(prefix + value.toString()+"Color.png");
+	    			prefix = prefix+"Colors/";
+	    			imageIcon = new ImageIcon(prefix+value.toString()+"Color.png");
 	    		}
 	    		
 	    	}

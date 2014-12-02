@@ -191,8 +191,13 @@ public class WorldView extends SimpleApplication implements Observer {
 		if (mesh.isSelected()){
 			res.setColor("Ambient",new ColorRGBA(0f,1.2f,0f, 0.5f));
 		}
-		if(classPath.subSequence(0, 3).equals("rsr")){	
-			texture=texture.replace("Colors/", "");
+		if(classPath.subSequence(0, 3).equals("rsr")){
+			if (texture.contains("Colors/")){
+				texture=texture.replace("Colors/", "");
+			}
+			else if (texture.contains("Textures/Full")){
+				texture=texture.replace("Textures/Full/","");
+			}
 			res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		}
 		else{
