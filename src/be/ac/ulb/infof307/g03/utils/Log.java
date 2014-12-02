@@ -84,4 +84,8 @@ public class Log {
     public static void error(String msg, Object...args){
     	getLogger().log(Level.SEVERE, String.format(msg, args));
     }
+    
+    public static void exception(Exception ex, String msg,  Object...args){
+    	getLogger().log(Level.SEVERE, String.format(msg, ex.getMessage(), args));
+    }
 }

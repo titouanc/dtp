@@ -38,14 +38,14 @@ public class Main {
 		// Enqueue a new GUI in main dispatcher
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){
+				BootController bc = new BootController();
+				Project proj = bc.initProject();
+				if (proj == null)
+					Log.error("Unable to initialize project !");
 				try {
-					BootController bc = new BootController();
-					Project proj = bc.initProject();
-					if (proj == null)
-						Log.error("Unable to initialize project !");
 					new GUI(proj);
-				} catch (SQLException e) {
-					e.printStackTrace();
+				} catch (SQLException sqlEx) {
+					Log.exception(sqlEx,"SQLException in GUI");
 				}
 			}
 		});
