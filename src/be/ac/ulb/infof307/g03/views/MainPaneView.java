@@ -24,19 +24,19 @@ import be.ac.ulb.infof307.g03.models.Project;
  */
 public class MainPaneView extends JPanel {
 	
-	private MainPaneController _controller;
+	private MainPaneController controller;
 	
 	private static final long serialVersionUID = 1L;
 	
-	private JScrollPane _textureScrollPane;
+	private JScrollPane textureScrollPane;
 
-	private JSplitPane _hSplitPane, _vSplitPane;
-	private JScrollPane _worldListScrollPane;
-	private JScrollPane _objectListScrollPane;
-	private ObjectListController _objectList;
+	private JSplitPane hSplitPane, vSplitPane;
+	private JScrollPane worldListScrollPane;
+	private JScrollPane objectListScrollPane;
+	private ObjectListController objectList;
 
-	private ObjectTreeController _objectTree;
-	private TextureController _texture ;
+	private ObjectTreeController objectTree;
+	private TextureController texture ;
 	
 	
 	/**
@@ -49,53 +49,53 @@ public class MainPaneView extends JPanel {
 	public MainPaneView(MainPaneController newController, Project project, Canvas canvas){
 		super(new BorderLayout());
 		
-		_controller = newController;
+		this.controller = newController;
         
         // Create the object list
-        _objectList = new ObjectListController(project);
-        _objectList.run();
+        this.objectList = new ObjectListController(project);
+        this.objectList.run();
 
 		// Create an object tree
-        _objectTree = new ObjectTreeController(project);
-        _objectTree.run();
+        this.objectTree = new ObjectTreeController(project);
+        this.objectTree.run();
 
         
-        _texture = new TextureController(project);
-        _texture.run();
+        this.texture = new TextureController(project);
+        this.texture.run();
         
         Dimension listScrollPaneDimension = new Dimension(150,480);
         Dimension textureScrollPaneDimension = new Dimension(150,480);
 
-        _worldListScrollPane = new JScrollPane(_objectTree.getView()); 
+        this.worldListScrollPane = new JScrollPane(this.objectTree.getView()); 
         // Set up resize behavior
-        _worldListScrollPane.setMinimumSize(listScrollPaneDimension);
-        _worldListScrollPane.setPreferredSize(listScrollPaneDimension);
+        this.worldListScrollPane.setMinimumSize(listScrollPaneDimension);
+        this.worldListScrollPane.setPreferredSize(listScrollPaneDimension);
         
-        _objectListScrollPane = new JScrollPane(_objectList.getView());
+        this.objectListScrollPane = new JScrollPane(this.objectList.getView());
         // Set up resize behavior
-        _objectListScrollPane.setMinimumSize(listScrollPaneDimension);
-        _objectListScrollPane.setPreferredSize(listScrollPaneDimension);
+        this.objectListScrollPane.setMinimumSize(listScrollPaneDimension);
+        this.objectListScrollPane.setPreferredSize(listScrollPaneDimension);
         
 	     // Create split pane
-	     _vSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,_worldListScrollPane,_objectListScrollPane);
+	     this.vSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,this.worldListScrollPane,this.objectListScrollPane);
 	     // Set up split pane
-	     _vSplitPane.setDividerLocation(240);
-	     _vSplitPane.setBorder(null);
+	     this.vSplitPane.setDividerLocation(240);
+	     this.vSplitPane.setBorder(null);
         
         // Create split pane
-		_hSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,_vSplitPane,canvas);
+		this.hSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.vSplitPane,canvas);
 		// Set up split pane
-		_hSplitPane.setDividerLocation(150);
-		_hSplitPane.setBorder(null);
+		this.hSplitPane.setDividerLocation(150);
+		this.hSplitPane.setBorder(null);
 		
         // Create right menu
-        _textureScrollPane = new JScrollPane (_texture.getView());
-        _textureScrollPane.setMinimumSize(textureScrollPaneDimension);
-        _textureScrollPane.setPreferredSize(textureScrollPaneDimension);
+        this.textureScrollPane = new JScrollPane (this.texture.getView());
+        this.textureScrollPane.setMinimumSize(textureScrollPaneDimension);
+        this.textureScrollPane.setPreferredSize(textureScrollPaneDimension);
         
 		// add the splitpane to the inherited Jpanel
-		add(_hSplitPane);
-		add(_textureScrollPane, BorderLayout.EAST);
+		add(this.hSplitPane);
+		add(this.textureScrollPane, BorderLayout.EAST);
 	}
 
 }

@@ -34,7 +34,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		public JToggleButton _worldButton, _objectButton, _cursorButton, _handButton, _rotateButton;
+		public JToggleButton worldButton, objectButton, cursorButton, handButton, rotateButton;
 		
 		NavigationModule() {
 			super();
@@ -59,23 +59,23 @@ public class ToolsBarView extends JToolBar implements Observer  {
 	    		objectIcon   = new ImageIcon(prefix + "object.png");
 	    	}
 	    	
-	    	_worldButton = createJToggleButton(worldIcon, ToolsBarController.WORLD, "Switch to the world mode.");
-	    	_objectButton = createJToggleButton(objectIcon, ToolsBarController.OBJECT, "Switch to the object mode.");
+	    	this.worldButton = createJToggleButton(worldIcon, ToolsBarController.WORLD, "Switch to the world mode.");
+	    	this.objectButton = createJToggleButton(objectIcon, ToolsBarController.OBJECT, "Switch to the object mode.");
 	    	
 	    	// Restore mode
 	    	String editionMode = _project.config("edition.mode");
 	    	if (editionMode.equals("object")) {
-	    		_objectButton.setSelected(true);
+	    		this.objectButton.setSelected(true);
 	    	} else {
-	    		_worldButton.setSelected(true);
+	    		this.worldButton.setSelected(true);
 	    	}
 	    	
 	    	ButtonGroup buttonGroup = new ButtonGroup();
-	    	buttonGroup.add(_worldButton);
-	    	buttonGroup.add(_objectButton);
+	    	buttonGroup.add(this.worldButton);
+	    	buttonGroup.add(this.objectButton);
 	    	
-	    	this.add(_worldButton);
-	    	this.add(_objectButton);
+	    	this.add(this.worldButton);
+	    	this.add(this.objectButton);
 
 		}
 		
@@ -129,29 +129,29 @@ public class ToolsBarView extends JToolBar implements Observer  {
 	    	}
 	    	
 	    	//Creates the buttons
-	    	_cursorButton = createJToggleButton(cursorIcon, ToolsBarController.CURSOR, "Move element") ;
-	    	_handButton = createJToggleButton(grabIcon, ToolsBarController.HAND, "Move screen"); 
-	    	_rotateButton = createJToggleButton(rotateIcon, ToolsBarController.ROTATE, "Rotate the screen");
+	    	this.cursorButton = createJToggleButton(cursorIcon, ToolsBarController.CURSOR, "Move element") ;
+	    	this.handButton = createJToggleButton(grabIcon, ToolsBarController.HAND, "Move screen"); 
+	    	this.rotateButton = createJToggleButton(rotateIcon, ToolsBarController.ROTATE, "Rotate the screen");
 
 	    	//Creates the button group (so that there's only one button "selected" at a time
 	        ButtonGroup buttonGroup = new ButtonGroup();
-	        buttonGroup.add(_cursorButton);
-	        buttonGroup.add(_handButton);
-	        buttonGroup.add(_rotateButton);
+	        buttonGroup.add(this.cursorButton);
+	        buttonGroup.add(this.handButton);
+	        buttonGroup.add(this.rotateButton);
 	        
 	        // restore mouse mode / restore button selection
 	        String mouseMode = _project.config("mouse.mode");
 	        if (mouseMode.equals("dragRotate")) {
-	        	_rotateButton.setSelected(true);
+	        	this.rotateButton.setSelected(true);
 	        } else if (mouseMode.equals("dragMove")) {
-	        	_handButton.setSelected(true);
+	        	this.handButton.setSelected(true);
 	    	} else {
-	    		_cursorButton.setSelected(true);
+	    		this.cursorButton.setSelected(true);
 	    	}
 
-	        add(_cursorButton);
-	        add(_handButton);
-	        add(_rotateButton);
+	        add(this.cursorButton);
+	        add(this.handButton);
+	        add(this.rotateButton);
 	        addSeparator();
 	    }
 		
@@ -293,19 +293,19 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	bg.add(_objectEditionModule._cubeButton);
     	bg.add(_objectEditionModule._sphereButton);
     	bg.add(_worldEditionModule._createButton);
-    	bg.add(_navigationModule._cursorButton);
-    	bg.add(_navigationModule._handButton);
-    	bg.add(_navigationModule._rotateButton);
+    	bg.add(_navigationModule.cursorButton);
+    	bg.add(_navigationModule.handButton);
+    	bg.add(_navigationModule.rotateButton);
     }
     
     public void setWorldModeSelected() {
 		Log.debug("Switch to world mode");
-    	_navigationModule._worldButton.setSelected(true);
+    	_navigationModule.worldButton.setSelected(true);
     }
     
     public void setObjectModeSelected() {
     	Log.debug("Switch to object mode");
-    	_navigationModule._objectButton.setSelected(true);
+    	_navigationModule.objectButton.setSelected(true);
     }
 
 	/**

@@ -18,7 +18,7 @@ import be.ac.ulb.infof307.g03.controllers.MenuBarController;
 public class MenuBarView extends JMenuBar {
 	private static final long serialVersionUID = 1L;
 	
-	private MenuBarController _controller;
+	private MenuBarController controller; 
 	
 	/**
 	 * Constructor of the class MenuBar
@@ -28,7 +28,7 @@ public class MenuBarView extends JMenuBar {
     public MenuBarView(MenuBarController newController) {
     	super();
     	
-    	_controller = newController;
+    	this.controller = newController;
     	
         JMenu menu;
         
@@ -75,7 +75,7 @@ public class MenuBarView extends JMenuBar {
     	menuItem = new JMenuItem(label, keyEvent);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(keyEvent, ActionEvent.CTRL_MASK));
         menuItem.getAccessibleContext().setAccessibleDescription(descr);
-        menuItem.addActionListener(_controller);
+        menuItem.addActionListener(this.controller);
         menuItem.setActionCommand(cmd);
     	return menuItem;
     }

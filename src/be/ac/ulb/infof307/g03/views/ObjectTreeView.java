@@ -39,20 +39,20 @@ public class ObjectTreeView extends JTree implements Observer {
 	private static final long serialVersionUID = 1L;
 	
 	// Attribute
-	private ObjectTreeController _controller;
-	private Project _project;
-	private GeometryDAO _dao;
-	private static DefaultMutableTreeNode _root = new DefaultMutableTreeNode("Root");
-	private Map<String,DefaultMutableTreeNode> _nodes = new HashMap<String,DefaultMutableTreeNode>();
+	private ObjectTreeController controller;
+	private Project project;
+	private GeometryDAO dao;
+	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+	private Map<String,DefaultMutableTreeNode> nodes = new HashMap<String,DefaultMutableTreeNode>();
 		
 	// Action alias
-	static private final String _RENAME  		 = "Rename" ;
-	static private final String _DELETE 		 = "Delete";
-	static private final String _HIDE   		 = "Hide";
-	static private final String _SHOW   		 = "Show";
-	static private final String _WIDTH   		 = "Width";
-	static private final String _HEIGHT	 		 = "Height";
-	static private final String _CHANGETEXTURE	 = "Change Texture";
+	static private final String RENAME  		 = "Rename" ;
+	static private final String DELETE 		 = "Delete";
+	static private final String HIDE   		 = "Hide";
+	static private final String SHOW   		 = "Show";
+	static private final String WIDTH   		 = "Width";
+	static private final String HEIGHT	 		 = "Height";
+	static private final String CHANGETEXTURE	 = "Change Texture";
 	
 	/**
 	 * This class implements a ActionListener to be 
@@ -69,29 +69,29 @@ public class ObjectTreeView extends JTree implements Observer {
 			String cmd = event.getActionCommand();
 			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
 	        Geometric clickedItem = (Geometric) clickedNode.getUserObject();
-			if (cmd.equals(_RENAME)) {
+			if (cmd.equals(RENAME)) {
 				String name = JOptionPane.showInputDialog("New name ?");
-				_controller.renameNode(clickedItem, name);
-			} else if (cmd.equals(_DELETE)) {
-				_controller.deselectElement(clickedItem);
-				_controller.deleteNode(clickedItem);
-			} else if (cmd.equals(_SHOW)){
-				_controller.showGrouped((Meshable) clickedItem);
-			} else if (cmd.equals(_HIDE)){
-				_controller.hideGrouped((Meshable) clickedItem);
-			} else if (cmd.equals(_WIDTH)){
+				controller.renameNode(clickedItem, name);
+			} else if (cmd.equals(DELETE)) {
+				controller.deselectElement(clickedItem);
+				controller.deleteNode(clickedItem);
+			} else if (cmd.equals(SHOW)){
+				controller.showGrouped((Meshable) clickedItem);
+			} else if (cmd.equals(HIDE)){
+				controller.hideGrouped((Meshable) clickedItem);
+			} else if (cmd.equals(WIDTH)){
 				String userInput = JOptionPane.showInputDialog("Width ?");
-				_controller.setWidth((Wall) clickedItem, userInput);
-			} else if (cmd.equals(_HEIGHT)){
+				controller.setWidth((Wall) clickedItem, userInput);
+			} else if (cmd.equals(HEIGHT)){
 				String userInput = JOptionPane.showInputDialog("Height ?");
-				_controller.setHeight((Floor) clickedItem, userInput);
+				controller.setHeight((Floor) clickedItem, userInput);
 			}
-			else if (cmd.equals(_CHANGETEXTURE)){
-				String currentTexture=_project.config("texture.selected");
+			else if (cmd.equals(CHANGETEXTURE)){
+				String currentTexture=project.config("texture.selected");
 				// On va assigner à l'objet cliqué la texture sélectionnée
 				if (clickedItem instanceof Meshable){
 					try {
-						_controller.setTexture((Meshable)clickedItem,currentTexture);
+						controller.setTexture((Meshable)clickedItem,currentTexture);
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
@@ -127,7 +127,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				sel = item.isSelected();
 			} else if (value instanceof Floor){
 				Floor fl = (Floor) value;
-				sel = _project.config("floor.current").equals(fl.getUID());
+				sel = project.config("floor.current").equals(fl.getUID());
 			}
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 			return this;
@@ -139,7 +139,7 @@ public class ObjectTreeView extends JTree implements Observer {
 		res.setUserObject(item);
 		boolean hasChildren = (item instanceof Room || item instanceof Floor);
 		res.setAllowsChildren(hasChildren);
-		_nodes.put(item.getUID(), res);
+		this.nodes.put(item.getUID(), res);
 		return res;
 	}
 	
@@ -155,20 +155,20 @@ public class ObjectTreeView extends JTree implements Observer {
 	
 	public void createTree() throws SQLException{
 		Log.debug("createTree");
-		_root.removeAllChildren();
-		for (Floor floor : _dao.getFloors()){
+		root.removeAllChildren();
+		for (Floor floor : this.dao.getFloors()){
 			DefaultMutableTreeNode floorNode = _createNode(floor);
-			for (Room room : _dao.getRooms(floor))
+			for (Room room : this.dao.getRooms(floor))
 				floorNode.add(_createTree(room));
-			_root.add(floorNode);
+			root.add(floorNode);
 		}
 	}
 	
 	public void clearTree() {
 		Log.debug("clearTree");
-		for (DefaultMutableTreeNode node : _nodes.values()) {
+		for (DefaultMutableTreeNode node : this.nodes.values()) {
 			node.removeFromParent();
-			_nodes.remove(node);
+			this.nodes.remove(node);
 		}
 	}
 	
@@ -191,18 +191,18 @@ public class ObjectTreeView extends JTree implements Observer {
 		PopupListener listener = new PopupListener();
 		JPopupMenu res = new JPopupMenu();
 		
-		res.add(createJMenuItem(_DELETE, _DELETE, listener));
+		res.add(createJMenuItem(DELETE, DELETE, listener));
 		if (geo instanceof Room){
-			res.add(createJMenuItem(_RENAME, _RENAME, listener));
+			res.add(createJMenuItem(RENAME, RENAME, listener));
 		} else if (geo instanceof Meshable){
-			String action = ((Meshable) geo).isVisible() ? _HIDE : _SHOW;
+			String action = ((Meshable) geo).isVisible() ? HIDE : SHOW;
 			res.add(createJMenuItem(action, action, listener));
 			if (geo instanceof Wall){
-				res.add(createJMenuItem("Edit width", _WIDTH, listener));
+				res.add(createJMenuItem("Edit width", WIDTH, listener));
 			}
-			res.add(createJMenuItem("Change Texture",_CHANGETEXTURE,listener));
+			res.add(createJMenuItem("Change Texture",CHANGETEXTURE,listener));
 		} else if (geo instanceof Floor){
-			res.add(createJMenuItem(_HEIGHT, _HEIGHT, listener));
+			res.add(createJMenuItem(HEIGHT, HEIGHT, listener));
 		}
 		
 		return res;
@@ -214,14 +214,14 @@ public class ObjectTreeView extends JTree implements Observer {
 	 * @param project 
 	 */
 	public ObjectTreeView(ObjectTreeController newController, Project project) {
-		super(_root);
+		super(root);
 		
-		_controller = newController;
-		_project = project;
+		controller = newController;
+		this.project = project;
 		
 		try {
-			_dao = project.getGeometryDAO();
-			_dao.addObserver(this);
+			this.dao = project.getGeometryDAO();
+			this.dao.addObserver(this);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
@@ -231,14 +231,14 @@ public class ObjectTreeView extends JTree implements Observer {
 		setCellRenderer(new GeometricRenderer());
 		
 		// Listen for when the selection changes
-		addTreeSelectionListener(_controller);
+		addTreeSelectionListener(controller);
 		setRootVisible(false);
 		setShowsRootHandles(true);
 
 		// add the mouse listener to the tree
-		addMouseListener(_controller);
+		addMouseListener(controller);
 		// add key listener
-		addKeyListener(_controller);
+		addKeyListener(controller);
 		
 	}
 	
@@ -259,14 +259,14 @@ public class ObjectTreeView extends JTree implements Observer {
 			Geometric changed = change.getItem();
 			
 			try {
-				_dao.refresh(changed);
+				this.dao.refresh(changed);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 			
 			/* An object has been update: update the linked object in TreeView */
 			if (change.isUpdate()){
-				DefaultMutableTreeNode node = _nodes.get(changed.getUID());
+				DefaultMutableTreeNode node = this.nodes.get(changed.getUID());
 				if (node != null){
 					node.setUserObject(changed);
 					refreshUI(node);
@@ -275,16 +275,16 @@ public class ObjectTreeView extends JTree implements Observer {
 			
 			/* An object has been deleted: remove from tree */
 			else if (change.isDeletion()){
-				DefaultMutableTreeNode node = _nodes.get(changed.getUID());
+				DefaultMutableTreeNode node = this.nodes.get(changed.getUID());
 				if (node != null){
 					TreeNode parentNode = node.getParent();
 					node.removeFromParent();
-					_nodes.remove(node);
+					this.nodes.remove(node);
 					refreshUI(parentNode);
 				}
 			}
 			/* Creation: insert in right place in tree */
-			else if (change.isCreation() && ! _nodes.containsKey(changed.getUID())){
+			else if (change.isCreation() && ! this.nodes.containsKey(changed.getUID())){
 				if (! isShown(changed))
 					continue;
 				
@@ -295,10 +295,10 @@ public class ObjectTreeView extends JTree implements Observer {
 					continue;
 				}
 				
-				DefaultMutableTreeNode parentNode = _root;
+				DefaultMutableTreeNode parentNode = root;
 				if (changed instanceof Room){
 					Room room = (Room) changed;
-					parentNode = _nodes.get(room.getFloor().getUID());
+					parentNode = this.nodes.get(room.getFloor().getUID());
 					parentNode.add(newNode);
 					refreshUI(parentNode);
 				}
