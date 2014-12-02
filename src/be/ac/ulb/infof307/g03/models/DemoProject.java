@@ -5,6 +5,8 @@ package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
 
+import com.jme3.math.Vector3f;
+
 
 /**
  * @author pierre
@@ -64,6 +66,10 @@ public class DemoProject {
 		for	(Room room : firstFloor.getRooms()){
 			showRoof(room,dao); // nothing on the top of this room
 		}
+		
+		Item placedObject = new Item(firstFloor, entity);
+		placedObject.setPosition(new Vector3f(-10, -10, 3));
+		dao.create(placedObject);
 		
 		dao.notifyObservers();
 		return proj;

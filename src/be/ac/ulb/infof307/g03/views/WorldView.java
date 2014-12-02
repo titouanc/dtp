@@ -18,7 +18,6 @@ import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.AssetLocator;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
@@ -37,8 +36,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.texture.Texture;
-import com.jme3.texture.Texture.WrapMode;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -68,8 +65,8 @@ public class WorldView extends SimpleApplication implements Observer {
 		try {
 			this.dao= project.getGeometryDAO();
 			this.dao.addObserver(this);
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
 		this.setDisplayStatView(false);
 		this.project.addObserver(this);
@@ -167,6 +164,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	/**
+<<<<<<< HEAD
 	 * Create the materials with their texture
 	 * @param mesh
 	 * @param texture
@@ -207,6 +205,8 @@ public class WorldView extends SimpleApplication implements Observer {
 	 }
 
 	/**
+=======
+>>>>>>> refs/remotes/origin/stage
 	 * Redraw the entire 3D scene
 	 */
 	public void makeScene(){
@@ -223,17 +223,19 @@ public class WorldView extends SimpleApplication implements Observer {
 	    		
 	    		try {
 					for (Floor floor : dao.getFloors()){
+						/* Draw rooms areas */
 						for (Room room : floor.getRooms()){
-							if (room.getGround() != null)
-								_drawGround(room.getGround());
-							if (room.getWall() != null)
-								_drawWall(room.getWall());
-							if (room.getRoof() != null)
-								_drawRoof(room.getRoof());
+							for (Meshable meshable : room.getMeshables()){
+								drawMeshable(rootNode,meshable);
+							}
+						}
+						/* Draw objects */
+						for (Item item : floor.getItems()){
+							drawMeshable(rootNode, item);
 						}
 					}
-				} catch (SQLException e) {
-					e.printStackTrace();
+				} catch (SQLException ex) {
+					Log.exception(ex);
 				}
 	            return null;
 	        }
@@ -243,12 +245,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	public void makeScene(final Entity entity) {
 		enqueue(new Callable<Object>() {
 	        public Object call() {
-	        	ForeignCollection<Primitive> primitives = entity.getPrimitives();
-	    		for (Primitive primitive : primitives) {
-	    			Log.debug("[DEBUG] Loading primitive");
-	    			Material mat = _makeBasicMaterial(ColorRGBA.Cyan/*_getColor(primitive)*/);
-	    			rootNode.attachChild(primitive.toSpatial(mat));
-	    		}
+	        	drawMeshable(rootNode, entity);
 	            return null;
 	        }
 	    });
@@ -291,25 +288,11 @@ public class WorldView extends SimpleApplication implements Observer {
 		_attachAxis(origin, zAxis,ColorRGBA.Blue);
 	}
 	
-	private void _drawWall(Wall wall){
-		if (! wall.isVisible())
+	private void drawMeshable(Node parent, Meshable meshable){
+		if (! meshable.isVisible())
 			return;
-		Material material = _makeMaterial(wall);
-		rootNode.attachChild(wall.toSpatial(material));
-	}
-	
-	private void _drawGround(Ground gnd){
-		if (! gnd.isVisible())
-			return;
-		Material material = _makeMaterial(gnd);
-		rootNode.attachChild(gnd.toSpatial(material));
-	}
-	
-	private void _drawRoof(Roof roof){
-		if (! roof.isVisible())
-			return;
-		Material material = _makeMaterial(roof);
-		rootNode.attachChild(roof.toSpatial(material));
+		
+		parent.attachChild(meshable.toSpatial(assetManager));
 	}
 	
 	/**
@@ -350,8 +333,8 @@ public class WorldView extends SimpleApplication implements Observer {
 			for (Room room : point.getBoundRooms()){
 				try {
 					this.dao.refresh(room);
-				} catch (SQLException e) {
-					e.printStackTrace();
+				} catch (SQLException ex) {
+					Log.exception(ex);
 				}
 				for (Meshable meshable : room.getMeshables())
 					_updateMeshable(Change.update(meshable));
@@ -365,20 +348,19 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	private void _updateMeshable(Change change){
 		Meshable meshable = (Meshable) change.getItem();
-		
-		/* 3D object don't exist yet if it is a creation */
-		if (! change.isCreation())
-			rootNode.detachChildNamed(meshable.getUID());
+		Spatial node = rootNode.getChild(meshable.getUID());
+		Node parent = rootNode;
+		if (node != null){
+			parent = node.getParent();
+			/* 3D object don't exist yet if it is a creation */
+			if (! change.isCreation()) {
+				parent.detachChild(node);
+			}
+		}
 		
 		/* No need to redraw if it is a deletion */
-		if (! change.isDeletion()){
-			if (meshable instanceof Wall)
-				_drawWall((Wall) meshable);
-			else if (meshable instanceof Ground)
-				_drawGround((Ground) meshable);
-			else if (meshable instanceof Roof)
-				_drawRoof((Roof) meshable);
-		}
+		if (! change.isDeletion())
+			drawMeshable(parent,meshable);
 		
 		/* Conclusion: updates will do both (detach & redraw) */
 	}
@@ -433,7 +415,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	@Override
 	public void simpleUpdate(float t){
-		
 		synchronized (this.queuedChanges){
 			if (this.queuedChanges.size() > 0){
 				for (Change change : this.queuedChanges){

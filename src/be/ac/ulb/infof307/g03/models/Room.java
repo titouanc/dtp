@@ -145,8 +145,8 @@ public class Room extends Geometric {
 		}
 	}
 	
-	public final List<Meshable> getMeshables(){
-		List<Meshable> res = new ArrayList<Meshable>(3);
+	public final List<Area> getMeshables(){
+		List<Area> res = new ArrayList<Area>(3);
 		if (this.wall != null)
 			res.add(this.wall);
 		if (this.ground != null)
