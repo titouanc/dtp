@@ -19,7 +19,7 @@ import com.jme3.util.BufferUtils;
  * A roof is a surface delimited by the height of wall
  * @author Walter Moulart
  */
-public class Roof extends Meshable {
+public class Roof extends Area {
 	/**
 	 * Create a new empty roof object, and create a new group for it
 	 */

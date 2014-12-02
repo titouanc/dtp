@@ -18,7 +18,7 @@ import com.jme3.util.BufferUtils;
  * A ground is a surface delimited by a group of shapes
  * @author Titouan Christophe
  */
-public class Ground extends Meshable {
+public class Ground extends Area {
 	/**
 	 * Create a new empty ground object, and create a new group for it
 	 */

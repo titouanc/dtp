@@ -19,7 +19,7 @@ import com.jme3.scene.shape.Box;
 /**
  * @author Titouan Christophe
  */
-public class Wall extends Meshable {
+public class Wall extends Area {
 	@DatabaseField
 	private double width = 0.2; 
 	

@@ -74,6 +74,7 @@ public class ObjectListController implements MouseListener {
 	public void onDeleteAction(Entity entity) {
 		if (this.project.config("edition.mode").equals("object")) {
 			if (this.project.config("entity.current").equals(entity.getUID())) {
+				this.project.config("mouse.mode", "dragSelect");
 				this.project.config("edition.mode","world");
 			}
 		}

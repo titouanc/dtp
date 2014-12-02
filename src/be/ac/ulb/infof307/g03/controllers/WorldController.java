@@ -10,6 +10,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.collision.CollisionResults;
@@ -254,29 +255,43 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	}
     
     /**
-     * Toggle selection for a Meshable item, save to database and notify observers
-     * @param meshable The Meshable item to select
+     * Toggle selection for a Area item, save to database and notify observers
+     * @param area The Area item to select
      */
-    public void selectObject(Meshable meshable) {
-	        try {
-	        	meshable.toggleSelect();
-	        	GeometryDAO dao = this.project.getGeometryDAO();
-	        	for (Point p : meshable.getPoints()){
-	        		if (meshable.isSelected())
-	        			p.select();
-	        		else
-	        			p.deselect();
-	        		dao.update(p);
-	        	}
-	            dao.update(meshable);
-	            dao.notifyObservers(meshable);
-	            String floorUID = meshable.getRoom().getFloor().getUID();
-	            if (! this.project.config("floor.current").equals(floorUID))
-	            	this.project.config("floor.current", floorUID);
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-	    }
+	public void selectObject(Area area) {
+		try {
+			area.toggleSelect();
+			GeometryDAO dao = this.project.getGeometryDAO();
+			for (Point p : area.getPoints()){
+				if (area.isSelected())
+					p.select();
+				else
+					p.deselect();
+				dao.update(p);
+			}
+			dao.update(area);
+			dao.notifyObservers(area);
+			String floorUID = area.getRoom().getFloor().getUID();
+			if (! this.project.config("floor.current").equals(floorUID))
+				this.project.config("floor.current", floorUID);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void selectObject(Primitive primitive) {
+		try {
+			primitive.toggleSelect();
+			GeometryDAO dao = this.project.getGeometryDAO();
+			dao.update(primitive);
+			dao.notifyObservers(primitive);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
     /**
      * Add the points in the Point List when user click to create his wall
@@ -359,13 +374,14 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     	
     	if (finalUpdate){
     		this.builtGeometric = null;
+    		this.savedCenter = null;
     	}
     }
     
     private void mouseMoved(float value) {
     	if (this.movingPoint != null) {
     		dropMovingPoint(false);
-    	} else if (this.savedCenter != null) {
+    	} else if (this.builtGeometric != null) {
     		if (this.leftClickPressed)
     			updateShapeDisplay(false);
     	}
@@ -401,12 +417,16 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         	return;
         
         /* If it is a Meshable (Wall, Ground): select it */
-        if (clicked instanceof Meshable)
-        	selectObject((Meshable) clicked);
+        if (clicked instanceof Area)
+        	selectObject((Area) clicked);
         
         /* If it is a Point: initiate drag'n drop */
         else if (clicked instanceof Point)
     		this.movingPoint = (Point) clicked;
+        
+        /* If it is a Primitive : select it */
+        else if (clicked instanceof Primitive)
+        	selectObject((Primitive) clicked);
     }
     
     public void initSphere() {
@@ -462,22 +482,25 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		if (name.equals(LEFTCLICK)) {
 	    	this.leftClickPressed = value;
 			if (value) { // on click
-				if (this.mouseMode.equals("construct")) { /* We're in construct mode and left-click: add a point */
-					construct();
-				} else if (this.mouseMode.equals("dragSelect")) {
-					dragSelectHandler();
-				} else if(this.mouseMode.equals("sphere")){
-					initSphere();
-				} else if(this.mouseMode.equals("cube")){
-					initCube();
+				if (currentEditionMode.equals(WorldController.WORLDMODE)) {
+					if (this.mouseMode.equals("construct")) { /* We're in construct mode and left-click: add a point */
+						construct();
+					}
+				} else if (currentEditionMode.equals(WorldController.OBJECTMODE)) {
+					if(this.mouseMode.equals("sphere")){
+						initSphere();
+					} else if(this.mouseMode.equals("cube")){
+						initCube();
+					}
 				}
-				
+				if (this.mouseMode.equals("dragSelect")) {
+					dragSelectHandler();
+				} 
 			} else { // on release
 				if (this.movingPoint != null) { // We're moving a point, and mouse button up: stop the point here
 					dropMovingPoint(true);
 				} else if (this.builtGeometric != null) {
-	    			updateShapeDisplay(true);
-					
+	    			updateShapeDisplay(true);					
 				}
 			}
 		} else if (name.equals(RIGHTCLICK)) {
@@ -487,7 +510,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				}
 				else if (this.mouseMode.equals("dragSelect")){
 					Geometric clicked = getClickedObject();
-					if (clicked instanceof Meshable){
+					if (clicked instanceof Area){
 						try {
 							setTexture((Meshable)clicked,this.project.config("texture.selected"));
 						} catch (SQLException e) {

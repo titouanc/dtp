@@ -278,6 +278,7 @@ public class ToolsBarController implements ActionListener, Observer {
 
 	private void onWorldMode() {
 		Log.log(Level.FINEST,"[DEBUG] User clicked on : world");
+		_project.config("mouse.mode", "dragSelect");
 		_project.config("edition.mode", "world");	
 	}
 	
