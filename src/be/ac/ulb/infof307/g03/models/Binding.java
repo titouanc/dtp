@@ -61,6 +61,6 @@ public class Binding extends Ordered {
 	}
 	
 	protected <Subtype> Where<Subtype, Integer> getWhereForUniqueness(Where<Subtype, Integer> initialClause) throws SQLException {
-		return initialClause.and().eq("_room_id", this.room.getId());
+		return initialClause.and().eq("room_id", this.room.getId());
 	}
 }

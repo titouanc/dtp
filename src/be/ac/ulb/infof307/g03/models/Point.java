@@ -26,7 +26,7 @@ public class Point extends Geometric {
 	private double z = 0;
 	@DatabaseField
 	private Boolean selected = false;
-	@ForeignCollectionField(eager = false, orderColumnName = "_room_id")
+	@ForeignCollectionField(eager = false, orderColumnName = "room_id")
     private ForeignCollection<Binding> bindings;
 	
 	/**

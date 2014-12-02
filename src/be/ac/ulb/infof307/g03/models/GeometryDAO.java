@@ -361,7 +361,7 @@ public class GeometryDAO extends Observable {
 	public List<Binding> getLinesForPoint(Point p) throws SQLException {
 		int pid = p.getId();
 		return this.bindings.query(
-			this.bindings.queryBuilder().where().eq("_p1_id", pid).or().eq("_p2_id", pid).prepare()
+			this.bindings.queryBuilder().where().eq("p1_id", pid).or().eq("p2_id", pid).prepare()
 		);
 	}
 	
@@ -392,7 +392,7 @@ public class GeometryDAO extends Observable {
 	 */
 	public Room getGroup(String name) throws SQLException {
 		return this.rooms.queryForFirst(
-			this.rooms.queryBuilder().where().eq("_name", name).prepare()
+			this.rooms.queryBuilder().where().eq("name", name).prepare()
 		);
 	}
 	
@@ -404,7 +404,7 @@ public class GeometryDAO extends Observable {
 	 */
 	public List<Room> getRooms(Floor floor) throws SQLException {
 		return this.rooms.query(
-			this.rooms.queryBuilder().where().eq("_floor_id", floor.getId()).prepare()
+			this.rooms.queryBuilder().where().eq("floor_id", floor.getId()).prepare()
 		); 
 	}
 	
@@ -544,7 +544,7 @@ public class GeometryDAO extends Observable {
 	 */
 	public Point getPoint(double x, double y, double z) throws SQLException{
 		return this.points.queryForFirst(
-			this.points.queryBuilder().where().eq("_x", x).and().eq("_y", y).and().eq("_z", z).prepare()
+			this.points.queryBuilder().where().eq("x", x).and().eq("y", y).and().eq("z", z).prepare()
 		);
 	}
 	
@@ -641,9 +641,9 @@ public class GeometryDAO extends Observable {
 		       zmax = p.getZ() + bound;
 		
 		return this.points.queryForFirst(
-			this.points.queryBuilder().where().ge("_x", xmin).and().le("_x", xmax).
-			and().ge("_y", ymin).and().le("_y", ymax).
-			and().ge("_z", zmin).and().le("_z", zmax).prepare()
+			this.points.queryBuilder().where().ge("x", xmin).and().le("x", xmax).
+			and().ge("y", ymin).and().le("y", ymax).
+			and().ge("z", zmin).and().le("z", zmax).prepare()
 		);
 	}
 	
@@ -687,9 +687,9 @@ public class GeometryDAO extends Observable {
 	 */
 	public List<Meshable> getSelectedMeshables() throws SQLException {
 		List<Meshable> res = new ArrayList<Meshable>();
-		res.addAll(this.walls.queryForEq("_selected", true));
-		res.addAll(this.grounds.queryForEq("_selected", true));
-		res.addAll(this.roofs.queryForEq("_selected", true));
+		res.addAll(this.walls.queryForEq("selected", true));
+		res.addAll(this.grounds.queryForEq("selected", true));
+		res.addAll(this.roofs.queryForEq("selected", true));
 		return res;
 	}
 
@@ -699,6 +699,6 @@ public class GeometryDAO extends Observable {
 	 * @throws SQLException
 	 */
 	public List<Point> getSelectedPoints() throws SQLException {
-		return this.points.queryForEq("_selected", true);
+		return this.points.queryForEq("selected", true);
 	}
 }
