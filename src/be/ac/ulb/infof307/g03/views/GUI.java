@@ -25,10 +25,10 @@ import be.ac.ulb.infof307.g03.models.Project;
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
-	private MenuBarController _menuBar;
-	private ToolsBarController _toolsBar;
-	private MainPaneController _workspace;
-	private SplashScreen _screen;
+	private MenuBarController menuBar;
+	private ToolsBarController toolsBar;
+	private MainPaneController workspace;
+	private SplashScreen screen;
 	
 	/**
 	 * Constructor of GUI.
@@ -44,27 +44,27 @@ public class GUI extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		//Sets up the loading screen
-        _screen = SplashScreen.getSplashScreen();
+        this.screen = SplashScreen.getSplashScreen();
    
         // Create the menuBar
-        _menuBar = new MenuBarController(project, this);
-        _menuBar.run();
-        this.setJMenuBar(_menuBar.getView());
+        this.menuBar = new MenuBarController(project, this);
+        this.menuBar.run();
+        this.setJMenuBar(this.menuBar.getView());
         
         // Create the main panel
         // http://docs.oracle.com/javase/tutorial/uiswing/components/toplevel.html
         JPanel contentPane = new JPanel(new BorderLayout());
         
         // Create the toolbar
-        _toolsBar = new ToolsBarController(project);
-        _toolsBar.run();
-        contentPane.add(_toolsBar.getView(), BorderLayout.PAGE_START);
+        this.toolsBar = new ToolsBarController(project);
+        this.toolsBar.run();
+        contentPane.add(this.toolsBar.getView(), BorderLayout.PAGE_START);
      
         // Create the workspace
         // this one contains Jmonkey canvas and the left menu
-        _workspace = new MainPaneController(project);
-        _workspace.run();
-        contentPane.add(_workspace.getView(), BorderLayout.CENTER);
+        this.workspace = new MainPaneController(project);
+        this.workspace.run();
+        contentPane.add(this.workspace.getView(), BorderLayout.CENTER);
         
         // Add the workspace to the frame
         this.setContentPane(contentPane);
@@ -75,15 +75,15 @@ public class GUI extends JFrame {
         this.setPreferredSize(windowDimension);
         
         this.pack();
-        if(_screen != null){
-	        while(!_workspace.getWc().getView().isCreated()){
+        if(this.screen != null){
+	        while(!this.workspace.getWc().getView().isCreated()){
 	        	try {
 		            Thread.sleep(2000);
 		        }
 		        	catch(InterruptedException e) {
 		        }
 	        }
-	        _screen.close();
+	        this.screen.close();
         }
         // Display the window
         this.setVisible(true);

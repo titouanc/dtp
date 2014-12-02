@@ -15,18 +15,18 @@ import be.ac.ulb.infof307.g03.controllers.FileChooserController;
  * This class is a view of a file dialog
  */
 public class FileChooserView {
-	JFileChooser _chooser;
-	FileChooserController _controller;
+	JFileChooser chooser;
+	FileChooserController controller;
 	
 	/**
 	 * @param controller  The view's controller
 	 * 
 	 */
 	public FileChooserView(FileChooserController controller){
-		_controller = controller;
-		_chooser = new JFileChooser();
+		this.controller = controller;
+		this.chooser = new JFileChooser();
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Home Plans Project (hpj)", "hpj");
-	    _chooser.setFileFilter(filter);
+	    this.chooser.setFileFilter(filter);
 	}
 	
 	/**
@@ -36,9 +36,9 @@ public class FileChooserView {
 	 * @param parent Parent of the dialog window.
 	 */
 	public void displayNew(Component parent){
-	    int returnVal = _chooser.showDialog(parent, "New project");
+	    int returnVal = this.chooser.showDialog(parent, "New project");
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	    	_controller.newProject(_chooser.getSelectedFile());
+	    	this.controller.newProject(this.chooser.getSelectedFile());
 	    }
 		
 	}
@@ -50,9 +50,9 @@ public class FileChooserView {
 	 * @param parent Parent of the dialog window.
 	 */
 	public void displayOpen(Component parent){
-		int returnVal = _chooser.showOpenDialog(parent);
+		int returnVal = this.chooser.showOpenDialog(parent);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	    	_controller.openProject(_chooser.getSelectedFile());
+	    	this.controller.openProject(this.chooser.getSelectedFile());
 	    }
 		
 	}
@@ -64,9 +64,9 @@ public class FileChooserView {
 	 * @param parent Parent of the dialog window.
 	 */
 	public void displaySaveAs(Component parent){
-		int returnVal = _chooser.showSaveDialog(parent);
+		int returnVal = this.chooser.showSaveDialog(parent);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	    	_controller.saveAsProject(_chooser.getSelectedFile());
+	    	this.controller.saveAsProject(this.chooser.getSelectedFile());
 	    }
 		
 	}

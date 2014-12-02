@@ -46,12 +46,12 @@ import com.jme3.texture.Texture.WrapMode;
  */
 public class WorldView extends SimpleApplication implements Observer {	
 	
-	private Project _project = null;
-	private GeometryDAO _dao = null;
-	private WorldController _controller; 
-	private LinkedList<Change> _queuedChanges = null;
+	private Project project = null;
+	private GeometryDAO dao = null;
+	private WorldController controller; 
+	private LinkedList<Change> queuedChanges = null;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
-	private boolean _isCreated = false;
+	private boolean isCreated = false;
 	
 	
 	/**
@@ -61,17 +61,17 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	public WorldView(WorldController newController, Project project){
 		super();
-		_controller = newController;
-		_project = project;
-		_queuedChanges = new LinkedList<Change>();
+		this.controller = newController;
+		this.project = project;
+		this.queuedChanges = new LinkedList<Change>();
 		try {
-			_dao= project.getGeometryDAO();
-			_dao.addObserver(this);
+			this.dao= project.getGeometryDAO();
+			this.dao.addObserver(this);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		this.setDisplayStatView(false);
-		_project.addObserver(this);
+		this.project.addObserver(this);
 
 	}
 	
@@ -84,16 +84,16 @@ public class WorldView extends SimpleApplication implements Observer {
 		flyCam.setEnabled(false);
 		
 		// Update the camera mode
-		_controller.setCameraContext(new CameraContext(_project,cam,inputManager, this));
+		this.controller.setCameraContext(new CameraContext(this.project,cam,inputManager, this));
 		
 		// Update the edition mode
-		_controller.updateEditionMode();
+		this.controller.updateEditionMode();
 		
 		// Change the default background
 		viewPort.setBackgroundColor(ColorRGBA.White);
 
 		// listen for clicks on the canvas
-		_controller.inputSetUp(inputManager);
+		this.controller.inputSetUp(inputManager);
 		
 		// Notify our controller that initialisation is done
 		this.setPauseOnLostFocus(false);
@@ -205,7 +205,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	    		_addSun();
 	    		
 	    		try {
-					for (Floor floor : _dao.getFloors()){
+					for (Floor floor : dao.getFloors()){
 						for (Room room : floor.getRooms()){
 							if (room.getGround() != null)
 								_drawGround(room.getGround());
@@ -317,7 +317,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	private void _updatePoint(Change change){
 		Point point = (Point) change.getItem();
-		Floor floor = _controller.getCurrentFloor();
+		Floor floor = this.controller.getCurrentFloor();
 		rootNode.detachChildNamed(point.getUID());
 		if (point.isSelected()){			
 			Sphere mySphere = new Sphere(32,32, 1.0f);
@@ -332,7 +332,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		    rootNode.attachChild(sphere);
 			for (Room room : point.getBoundRooms()){
 				try {
-					_dao.refresh(room);
+					this.dao.refresh(room);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -373,11 +373,11 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	public boolean isCreated() {
-		return _isCreated;
+		return this.isCreated;
 	}
 
 	public void setCreated() {
-		this._isCreated = !this._isCreated;
+		this.isCreated = !this.isCreated;
 	}
 	
 	/**
@@ -406,8 +406,8 @@ public class WorldView extends SimpleApplication implements Observer {
 		if (msg == null)
 			return;
 		if (obs instanceof GeometryDAO) {
-			synchronized (_queuedChanges) {
-				_queuedChanges.addAll((List<Change>) msg);
+			synchronized (this.queuedChanges) {
+				this.queuedChanges.addAll((List<Change>) msg);
 			}
 		}
 	}
@@ -418,9 +418,9 @@ public class WorldView extends SimpleApplication implements Observer {
 	@Override
 	public void simpleUpdate(float t){
 		
-		synchronized (_queuedChanges){
-			if (_queuedChanges.size() > 0){
-				for (Change change : _queuedChanges){
+		synchronized (this.queuedChanges){
+			if (this.queuedChanges.size() > 0){
+				for (Change change : this.queuedChanges){
 					if (change.isDeletion())
 						rootNode.detachChildNamed(change.getItem().getUID());
 					else if (change.getItem() instanceof Meshable)
@@ -430,7 +430,7 @@ public class WorldView extends SimpleApplication implements Observer {
 					else if (change.getItem() instanceof Floor)
 						_updateFloor(change);
 				}		
-				_queuedChanges.clear();
+				this.queuedChanges.clear();
 			}
 		}
 	}

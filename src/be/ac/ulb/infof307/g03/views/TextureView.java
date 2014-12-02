@@ -33,27 +33,27 @@ import java.util.ArrayList;
 public class TextureView extends JPanel implements ItemListener {
 
 	private static final long serialVersionUID = 1L;
-	private TextureController _controller;
-	private Project _project;
+	private TextureController controller;
+	private Project project;
 	
-	private GridBagLayout _paneLayout;
-	private ArrayList<String> _colorFiles=   new ArrayList <String>();
-	private ArrayList<String> _textureFiles= new ArrayList <String>();
+	private GridBagLayout paneLayout;
+	private ArrayList<String> colorFiles=   new ArrayList <String>();
+	private ArrayList<String> textureFiles= new ArrayList <String>();
 	
-	private final static String _COLORPANEL = "Colors";
-	private final static String _TEXTURESPANEL = "Textures";
-	private final static String _ADDTEXTURE= "Add a new Texture...";
-    private static String _CURRENTMODE ="" ;
+	private final static String COLORPANEL = "Colors";
+	private final static String TEXTURESPANEL = "Textures";
+	private final static String ADDTEXTURE= "Add a new Texture...";
+    private static String CURRENTMODE ="" ;
     
     // Action alias
-    static private final String _DELETE = "Delete";
+    static private final String DELETE = "Delete";
 
-    static private JList _textureList = new JList();
+    static private JList textureList = new JList();
 
-	static private JList _colorList   = new JList();
-	static private JPanel _texturesPanel = new JPanel();
+	static private JList colorList   = new JList();
+	static private JPanel texturesPanel = new JPanel();
 	
-    private JPanel _cards; //a panel that uses CardLayout
+    private JPanel cards; //a panel that uses CardLayout 
     
     /**
 	 * This class implements a ActionListener to be 
@@ -68,9 +68,9 @@ public class TextureView extends JPanel implements ItemListener {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			String cmd = event.getActionCommand();
-			if (cmd.equals(_DELETE)) {
-				String toDelete=_controller.deleteFile();
-				_textureFiles.remove(toDelete);
+			if (cmd.equals(DELETE)) {
+				String toDelete=controller.deleteFile();
+				textureFiles.remove(toDelete);
 				update();
 				
 			}
@@ -85,23 +85,23 @@ public class TextureView extends JPanel implements ItemListener {
 		//Builds a JPane based on a CardLayout, which is a layout that mages 2+ panes using the same display space
     	super(new CardLayout());  	
     	
-    	_controller = newControler;
-    	_project = project;
+    	this.controller = newControler;
+    	this.project = project;
         
     	//Uses the GridbagConstraints
-    	_paneLayout = new GridBagLayout();
-    	this.setLayout(_paneLayout);
+    	this.paneLayout = new GridBagLayout();
+    	this.setLayout(this.paneLayout);
 		
     	//Fixes the width of the pane
     	this.setPreferredSize(new Dimension(this.getHeight(),100));
     	
     	// Get filenames
-    	_texturesPanel.removeAll();
+    	texturesPanel.removeAll();
 		this.addAllFiles();
-		_textureFiles.add(_ADDTEXTURE);
+		this.textureFiles.add(ADDTEXTURE);
 		this.addTypeSelection();
 		this.addMaterialChoice();
-		_CURRENTMODE=_COLORPANEL; // Mode du début
+		CURRENTMODE=COLORPANEL; // Mode du début
 
         
     }
@@ -113,14 +113,14 @@ public class TextureView extends JPanel implements ItemListener {
 		File[] files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Colors/").listFiles(); 
 		for (File file : files) {
 		    if (file.isFile()) {
-		    	_colorFiles.add(file.getName().replace(".png", ""));
+		    	this.colorFiles.add(file.getName().replace(".png", ""));
 		    }
 		}
 		files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/").listFiles(); 
 		for (File file : files) {
 		    if (file.isFile()) {
 		    	if(!(file.getName().contains("Full"))){
-		    		_textureFiles.add(file.getName().replace(".png", ""));	
+		    		this.textureFiles.add(file.getName().replace(".png", ""));	
 		    	}
 		    }
 		}
@@ -137,7 +137,7 @@ public class TextureView extends JPanel implements ItemListener {
 		//Pulldown menu
         JPanel comboBoxPane = new JPanel(); 
         comboBoxPane.setLayout(new GridLayout(0,1));
-        String comboBoxItems[] = { _COLORPANEL, _TEXTURESPANEL };
+        String comboBoxItems[] = { COLORPANEL, TEXTURESPANEL };
 
 		JComboBox comboBox = new JComboBox(comboBoxItems);
         comboBox.setEditable(false);
@@ -162,25 +162,25 @@ public class TextureView extends JPanel implements ItemListener {
 	 * @return add tetxture
 	 */
 	public String getAddFile(){
-		return _ADDTEXTURE;
+		return ADDTEXTURE;
 	}
 	
 	/**
 	 * @return the color List
 	 */
 	public String getSelectedColorAsString(){
-		return ("Colors/" + _colorList.getSelectedValue().toString());
+		return ("Colors/" + colorList.getSelectedValue().toString());
 	}
 	
 	/**
 	 * @return the texture List
 	 */
 	public String getSelectedTexture(){
-		if (_textureList.getSelectedValue().toString().equals(_ADDTEXTURE)){
-			return _ADDTEXTURE;
+		if (textureList.getSelectedValue().toString().equals(ADDTEXTURE)){
+			return ADDTEXTURE;
 		}
 		else{
-			return ("Textures/Full/" + _textureList.getSelectedValue().toString());
+			return ("Textures/Full/" + textureList.getSelectedValue().toString());
 		}
 	}
 	
@@ -188,19 +188,19 @@ public class TextureView extends JPanel implements ItemListener {
 	 * @return current mode between texture and colors
 	 */
 	public String getCurrentMode(){
-		return _CURRENTMODE;
+		return CURRENTMODE;
 	}
 	
 	/**
 	 * Update the JPanel : refresh it 
 	 */
 	private void update(){
-		_textureList = new JList(_textureFiles.toArray());
-        _textureList.setCellRenderer(new ColorCellRenderer());	
-        _texturesPanel.removeAll();
-        _texturesPanel.add(_textureList);
-		_texturesPanel.updateUI();
-		_textureList.addMouseListener(_controller);
+		textureList = new JList(this.textureFiles.toArray());
+        textureList.setCellRenderer(new ColorCellRenderer());	
+        texturesPanel.removeAll();
+        texturesPanel.add(textureList);
+		texturesPanel.updateUI();
+		textureList.addMouseListener(this.controller);
 	}
 	
 	/**
@@ -209,7 +209,7 @@ public class TextureView extends JPanel implements ItemListener {
 	 */
 	public void updatePanel(String filename){
 		filename=filename.replace(".png","");
-		_textureFiles.add(_textureFiles.size()-1,filename);
+		this.textureFiles.add(this.textureFiles.size()-1,filename);
 		this.update();
 	}
  
@@ -218,21 +218,21 @@ public class TextureView extends JPanel implements ItemListener {
 	 */
 	public void addMaterialChoice(){
         //Creates the "cards".
-        _textureList = new JList(_textureFiles.toArray());
-        _textureList.setCellRenderer(new ColorCellRenderer());
-        _texturesPanel.add(_textureList);
-        _texturesPanel.setLayout(new GridLayout(0,1));
+        textureList = new JList(this.textureFiles.toArray());
+        textureList.setCellRenderer(new ColorCellRenderer());
+        texturesPanel.add(textureList);
+        texturesPanel.setLayout(new GridLayout(0,1));
          
         JPanel colorsPanel = new JPanel();
-        _colorList = new JList(_colorFiles.toArray());
-        _colorList.setCellRenderer(new ColorCellRenderer());
-        colorsPanel.add(_colorList);
+        colorList = new JList(this.colorFiles.toArray());
+        colorList.setCellRenderer(new ColorCellRenderer());
+        colorsPanel.add(colorList);
         colorsPanel.setLayout(new GridLayout(0,1));
          
         //Creates the panel that contains the switching panes.
-        _cards = new JPanel(new CardLayout());
-        _cards.add(colorsPanel, _COLORPANEL);
-        _cards.add(_texturesPanel, _TEXTURESPANEL);
+        this.cards = new JPanel(new CardLayout());
+        this.cards.add(colorsPanel, COLORPANEL);
+        this.cards.add(texturesPanel, TEXTURESPANEL);
 
         GridBagConstraints gridBagCons = new GridBagConstraints();
 		gridBagCons.fill = GridBagConstraints.BOTH;
@@ -242,9 +242,9 @@ public class TextureView extends JPanel implements ItemListener {
 		gridBagCons.gridx = 0;
 		gridBagCons.gridy = 1;
 		
-		_textureList.addMouseListener(_controller);
-		_colorList.addMouseListener(_controller);
-        this.add(_cards, gridBagCons);
+		textureList.addMouseListener(this.controller);
+		colorList.addMouseListener(this.controller);
+        this.add(this.cards, gridBagCons);
 
 		//c.ipady = 200;
 		
@@ -255,9 +255,9 @@ public class TextureView extends JPanel implements ItemListener {
 	 */
 	@Override
 	public void itemStateChanged(ItemEvent evt) {
-        CardLayout cl = (CardLayout) _cards.getLayout();
-        cl.show(_cards, (String) evt.getItem());
-        _CURRENTMODE = (String) evt.getItem();
+        CardLayout cl = (CardLayout) this.cards.getLayout();
+        cl.show(this.cards, (String) evt.getItem());
+        CURRENTMODE = (String) evt.getItem();
 	}
 	
 	/**
@@ -281,7 +281,7 @@ public class TextureView extends JPanel implements ItemListener {
 	public JPopupMenu createPopupMenu(){	
 		PopupListener listener = new PopupListener();
 		JPopupMenu res = new JPopupMenu();
-		res.add(createJMenuItem(_DELETE, _DELETE, listener));
+		res.add(createJMenuItem(DELETE, DELETE, listener));
 		return res;
 	}
 	
@@ -313,7 +313,7 @@ public class TextureView extends JPanel implements ItemListener {
 	    	Icon imageIcon;
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
 	    		prefix = "/";
-	    		if (list.equals(_textureList)){
+	    		if (list.equals(textureList)){
 	    			imageIcon = new ImageIcon(getClass().getResource(prefix + value.toString()));
 	    		}
 	    		else{
@@ -322,7 +322,7 @@ public class TextureView extends JPanel implements ItemListener {
 	    		}
 	    	} else {
 	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/";
-	    		if (list.equals(_textureList)){
+	    		if (list.equals(textureList)){
 	    			prefix = prefix.concat("Textures/");
 	    			imageIcon = new ImageIcon(prefix + value.toString()+".png" );
 	    		}
