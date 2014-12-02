@@ -20,10 +20,9 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
-import com.jme3.material.Material;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.*;
@@ -272,7 +271,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				DefaultMutableTreeNode node = _nodes.get(changed.getUID());
 				if (node != null){
 					node.setUserObject(changed);
-					mustUpdateUI = true;
+					refreshUI(node);
 				}
 			}
 			
@@ -294,21 +293,26 @@ public class ObjectTreeView extends JTree implements Observer {
 				if (changed instanceof Floor){
 					_root.add(newNode);
 					mustUpdateUI = true;
-				} else if (changed instanceof Meshable){
-					_nodes.get(((Meshable) changed).getRoom().getUID()).add(newNode);
-					mustUpdateUI = true;
-				} else if (changed instanceof Room){
+				}
+//				else if (changed instanceof Meshable){
+//					_nodes.get(((Meshable) changed).getRoom().getUID()).add(newNode);
+//					mustUpdateUI = true;
+//				}
+				else if (changed instanceof Room){
 					Room room = (Room) changed;
 					_nodes.get(room.getFloor().getUID()).add(newNode);
-					mustUpdateUI = true;
+					refreshUI(newNode);
 				}
 				
 			}
 		}
-		if (mustUpdateUI){
-			((DefaultTreeModel) treeModel).reload();
-		}
 	}
 	
-
+	/**
+	 * Notify UI class that a node has changed
+	 * @param changed The node who has changed
+	 */
+	private void refreshUI(TreeNode changed){
+		((DefaultTreeModel) treeModel).reload(changed);
+	}
 }

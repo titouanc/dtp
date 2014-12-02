@@ -352,10 +352,14 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			int row = _view.getClosestRowForLocation(e.getX(), e.getY());
 			_view.setSelectionRow(row);
 			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) _view.getLastSelectedPathComponent();
-			Geometric clickedItem = (Geometric) clickedNode.getUserObject();
-			JPopupMenu menuForItem = _view.createPopupMenu(clickedItem);
-			if (menuForItem != null) 
-				menuForItem.show(e.getComponent(), e.getX(), e.getY());
+			if (clickedNode == null){
+				Log.error("Right-clicked null node");
+			} else {
+				Geometric clickedItem = (Geometric) clickedNode.getUserObject();;
+				JPopupMenu menuForItem = _view.createPopupMenu(clickedItem);
+				if (menuForItem != null) 
+					menuForItem.show(e.getComponent(), e.getX(), e.getY());
+			}
 		}
 	}
 
