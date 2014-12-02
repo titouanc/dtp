@@ -171,9 +171,12 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	private Material _makeMaterial(Meshable mesh){	
 		 String texture=mesh.getTexture();
-		 if (texture.equals("Gray")){
-			texture="Colors/Gray";
-		}
+		 if (!(texture.contains("Full"))){
+		 String subStr= texture.substring(texture.length()-5);
+			 if (!(subStr.equals("Color"))){
+				texture=texture+"Color";
+			}
+		 }
 		Material res= new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		res.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
