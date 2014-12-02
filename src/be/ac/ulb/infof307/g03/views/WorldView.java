@@ -303,13 +303,16 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void _updateMeshable(Change change){
 		Meshable meshable = (Meshable) change.getItem();
 		Spatial node = rootNode.getChild(meshable.getUID());
-		Node parent = node.getParent();
-		/* 3D object don't exist yet if it is a creation */
-		if (! change.isCreation()) {
-			parent.detachChild(node);
+		Node parent = rootNode;
+		if (node != null){
+			parent = node.getParent();
+			/* 3D object don't exist yet if it is a creation */
+			if (! change.isCreation()) {
+				parent.detachChild(node);
+			}
 		}
+		
 		/* No need to redraw if it is a deletion */
-
 		if (! change.isDeletion())
 			drawMeshable(parent,meshable);
 		
