@@ -91,9 +91,19 @@ public class DemoProject {
 	 */
 	private static Room createRoom(Floor floor, String name, Point...points) throws SQLException{
 		Room room = new Room(name);
-		room.setWall(new Wall());
-		room.setGround(new Ground());
-		room.setRoof(new Roof());
+		
+		Wall wall = new Wall();
+		//wall.setTexture("Gray");
+		room.setWall(wall);
+		
+		Ground ground = new Ground();
+		//ground.setTexture("Gray");
+		room.setGround(ground);
+		
+		Roof roof = new Roof();
+		roof.setTexture("Black");
+		room.setRoof(roof);
+		
 		floor.getRooms().add(room);
 		floor.getRooms().refresh(room);
 		
