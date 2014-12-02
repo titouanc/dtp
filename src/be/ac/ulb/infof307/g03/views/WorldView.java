@@ -264,6 +264,16 @@ public class WorldView extends SimpleApplication implements Observer {
 		mat.setColor("Color", color);
 		rootNode.attachChild(axisGeo);
 	}
+	
+	public void drawHandles(Node node, Vector3f center, Vector3f dir, ColorRGBA color) {
+		Line axis = new Line(center,center.add(dir));
+		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		Geometry axisGeo = new Geometry("Axis", axis);
+		axisGeo.setMaterial(mat);
+		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		mat.setColor("Color", color);
+		node.attachChild(axisGeo);
+	}
 		
 	/**
 	 * Update view when a Point has changed

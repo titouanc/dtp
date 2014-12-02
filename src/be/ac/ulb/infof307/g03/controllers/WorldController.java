@@ -22,13 +22,16 @@ import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
+import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
@@ -305,6 +308,11 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			GeometryDAO dao = this.project.getGeometryDAO();
 			dao.update(primitive);
 			dao.notifyObservers(primitive);
+			Vector3f center = primitive.getTranslation();
+			//Node parent = view.getRootNode().getChild(primitive.getUID()).getParent();
+			//view.drawHandles(parent, center, new Vector3f(1,0,0), ColorRGBA.Blue);
+			//view.drawHandles(parent, center, new Vector3f(0,1,0), ColorRGBA.Red);
+			//view.drawHandles(parent, center, new Vector3f(0,0,1), ColorRGBA.Green);
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -548,7 +556,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				}
 				else if (this.mouseMode.equals("dragSelect")){
 					Geometric clicked = getClickedObject();
-					if (clicked instanceof Area){
+					if (clicked instanceof Meshable){
 						try {
 							setTexture((Meshable)clicked,this.project.config("texture.selected"));
 						} catch (SQLException ex) {
