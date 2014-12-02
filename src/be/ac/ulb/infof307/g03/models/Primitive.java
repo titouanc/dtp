@@ -4,11 +4,17 @@
 package be.ac.ulb.infof307.g03.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Sphere;
 
 /**
  * A primitive shape used to build objects
- * @author brochape, Titouan
+ * @author brochape, Titouan, jschembr
  */
 public class Primitive extends Geometric {
 	public static String CUBE = "cube";
@@ -61,6 +67,12 @@ public class Primitive extends Geometric {
 		_scalez = scale.getZ();
 	}
 	
+	public final void setTranslation(Vector3f translation) {
+		_translationx = translation.getX();
+		_translationy = translation.getY();
+		_translationz = translation.getZ();
+	}
+	
 	public final Vector3f getScale(){
 		return new Vector3f((float) _scalex, (float) _scaley, (float) _scalez);
 	}
@@ -82,5 +94,21 @@ public class Primitive extends Geometric {
 	 */
 	public Vector3f getRotation(){
 		return new Vector3f((float) _rotationx, (float) _rotationy, (float) _rotationz);
+	}
+
+	public Spatial toSpatial(Material mat) {
+		Mesh mesh = null;
+		if (_type.equals(Primitive.CUBE)) {
+			mesh = new Box(0.5f,0.5f,0.5f);
+		} else if (_type.equals(Primitive.SPHERE)) {
+			mesh = new Sphere(32,32,1f);
+		}
+		
+		Geometry res = new Geometry(getUID(),mesh);
+		res.setMaterial(mat);
+		res.scale((float) _scalex, (float) _scaley, (float) _scalez);
+		res.rotate((float) _rotationx, (float) _rotationy, (float) _rotationz);
+		res.setLocalTranslation((float) _translationx, (float) _translationy, (float) _translationz);
+		return res;
 	}
 }

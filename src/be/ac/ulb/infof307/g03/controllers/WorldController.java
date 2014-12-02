@@ -51,6 +51,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	private Vector2f _savedCenter = null;
 	private boolean _leftClickPressed = false;
 	private Geometry _builtGeometric = null;
+	private Entity _currentEntity = null;
     
     // Edition mode alias
 	static final private String _WORLDMODE = "world";
@@ -160,6 +161,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     		_view.makeScene();
     	} else if (_currentEditionMode.equals(_OBJECTMODE)) {
     		_view.cleanScene();
+    		_view.makeScene(_currentEntity);
     	}
 	}
     
@@ -210,7 +212,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * - Update in database and notify
      * - Set current moving point to null
      */
-    public void dropMovingPoint(boolean finalDrop){
+    public void dropMovingPoint(boolean finalPoint){
     	if (_movingPoint == null)
     		return;
     	
@@ -219,7 +221,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         try {
         	GeometryDAO dao = _project.getGeometryDAO();
         	dao.update(_movingPoint);
-        	if (finalDrop) 
+        	if (finalPoint) 
         		_movingPoint = null;
         	dao.notifyObservers();
         } catch (SQLException err){
@@ -329,22 +331,34 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     }
     
     private void updateShapeDisplay(boolean finalUpdate) {
+    	Vector2f currPos = getXYForMouse(0);
+    	float dist = currPos.distance(_savedCenter);
+    	
     	if (_mouseMode.equals("cube")) {
-    		Vector2f currPos = getXYForMouse(0);
-    		float dist = currPos.distance(_savedCenter);
     		float d = dist / FastMath.sqr(2);
     		Vector3f center = new Vector3f(_savedCenter.x-d,_savedCenter.y-d,dist/2);
     		_builtGeometric.setLocalTranslation(center);
     		_builtGeometric.setLocalScale(dist); // h^2 = 2a^2 <=> h = sqrt(2) a <=> a = h/sqrt(2)
     	} else if (_mouseMode.equals("sphere")) {
-    		Vector2f currPos = getXYForMouse(0);
-    		float dist = currPos.distance(_savedCenter);
     		Vector3f center = new Vector3f(_savedCenter.x,_savedCenter.y,dist);
     		_builtGeometric.setLocalTranslation(center);
     		_builtGeometric.setLocalScale(dist);
     	}
+    	
+    	try {
+			GeometryDAO dao = _project.getGeometryDAO();
+			Primitive primitive = (Primitive) dao.getByUID(_builtGeometric.getName());
+			primitive.setScale(_builtGeometric.getLocalScale());
+			primitive.setTranslation(_builtGeometric.getLocalTranslation());
+			dao.update(primitive);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	
     	if (finalUpdate){
-    		_builtGeometric =null;
+    		_builtGeometric = null;
     	}
     }
     
@@ -396,9 +410,18 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     }
     
     public void initSphere() {
+    	Sphere sphere = new Sphere(32,32,1f);
+		try {
+			GeometryDAO dao = _project.getGeometryDAO();
+			Primitive primitive = new Primitive(_currentEntity,Primitive.SPHERE);
+			dao.create(primitive);
+			_builtGeometric = new Geometry(primitive.getUID(), sphere);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
     	_savedCenter = getXYForMouse(0f);
-		Sphere sphere = new Sphere(32,32,1f);
-		_builtGeometric = new Geometry("plop", sphere);
+		
 		sphere.setTextureMode(Sphere.TextureMode.Projected);
 		Material sphereMat = new Material(_view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
 		sphereMat.setBoolean("UseMaterialColors",true);    
@@ -410,9 +433,18 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     }
     
     public void initCube() {
-    	_savedCenter = getXYForMouse(0f);
     	Box box = new Box(0.5f,0.5f,0.5f);
-    	_builtGeometric = new Geometry("plop", box);
+    	try {
+			GeometryDAO dao = _project.getGeometryDAO();
+			Primitive primitive = new Primitive(_currentEntity,Primitive.CUBE);
+			dao.create(primitive);
+			_builtGeometric = new Geometry(primitive.getUID(), box);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	
+    	_savedCenter = getXYForMouse(0f);
 		Material boxMat = new Material(_view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
 		boxMat.setBoolean("UseMaterialColors",true);    
 		boxMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
@@ -486,6 +518,13 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				}
 			} else if (config.getName().equals("mouse.mode")) {
 				_mouseMode = config.getValue();
+			} else if (config.getName().equals("entity.current")) {
+				try {
+					_currentEntity = (Entity) _project.getGeometryDAO().getByUID(config.getValue());
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}

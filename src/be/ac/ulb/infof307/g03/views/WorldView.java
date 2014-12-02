@@ -14,7 +14,9 @@ import java.util.concurrent.Callable;
 import be.ac.ulb.infof307.g03.controllers.CameraContext;
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
@@ -197,6 +199,20 @@ public class WorldView extends SimpleApplication implements Observer {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
+	            return null;
+	        }
+	    });
+	}
+	
+	public void makeScene(final Entity entity) {
+		enqueue(new Callable<Object>() {
+	        public Object call() {
+	        	ForeignCollection<Primitive> primitives = entity.getPrimitives();
+	    		for (Primitive primitive : primitives) {
+	    			Log.debug("[DEBUG] Loading primitive");
+	    			Material mat = _makeBasicMaterial(ColorRGBA.Cyan/*_getColor(primitive)*/);
+	    			rootNode.attachChild(primitive.toSpatial(mat));
+	    		}
 	            return null;
 	        }
 	    });
