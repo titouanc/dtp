@@ -168,7 +168,10 @@ public class FileChooserController {
 	 */
 	public void saveAsProject(File fileToSave) {
 		Log.info("Save as %s", fileToSave.getName());
-		String filename = fileToSave.getAbsolutePath() + ".hpj";
+		String filename = fileToSave.getAbsolutePath();
+		
+		if(!filename.endsWith(".hpj")){	filename+=".hpj";}
+		
 		int dialogResult = JOptionPane.YES_OPTION;
 		if(new File(filename).exists()){
 			int dialogButton = JOptionPane.YES_NO_OPTION;
