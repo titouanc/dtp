@@ -43,7 +43,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     private WorldView view;
     private Project project;
     private CameraContext cameraContext = null;
-    private Point movingPoint = null;
+    private Geometric movingGeometric = null;
     private List<Point> inConstruction ;
     private Floor currentFloor = null;
 	private String currentEditionMode;
@@ -213,21 +213,41 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * - Update in database and notify
      * - Set current moving point to null
      */
-    public void dropMovingPoint(boolean finalPoint){
-    	if (this.movingPoint == null)
+    public void dropMovingPoint(boolean finalMove){
+    	Point movingPoint = (Point) movingGeometric;
+    	if (movingPoint == null)
     		return;
     	
-    	getXYForMouse(this.movingPoint);
+    	getXYForMouse(movingPoint);
         
         try {
         	GeometryDAO dao = this.project.getGeometryDAO();
-        	dao.update(this.movingPoint);
-        	if (finalPoint) 
-        		this.movingPoint = null;
+        	dao.update(movingPoint);
+        	if (finalMove) 
+        		movingGeometric = null;
         	dao.notifyObservers();
         } catch (SQLException err){
         	Log.exception(err);
         }
+    }
+    
+    public void dropMovingPrimitive(boolean finalMove) {
+    	Primitive movingPrimitive = (Primitive) movingGeometric;
+    	if (movingPrimitive == null)
+    		return;
+    	
+    	Vector2f v = getXYForMouse(0);
+    	movingPrimitive.setTranslation(new Vector3f(v.x,v.y,movingPrimitive.getTranslation().z));
+
+    	try {
+    		GeometryDAO dao = this.project.getGeometryDAO();
+    		dao.update(movingPrimitive);
+    		if (finalMove) 
+    			movingGeometric = null;
+    		dao.notifyObservers(movingPrimitive);
+    	} catch (SQLException err){
+    		Log.exception(err);
+    	}
     }
     
     /**
@@ -378,8 +398,11 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     }
     
     private void mouseMoved(float value) {
-    	if (this.movingPoint != null) {
-    		dropMovingPoint(false);
+    	if (movingGeometric != null) {
+    		if (movingGeometric instanceof Point)
+    			dropMovingPoint(false);
+    		else if (movingGeometric instanceof Primitive)
+    			dropMovingPrimitive(false);
     	} else if (this.builtGeometric != null) {
     		if (this.leftClickPressed)
     			updateShapeDisplay(false);
@@ -407,7 +430,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 								);
 	}
     
-    private void dragSelectHandler() {
+    private void dragSelectHandlerW() {
     	/* Find the Geometric object where we clicked */
         Geometric clicked = getClickedObject();
         
@@ -421,11 +444,24 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         
         /* If it is a Point: initiate drag'n drop */
         else if (clicked instanceof Point)
-    		this.movingPoint = (Point) clicked;
+    		this.movingGeometric = (Point) clicked;
+        
+        
+    }
+    
+    private void dragSelectHandlerO() {
+    	/* Find the Geometric object where we clicked */
+        Geometric clicked = getClickedObject();
+        
+        /* We're not interested if no object */
+        if (clicked == null)
+        	return;
         
         /* If it is a Primitive : select it */
-        else if (clicked instanceof Primitive)
+        if (clicked instanceof Primitive) {
         	selectObject((Primitive) clicked);
+        	this.movingGeometric = (Primitive) clicked;
+        }
     }
     
     public void initSphere() {
@@ -482,20 +518,25 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				if (currentEditionMode.equals(WorldController.WORLDMODE)) {
 					if (this.mouseMode.equals("construct")) { /* We're in construct mode and left-click: add a point */
 						construct();
-					}
+					} else if (this.mouseMode.equals("dragSelect")) {
+						dragSelectHandlerW();
+					} 
 				} else if (currentEditionMode.equals(WorldController.OBJECTMODE)) {
 					if(this.mouseMode.equals("sphere")){
 						initSphere();
 					} else if(this.mouseMode.equals("cube")){
 						initCube();
-					}
+					} else if (this.mouseMode.equals("dragSelect")) {
+						dragSelectHandlerO();
+					} 
 				}
-				if (this.mouseMode.equals("dragSelect")) {
-					dragSelectHandler();
-				} 
+				
 			} else { // on release
-				if (this.movingPoint != null) { // We're moving a point, and mouse button up: stop the point here
-					dropMovingPoint(true);
+				if (movingGeometric != null) { // We're moving a point, and mouse button up: stop the point here
+					if (movingGeometric instanceof Point)
+						dropMovingPoint(true);
+					else if (movingGeometric instanceof Primitive) 
+						dropMovingPrimitive(true);
 				} else if (this.builtGeometric != null) {
 	    			updateShapeDisplay(true);					
 				}

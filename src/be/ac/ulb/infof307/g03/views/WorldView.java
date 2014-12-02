@@ -300,6 +300,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	private void drawPrimitive(Primitive primitive) {
+		Log.debug("problem2");
 		if (! primitive.isVisible()) 
 			return;
 		Material mat = _makeMaterial(primitive);
@@ -358,6 +359,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * @param change
 	 */
 	private void _updateMeshable(Change change){
+		Log.debug("Problem");
 		Meshable meshable = (Meshable) change.getItem();
 		
 		/* 3D object don't exist yet if it is a creation */
@@ -372,8 +374,10 @@ public class WorldView extends SimpleApplication implements Observer {
 				_drawGround((Ground) meshable);
 			else if (meshable instanceof Roof)
 				_drawRoof((Roof) meshable);
-			else if (meshable instanceof Primitive)
+			else if ((meshable instanceof Primitive) && (controller.getCameraModeController().equals("Object")))
 				drawPrimitive((Primitive) meshable);
+			//else if ((meshable instanceof Item) && (controller.getCameraModeController().equals("World"))
+			//	drawItem((Item) meshable);
 		}
 		
 		/* Conclusion: updates will do both (detach & redraw) */
@@ -434,6 +438,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		synchronized (this.queuedChanges){
 			if (this.queuedChanges.size() > 0){
 				for (Change change : this.queuedChanges){
+					Log.debug("Update change worldview : %s",change.getItem().getUID());
 					if (change.isDeletion())
 						rootNode.detachChildNamed(change.getItem().getUID());
 					else if (change.getItem() instanceof Meshable)
