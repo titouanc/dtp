@@ -217,6 +217,8 @@ public class ToolsBarController implements ActionListener, Observer {
 			_view.setWorldEditionModuleVisible(false);
 			_view.setObjectEditionModuleVisible(true);
 		}
+		_project.config("mouse.mode", "dragSelect");
+		_view.setDragSelectSelected(true);
 	}
     
     /**

@@ -231,7 +231,7 @@ public class TextureView extends JPanel implements ItemListener {
 				return ADDTEXTURE;
 			}
 			else{
-				return ("Textures/Full/" + textureList.getSelectedValue().toString()+"Full");
+				return ("Textures/Full/" + textureList.getSelectedValue().toString());
 			}
 		}
 	}

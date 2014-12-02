@@ -97,7 +97,6 @@ public class Primitive extends Meshable {
 	}
 
 	public Spatial toSpatial(Material mat) {
-		System.out.println(type+" "+getId());
 		Mesh mesh = null;
 		if (this.type.equals(Primitive.CUBE)) {
 			mesh = new Box(0.5f,0.5f,0.5f);

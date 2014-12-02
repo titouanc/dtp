@@ -399,4 +399,8 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	}
  	}
 
+	public void setDragSelectSelected(boolean b) {
+		_navigationModule.cursorButton.setSelected(b);
+	}
+
 }

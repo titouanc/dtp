@@ -388,6 +388,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			Config config = (Config) arg;
 			if (config.getName().equals("edition.mode")) {
 				updateEditionMode(config.getValue());
+			} else if (config.getName().equals("entity.current")) {
+				updateEditionMode();
 			}
 		}		
 	}

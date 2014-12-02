@@ -578,6 +578,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			} else if (config.getName().equals("entity.current")) {
 				try {
 					this.currentEntity = (Entity) this.project.getGeometryDAO().getByUID(config.getValue());
+					updateEditionMode();
 				} catch (SQLException ex) {
 					Log.exception(ex);
 				}
