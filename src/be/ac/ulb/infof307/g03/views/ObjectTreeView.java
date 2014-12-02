@@ -158,8 +158,14 @@ public class ObjectTreeView extends JTree implements Observer {
 		root.removeAllChildren();
 		for (Floor floor : this.dao.getFloors()){
 			DefaultMutableTreeNode floorNode = _createNode(floor);
-			for (Room room : this.dao.getRooms(floor))
+			for (Room room : floor.getRooms()){
+				floor.getRooms().refresh(room);
 				floorNode.add(_createTree(room));
+			}
+			for (Item item : floor.getItems()){
+				floor.getItems().refresh(item);
+				floorNode.add(_createNode(item));
+			}
 			root.add(floorNode);
 		}
 	}
