@@ -25,7 +25,7 @@ public abstract class Meshable extends Geometric {
 	private Boolean selected = false;
 	
 	@DatabaseField
-	private String texture = "GrayColor";
+	private String texture = "Gray";
 	
 	@ForeignCollectionField
 	private ForeignCollection<Room> room;

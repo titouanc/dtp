@@ -6,6 +6,8 @@ package be.ac.ulb.infof307.g03.models;
 import java.sql.SQLException;
 import java.util.Observable;
 
+import be.ac.ulb.infof307.g03.utils.Log;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -122,6 +124,7 @@ public class Project extends Observable {
 			}
 			return entry.getValue();
 		} catch (SQLException err){
+			Log.warn("SQLException in Project.config");
 			return "";
 		}
 	}
@@ -147,6 +150,7 @@ public class Project extends Observable {
 			notifyObservers(entry);
 			return entry.getValue();
 		} catch (SQLException err){
+			Log.warn("SQLException in Project.config");
 			return "";
 		}
 	}

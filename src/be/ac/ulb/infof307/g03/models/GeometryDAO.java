@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
+import be.ac.ulb.infof307.g03.utils.Log;
+
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.j256.ormlite.dao.Dao;
@@ -29,6 +31,7 @@ public class GeometryDAO extends Observable {
 	private Dao<Roof,  Integer> roofs = null;
 	private Dao<Primitive,  Integer> primitives = null;
 	private Dao<Entity, Integer> entities = null;
+	private Dao<Item, Integer> items = null;
 	private List<Change> changes = null;
 	
 	/**
@@ -46,6 +49,7 @@ public class GeometryDAO extends Observable {
 		TableUtils.createTableIfNotExists(database, Roof.class);
 		TableUtils.createTableIfNotExists(database, Primitive.class);
 		TableUtils.createTableIfNotExists(database, Entity.class);
+		TableUtils.createTableIfNotExists(database, Item.class);
 	}
 	
 	/**
@@ -73,6 +77,7 @@ public class GeometryDAO extends Observable {
 		this.roofs = DaoManager.createDao(database, Roof.class);
 		this.primitives = DaoManager.createDao(database, Primitive.class);
 		this.entities = DaoManager.createDao(database, Entity.class);
+		this.items = DaoManager.createDao(database, Item.class);
 		this.changes = new LinkedList<Change>();
 	}
 	
@@ -93,12 +98,19 @@ public class GeometryDAO extends Observable {
         toCopy.addAll(other.rooms.queryForAll());
         toCopy.addAll(other.entities.queryForAll());
         toCopy.addAll(other.primitives.queryForAll());
+        toCopy.addAll(other.items.queryForAll());
 		int res = 0;
 		for (Geometric g : toCopy)
 			res += create(g);
 		return res;
 	}
 	
+	/**
+	 * Creates a point in the database
+	 * @param p The point
+	 * @return
+	 * @throws SQLException
+	 */
 	public int create(Point p) throws SQLException {
 		int res = 0;
 		try {res=this.points.create(p);}
@@ -113,6 +125,11 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
+	/**
+	 * @param bind
+	 * @return
+	 * @throws SQLException
+	 */
 	public int create(Binding bind) throws SQLException {
 		if (bind.getPoint().getId() == 0)
 			create(bind.getPoint());
@@ -124,6 +141,11 @@ public class GeometryDAO extends Observable {
 		return res;
 	}
 	
+	/**
+	 * @param floor
+	 * @return
+	 * @throws SQLException
+	 */
 	public int create(Floor floor) throws SQLException {
 		double base = 0;
 		for (Floor f : getFloorsBelow(floor))
@@ -163,6 +185,8 @@ public class GeometryDAO extends Observable {
 			res = this.primitives.create((Primitive) object);
 		else if (object instanceof Entity)
 			res = this.entities.create((Entity) object);
+		else if (object instanceof Item)
+			res = this.items.create((Item) object);
 		if (res != 0){
 			setChanged();
 			this.changes.add(Change.create(object));
@@ -196,6 +220,8 @@ public class GeometryDAO extends Observable {
 			res = this.primitives.refresh((Primitive) object);
 		else if (object instanceof Entity)
 			res = this.entities.refresh((Entity) object);
+		else if (object instanceof Item)
+			res = this.items.refresh((Item) object);
 		return res;
 	}
 	
@@ -246,6 +272,8 @@ public class GeometryDAO extends Observable {
 			res= this.primitives.update((Primitive) object);
 		else if (object instanceof Entity)
 			res = this.entities.update((Entity) object);
+		else if (object instanceof Entity)
+			res = this.items.update((Item) object);
 		if (res != 0){
 			setChanged();
 			this.changes.add(Change.update(object));
@@ -307,6 +335,8 @@ public class GeometryDAO extends Observable {
 			res = this.primitives.delete((Primitive) object);
 		else if (object instanceof Entity)
 			res = this.entities.delete((Entity) object);
+		else if (object instanceof Item)
+			res = this.items.delete((Item) object);
 		if (res != 0){
 			setChanged();
 			this.changes.add(Change.delete(object));
@@ -344,9 +374,11 @@ public class GeometryDAO extends Observable {
 					res = getPrimitive(id);
 				else if (prefix.equals(new Entity().getUIDPrefix()))
 					res = getEntity(id);
+				else if (prefix.equals(new Item().getUIDPrefix()))
+					res = getItem(id);
 			}
-		} catch (SQLException e){
-			e.printStackTrace();
+		} catch (SQLException ex){
+			Log.exception(ex);
 		}
 		return res;
 		
@@ -366,9 +398,9 @@ public class GeometryDAO extends Observable {
 	}
 	
 	/**
-	 * Get a line object from the database
-	 * @param line_id The line identifier
-	 * @return The line
+	 * Get a binding object from the database
+	 * @param bind_id The line identifier
+	 * @return The Binding
 	 * @throws SQLException
 	 */
 	public Binding getBinding(int bind_id) throws SQLException{
@@ -449,7 +481,7 @@ public class GeometryDAO extends Observable {
 	
 	/**
 	 * Get a line object from the database
-	 * @param line_id The line identifier
+	 * @param entity_id The Entity identifier
 	 * @return The line
 	 * @throws SQLException
 	 */
@@ -457,8 +489,24 @@ public class GeometryDAO extends Observable {
 		return this.entities.queryForId(entity_id);
 	}
 	
+	/**
+	 * Get a primitive from the database
+	 * @param prim_id The primitive identifier
+	 * @return The primitive
+	 * @throws SQLException
+	 */
 	public Primitive getPrimitive(int prim_id) throws SQLException {
 		return this.primitives.queryForId(prim_id);
+	}
+	
+	/**
+	 * Get an item from the database
+	 * @param item_id The item identifier
+	 * @return The item
+	 * @throws SQLException
+	 */
+	public Item getItem(int item_id) throws SQLException {
+		return this.items.queryForId(item_id);
 	}
 	
 	/**
@@ -685,8 +733,8 @@ public class GeometryDAO extends Observable {
 	 * @return A (possibly empty) list of all selected Meshables
 	 * @throws SQLException
 	 */
-	public List<Meshable> getSelectedMeshables() throws SQLException {
-		List<Meshable> res = new ArrayList<Meshable>();
+	public List<Area> getSelectedMeshables() throws SQLException {
+		List<Area> res = new ArrayList<Area>();
 		res.addAll(this.walls.queryForEq("selected", true));
 		res.addAll(this.grounds.queryForEq("selected", true));
 		res.addAll(this.roofs.queryForEq("selected", true));

@@ -1,5 +1,7 @@
 package be.ac.ulb.infof307.g03.utils;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,5 +85,13 @@ public class Log {
      */
     public static void error(String msg, Object...args){
     	getLogger().log(Level.SEVERE, String.format(msg, args));
+    }
+    
+    public static void exception(Exception ex, String msg,  Object...args){
+    	getLogger().log(Level.SEVERE, String.format(msg, args),ex);
+    }
+    
+    public static void exception(Exception ex,  Object...args){
+    	getLogger().log(Level.SEVERE, String.format(ex.getMessage(), args),ex);
     }
 }

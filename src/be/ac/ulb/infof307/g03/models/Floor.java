@@ -20,6 +20,8 @@ public class Floor extends Ordered {
 	private double baseHeight = 0.0;
 	@ForeignCollectionField
 	private ForeignCollection<Room> rooms;
+	@ForeignCollectionField
+	private ForeignCollection<Item> items;
 	
 	/**
 	 * Constructor of the class Floor.
@@ -79,5 +81,13 @@ public class Floor extends Ordered {
 	 */
 	public final ForeignCollection<Room> getRooms(){
 		return this.rooms;
+	}
+	
+	/**
+	 * Return all items on this floor
+	 * @return A (possibly empty) collection of items
+	 */
+	public final ForeignCollection<Item> getItems(){
+		return items;
 	}
 }

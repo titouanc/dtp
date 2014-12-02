@@ -16,7 +16,7 @@ import com.jme3.scene.shape.Sphere;
  * A primitive shape used to build objects
  * @author brochape, Titouan, jschembr
  */
-public class Primitive extends Geometric {
+public class Primitive extends Meshable {
 	public static String CUBE = "cube";
 	public static String SPHERE = "sphere";
 	
@@ -110,5 +110,11 @@ public class Primitive extends Geometric {
 		res.rotate((float) this.rotationx, (float) this.rotationy, (float) this.rotationz);
 		res.setLocalTranslation((float) this.translationx, (float) this.translationy, (float) this.translationz);
 		return res;
+	}
+
+	@Override
+	protected String innerToString() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
