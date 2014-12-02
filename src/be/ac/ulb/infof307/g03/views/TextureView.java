@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import be.ac.ulb.infof307.g03.controllers.TextureController;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
+
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -110,20 +112,45 @@ public class TextureView extends JPanel implements ItemListener {
 	 * Get all files from a directory
 	 */
 	private void addAllFiles(){
-		File[] files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Colors/").listFiles(); 
-		for (File file : files) {
-		    if (file.isFile()) {
-		    	this.colorFiles.add(file.getName().replace(".png", ""));
-		    }
-		}
-		files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/").listFiles(); 
-		for (File file : files) {
-		    if (file.isFile()) {
-		    	if(!(file.getName().contains("Full"))){
-		    		this.textureFiles.add(file.getName().replace(".png", ""));	
-		    	}
-		    }
-		}
+		String classPath = getClass().getResource("TextureView.class").toString();
+		String prefix="/";
+		System.out.println(getClass().getResource(prefix).toString());
+		if(classPath.subSequence(0, 3).equals("rsr")){
+			String path=getClass().getResource(prefix).toString();			
+    		File[] files = new File(path).listFiles(); 
+    		for (File file : files) {
+    		    if (file.isFile()) {
+    		    	System.out.println(file.getName());
+    		    	this.colorFiles.add(file.getName().replace(".png", ""));
+    		    }
+    		}
+    		files = new File(path).listFiles(); 
+    		for (File file : files) {
+    		    if (file.isFile()) {
+    		    	if(!(file.getName().contains("Full"))){
+    		    		this.textureFiles.add(file.getName().replace(".png", ""));	
+    		    	}
+    		    }
+    		}
+
+    	} else {
+    		File[] files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Colors/").listFiles(); 
+    		for (File file : files) {
+    		    if (file.isFile()) {
+    		    	this.colorFiles.add(file.getName().replace(".png", ""));
+    		    }
+    		}
+    		files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/").listFiles(); 
+    		for (File file : files) {
+    		    if (file.isFile()) {
+    		    	if(!(file.getName().contains("Full"))){
+    		    		this.textureFiles.add(file.getName().replace(".png", ""));	
+    		    	}
+    		    }
+    		}
+    		
+    		
+    	}    	
 	}
 	
 	
@@ -180,7 +207,7 @@ public class TextureView extends JPanel implements ItemListener {
 			return ADDTEXTURE;
 		}
 		else{
-			return ("Textures/Full/" + textureList.getSelectedValue().toString());
+			return ("Textures/Full/" + textureList.getSelectedValue().toString()+"Full");
 		}
 	}
 	
