@@ -2,6 +2,7 @@ package be.ac.ulb.infof307.g03.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.jme3.asset.AssetManager;
+import com.jme3.asset.AssetNotFoundException;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.material.RenderState.FaceCullMode;
@@ -104,7 +105,7 @@ public abstract class Meshable extends Geometric {
 	public abstract Spatial toSpatial(Material material);
 	
 	private final Material loadTexture(AssetManager assetManager){
-		if (texture.equals("Gray")){
+		if (texture.equals("Gray") || texture.equals("")){
 			texture = "Colors/Gray";
 		}
 		Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
@@ -118,7 +119,12 @@ public abstract class Meshable extends Geometric {
 		if (isSelected()){
 			mat.setColor("Ambient",new ColorRGBA(0f, 1.2f, 0f, 0.33f));
 		}
-		mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
+		try{
+			mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
+		} catch (AssetNotFoundException ex){
+			texture = "Colors/Gray";
+			mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
+		}
 		return mat;
 	}
 	
