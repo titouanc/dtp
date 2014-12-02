@@ -40,7 +40,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	
 	//private final static String _CHANGETEXTURE	= "Change Texture";
 	private static String fileToDelete= new String();
-	private String classPath= getClass().getResource("TextureView.class").toString();
+	private String classPath= getClass().getResource("TextureController.class").toString();
 
 	
 	
@@ -118,7 +118,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 					copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
 					
 					String filename = fileToImport.getName();
-					if (!(filename).equals(this.view.getAddFile()) && (filename.contains(".png"))){
+					if (!(filename).equals(this.view.getAddFile()) && (filename.endsWith(".png"))){
 						if(fileToImport.renameTo(destinationMini)){
 							reScale(destinationMini); // Set image to 20x20 format
 							this.view.updatePanel(filename);
@@ -126,6 +126,9 @@ public class TextureController implements ActionListener,MouseListener, Observer
 						else{
 							Log.debug("The new texture has not been imported. Error.");
 						}
+					}
+					else{
+						Log.debug("Only PNG allowed");
 					}
 			    }
 			    catch (NullPointerException ex){
@@ -135,9 +138,22 @@ public class TextureController implements ActionListener,MouseListener, Observer
 			else{
 				try{
 					File fileToImport = fc.getSelectedFile();
-					//File destinationMini = new File();
-					//File destinationFull = new File();
-					//copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
+					File destinationMini = new File(fileToImport.getAbsolutePath().replace(".png", "") + "Mini.png");
+					File destinationFull = new File(fileToImport.getAbsolutePath().replace(".png", "") + "Full.png");
+					copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
+					String filename = fileToImport.getName();
+					if (!(filename).equals(this.view.getAddFile()) && (filename.endsWith(".png"))){
+						if(fileToImport.renameTo(destinationMini)){
+							reScale(destinationMini); // Set image to 20x20 format
+							this.view.updatePanel(destinationFull.getAbsolutePath());
+						}
+						else{
+							Log.debug("The new texture has not been imported. Error.");
+						}
+					}
+					else{
+						Log.debug("Only PNG allowed");
+					}
 				}
 				catch(NullPointerException ex){
 			    	Log.exception(ex);				

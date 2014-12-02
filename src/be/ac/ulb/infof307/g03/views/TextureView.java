@@ -223,8 +223,17 @@ public class TextureView extends JPanel implements ItemListener {
 	 * @return the texture List
 	 */
 	public String getSelectedTexture(){
-		if(classPath.subSequence(0, 3).equals("rsr")){		
-			return (textureList.getSelectedValue().toString()+"Full");
+		if(classPath.subSequence(0, 3).equals("rsr")){
+			if (textureList.getSelectedValue().toString().equals(ADDTEXTURE)){
+				return ADDTEXTURE;
+			}
+			else{
+				String res = textureList.getSelectedValue().toString();
+				if(!res.contains(File.separator)){
+					res += "Full";
+				}
+				return (res);
+			}
 		}
 		else{
 			if (textureList.getSelectedValue().toString().equals(ADDTEXTURE)){
@@ -260,7 +269,7 @@ public class TextureView extends JPanel implements ItemListener {
 	 * Update the panel 
 	 */
 	public void updatePanel(String filename){
-		filename=filename.replace(".png","");
+		filename=filename.replace(".png","");	
 		this.textureFiles.add(this.textureFiles.size()-1,filename);
 		this.update();
 	}
@@ -363,9 +372,16 @@ public class TextureView extends JPanel implements ItemListener {
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
 	    		if (list.equals(textureList)){
 	    			if (!(value.toString()==ADDTEXTURE)){
-	    				imageIcon = new ImageIcon(getClass().getResource(prefix+value.toString()+".png"));
+	    				if(value.toString().contains(File.separator)){
+	    					Log.debug("VALUE : " + value.toString());
+	    					imageIcon = new ImageIcon(value.toString().replace("Full", "Mini")+".png");
+	    				}
+	    				else{
+	    					imageIcon = new ImageIcon(
+	    							getClass().getResource(prefix+value.toString()+".png"));
+	    				}
 	    			}
-	    			else{// If Else
+	    			else{
 	    				imageIcon = new ImageIcon(getClass().getResource(prefix+"addFile.png"));
 	    			}
 	    		}
