@@ -55,12 +55,5 @@ public class Entity extends Geometric {
 	public String toString(){
 		return this.name;
 	}
-	
-	public Spatial toSpacial(Material mat) {
-		Node res = new Node(this.getUID());
-		for (Primitive primitive : this.primitives) {
-			res.attachChild(primitive.toSpatial(mat));
-		}
-		return res;
-	}
+
 }
