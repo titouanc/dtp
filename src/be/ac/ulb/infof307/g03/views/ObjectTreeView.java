@@ -133,9 +133,6 @@ public class ObjectTreeView extends JTree implements Observer {
 		 
 		public TreeNodeCheckBox(final String text, final boolean selected) {
 		      this(text, null, selected);
-		      System.out.println(text);
-		      System.out.println(selected);
-		      System.out.println("---------");
 		}
 		 
 		public TreeNodeCheckBox(final String text, final Icon icon, final boolean selected) {
@@ -284,8 +281,6 @@ public class ObjectTreeView extends JTree implements Observer {
 					} catch (SQLException ex) {
 						Log.exception(ex);
 					}
-		               System.out.println(uid);
-
 
 		            }
 		         });
