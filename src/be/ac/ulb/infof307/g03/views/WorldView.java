@@ -18,7 +18,6 @@ import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.AssetLocator;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
@@ -37,8 +36,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.texture.Texture;
-import com.jme3.texture.Texture.WrapMode;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -417,7 +414,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	 */
 	@Override
 	public void simpleUpdate(float t){
-		
 		synchronized (this.queuedChanges){
 			if (this.queuedChanges.size() > 0){
 				for (Change change : this.queuedChanges){

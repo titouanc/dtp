@@ -8,7 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	TestGeometry.class, TestBinding.class, TestPoint.class, 
 	TestProject.class, TestFloor.class, TestMeshable.class, 
-	TestRoom.class, TestEntity.class})
+	TestRoom.class, TestEntity.class, TestItem.class})
 public class TestModels {
 
 }
