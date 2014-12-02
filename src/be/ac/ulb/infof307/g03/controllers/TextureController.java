@@ -133,7 +133,15 @@ public class TextureController implements ActionListener,MouseListener, Observer
 			    }   
 			}
 			else{
-				//
+				try{
+					File fileToImport = fc.getSelectedFile();
+					//File destinationMini = new File();
+					//File destinationFull = new File();
+					//copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
+				}
+				catch(NullPointerException ex){
+			    	Log.exception(ex);				
+				}
 			}
 	    }
 	}

@@ -365,7 +365,7 @@ public class TextureView extends JPanel implements ItemListener {
 	    			if (!(value.toString()==ADDTEXTURE)){
 	    				imageIcon = new ImageIcon(getClass().getResource(prefix+value.toString()+".png"));
 	    			}
-	    			else{
+	    			else{// If Else
 	    				imageIcon = new ImageIcon(getClass().getResource(prefix+"addFile.png"));
 	    			}
 	    		}
