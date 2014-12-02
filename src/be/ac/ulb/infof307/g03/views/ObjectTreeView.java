@@ -7,22 +7,40 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
 
+import javax.swing.AbstractCellEditor;
+import javax.swing.JCheckBox;
+import javax.swing.JTree;
+import javax.swing.UIManager;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeCellEditor;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import javax.swing.Icon;
+import javax.swing.border.LineBorder;
+
+import java.awt.Insets;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.*;
@@ -101,38 +119,181 @@ public class ObjectTreeView extends JTree implements Observer {
 		}
 
 	}
-
-	/**
-	 * Node rendering in TreeView
-	 * @author titou
-	 */
-	class GeometricRenderer extends DefaultTreeCellRenderer {
-		/**
-		 * Default serial version UID
-		 */
+	
+	
+	
+	private class TreeNodeCheckBox extends JCheckBox {
+		 
 		private static final long serialVersionUID = 1L;
+		private String uid;
 
-		public Component getTreeCellRendererComponent(
-                JTree tree,
-                Object value,
-                boolean sel,
-                boolean expanded,
-                boolean leaf,
-                int row,
-                boolean hasFocus){
-			if (value instanceof DefaultMutableTreeNode)
-				value = ((DefaultMutableTreeNode) value).getUserObject();
-			if (value instanceof Meshable){
-				Meshable item = (Meshable) value;
-				sel = item.isSelected();
-			} else if (value instanceof Floor){
-				Floor fl = (Floor) value;
-				sel = project.config("floor.current").equals(fl.getUID());
-			}
-			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-			return this;
+		public TreeNodeCheckBox() {
+		      this("", false);
 		}
+		 
+		public TreeNodeCheckBox(final String text, final boolean selected) {
+		      this(text, null, selected);
+		      System.out.println(text);
+		      System.out.println(selected);
+		      System.out.println("---------");
+		}
+		 
+		public TreeNodeCheckBox(final String text, final Icon icon, final boolean selected) {
+		      super(text, icon, selected);
+		}
+		
+		public void setValue(String newUid){
+			uid = newUid;
+		}
+		
+		public String getValue(){
+			return uid;
+		}
+		
+		
 	}
+
+	class CheckBoxTreeNodeRenderer implements TreeCellRenderer {
+		   Color selectionBorderColor, selectionForeground, selectionBackground, textForeground, textBackground;
+		   private TreeNodeCheckBox checkBoxRenderer;
+		   private DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
+		 
+		   public CheckBoxTreeNodeRenderer() {
+			  checkBoxRenderer = new TreeNodeCheckBox();
+		      Font fontValue = UIManager.getFont("Tree.font");
+		      if (fontValue != null) {
+		         checkBoxRenderer.setFont(fontValue);
+		      }
+		      Boolean booleanValue = (Boolean) UIManager.get("Tree.drawsFocusBorderAroundIcon");
+		      checkBoxRenderer.setFocusPainted((booleanValue != null) && (booleanValue.booleanValue()));
+		 
+		      selectionBorderColor = UIManager.getColor("Tree.selectionBorderColor");
+		      selectionForeground = UIManager.getColor("Tree.selectionForeground");
+		      selectionBackground = UIManager.getColor("Tree.selectionBackground");
+		      textForeground = UIManager.getColor("Tree.textForeground");
+		      textBackground = UIManager.getColor("Tree.textBackground");
+		   }
+		 
+		   protected TreeNodeCheckBox getCheckBoxRenderer() {
+		      return checkBoxRenderer;
+		   }
+		 
+		   public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+			  Component component;
+		      if (leaf) {
+			      boolean isChecked = false;
+			      DefaultMutableTreeNode tn = (DefaultMutableTreeNode) value;
+			      if (tn.getUserObject() instanceof Meshable){
+			    	  Meshable ms = (Meshable) tn.getUserObject();
+			    	  if( ms.isVisible() != selected ){
+			    		  isChecked = ms.isVisible(); 
+			    	  }
+			      }
+		         String stringValue = tree.convertValueToText(value, selected, expanded, leaf, row, false);
+		         checkBoxRenderer.setText(stringValue);
+		         checkBoxRenderer.setSelected(isChecked);
+		         checkBoxRenderer.setEnabled(tree.isEnabled());
+		         if (selected) {
+		            //checkBoxRenderer.setBorder(new LineBorder(selectionBorderColor));
+		            checkBoxRenderer.setForeground(selectionForeground);
+		            checkBoxRenderer.setBackground(selectionBackground);
+		         } else {
+		            //checkBoxRenderer.setBorder(null);
+		            checkBoxRenderer.setForeground(textForeground);
+		            checkBoxRenderer.setBackground(textBackground);
+		         }
+		         if ((value != null) && (value instanceof DefaultMutableTreeNode)) {
+		            Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
+		            if (userObject instanceof TreeNodeCheckBox) {
+		               TreeNodeCheckBox node = (TreeNodeCheckBox) userObject;
+		               checkBoxRenderer.setText(node.getText());
+		               checkBoxRenderer.setSelected(node.isSelected());
+		            }
+		         }
+		         component = checkBoxRenderer;
+		      } else {
+		         component = defaultRenderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+		      }
+		      return component;
+		   }
+		}
+		 
+		class CheckBoxTreeNodeEditor extends AbstractCellEditor implements TreeCellEditor {
+		   /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			CheckBoxTreeNodeRenderer renderer = new CheckBoxTreeNodeRenderer();
+			JTree tree;
+		 
+		   public CheckBoxTreeNodeEditor(JTree tree) {
+		      this.tree = tree;
+		   }
+		 
+		   public Object getCellEditorValue() {
+		      TreeNodeCheckBox checkBox = renderer.getCheckBoxRenderer();
+		      TreeNodeCheckBox checkBoxNode = new TreeNodeCheckBox(checkBox.getText(), checkBox.isSelected());
+		      return checkBoxNode;
+		   }
+		 
+		   public boolean isCellEditable(EventObject event) {
+		      boolean editable = false;
+		      if (event instanceof MouseEvent) {
+		         MouseEvent mouseEvent = (MouseEvent) event;
+		         TreePath path = tree.getPathForLocation(mouseEvent.getX(), mouseEvent.getY());
+		         if (path != null) {
+		        	 if(mouseEvent.getX() < 80){
+				        Object node = path.getLastPathComponent();
+				        if ((node != null) && (node instanceof DefaultMutableTreeNode)) {
+				           DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
+				           editable = treeNode.isLeaf();
+				        }
+		        		 
+		        	 }
+		         }
+		      }
+		      return editable;
+		   }
+		 
+		   public Component getTreeCellEditorComponent(JTree tree, final Object value, final boolean selected, boolean expanded, boolean leaf, int row) {
+		      final Component editor = renderer.getTreeCellRendererComponent(tree, value, true, expanded, leaf, row, true);
+		      if (editor instanceof TreeNodeCheckBox) {
+		    	 DefaultMutableTreeNode tn = (DefaultMutableTreeNode) value;
+		    	 if (tn.getUserObject() instanceof Meshable){
+			    	 Meshable ms = (Meshable) tn.getUserObject();
+			    	 ((TreeNodeCheckBox) editor).setValue(ms.getUID()); 
+		    	 }
+		         ((TreeNodeCheckBox) editor).addItemListener(new ItemListener() {
+		            public void itemStateChanged(ItemEvent itemEvent) {
+		               if (stopCellEditing()) {
+		                  fireEditingStopped();
+		               }
+		               Object obj = itemEvent.getItem();
+		               Integer state = itemEvent.getStateChange();
+		               String uid = ((TreeNodeCheckBox) obj).getValue();
+		               Meshable ms1 = (Meshable) dao.getByUID(uid);
+		               if (state == 1){
+		            	   ms1.hide();
+		               }
+		               else{
+		            	   ms1.show();
+		               }
+		               try {
+						dao.update(ms1);
+						dao.notifyObservers();
+					} catch (SQLException ex) {
+						Log.exception(ex);
+					}
+		               System.out.println(uid);
+
+
+		            }
+		         });
+		      }
+		      return editor;
+		   }
+		}
+
 	
 	private DefaultMutableTreeNode _createNode(Geometric item){
 		DefaultMutableTreeNode res = new DefaultMutableTreeNode(item.toString());
@@ -228,7 +389,9 @@ public class ObjectTreeView extends JTree implements Observer {
 		
 		// Create a tree that allows one selection at a time.
 		getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-		setCellRenderer(new GeometricRenderer());
+		setCellRenderer(new CheckBoxTreeNodeRenderer() );
+		setCellEditor(new CheckBoxTreeNodeEditor(this));
+		setEditable(true);
 		
 		// Listen for when the selection changes
 		addTreeSelectionListener(controller);
