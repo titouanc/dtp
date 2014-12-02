@@ -18,13 +18,13 @@ public class BootController {
 
 	
 	static final private String LAST_PROJECT = "LastOpenedProject";
-	private Preferences _prefs;
+	private Preferences prefs; 
 	
 	/**
 	 * Constructor of the class Bootcontroller
 	 */
 	public BootController(){
-		 _prefs = Preferences.userRoot().node("HomePlans");
+		 this.prefs = Preferences.userRoot().node("HomePlans");
 	}
 	
 	/**
@@ -32,14 +32,14 @@ public class BootController {
 	 * 
 	 */
 	public void saveCurrentProjectPath(String path){
-		_prefs.put(LAST_PROJECT, path);
+		this.prefs.put(LAST_PROJECT, path);
 	}
 	
 	/**
 	 * @return A string containing the path of the last project opened
 	 */
 	public String getLastProjectPath(){
-		String path = _prefs.get(LAST_PROJECT, null);
+		String path = this.prefs.get(LAST_PROJECT, null);
 		return path;
 	}
 	

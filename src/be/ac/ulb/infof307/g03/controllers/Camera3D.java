@@ -17,19 +17,19 @@ public class Camera3D extends CameraController {
     private final int minimumHeight = 1;
 	
 	// Speed parameters
-	private float _rotationSpeed 	= 1f;
-	private float _moveSpeed 		= 10f;
-	private float _zoomSpeed		= 4f;
+	private float rotationSpeed 	= 1f;
+	private float moveSpeed 		= 10f;
+	private float zoomSpeed		= 4f;
 	
 	// Default camera parameter
-	private final int _defaultCameraZ = 40;
+	private final int defaultCameraZ = 40;
 	
 	/**
 	 * Camera 3D controller constructor
-	 * @param cam
+	 * @param newCam
 	 */
-	public Camera3D(Camera cam) {
-		super(cam);
+	public Camera3D(Camera newCam) {
+		super(newCam);
 	}
 	
 	/**
@@ -37,10 +37,10 @@ public class Camera3D extends CameraController {
 	 */
 	public void resetCamera(WorldView wv) {
 		Log.info("Reset 3D camera direction");
-        _cam.setParallelProjection(false);
+        cam.setParallelProjection(false);
         
-        _cam.setLocation(new Vector3f(_cam.getLocation().x,_cam.getLocation().y,_defaultCameraZ));
-        _cam.setFrustumPerspective(45f, (float)_cam.getWidth() / _cam.getHeight(), 1f, 1000f);
+        cam.setLocation(new Vector3f(cam.getLocation().x,cam.getLocation().y, this.defaultCameraZ));
+        cam.setFrustumPerspective(45f, (float)cam.getWidth() / cam.getHeight(), 1f, 1000f);
 	}
 
 	/**
@@ -49,18 +49,18 @@ public class Camera3D extends CameraController {
 	 * @param sideways True if up or down, false if left or right
 	 */
 	public void moveCamera(float value, boolean sideways) {
-		Vector3f pos = _cam.getLocation().clone();
+		Vector3f pos = cam.getLocation().clone();
 		Vector3f vel = new Vector3f();
 		
 		// Choose the vector to follow
 		if (sideways) { // forward or backward
-			if (FastMath.abs(_cam.getDirection().getZ())!=1) {
-				_cam.getDirection(vel);
+			if (FastMath.abs(cam.getDirection().getZ())!=1) {
+				cam.getDirection(vel);
 			} else {
-				_cam.getUp(vel);
+				cam.getUp(vel);
 			}
 		} else { // strafe left or right
-			_cam.getLeft(vel);
+			cam.getLeft(vel);
 		}
 		
 		// Make this vector parallel to the Oxy plan
@@ -68,11 +68,11 @@ public class Camera3D extends CameraController {
 		vel.normalizeLocal();
 		
 		// Find the new position
-		vel.multLocal(value*_moveSpeed);
+		vel.multLocal(value*this.moveSpeed);
 		pos.addLocal(vel);
 
 		// Move the camera
-		_cam.setLocation(pos);
+		cam.setLocation(pos);
 	}
 	
 	/**
@@ -82,11 +82,11 @@ public class Camera3D extends CameraController {
 	 */
 	public void rotateCameraByGrab(float value, Vector3f axis) {
 		Matrix3f mat = new Matrix3f();
-        mat.fromAngleNormalAxis(_rotationSpeed * value, axis);
+        mat.fromAngleNormalAxis(this.rotationSpeed * value, axis);
 
-        Vector3f up = _cam.getUp();
-        Vector3f left = _cam.getLeft();
-        Vector3f dir = _cam.getDirection();
+        Vector3f up = cam.getUp();
+        Vector3f left = cam.getLeft();
+        Vector3f dir = cam.getDirection();
 
         mat.mult(up, up);
         mat.mult(left, left);
@@ -96,7 +96,7 @@ public class Camera3D extends CameraController {
         q.fromAxes(left, up, dir);
         q.normalizeLocal();
 
-        _cam.setAxes(q);
+        cam.setAxes(q);
 	}
 	
 	/**
@@ -105,11 +105,11 @@ public class Camera3D extends CameraController {
 	 */
 	public void rotateCamera(float value, boolean trigoRotate) {
 		Matrix3f mat = new Matrix3f();
-		mat.fromAngleNormalAxis(_rotationSpeed * value, _cam.getDirection());
+		mat.fromAngleNormalAxis(this.rotationSpeed * value, cam.getDirection());
 
-		Vector3f up = _cam.getUp();
-		Vector3f left = _cam.getLeft();
-		Vector3f dir = _cam.getDirection();
+		Vector3f up = cam.getUp();
+		Vector3f left = cam.getLeft();
+		Vector3f dir = cam.getDirection();
 
 		mat.mult(up, up);
 		mat.mult(left, left);
@@ -119,7 +119,7 @@ public class Camera3D extends CameraController {
 		q.fromAxes(left, up, dir);
 		q.normalizeLocal();
 
-		_cam.setAxes(q);
+		cam.setAxes(q);
 	}
 	
 	/**
@@ -127,12 +127,12 @@ public class Camera3D extends CameraController {
 	 * @param value
 	 */
 	public void zoomCamera(float value) {
-		Vector3f pos = _cam.getLocation().clone();
-		Vector3f vel = _cam.getDirection().clone();
-		vel.multLocal(-value*_zoomSpeed);
+		Vector3f pos = cam.getLocation().clone();
+		Vector3f vel = cam.getDirection().clone();
+		vel.multLocal(-value*this.zoomSpeed);
 		pos.addLocal(vel);
-		if (pos.z > minimumHeight){
-			_cam.setLocation(pos);
+		if (pos.z > this.minimumHeight){
+			cam.setLocation(pos);
 		}
 	}
 	
@@ -141,9 +141,9 @@ public class Camera3D extends CameraController {
 	 */
 	public void moveCameraByGrab(Vector3f oldPos, Vector3f currPos) {
 		currPos.subtractLocal(oldPos);
-		Vector3f pos = _cam.getLocation().clone();
+		Vector3f pos = cam.getLocation().clone();
 		pos.subtractLocal(currPos);
-		_cam.setLocation(pos);
+		cam.setLocation(pos);
 	}
 
 }

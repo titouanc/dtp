@@ -19,10 +19,10 @@ import be.ac.ulb.infof307.g03.views.MenuBarView;
  * @brief Controller of the MenuBar
  */
 public class MenuBarController implements ActionListener {
-	private MenuBarView _view;
-	private FileChooserController _fileController;
-	private GUI _gui; // to dispose when top left red cross is clicked
-	private Project _project;
+	private MenuBarView view;
+	private FileChooserController fileController;
+	private GUI gui; // to dispose when top left red cross is clicked
+	private Project project;
 	
 	/**
 	 * New alias
@@ -68,8 +68,8 @@ public class MenuBarController implements ActionListener {
 	 * @param gui The main gui frame (for .dispose())
 	 */
 	public MenuBarController(Project project,GUI gui){
-		_gui = gui;
-		_project = project;
+		this.gui = gui;
+		this.project = project;
 	}
 	
 	/**
@@ -77,37 +77,37 @@ public class MenuBarController implements ActionListener {
 	 * Runs the MenuBar GUI
 	 */
 	public void run(){
-		_view = new MenuBarView(this);
-		_fileController = new FileChooserController(_view, _project, _gui);
-		_fileController.run();
+		this.view = new MenuBarView(this);
+		this.fileController = new FileChooserController(this.view, this.project, this.gui);
+		this.fileController.run();
 	}
 	
 	/**
 	 * This method initiate the view
 	 */
 	public void initView(){
-		_view = new MenuBarView(this);
+		this.view = new MenuBarView(this);
 	}
 	
 	/**
 	 * @return the controller's view
 	 */
 	public MenuBarView getView(){
-		return _view;
+		return this.view;
 	}
 	
 	/**
 	 * Handler launched when menu item "New" is clicked
 	 */
 	public void onNew() {
-		_fileController.notifyDisplayNew();
+		this.fileController.notifyDisplayNew();
 	}
 	
 	/**
 	 * Handler launched when menu item "Open" is clicked
 	 */
 	public void onOpen() {
-		_fileController.notifyDisplayOpen();
+		this.fileController.notifyDisplayOpen();
 		
 	}
 	
@@ -115,15 +115,15 @@ public class MenuBarController implements ActionListener {
 	 * Handler launched when menu item "Demo" is clicked
 	 */
 	public void onDemo() {
-		_fileController.openDemo();
+		this.fileController.openDemo();
 	}
 	
 	/**
 	 * Handler launched when menu item "Save" is clicked
 	 */
 	public void onSave() {
-		if (_project.isOnDisk())
-			JOptionPane.showMessageDialog(_view,"Project saved. (auto-save is enabled)", "Information", JOptionPane.PLAIN_MESSAGE);
+		if (this.project.isOnDisk())
+			JOptionPane.showMessageDialog(this.view,"Project saved. (auto-save is enabled)", "Information", JOptionPane.PLAIN_MESSAGE);
 		else
 			onSaveAs();
 	}
@@ -132,14 +132,14 @@ public class MenuBarController implements ActionListener {
 	 * Handler launched when menu item "Save" is clicked
 	 */
 	public void onSaveAs() {
-		_fileController.notifyDisplaySaveAs();
+		this.fileController.notifyDisplaySaveAs();
 	}
 	
 	/**
 	 * Handler launched when menu item "Quit" is clicked
 	 */
 	public void onQuit() {
-		_gui.dispatchEvent(new WindowEvent(_gui, WindowEvent.WINDOW_CLOSING));
+		this.gui.dispatchEvent(new WindowEvent(this.gui, WindowEvent.WINDOW_CLOSING));
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class MenuBarController implements ActionListener {
 				+ "Arrows : Move\n\n"
 				+ "Mouse wheel : Zoom in/out\n"
 				+ "2D Mode\n O/P : Rotate Left/Right";
-		JOptionPane.showMessageDialog(_view, keybindingsMessage);
+		JOptionPane.showMessageDialog(this.view, keybindingsMessage);
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class MenuBarController implements ActionListener {
 				+ "Grab Mode : Drag with left click to move\n"
 				+ "Simple Cursor Mode : Used to select\n"
 				+ "New Room : Used to create new rooms; Left click to create corners, Right click to confirm";
-		JOptionPane.showMessageDialog(_view, helpMessage);
+		JOptionPane.showMessageDialog(this.view, helpMessage);
 	}
 	
 	/**
@@ -189,7 +189,7 @@ public class MenuBarController implements ActionListener {
 	public void onAbout() {
 		String aboutMessage = "HomePlans v1.0.0\n\n"
 				+ "Made by F. Hennecker, T. Christophe, J. Schembri, P. Gerard, W. Moulart, B. Rocha Pereira";
-		JOptionPane.showMessageDialog(_view, aboutMessage);
+		JOptionPane.showMessageDialog(this.view, aboutMessage);
 		
 	}
 	

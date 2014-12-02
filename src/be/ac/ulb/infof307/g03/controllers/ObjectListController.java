@@ -4,30 +4,32 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import be.ac.ulb.infof307.g03.models.Entity;
-import be.ac.ulb.infof307.g03.models.Geometric;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.ObjectListView;
-import be.ac.ulb.infof307.g03.views.ObjectTreeView;
 
+/**
+ * @author titou
+ *
+ */
 public class ObjectListController implements MouseListener {
-	private ObjectListView _view = null;
-	private Project _project = null;
-	private GeometryDAO _dao = null;
+	private ObjectListView view = null;
+	private Project project = null;
+	private GeometryDAO dao = null;
 	
+	/**
+	 * @param project the main project
+	 */
 	public ObjectListController(Project project) {
-		_view = new ObjectListView(this,project);
-		_project = project;
+		this.view = new ObjectListView(this,project);
+		this.project = project;
 		try {
-			_dao = project.getGeometryDAO();
+			this.dao = project.getGeometryDAO();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -39,7 +41,7 @@ public class ObjectListController implements MouseListener {
 	 * Run the ObjectTree GUI
 	 */
 	public void run(){
-		initView(_project);
+		initView(this.project);
 	}
 	
 	/**
@@ -47,37 +49,37 @@ public class ObjectListController implements MouseListener {
 	 * @param project The main project
 	 */
 	public void initView(Project project){
-		_view = new ObjectListView(this, project);
+		this.view = new ObjectListView(this, project);
 	}
 	
 	public ObjectListView getView() {
-		return _view;
+		return this.view;
 	}
 	
 	public void onNewAction(String name) {
 		if (name != null) {
 			Entity entity = new Entity(name);
 			try {
-				_dao.create(entity);
-				_dao.notifyObservers();
+				this.dao.create(entity);
+				this.dao.notifyObservers();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			_project.config("entity.current", entity.getUID());
-			_project.config("edition.mode", "object");
+			this.project.config("entity.current", entity.getUID());
+			this.project.config("edition.mode", "object");
 		}
 	}
 	
 	public void onDeleteAction(Entity entity) {
-		if (_project.config("edition.mode").equals("object")) {
-			if (_project.config("entity.current").equals(entity.getUID())) {
-				_project.config("edition.mode","world");
+		if (this.project.config("edition.mode").equals("object")) {
+			if (this.project.config("entity.current").equals(entity.getUID())) {
+				this.project.config("edition.mode","world");
 			}
 		}
 		try {
-			_dao.delete(entity);
-			_dao.notifyObservers();
+			this.dao.delete(entity);
+			this.dao.notifyObservers();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,8 +90,8 @@ public class ObjectListController implements MouseListener {
 		if (newName != null) {
 			entity.setName(newName);
 			try {
-				_dao.update(entity);
-				_dao.notifyObservers();
+				this.dao.update(entity);
+				this.dao.notifyObservers();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -98,8 +100,8 @@ public class ObjectListController implements MouseListener {
 	}
 
 	public void onEditAction(Entity entity) {
-		_project.config("entity.current", entity.getUID());
-		_project.config("edition.mode", "object");
+		this.project.config("entity.current", entity.getUID());
+		this.project.config("edition.mode", "object");
 	}
 	
 	@Override
@@ -127,10 +129,10 @@ public class ObjectListController implements MouseListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (SwingUtilities.isRightMouseButton(e)) {
-			JPopupMenu popupMenu = _view.createPopupMenu();
+			JPopupMenu popupMenu = this.view.createPopupMenu();
 			// Select the item
-			int row = _view.locationToIndex(new Point(e.getX(),e.getY()));
-			_view.setSelectedIndex(row);
+			int row = this.view.locationToIndex(new Point(e.getX(),e.getY()));
+			this.view.setSelectedIndex(row);
 
 			popupMenu.show(e.getComponent(), e.getX(), e.getY());
 		}

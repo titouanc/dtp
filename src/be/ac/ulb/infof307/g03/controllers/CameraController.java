@@ -10,10 +10,10 @@ import com.jme3.renderer.Camera;
  *
  */
 public abstract class CameraController {
-	protected Camera _cam;
+	protected Camera cam;
 	
-	public CameraController(Camera cam) {
-		_cam = cam;
+	public CameraController(Camera newCam) {
+		this.cam = newCam;
 	}
 	
 	abstract public void zoomCamera(float value);

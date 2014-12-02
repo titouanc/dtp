@@ -31,8 +31,8 @@ import javax.swing.SwingUtilities;
  */
 public class TextureController implements ActionListener,MouseListener, Observer {
 	// Attributes
-	private TextureView _view;
-	private Project _project;
+	private TextureView view;
+	private Project project;
 	
 	// Static value
 	private final static int _IMG_WIDTH = 20;
@@ -47,29 +47,29 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	 * @param aProject
 	 */
 	public TextureController(Project aProject){	
-		_project = aProject; 
-		_project.addObserver(this);
+		this.project = aProject; 
+		this.project.addObserver(this);
 	}
 	
 	/**
 	 * Run the View
 	 */
 	public void run(){
-		initView(_project);
+		initView(this.project);
 	}
 	
 	/**
 	 * @param aProject
 	 */
 	public void initView(Project aProject){
-		_view = new TextureView(this,aProject);
+		this.view = new TextureView(this,aProject);
 	}
 	
 	/**
 	 * @return The controller view 
 	 */
 	public TextureView getView(){
-		return _view;
+		return this.view;
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	 */
 	public void addNewTexture() throws IOException{
 		final JFileChooser fc = new JFileChooser();
-		int returnVal = fc.showOpenDialog(_view);
+		int returnVal = fc.showOpenDialog(this.view);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
 		    try{
 				File fileToImport = fc.getSelectedFile();
@@ -116,10 +116,10 @@ public class TextureController implements ActionListener,MouseListener, Observer
 				copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
 				
 				String filename = fileToImport.getName();
-				if (!(filename).equals(_view.getAddFile()) && (filename.contains(".png"))){
+				if (!(filename).equals(this.view.getAddFile()) && (filename.contains(".png"))){
 					if(fileToImport.renameTo(destinationMini)){
 						reScale(destinationMini); // Set image to 20x20 format
-						_view.updatePanel(filename);
+						this.view.updatePanel(filename);
 					}
 					else{
 						Log.debug("The new texture has not been imported. Error.");
@@ -200,12 +200,12 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {			
-			if (_view.getCurrentMode().equals("Colors")){
-				_project.config("texture.selected",_view.getSelectedColorAsString());
+			if (this.view.getCurrentMode().equals("Colors")){
+				this.project.config("texture.selected",this.view.getSelectedColorAsString());
 			}
 			else{
-				if(!(_view.getSelectedTexture().equals(_view.getAddFile()))){
-					_project.config("texture.selected",_view.getSelectedTexture());
+				if(!(this.view.getSelectedTexture().equals(this.view.getAddFile()))){
+					this.project.config("texture.selected",this.view.getSelectedTexture());
 				}
 				else{
 					try {
@@ -218,10 +218,10 @@ public class TextureController implements ActionListener,MouseListener, Observer
 			}
 		}
 		else if (SwingUtilities.isRightMouseButton(e)){
-			if((_view.getCurrentMode().equals("Textures"))){
-				if(!(_view.getSelectedTexture().equals(_view.getAddFile()))){
-					JPopupMenu PopupMenu = _view.createPopupMenu();
-					fileToDelete=_view.getSelectedTexture(); // On a le nom comme Textures/Full/xxx
+			if((this.view.getCurrentMode().equals("Textures"))){
+				if(!(this.view.getSelectedTexture().equals(this.view.getAddFile()))){
+					JPopupMenu PopupMenu = this.view.createPopupMenu();
+					fileToDelete=this.view.getSelectedTexture(); // On a le nom comme Textures/Full/xxx
 					if (PopupMenu != null) {
 						PopupMenu.show(e.getComponent(), e.getX(), e.getY());
 					}					

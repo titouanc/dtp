@@ -29,10 +29,10 @@ import be.ac.ulb.infof307.g03.views.ObjectTreeView;
  *
  */
 public class ObjectTreeController implements TreeSelectionListener, MouseListener, KeyListener, Observer {
-	private ObjectTreeView _view;
-	private GeometryDAO _dao;
-	private Project _project;
-	private String _currentEditionMode;
+	private ObjectTreeView view;
+	private GeometryDAO dao;
+	private Project project;
+	private String currentEditionMode;
 	
 	static private final String _WORLDMODE = "world";
 	static private final String _OBJECTMODE = "object";
@@ -41,15 +41,15 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * @param project Project object from model
 	 */
 	public ObjectTreeController(Project project) {
-		_project = project;
+		this.project = project;
 		try {
-			_dao = project.getGeometryDAO();
+			this.dao = project.getGeometryDAO();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		_project.addObserver(this);
+		this.project.addObserver(this);
 		
 	}
 	
@@ -58,8 +58,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * Run the ObjectTree GUI
 	 */
 	public void run(){
-		initView(_project);
-		updateEditionMode(_project.config("edition.mode"));
+		initView(this.project);
+		updateEditionMode(this.project.config("edition.mode"));
 	}
 	
 	/**
@@ -67,14 +67,14 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * @param project The main project
 	 */
 	public void initView(Project project){
-		_view = new ObjectTreeView(this, project);
+		this.view = new ObjectTreeView(this, project);
 	}
 	
 	/**
 	 * @return The controller's view
 	 */
 	public ObjectTreeView getView(){
-		return _view;
+		return this.view;
 	}
 	
 	/**
@@ -82,27 +82,27 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * @param mode
 	 */
 	private void updateEditionMode(String mode) {
-		if (mode!=_currentEditionMode) {
-			_currentEditionMode = mode;
+		if (mode!=this.currentEditionMode) {
+			this.currentEditionMode = mode;
 			updateEditionMode();
 		}
 	}
 	
 	public void updateEditionMode() {
-		if (_currentEditionMode.equals(_WORLDMODE)) {
+		if (this.currentEditionMode.equals(_WORLDMODE)) {
 			System.out.println("[DEBUG] ObjectTree switched to world edition mode.");
-			_view.clearTree();
+			this.view.clearTree();
 			try {
-				_view.createTree();
+				this.view.createTree();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (_currentEditionMode.equals(_OBJECTMODE)) {
+		} else if (this.currentEditionMode.equals(_OBJECTMODE)) {
 			System.out.println("[DEBUG] ObjectTree switched to object edition mode.");
-			_view.clearTree();
+			this.view.clearTree();
 		}
-		((DefaultTreeModel) _view.getModel()).reload();
+		((DefaultTreeModel) this.view.getModel()).reload();
 	}
 
 	/**
@@ -114,8 +114,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			Room grp = (Room) object;
 			grp.setName(name);
 			try {
-				_dao.update(grp);
-				_dao.notifyObservers(object);
+				this.dao.update(grp);
+				this.dao.notifyObservers(object);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -131,8 +131,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			Geometric item = (Geometric) object;
 			try {
 				Log.info("DELETE %s", item.toString());
-				_dao.delete(item);
-				_dao.notifyObservers(item);
+				this.dao.delete(item);
+				this.dao.notifyObservers(item);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -151,10 +151,10 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			try {
 				for (Point p : meshable.getPoints()){
 					p.deselect();
-					_dao.update(p);
+					this.dao.update(p);
 				}
-				_dao.update(meshable);
-				_dao.notifyObservers(meshable);
+				this.dao.update(meshable);
+				this.dao.notifyObservers(meshable);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -162,11 +162,11 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			Room room = (Room) element;
 			try {
 				for (Point p : room.getPoints()){
-					_dao.refresh(p);
+					this.dao.refresh(p);
 					p.deselect();
-					_dao.update(p);
+					this.dao.update(p);
 				}
-				_dao.notifyObservers();
+				this.dao.notifyObservers();
 		
 			} catch (SQLException err){
 				// TODO Auto-generated catch block
@@ -182,19 +182,19 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void selectElement(Object element) {
 		if (element instanceof Floor){
 			Floor current = (Floor) element;
-			_project.config("floor.current", current.getUID());
+			this.project.config("floor.current", current.getUID());
 		} else if (element instanceof Meshable){
 			Meshable meshable = (Meshable) element;
 			Log.debug("Select %s", meshable.getUID());
 			try {
-				_dao.refresh(meshable);
+				this.dao.refresh(meshable);
 				meshable.select();
 				for (Point p : meshable.getPoints()){
 					p.select();
-					_dao.update(p);
+					this.dao.update(p);
 				}
-				_dao.update(meshable);
-				_dao.notifyObservers(meshable);
+				this.dao.update(meshable);
+				this.dao.notifyObservers(meshable);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -203,11 +203,11 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			try {
 				Room room = (Room) element;
 				for (Point p : room.getPoints()){
-					_dao.refresh(p);
+					this.dao.refresh(p);
 					p.select();
-					_dao.update(p);
+					this.dao.update(p);
 				}
-				_dao.notifyObservers();
+				this.dao.notifyObservers();
 		
 			} catch (SQLException err){
 				// TODO Auto-generated catch block
@@ -223,8 +223,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void hideGrouped(Meshable meshable){
 		meshable.hide();
 		try {
-			_dao.update(meshable);
-			_dao.notifyObservers();
+			this.dao.update(meshable);
+			this.dao.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -237,8 +237,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void showGrouped(Meshable meshable){
 		meshable.show();
 		try {
-			_dao.update(meshable);
-			_dao.notifyObservers();
+			this.dao.update(meshable);
+			this.dao.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -249,17 +249,17 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		try {
 			width = Double.parseDouble(userInput);
 		} catch (NumberFormatException err){
-			JOptionPane.showMessageDialog(_view, "Invalid width " + err.getMessage());
+			JOptionPane.showMessageDialog(this.view, "Invalid width " + err.getMessage());
 			return;
 		}
 		if (width <= 0){
-			JOptionPane.showMessageDialog(_view, "Cannot set a non strictly positive width !");
+			JOptionPane.showMessageDialog(this.view, "Cannot set a non strictly positive width !");
 			return;
 		}
 		wall.setWidth(width);
 		try {
-			_dao.update(wall);
-			_dao.notifyObservers();
+			this.dao.update(wall);
+			this.dao.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -276,17 +276,17 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		try{
 			height = Double.parseDouble(userInput);
 		} catch (NumberFormatException err){
-			JOptionPane.showMessageDialog(_view, "Invalid height "+ err.getMessage());
+			JOptionPane.showMessageDialog(this.view, "Invalid height "+ err.getMessage());
 			return;
 		}
 		if (height <= 0){
-			JOptionPane.showMessageDialog(_view, "A floor has to have a positive height!");
+			JOptionPane.showMessageDialog(this.view, "A floor has to have a positive height!");
 			return;
 		}
 		floor.setHeight(height);
 		try{
-			_dao.update(floor);
-			_dao.notifyObservers();
+			this.dao.update(floor);
+			this.dao.notifyObservers();
 		} catch (SQLException e){
 			e.printStackTrace();
 		}
@@ -296,10 +296,10 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void valueChanged(TreeSelectionEvent event) {
 		TreePath path = event.getOldLeadSelectionPath();
 		if (path != null)
-			deselectElement(_view.getGeometric(path));
+			deselectElement(this.view.getGeometric(path));
 		path = event.getNewLeadSelectionPath();
 		if (path != null)
-			selectElement(_view.getGeometric(path));
+			selectElement(this.view.getGeometric(path));
 	}
 	
 	@Override
@@ -311,7 +311,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void keyReleased(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 		if (keyCode==KeyEvent.VK_BACK_SPACE) {
-			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) _view.getLastSelectedPathComponent();
+			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) this.view.getLastSelectedPathComponent();
 			Geometric clickedItem = (Geometric) clickedNode.getUserObject();
 			deselectElement(clickedItem);
 			deleteNode(clickedItem);
@@ -345,14 +345,14 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		// if right click
 		if (SwingUtilities.isRightMouseButton(e)) {
 			// select the closest element near the click on the tree
-			int row = _view.getClosestRowForLocation(e.getX(), e.getY());
-			_view.setSelectionRow(row);
-			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) _view.getLastSelectedPathComponent();
+			int row = this.view.getClosestRowForLocation(e.getX(), e.getY());
+			this.view.setSelectionRow(row);
+			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) this.view.getLastSelectedPathComponent();
 			if (clickedNode == null){
 				Log.error("Right-clicked null node");
 			} else {
 				Geometric clickedItem = (Geometric) clickedNode.getUserObject();;
-				JPopupMenu menuForItem = _view.createPopupMenu(clickedItem);
+				JPopupMenu menuForItem = this.view.createPopupMenu(clickedItem);
 				if (menuForItem != null) 
 					menuForItem.show(e.getComponent(), e.getX(), e.getY());
 			}
@@ -382,8 +382,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 */
 	public void setTexture(Meshable clickedItem,String newTexture) throws SQLException {
 		clickedItem.setTexture(newTexture);
-		_dao.update(clickedItem);
-		_dao.notifyObservers();
+		this.dao.update(clickedItem);
+		this.dao.notifyObservers();
 	}
 	
 }

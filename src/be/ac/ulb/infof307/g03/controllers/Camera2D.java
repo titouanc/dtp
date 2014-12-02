@@ -21,17 +21,17 @@ public class Camera2D extends CameraController {
     private final int minimumHeight = 1;
     
     // Speed parameters
-	private float _rotationSpeed	= 1f;
-    private float _moveSpeed		= 15f;
-    private float _zoomSpeed		= 4f;
+	private float rotationSpeed	= 1f;
+    private float moveSpeed		= 15f;
+    private float zoomSpeed		= 4f;
 	
     
     /**
      * Camera 2D controller constructor
-     * @param cam
+     * @param newCam
      */
-    public Camera2D(Camera cam) {
-		super(cam);
+    public Camera2D(Camera newCam) {
+		super(newCam);
 	}
     
 	/**
@@ -40,24 +40,24 @@ public class Camera2D extends CameraController {
 	 * @param sideways direction (up/down or left/right)
 	 */
 	public void moveCamera(float value, boolean sideways) {
-		Vector3f pos = _cam.getLocation().clone();
+		Vector3f pos = cam.getLocation().clone();
 		Vector3f vel = new Vector3f();
 		if (sideways) {
-			_cam.getUp(vel);
+			cam.getUp(vel);
 		} else { 
-			_cam.getLeft(vel);
+			cam.getLeft(vel);
 		}
-		vel.multLocal(value*_moveSpeed);
+		vel.multLocal(value*this.moveSpeed);
 		pos.addLocal(vel);
 
-		_cam.setLocation(pos); 
+		cam.setLocation(pos); 
 	}
 	
 	public void moveCameraByGrab(Vector3f oldPos, Vector3f currPos) {
 		currPos.subtractLocal(oldPos);
-		Vector3f pos = _cam.getLocation().clone();
+		Vector3f pos = cam.getLocation().clone();
 		pos.subtractLocal(currPos);
-		_cam.setLocation(pos);
+		cam.setLocation(pos);
 	}
 	
 	/**
@@ -88,12 +88,12 @@ public class Camera2D extends CameraController {
 		  }
 		  X=(minX+maxX)/2;
 		  Y=(minY+maxY)/2;
-	      _cam.setLocation(new Vector3f(X,Y,Z+offset));
-		  _cam.lookAt(new Vector3f(X,Y,0),Vector3f.UNIT_Z);
-	      _cam.setParallelProjection(true);
-	     frustumSize = Z/offset+offset;
-	      float aspect = (float) _cam.getWidth() / _cam.getHeight();
-	      _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
+	      cam.setLocation(new Vector3f(X,Y,Z+offset));
+		  cam.lookAt(new Vector3f(X,Y,0),Vector3f.UNIT_Z);
+	      cam.setParallelProjection(true);
+	     this.frustumSize = Z/offset+offset;
+	      float aspect = (float) cam.getWidth() / cam.getHeight();
+	      cam.setFrustum(-1000, 1000, -aspect * this.frustumSize, aspect * this.frustumSize, this.frustumSize, -this.frustumSize);
 	  }
 	
 	/**
@@ -101,16 +101,16 @@ public class Camera2D extends CameraController {
 	 * float value : value of zoom
 	 */
 	public void zoomCamera(float value){
-		if(frustumSize + 0.3f * value >= minimumHeight){
+		if(this.frustumSize + 0.3f * value >= this.minimumHeight){
 			
-	        frustumSize += 0.3f * value;
+	        this.frustumSize += 0.3f * value;
 	
-	        float aspect = (float) _cam.getWidth() / _cam.getHeight();
-	        _cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
+	        float aspect = (float) cam.getWidth() / cam.getHeight();
+	        cam.setFrustum(-1000, 1000, -aspect * this.frustumSize, aspect * this.frustumSize, this.frustumSize, -this.frustumSize);
 	
-			Vector3f pos = _cam.getLocation().clone();
-			pos.setZ(pos.getZ() + (value*_zoomSpeed));
-			_cam.setLocation(pos);
+			Vector3f pos = cam.getLocation().clone();
+			pos.setZ(pos.getZ() + (value*this.zoomSpeed));
+			cam.setLocation(pos);
 		}
     }
 	
@@ -121,11 +121,11 @@ public class Camera2D extends CameraController {
 	 */
 	public void rotateCamera(float value, boolean trigoRotate) {
 		Matrix3f mat = new Matrix3f();
-		mat.fromAngleNormalAxis(_rotationSpeed * value, _cam.getDirection());
+		mat.fromAngleNormalAxis(this.rotationSpeed * value, cam.getDirection());
 
-		Vector3f up = _cam.getUp();
-		Vector3f left = _cam.getLeft();
-		Vector3f dir = _cam.getDirection();
+		Vector3f up = cam.getUp();
+		Vector3f left = cam.getLeft();
+		Vector3f dir = cam.getDirection();
 
 		mat.mult(up, up);
 		mat.mult(left, left);
@@ -135,7 +135,7 @@ public class Camera2D extends CameraController {
 		q.fromAxes(left, up, dir);
 		q.normalizeLocal();
 
-		_cam.setAxes(q);
+		cam.setAxes(q);
 	}
 
 	@Override

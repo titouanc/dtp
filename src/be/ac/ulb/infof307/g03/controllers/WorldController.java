@@ -39,34 +39,34 @@ import com.jme3.system.JmeContext;
 public class WorldController implements ActionListener, AnalogListener, Observer {
     
 	// Attributes
-    private WorldView _view;
-    private Project _project;
-    private CameraContext _cameraContext = null;
-    private Point _movingPoint = null;
-    private List<Point> _inConstruction ;
-    private Floor _currentFloor = null;
-	private String _currentEditionMode;
-	private String _mouseMode;
+    private WorldView view;
+    private Project project;
+    private CameraContext cameraContext = null;
+    private Point movingPoint = null;
+    private List<Point> inConstruction ;
+    private Floor currentFloor = null;
+	private String currentEditionMode;
+	private String mouseMode;
 	
-	private Vector2f _savedCenter = null;
-	private boolean _leftClickPressed = false;
-	private Geometry _builtGeometric = null;
-	private Entity _currentEntity = null;
+	private Vector2f savedCenter = null;
+	private boolean leftClickPressed = false;
+	private Geometry builtGeometric = null;
+	private Entity currentEntity = null;
     
     // Edition mode alias
-	static final private String _WORLDMODE = "world";
-	static final private String _OBJECTMODE = "object";
+	static final private String WORLDMODE = "world";
+	static final private String OBJECTMODE = "object";
 
-    private double _currentHeight;
-    private AppSettings _appSettings;
+    private double currentHeight;
+    private AppSettings appSettings;
     
     // Input alias
-    static private final String _RIGHTCLICK 	= "WC_SelectObject";
-	static private final String _LEFTCLICK 		= "WC_Select";
-	static private final String _LEFT 			= "WC_Left";
-	static private final String _RIGHT			= "WC_Right";
-	static private final String _UP				= "WC_Up";
-	static private final String _DOWN			= "WC_Down";
+    static private final String RIGHTCLICK 	= "WC_SelectObject";
+	static private final String LEFTCLICK 		= "WC_Select";
+	static private final String LEFT 			= "WC_Left";
+	static private final String RIGHT			= "WC_Right";
+	static private final String UP				= "WC_Up";
+	static private final String DOWN			= "WC_Down";
     
     /**
      * Constructor of WorldController.
@@ -77,26 +77,26 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      */
     public WorldController(AppSettings settings, Project project) throws SQLException{
 
-    	_appSettings = settings;
+    	this.appSettings = settings;
 
-        _project = project;
-        _inConstruction = new LinkedList <Point>();
+        this.project = project;
+        this.inConstruction = new LinkedList <Point>();
 
         String floorUID = project.config("floor.current");
-        _currentFloor = (Floor) project.getGeometryDAO().getByUID(floorUID);
-        if (_currentFloor == null)
-        	_currentFloor = project.getGeometryDAO().getFloors().get(0);
-        _currentEditionMode = project.config("edition.mode");
-        if (_currentEditionMode.equals("")) // set as default for the first time
-        	_currentEditionMode = _WORLDMODE;
+        this.currentFloor = (Floor) project.getGeometryDAO().getByUID(floorUID);
+        if (this.currentFloor == null)
+        	this.currentFloor = project.getGeometryDAO().getFloors().get(0);
+        this.currentEditionMode = project.config("edition.mode");
+        if (this.currentEditionMode.equals("")) // set as default for the first time
+        	this.currentEditionMode = WORLDMODE;
         project.addObserver(this);
-        _mouseMode = project.config("mouse.mode");
+        this.mouseMode = project.config("mouse.mode");
     }
     
     public void run(){
-    	initView(_project);
-        _view.setSettings(_appSettings);
-        _view.createCanvas();
+    	initView(this.project);
+        this.view.setSettings(this.appSettings);
+        this.view.createCanvas();
     }
     
 	/**
@@ -104,50 +104,50 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	 * @param project 
 	 */
 	public void initView(Project project){
-		_view = new WorldView(this, project);
+		this.view = new WorldView(this, project);
 	}
 
 	/**
      * @return the world view.
      */
     public WorldView getView(){
-        return _view;
+        return this.view;
     }
     
     public Floor getCurrentFloor(){
-    	return _currentFloor;
+    	return this.currentFloor;
     }
     
     /**
      * @return the project
      */
     public Project getProject(){
-    	return _project;
+    	return this.project;
     }
     
     /**
      * @return The view context.
      */
     public JmeContext getViewContext(){
-        return _view.getContext();
+        return this.view.getContext();
     }
     
     /** 
      * @return The camera mode controller.
      */
     public CameraContext getCameraModeController() {
-        return _cameraContext;
+        return this.cameraContext;
     }
     
     public void setCameraContext(CameraContext cameraContext) {
-    	_cameraContext = cameraContext;
+    	this.cameraContext = cameraContext;
     }
     
     /**
      * Start the view canvas.
      */
     public void startViewCanvas(){
-        _view.startCanvas();
+        this.view.startCanvas();
     }
     
     
@@ -156,18 +156,18 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * @param mode A string who's a valid mode.
      */
     public void updateEditionMode() {
-    	if (_currentEditionMode.equals(_WORLDMODE) ){
-    		_view.cleanScene();
-    		_view.makeScene();
-    	} else if (_currentEditionMode.equals(_OBJECTMODE)) {
-    		_view.cleanScene();
-    		_view.makeScene(_currentEntity);
+    	if (this.currentEditionMode.equals(WORLDMODE) ){
+    		this.view.cleanScene();
+    		this.view.makeScene();
+    	} else if (this.currentEditionMode.equals(OBJECTMODE)) {
+    		this.view.cleanScene();
+    		this.view.makeScene(this.currentEntity);
     	}
 	}
     
     public void updateEditionMode(String mode) {
-    	if (mode!=_currentEditionMode) {
-    		_currentEditionMode = mode;
+    	if (mode!=this.currentEditionMode) {
+    		this.currentEditionMode = mode;
     		updateEditionMode();
     	}
     }
@@ -177,9 +177,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * @return The Ray corresponding to the mouse pointer as seen by the camera
      */
     public Ray getRayForMousePosition(){
-    	Vector2f cursorPosition = _view.getInputManager().getCursorPosition();
-        Vector3f camPos = _view.getCamera().getWorldCoordinates(cursorPosition, 0f).clone();
-        Vector3f camDir = _view.getCamera().getWorldCoordinates(cursorPosition, 1f).subtractLocal(camPos);
+    	Vector2f cursorPosition = this.view.getInputManager().getCursorPosition();
+        Vector3f camPos = this.view.getCamera().getWorldCoordinates(cursorPosition, 0f).clone();
+        Vector3f camDir = this.view.getCamera().getWorldCoordinates(cursorPosition, 1f).subtractLocal(camPos);
         return new Ray(camPos, camDir);
     }
     
@@ -189,14 +189,14 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      */
     public Geometric getClickedObject(){
         CollisionResults results = new CollisionResults();
-        _view.getRootNode().collideWith(getRayForMousePosition(), results);
+        this.view.getRootNode().collideWith(getRayForMousePosition(), results);
         
         if (results.size() > 0){
         	// Get 3D object from scene
             Geometry selected = results.getClosestCollision().getGeometry();         
             GeometryDAO dao = null;
             try {
-                dao = _project.getGeometryDAO();
+                dao = this.project.getGeometryDAO();
                 // Get associated Geometric from database
                 return dao.getByUID(selected.getName());
             } catch (SQLException e1) {
@@ -213,16 +213,16 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * - Set current moving point to null
      */
     public void dropMovingPoint(boolean finalPoint){
-    	if (_movingPoint == null)
+    	if (this.movingPoint == null)
     		return;
     	
-    	getXYForMouse(_movingPoint);
+    	getXYForMouse(this.movingPoint);
         
         try {
-        	GeometryDAO dao = _project.getGeometryDAO();
-        	dao.update(_movingPoint);
+        	GeometryDAO dao = this.project.getGeometryDAO();
+        	dao.update(this.movingPoint);
         	if (finalPoint) 
-        		_movingPoint = null;
+        		this.movingPoint = null;
         	dao.notifyObservers();
         } catch (SQLException err){
         	err.printStackTrace();
@@ -248,7 +248,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	 * @param p Get coordinates X and Y into Point
 	 */
 	public void getXYForMouse(Point p){
-		Vector2f myVector = getXYForMouse((float) _currentFloor.getBaseHeight());
+		Vector2f myVector = getXYForMouse((float) this.currentFloor.getBaseHeight());
 		p.setX(myVector.getX());
 		p.setY(myVector.getY());
 	}
@@ -260,7 +260,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     public void selectObject(Meshable meshable) {
 	        try {
 	        	meshable.toggleSelect();
-	        	GeometryDAO dao = _project.getGeometryDAO();
+	        	GeometryDAO dao = this.project.getGeometryDAO();
 	        	for (Point p : meshable.getPoints()){
 	        		if (meshable.isSelected())
 	        			p.select();
@@ -271,8 +271,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	            dao.update(meshable);
 	            dao.notifyObservers(meshable);
 	            String floorUID = meshable.getRoom().getFloor().getUID();
-	            if (! _project.config("floor.current").equals(floorUID))
-	            	_project.config("floor.current", floorUID);
+	            if (! this.project.config("floor.current").equals(floorUID))
+	            	this.project.config("floor.current", floorUID);
 	        } catch (SQLException e) {
 	            e.printStackTrace();
 	        }
@@ -288,7 +288,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		lastPoint.select();
 		
 		try {
-        	GeometryDAO dao = _project.getGeometryDAO();
+        	GeometryDAO dao = this.project.getGeometryDAO();
         	Point found = dao.findClosePoint(lastPoint, 1);
         	if (found != null){
         		lastPoint = found;
@@ -301,7 +301,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         } catch (SQLException err){
         	err.printStackTrace();
         }
-		_inConstruction.add(lastPoint);
+		this.inConstruction.add(lastPoint);
     }
     
     /**
@@ -309,12 +309,12 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      */
     public void finalizeConstruct(){
     	try {
-			GeometryDAO dao = _project.getGeometryDAO();
-	    	if (_inConstruction.size() >= 3){
-	    		dao.createRoom(_currentFloor, _inConstruction);
+			GeometryDAO dao = this.project.getGeometryDAO();
+	    	if (this.inConstruction.size() >= 3){
+	    		dao.createRoom(this.currentFloor, this.inConstruction);
 		    	dao.notifyObservers();
 	    	} else {
-	    		for (Point p : _inConstruction){
+	    		for (Point p : this.inConstruction){
 	    			if (p.getBindings().size() == 0){
 	    				dao.delete(p);
 	    			} else {
@@ -324,7 +324,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	    		}
 	    		dao.notifyObservers();
 	    	}
-	    	_inConstruction.clear();
+	    	this.inConstruction.clear();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -332,24 +332,24 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     
     private void updateShapeDisplay(boolean finalUpdate) {
     	Vector2f currPos = getXYForMouse(0);
-    	float dist = currPos.distance(_savedCenter);
+    	float dist = currPos.distance(this.savedCenter);
     	
-    	if (_mouseMode.equals("cube")) {
+    	if (this.mouseMode.equals("cube")) {
     		float d = dist / FastMath.sqr(2);
-    		Vector3f center = new Vector3f(_savedCenter.x-d,_savedCenter.y-d,dist/2);
-    		_builtGeometric.setLocalTranslation(center);
-    		_builtGeometric.setLocalScale(dist); // h^2 = 2a^2 <=> h = sqrt(2) a <=> a = h/sqrt(2)
-    	} else if (_mouseMode.equals("sphere")) {
-    		Vector3f center = new Vector3f(_savedCenter.x,_savedCenter.y,dist);
-    		_builtGeometric.setLocalTranslation(center);
-    		_builtGeometric.setLocalScale(dist);
+    		Vector3f center = new Vector3f(this.savedCenter.x-d,this.savedCenter.y-d,dist/2);
+    		this.builtGeometric.setLocalTranslation(center);
+    		this.builtGeometric.setLocalScale(dist); // h^2 = 2a^2 <=> h = sqrt(2) a <=> a = h/sqrt(2)
+    	} else if (this.mouseMode.equals("sphere")) {
+    		Vector3f center = new Vector3f(this.savedCenter.x,this.savedCenter.y,dist);
+    		this.builtGeometric.setLocalTranslation(center);
+    		this.builtGeometric.setLocalScale(dist);
     	}
     	
     	try {
-			GeometryDAO dao = _project.getGeometryDAO();
-			Primitive primitive = (Primitive) dao.getByUID(_builtGeometric.getName());
-			primitive.setScale(_builtGeometric.getLocalScale());
-			primitive.setTranslation(_builtGeometric.getLocalTranslation());
+			GeometryDAO dao = this.project.getGeometryDAO();
+			Primitive primitive = (Primitive) dao.getByUID(this.builtGeometric.getName());
+			primitive.setScale(this.builtGeometric.getLocalScale());
+			primitive.setTranslation(this.builtGeometric.getLocalTranslation());
 			dao.update(primitive);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -358,37 +358,37 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     	
     	
     	if (finalUpdate){
-    		_builtGeometric = null;
+    		this.builtGeometric = null;
     	}
     }
     
     private void mouseMoved(float value) {
-    	if (_movingPoint != null) {
+    	if (this.movingPoint != null) {
     		dropMovingPoint(false);
-    	} else if (_savedCenter != null) {
-    		if (_leftClickPressed)
+    	} else if (this.savedCenter != null) {
+    		if (this.leftClickPressed)
     			updateShapeDisplay(false);
     	}
     }
     
 	public void inputSetUp(InputManager inputManager){
 		// Mouse event mapping
-		inputManager.addMapping(_RIGHTCLICK, 	new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
-		inputManager.addMapping(_LEFTCLICK,  	new MouseButtonTrigger(MouseInput.BUTTON_LEFT ));
+		inputManager.addMapping(RIGHTCLICK, 	new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+		inputManager.addMapping(LEFTCLICK,  	new MouseButtonTrigger(MouseInput.BUTTON_LEFT ));
 
-		inputManager.addMapping(_UP, 			new MouseAxisTrigger(1, false));
-		inputManager.addMapping(_DOWN, 			new MouseAxisTrigger(1, true));
-		inputManager.addMapping(_LEFT,			new MouseAxisTrigger(0, true));
-		inputManager.addMapping(_RIGHT,			new MouseAxisTrigger(0, false));
+		inputManager.addMapping(UP, 			new MouseAxisTrigger(1, false));
+		inputManager.addMapping(DOWN, 			new MouseAxisTrigger(1, true));
+		inputManager.addMapping(LEFT,			new MouseAxisTrigger(0, true));
+		inputManager.addMapping(RIGHT,			new MouseAxisTrigger(0, false));
 		
 		inputManager.addListener(this, 
-										_RIGHTCLICK, 
-										_LEFTCLICK,
+										RIGHTCLICK, 
+										LEFTCLICK,
 										
-										_UP,
-										_DOWN,
-										_LEFT,
-										_RIGHT
+										UP,
+										DOWN,
+										LEFT,
+										RIGHT
 								);
 	}
     
@@ -406,52 +406,52 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         
         /* If it is a Point: initiate drag'n drop */
         else if (clicked instanceof Point)
-    		_movingPoint = (Point) clicked;
+    		this.movingPoint = (Point) clicked;
     }
     
     public void initSphere() {
     	Sphere sphere = new Sphere(32,32,1f);
 		try {
-			GeometryDAO dao = _project.getGeometryDAO();
-			Primitive primitive = new Primitive(_currentEntity,Primitive.SPHERE);
+			GeometryDAO dao = this.project.getGeometryDAO();
+			Primitive primitive = new Primitive(this.currentEntity,Primitive.SPHERE);
 			dao.create(primitive);
-			_builtGeometric = new Geometry(primitive.getUID(), sphere);
+			this.builtGeometric = new Geometry(primitive.getUID(), sphere);
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-    	_savedCenter = getXYForMouse(0f);
+    	this.savedCenter = getXYForMouse(0f);
 		
 		sphere.setTextureMode(Sphere.TextureMode.Projected);
-		Material sphereMat = new Material(_view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
+		Material sphereMat = new Material(this.view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
 		sphereMat.setBoolean("UseMaterialColors",true);    
 		sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
 		sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		_builtGeometric.setMaterial(sphereMat);
-		_builtGeometric.setLocalScale(0);
-		_view.getRootNode().attachChild(_builtGeometric);
+		this.builtGeometric.setMaterial(sphereMat);
+		this.builtGeometric.setLocalScale(0);
+		this.view.getRootNode().attachChild(this.builtGeometric);
     }
     
     public void initCube() {
     	Box box = new Box(0.5f,0.5f,0.5f);
     	try {
-			GeometryDAO dao = _project.getGeometryDAO();
-			Primitive primitive = new Primitive(_currentEntity,Primitive.CUBE);
+			GeometryDAO dao = this.project.getGeometryDAO();
+			Primitive primitive = new Primitive(this.currentEntity,Primitive.CUBE);
 			dao.create(primitive);
-			_builtGeometric = new Geometry(primitive.getUID(), box);
+			this.builtGeometric = new Geometry(primitive.getUID(), box);
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
     	
-    	_savedCenter = getXYForMouse(0f);
-		Material boxMat = new Material(_view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
+    	this.savedCenter = getXYForMouse(0f);
+		Material boxMat = new Material(this.view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
 		boxMat.setBoolean("UseMaterialColors",true);    
 		boxMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
 		boxMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		_builtGeometric.setMaterial(boxMat);
-		_builtGeometric.setLocalScale(0);
-		_view.getRootNode().attachChild(_builtGeometric);
+		this.builtGeometric.setMaterial(boxMat);
+		this.builtGeometric.setLocalScale(0);
+		this.view.getRootNode().attachChild(this.builtGeometric);
     }
     
     /**
@@ -459,37 +459,37 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      */
     @Override
 	public void onAction(String name, boolean value, float tpf) {	
-		if (name.equals(_LEFTCLICK)) {
-	    	_leftClickPressed = value;
+		if (name.equals(LEFTCLICK)) {
+	    	this.leftClickPressed = value;
 			if (value) { // on click
-				if (_mouseMode.equals("construct")) { /* We're in construct mode and left-click: add a point */
+				if (this.mouseMode.equals("construct")) { /* We're in construct mode and left-click: add a point */
 					construct();
-				} else if (_mouseMode.equals("dragSelect")) {
+				} else if (this.mouseMode.equals("dragSelect")) {
 					dragSelectHandler();
-				} else if(_mouseMode.equals("sphere")){
+				} else if(this.mouseMode.equals("sphere")){
 					initSphere();
-				} else if(_mouseMode.equals("cube")){
+				} else if(this.mouseMode.equals("cube")){
 					initCube();
 				}
 				
 			} else { // on release
-				if (_movingPoint != null) { // We're moving a point, and mouse button up: stop the point here
+				if (this.movingPoint != null) { // We're moving a point, and mouse button up: stop the point here
 					dropMovingPoint(true);
-				} else if (_builtGeometric != null) {
+				} else if (this.builtGeometric != null) {
 	    			updateShapeDisplay(true);
 					
 				}
 			}
-		} else if (name.equals(_RIGHTCLICK)) {
+		} else if (name.equals(RIGHTCLICK)) {
 			if (value) { // on click
-				if (_inConstruction.size() > 0) { // We're building a shape, and right-click: finish shape
+				if (this.inConstruction.size() > 0) { // We're building a shape, and right-click: finish shape
 					finalizeConstruct();
 				}
-				else if (_mouseMode.equals("dragSelect")){
+				else if (this.mouseMode.equals("dragSelect")){
 					Geometric clicked = getClickedObject();
 					if (clicked instanceof Meshable){
 						try {
-							setTexture((Meshable)clicked,_project.config("texture.selected"));
+							setTexture((Meshable)clicked,this.project.config("texture.selected"));
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -511,8 +511,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	 */
 	public void setTexture(Meshable clickedItem,String newTexture) throws SQLException {
 		clickedItem.setTexture(newTexture);
-		_project.getGeometryDAO().update(clickedItem);
-		_project.getGeometryDAO().notifyObservers();
+		this.project.getGeometryDAO().update(clickedItem);
+		this.project.getGeometryDAO().notifyObservers();
 	}
     
 	@Override
@@ -523,18 +523,18 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				updateEditionMode(config.getValue());
 			} else if (config.getName().equals("floor.current")){
 				String newUID = config.getValue();
-				if (newUID.equals(_currentFloor.getUID()))
+				if (newUID.equals(this.currentFloor.getUID()))
 					return;
 				try {
-					_currentFloor = (Floor) _project.getGeometryDAO().getByUID(config.getValue());
+					this.currentFloor = (Floor) this.project.getGeometryDAO().getByUID(config.getValue());
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			} else if (config.getName().equals("mouse.mode")) {
-				_mouseMode = config.getValue();
+				this.mouseMode = config.getValue();
 			} else if (config.getName().equals("entity.current")) {
 				try {
-					_currentEntity = (Entity) _project.getGeometryDAO().getByUID(config.getValue());
+					this.currentEntity = (Entity) this.project.getGeometryDAO().getByUID(config.getValue());
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -545,13 +545,13 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 
 	@Override
 	public void onAnalog(String name, float value, float tpf) {
-		if (name.equals(_UP)) {
+		if (name.equals(UP)) {
 			mouseMoved(value);
-		} else if (name.equals(_DOWN)) {
+		} else if (name.equals(DOWN)) {
 			mouseMoved(value);
-		} else if (name.equals(_LEFT)) {
+		} else if (name.equals(LEFT)) {
 			mouseMoved(value);
-		} else if (name.equals(_RIGHT)) {
+		} else if (name.equals(RIGHT)) {
 			mouseMoved(value);
 		}
 	}

@@ -46,10 +46,10 @@ public class ToolsBarController implements ActionListener, Observer {
 	static final public String SPHERE = "TB_Sphere";
 	
 	// Edition mode alias
-	static final private String _WORLDMODE = "world";
-	static final private String _OBJECTMODE = "object";
+	static final private String WORLDMODE = "world";
+	static final private String OBJECTMODE = "object";
 	
-	private String _currentObjectMode = null;
+	private String currentObjectMode = null;
 	
 	/**
 	 * Constructor of ToolsBarController.
@@ -71,9 +71,9 @@ public class ToolsBarController implements ActionListener, Observer {
 		//Sets the default mode
         this.onDragSelectMode();
         
-        _currentObjectMode = _project.config("edition.mode");
-        if (_currentObjectMode.equals(""))
-        	_currentObjectMode = _WORLDMODE;
+        this.currentObjectMode = _project.config("edition.mode");
+        if (this.currentObjectMode.equals(""))
+        	this.currentObjectMode = WORLDMODE;
         else
         	updateEditionMode();
 	}
@@ -200,18 +200,18 @@ public class ToolsBarController implements ActionListener, Observer {
     }
     
 	private void updateEditionMode(String value) {
-		if (_currentObjectMode!=value)  {
-			_currentObjectMode = value;
+		if (this.currentObjectMode!=value)  {
+			this.currentObjectMode = value;
 			updateEditionMode();
 		}
 	}
 	
 	private void updateEditionMode() {
-		if (_currentObjectMode.equals(_WORLDMODE)) {
+		if (this.currentObjectMode.equals(WORLDMODE)) {
 			_view.setWorldModeSelected();
 			_view.setWorldEditionModuleVisible(true);
 			_view.setObjectEditionModuleVisible(false);
-		} else if (_currentObjectMode.equals(_OBJECTMODE)) {
+		} else if (this.currentObjectMode.equals(OBJECTMODE)) {
 			_view.setObjectModeSelected();
 			_view.setWorldEditionModuleVisible(false);
 			_view.setObjectEditionModuleVisible(true);

@@ -20,10 +20,10 @@ import be.ac.ulb.infof307.g03.views.GUI;
  *
  */
 public class FileChooserController {
-	private FileChooserView _view;
-	private Component _parent;
-	private Project _project;
-	private GUI _gui;
+	private FileChooserView view;
+	private Component parent;
+	private Project project;
+	private GUI gui;
 	
 	/**
 	 * @param parent The parent of the controller to be linked
@@ -32,9 +32,9 @@ public class FileChooserController {
 	 * 
 	 */
 	public FileChooserController(Component parent,Project project,GUI gui){
-		_parent = parent;
-		_project = project;
-		_gui = gui;
+		this.parent = parent;
+		this.project = project;
+		this.gui = gui;
 	}
 	
 	/**
@@ -49,14 +49,14 @@ public class FileChooserController {
 	 * This method initiate the view
 	 */
 	public void initView(){
-		_view = new FileChooserView(this);
+		this.view = new FileChooserView(this);
 	}
 	
 	/**
 	 * Notify the view to view to display the open window
 	 */
 	public void notifyDisplayOpen(){
-		_view.displayOpen(_parent);
+		this.view.displayOpen(this.parent);
 		
 	}
 	
@@ -64,7 +64,7 @@ public class FileChooserController {
 	 * Notify the view to view to display the new project window
 	 */
 	public void notifyDisplayNew(){
-		_view.displayNew(_parent);
+		this.view.displayNew(this.parent);
 		
 	}
 	
@@ -72,7 +72,7 @@ public class FileChooserController {
 	 * Notify the view to view to display the save as window
 	 */
 	public void notifyDisplaySaveAs() {
-		_view.displaySaveAs(_parent);
+		this.view.displaySaveAs(this.parent);
 		
 	}
 	
@@ -81,7 +81,7 @@ public class FileChooserController {
 	 * This method is called by the view when the user want to see the demo
 	 */
 	public void openDemo(){
-		_gui.dispose();
+		this.gui.dispose();
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){
 				try{
@@ -90,7 +90,7 @@ public class FileChooserController {
 					new GUI(prj);
 					
 				}catch (SQLException e) {
-					JOptionPane.showMessageDialog(_parent, "Unable to load demo : :" + e.toString());
+					JOptionPane.showMessageDialog(parent, "Unable to load demo : :" + e.toString());
 				}
 			}
 		});	
@@ -103,7 +103,7 @@ public class FileChooserController {
 	public void openProject(File fileToOpen){
 		Log.info("Open %s", fileToOpen.getName());
 		final String filename = fileToOpen.getAbsolutePath();
-		_gui.dispose();
+		this.gui.dispose();
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){
 				try{
@@ -115,7 +115,7 @@ public class FileChooserController {
 					new GUI(prj);
 					
 				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(_parent, "Unable to open project named " + filename + ": " + e.toString());
+					JOptionPane.showMessageDialog(parent, "Unable to open project named " + filename + ": " + e.toString());
 				}
 			}
 		});	
@@ -128,7 +128,7 @@ public class FileChooserController {
 	public void newProject(File fileToCreate){
 		Log.info("New project %s", fileToCreate.getName());
 		final String filename = fileToCreate.getAbsolutePath() + ".hpj";
-		_gui.dispose();
+		this.gui.dispose();
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){
 				try{
@@ -140,7 +140,7 @@ public class FileChooserController {
 					new GUI(prj);
 					
 				}catch (SQLException e) {
-					JOptionPane.showMessageDialog(_parent, "Unable to create a new project named " + filename + ": " + e.toString());
+					JOptionPane.showMessageDialog(parent, "Unable to create a new project named " + filename + ": " + e.toString());
 				}
 			}
 		});
@@ -155,12 +155,12 @@ public class FileChooserController {
 		Log.info("Save as %s", fileToSave.getName());
 		String filename = fileToSave.getAbsolutePath() + ".hpj";
 		try {
-			_project.saveAs(filename);
+			this.project.saveAs(filename);
 			// save the path of the current project to the BootController
 			BootController bc = new BootController();
 			bc.saveCurrentProjectPath(filename);
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(_parent, "Unable to save as " + filename + ": " + e.toString());
+			JOptionPane.showMessageDialog(this.parent, "Unable to save as " + filename + ": " + e.toString());
 		}
 	}
 }
