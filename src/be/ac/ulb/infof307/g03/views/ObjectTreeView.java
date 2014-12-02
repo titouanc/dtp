@@ -89,7 +89,7 @@ public class ObjectTreeView extends JTree implements Observer {
 			else if (cmd.equals(CHANGETEXTURE)){
 				String currentTexture=project.config("texture.selected");
 				// On va assigner à l'objet cliqué la texture sélectionnée
-				if (clickedItem instanceof Meshable){
+				if (clickedItem instanceof Area){
 					try {
 						controller.setTexture((Meshable)clickedItem,currentTexture);
 					} catch (SQLException ex) {
@@ -122,7 +122,7 @@ public class ObjectTreeView extends JTree implements Observer {
                 boolean hasFocus){
 			if (value instanceof DefaultMutableTreeNode)
 				value = ((DefaultMutableTreeNode) value).getUserObject();
-			if (value instanceof Meshable){
+			if (value instanceof Area){
 				Meshable item = (Meshable) value;
 				sel = item.isSelected();
 			} else if (value instanceof Floor){
@@ -194,7 +194,7 @@ public class ObjectTreeView extends JTree implements Observer {
 		res.add(createJMenuItem(DELETE, DELETE, listener));
 		if (geo instanceof Room){
 			res.add(createJMenuItem(RENAME, RENAME, listener));
-		} else if (geo instanceof Meshable){
+		} else if (geo instanceof Area){
 			String action = ((Meshable) geo).isVisible() ? HIDE : SHOW;
 			res.add(createJMenuItem(action, action, listener));
 			if (geo instanceof Wall){
@@ -317,7 +317,7 @@ public class ObjectTreeView extends JTree implements Observer {
 		return (
 			item instanceof Floor ||
 			item instanceof Room  ||
-			item instanceof Meshable
+			item instanceof Area
 		);
 	}
 	

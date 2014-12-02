@@ -142,8 +142,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * @param element
 	 */
 	public void deselectElement(Object element) {
-		if (element instanceof Meshable){
-			Meshable meshable = (Meshable) element;
+		if (element instanceof Area){
+			Area meshable = (Area) element;
 			Log.debug("Unselect %s", meshable.getUID());
 			meshable.deselect();
 			try {
@@ -181,8 +181,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		if (element instanceof Floor){
 			Floor current = (Floor) element;
 			this.project.config("floor.current", current.getUID());
-		} else if (element instanceof Meshable){
-			Meshable meshable = (Meshable) element;
+		} else if (element instanceof Area){
+			Area meshable = (Area) element;
 			Log.debug("Select %s", meshable.getUID());
 			try {
 				this.dao.refresh(meshable);

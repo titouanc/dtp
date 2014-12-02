@@ -687,8 +687,8 @@ public class GeometryDAO extends Observable {
 	 * @return A (possibly empty) list of all selected Meshables
 	 * @throws SQLException
 	 */
-	public List<Meshable> getSelectedMeshables() throws SQLException {
-		List<Meshable> res = new ArrayList<Meshable>();
+	public List<Area> getSelectedMeshables() throws SQLException {
+		List<Area> res = new ArrayList<Area>();
 		res.addAll(this.walls.queryForEq("selected", true));
 		res.addAll(this.grounds.queryForEq("selected", true));
 		res.addAll(this.roofs.queryForEq("selected", true));
