@@ -92,8 +92,8 @@ public class ObjectTreeView extends JTree implements Observer {
 				if (clickedItem instanceof Meshable){
 					try {
 						controller.setTexture((Meshable)clickedItem,currentTexture);
-					} catch (SQLException e) {
-						e.printStackTrace();
+					} catch (SQLException ex) {
+						Log.exception(ex);
 					}
 				}
 				
@@ -222,8 +222,8 @@ public class ObjectTreeView extends JTree implements Observer {
 		try {
 			this.dao = project.getGeometryDAO();
 			this.dao.addObserver(this);
-		} catch (SQLException e1) {
-			e1.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
 		
 		// Create a tree that allows one selection at a time.
@@ -260,8 +260,8 @@ public class ObjectTreeView extends JTree implements Observer {
 			
 			try {
 				this.dao.refresh(changed);
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (SQLException ex) {
+				Log.exception(ex);
 			}
 			
 			/* An object has been update: update the linked object in TreeView */
@@ -291,7 +291,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				DefaultMutableTreeNode newNode = null;
 				try {newNode = _createTree(changed);}
 				catch (SQLException err){
-					err.printStackTrace(); 
+					Log.exception(err); 
 					continue;
 				}
 				

@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
+import be.ac.ulb.infof307.g03.utils.Log;
+
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.j256.ormlite.dao.Dao;
@@ -345,8 +347,8 @@ public class GeometryDAO extends Observable {
 				else if (prefix.equals(new Entity().getUIDPrefix()))
 					res = getEntity(id);
 			}
-		} catch (SQLException e){
-			e.printStackTrace();
+		} catch (SQLException ex){
+			Log.exception(ex);
 		}
 		return res;
 		
