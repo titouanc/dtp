@@ -226,8 +226,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	public void makeScene(final Entity entity) {
 		enqueue(new Callable<Object>() {
 	        public Object call() {
-	        	Material mat = _makeBasicMaterial(ColorRGBA.Cyan);
-	        	rootNode.attachChild(entity.toSpacial(mat));
+	        	drawEntity(entity);
 	            return null;
 	        }
 	    });
@@ -291,7 +290,16 @@ public class WorldView extends SimpleApplication implements Observer {
 		rootNode.attachChild(roof.toSpatial(material));
 	}
 	
-	private void _drawPrimitive(Primitive primitive) {
+	private void drawEntity(Entity entity) {
+		Node ent = new Node(entity.getUID());
+		for (Primitive primitive : entity.getPrimitives()) {
+			Material mat = _makeMaterial(primitive);
+			ent.attachChild(primitive.toSpatial(mat));
+		}
+		rootNode.attachChild(ent);
+	}
+	
+	private void drawPrimitive(Primitive primitive) {
 		if (! primitive.isVisible()) 
 			return;
 		Material mat = _makeMaterial(primitive);
@@ -365,7 +373,7 @@ public class WorldView extends SimpleApplication implements Observer {
 			else if (meshable instanceof Roof)
 				_drawRoof((Roof) meshable);
 			else if (meshable instanceof Primitive)
-				_drawPrimitive((Primitive) meshable);
+				drawPrimitive((Primitive) meshable);
 		}
 		
 		/* Conclusion: updates will do both (detach & redraw) */
