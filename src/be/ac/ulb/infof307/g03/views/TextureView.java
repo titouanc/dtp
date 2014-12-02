@@ -373,7 +373,6 @@ public class TextureView extends JPanel implements ItemListener {
 	    		if (list.equals(textureList)){
 	    			if (!(value.toString()==ADDTEXTURE)){
 	    				if(value.toString().contains(File.separator)){
-	    					Log.debug("VALUE : " + value.toString());
 	    					imageIcon = new ImageIcon(value.toString().replace("Full", "Mini")+".png");
 	    				}
 	    				else{

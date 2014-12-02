@@ -193,13 +193,18 @@ public class TextureController implements ActionListener,MouseListener, Observer
  * @return the name of the file to be deleted
  */
    public String deleteFile(){
-	   File fullDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
-	   fullDimension.delete();
-	   fileToDelete=fileToDelete.replace("Textures/Full/", "Textures/");
-	   File miniDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
-	   miniDimension.delete();
-	   fileToDelete =fileToDelete.replace("Textures/", "");
-	   return fileToDelete;
+	   if(!(classPath.subSequence(0, 3).equals("rsr"))){
+		   File fullDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
+		   fullDimension.delete();
+		   fileToDelete=fileToDelete.replace("Textures/Full/", "Textures/");
+		   File miniDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
+		   miniDimension.delete();
+		   fileToDelete =fileToDelete.replace("Textures/", "");
+		   return fileToDelete;
+	   }
+	   else{
+		   return fileToDelete;
+	   }
    }
 	
 	@Override

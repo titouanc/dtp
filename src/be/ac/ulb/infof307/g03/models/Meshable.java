@@ -147,7 +147,8 @@ public abstract class Meshable extends Geometric {
 
 				}
 			}
-			mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
+		
+		mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		} catch (AssetNotFoundException ex){
 			texture = "GrayColor";
 			mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
