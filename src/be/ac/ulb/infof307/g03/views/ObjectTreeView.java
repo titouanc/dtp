@@ -89,7 +89,7 @@ public class ObjectTreeView extends JTree implements Observer {
 			else if (cmd.equals(CHANGETEXTURE)){
 				String currentTexture=project.config("texture.selected");
 				// On va assigner à l'objet cliqué la texture sélectionnée
-				if (clickedItem instanceof Area){
+				if (clickedItem instanceof Meshable){
 					try {
 						controller.setTexture((Meshable)clickedItem,currentTexture);
 					} catch (SQLException ex) {
@@ -164,6 +164,18 @@ public class ObjectTreeView extends JTree implements Observer {
 		}
 	}
 	
+	public void createObjectTree() {
+		root.removeAllChildren();
+		Entity entity = (Entity) dao.getByUID(project.config("entity.current"));
+		for (Primitive primitive : entity.getPrimitives()) {
+			DefaultMutableTreeNode primitiveNode = new DefaultMutableTreeNode(primitive.toString());
+			primitiveNode.setUserObject(primitive);
+			primitiveNode.setAllowsChildren(false);
+			this.nodes.put(primitive.getUID(), primitiveNode);
+			root.add(primitiveNode);
+		}
+	}
+	
 	public void clearTree() {
 		Log.debug("clearTree");
 		for (DefaultMutableTreeNode node : this.nodes.values()) {
@@ -194,7 +206,7 @@ public class ObjectTreeView extends JTree implements Observer {
 		res.add(createJMenuItem(DELETE, DELETE, listener));
 		if (geo instanceof Room){
 			res.add(createJMenuItem(RENAME, RENAME, listener));
-		} else if (geo instanceof Area){
+		} else if (geo instanceof Meshable){
 			String action = ((Meshable) geo).isVisible() ? HIDE : SHOW;
 			res.add(createJMenuItem(action, action, listener));
 			if (geo instanceof Wall){
@@ -302,6 +314,7 @@ public class ObjectTreeView extends JTree implements Observer {
 					parentNode.add(newNode);
 					refreshUI(parentNode);
 				}
+				
 				parentNode.add(newNode);
 				refreshUI(parentNode);
 			}
@@ -317,7 +330,8 @@ public class ObjectTreeView extends JTree implements Observer {
 		return (
 			item instanceof Floor ||
 			item instanceof Room  ||
-			item instanceof Area
+			item instanceof Area  ||
+			item instanceof Primitive
 		);
 	}
 	
