@@ -1,24 +1,45 @@
 package be.ac.ulb.infof307.g03.controllers;
 
+import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.TextureView;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
 
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+
+import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
+import javax.swing.JFileChooser;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 /**
  * @author wmoulart
  * @brief Controller of the JPanel that will open when user wants to change the texture of a group.
  */
-public class TextureController implements ActionListener, Observer {
+public class TextureController implements ActionListener,MouseListener, Observer {
 	// Attributes
 	private TextureView _view;
 	private Project _project;
 	
-	static final public String _CHANGETEXTURE	= "Change Texture";
+	// Static value
+	private final static int _IMG_WIDTH = 20;
+	private final static int _IMG_HEIGHT = 20;
+	
+	//private final static String _CHANGETEXTURE	= "Change Texture";
+	private static String fileToDelete= new String();
 	
 	
 	
@@ -51,40 +72,173 @@ public class TextureController implements ActionListener, Observer {
 		return _view;
 	}
 
-	public void actionPerformed(ActionEvent action) {
-		String cmd = action.getActionCommand();
-		if (cmd.equals(_CHANGETEXTURE)) {
-			System.out.println("fdp");
-		}
-	}
-
 	@Override
 	public void update(Observable obs, Object arg) {
-		System.out.println("UPDATE");
+		Log.debug("UPDATE");
 		if (obs instanceof Project){
 			Config conf = (Config) arg ;
 			if (conf.getName().equals("texture.mode") ){
-				updateTextureMode(conf.getValue());
+				//TODO updateTextureMode(conf.getValue());
 			}
 		}
 		
 	}
 
+	/*
 	@SuppressWarnings("deprecation")
 	private void updateTextureMode(String value) {
 		if (value.equals("shown")){
 			_view.show();
-			System.out.println("SHOW");
+			Log.debug("SHOW");
 		}
 		else{
-			System.out.println("HIDE");
+			Log.debug("HIDE");
 
 			_view.hide();
-		}/*
+		}
 		else if (value.equals("hidden")){
 			_view.hide();
-		}	*/
+		}	
 	}
+*/
+	/**
+	 * Add a new texture 
+	 * @throws IOException 
+	 */
+	public void addNewTexture() throws IOException{
+		final JFileChooser fc = new JFileChooser();
+		int returnVal = fc.showOpenDialog(_view);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+		    try{
+				File fileToImport = fc.getSelectedFile();
+				File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToImport.getName());
+				File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToImport.getName());
+				copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
+				
+				String filename = fileToImport.getName();
+				if (!(filename).equals(_view.getAddFile()) && (filename.contains(".png"))){
+					if(fileToImport.renameTo(destinationMini)){
+						reScale(destinationMini); // Set image to 20x20 format
+						_view.updatePanel(filename);
+					}
+					else{
+						Log.debug("The new texture has not been imported. Error.");
+					}
+				}
+		    }
+		    catch (NullPointerException e){
+		    	Log.warn("NullPointerException catched.");
+		    	e.printStackTrace();	
+		    }   
+	    }
+	}
+	
+	private static void copyImage(File toBeCopied,File destination)throws IOException {			    
+		ImageInputStream input = new FileImageInputStream(toBeCopied);
+		ImageOutputStream output = new FileImageOutputStream(destination);
+		byte[] buffer = new byte[1024];
+		int len;
+		while ((len = input.read(buffer)) > 0) {
+		output.write(buffer, 0, len);
+			}
+		input.close();
+		output.close();
+	}
+	
+	private static void reScale(File file) throws IOException{
+		BufferedImage originalImage = ImageIO.read(file);
+		int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+		BufferedImage resizeImagePng = rescaleImage(originalImage, type);
+		ImageIO.write(resizeImagePng,"png",file);
+	}
+	
+   private static BufferedImage rescaleImage(BufferedImage originalImage, int type){
+		BufferedImage resizedImage = new BufferedImage(_IMG_WIDTH, _IMG_HEIGHT, type);
+		Graphics2D image = resizedImage.createGraphics();
+		image.drawImage(originalImage, 0, 0, _IMG_WIDTH, _IMG_HEIGHT, null);
+		image.dispose();
+		return resizedImage;
+   }
+   
+   /**
+ * @return the name of the file to be deleted
+ */
+   public String deleteFile(){
+	   File fullDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
+	   fullDimension.delete();
+	   fileToDelete=fileToDelete.replace("Textures/Full/", "Textures/");
+	   File miniDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
+	   miniDimension.delete();
+	   fileToDelete =fileToDelete.replace("Textures/", "");
+	   return fileToDelete;
+   }
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (SwingUtilities.isLeftMouseButton(e)) {			
+			if (_view.getCurrentMode().equals("Colors")){
+				_project.config("texture.selected",_view.getSelectedColorAsString());
+			}
+			else{
+				if(!(_view.getSelectedTexture().equals(_view.getAddFile()))){
+					_project.config("texture.selected",_view.getSelectedTexture());
+				}
+				else{
+					try {
+						this.addNewTexture();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						//e1.printStackTrace();
+					}
+				}
+			}
+		}
+		else if (SwingUtilities.isRightMouseButton(e)){
+			if((_view.getCurrentMode().equals("Textures"))){
+				if(!(_view.getSelectedTexture().equals(_view.getAddFile()))){
+					JPopupMenu PopupMenu = _view.createPopupMenu();
+					fileToDelete=_view.getSelectedTexture(); // On a le nom comme Textures/Full/xxx
+					if (PopupMenu != null) {
+						PopupMenu.show(e.getComponent(), e.getX(), e.getY());
+					}					
+				}
+				
+			}		
+		}			
+	}
+		
+
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 	
 
 }

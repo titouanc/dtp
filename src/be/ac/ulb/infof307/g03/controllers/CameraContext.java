@@ -73,7 +73,12 @@ public class CameraContext implements AnalogListener, ActionListener, Observer {
 		_inputManager = interManager;
 		_wv = wv;
 		inputSetUp();
-		updateState(proj.config("camera.mode"));
+		String camMode = proj.config("camera.mode");
+		if (camMode.isEmpty()){
+			camMode = "2D";
+			proj.config("camera.mode", camMode);
+		}
+		updateState(camMode);
 		_mouseMode = proj.config("mouse.mode");
 	}
 	

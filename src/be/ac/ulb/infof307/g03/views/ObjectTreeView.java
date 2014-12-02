@@ -17,14 +17,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.*;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author pierre, titou
@@ -85,9 +87,18 @@ public class ObjectTreeView extends JTree implements Observer {
 				_controller.setHeight((Floor) clickedItem, userInput);
 			}
 			else if (cmd.equals(_CHANGETEXTURE)){
-				// Ouvrir le nouveau pannel 
+				String currentTexture=_project.config("texture.selected");
+				// On va assigner à l'objet cliqué la texture sélectionnée
+				if (clickedItem instanceof Meshable){
+					try {
+						_controller.setTexture((Meshable)clickedItem,currentTexture);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
+				
 			}
+		}
 
 	}
 
@@ -143,7 +154,8 @@ public class ObjectTreeView extends JTree implements Observer {
 	}
 	
 	public void createTree() throws SQLException{
-		System.out.println("[DEBUG] createTree");
+		Log.debug("createTree");
+		_root.removeAllChildren();
 		for (Floor floor : _dao.getFloors()){
 			DefaultMutableTreeNode floorNode = _createNode(floor);
 			for (Room room : _dao.getRooms(floor))
@@ -153,7 +165,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	}
 	
 	public void clearTree() {
-		System.out.println("[DEBUG] clearTree");
+		Log.debug("clearTree");
 		for (DefaultMutableTreeNode node : _nodes.values()) {
 			node.removeFromParent();
 			_nodes.remove(node);
@@ -198,6 +210,8 @@ public class ObjectTreeView extends JTree implements Observer {
 	
 	/**
 	 * Constructor of the main class ObjectTree
+	 * @param newController 
+	 * @param project 
 	 */
 	public ObjectTreeView(ObjectTreeController newController, Project project) {
 		super(_root);
@@ -228,6 +242,10 @@ public class ObjectTreeView extends JTree implements Observer {
 		
 	}
 	
+	/**
+	 * @param path
+	 * @return
+	 */
 	public Geometric getGeometric(TreePath path){
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 		return (Geometric) node.getUserObject();
@@ -235,8 +253,6 @@ public class ObjectTreeView extends JTree implements Observer {
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		/* Flag: do we need to update GUI ? */
-		boolean updateUI = false;
 		List<Change> changes = (List<Change>) arg1;
 		
 		for (Change change : changes){
@@ -253,7 +269,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				DefaultMutableTreeNode node = _nodes.get(changed.getUID());
 				if (node != null){
 					node.setUserObject(changed);
-					updateUI = true;
+					refreshUI(node);
 				}
 			}
 			
@@ -261,42 +277,55 @@ public class ObjectTreeView extends JTree implements Observer {
 			else if (change.isDeletion()){
 				DefaultMutableTreeNode node = _nodes.get(changed.getUID());
 				if (node != null){
+					TreeNode parentNode = node.getParent();
 					node.removeFromParent();
 					_nodes.remove(node);
-					updateUI = true;
+					refreshUI(parentNode);
 				}
 			}
 			/* Creation: insert in right place in tree */
 			else if (change.isCreation() && ! _nodes.containsKey(changed.getUID())){
+				if (! isShown(changed))
+					continue;
+				
 				DefaultMutableTreeNode newNode = null;
 				try {newNode = _createTree(changed);}
-				catch (SQLException err){err.printStackTrace();}
+				catch (SQLException err){
+					err.printStackTrace(); 
+					continue;
+				}
 				
-				if (changed instanceof Floor){
-					_root.add(newNode);
-					updateUI = true;
-				} else if (changed instanceof Meshable){
-					_nodes.get(((Meshable) changed).getRoom().getUID()).add(newNode);
-					updateUI = true;
-				} else if (changed instanceof Room){
+				DefaultMutableTreeNode parentNode = _root;
+				if (changed instanceof Room){
 					Room room = (Room) changed;
-					_nodes.get(room.getFloor().getUID()).add(newNode);
-					updateUI = true;
+					parentNode = _nodes.get(room.getFloor().getUID());
+					parentNode.add(newNode);
+					refreshUI(parentNode);
 				}
-				
+				parentNode.add(newNode);
+				refreshUI(parentNode);
 			}
-		}
-		if (updateUI){
-			SwingUtilities.invokeLater(new Runnable(){
-				@Override
-				public void run() {
-					/* Update GUI if needed */
-					updateUI();
-					
-				}
-			});
 		}
 	}
 	
-
+	/**
+	 * Return whether a geometric object is hown in tree view or not
+	 * @param item A geometric item
+	 * @return True if this geometric should be displayed in the tree
+	 */
+	private Boolean isShown(Geometric item){
+		return (
+			item instanceof Floor ||
+			item instanceof Room  ||
+			item instanceof Meshable
+		);
+	}
+	
+	/**
+	 * Notify UI class that a node has changed
+	 * @param changed The node who has changed
+	 */
+	private void refreshUI(TreeNode changed){
+		((DefaultTreeModel) treeModel).reload(changed);
+	}
 }

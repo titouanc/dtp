@@ -6,6 +6,7 @@ package be.ac.ulb.infof307.g03.models;
 import java.util.List;
 
 import com.jme3.material.Material;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -73,6 +74,15 @@ public class Ground extends Meshable {
 		Mesh mesh = new Mesh();
 	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
 	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
+	  	Vector2f[] texCoord = new Vector2f[7];
+	  	texCoord[0] = new Vector2f(0.5f, 0.5f);
+	  	texCoord[1] = new Vector2f(0, 0.5f);
+	  	texCoord[2] = new Vector2f(0.25f, 0);
+	  	texCoord[3] = new Vector2f(0.75f, 0);
+	  	texCoord[4] = new Vector2f(1, 0.5f);
+	  	texCoord[5] = new Vector2f(0.75f, 1);
+	  	texCoord[6] = new Vector2f(0.25f, 1);
+	  	mesh.setBuffer(Type.TexCoord, 2, BufferUtils.createFloatBuffer(texCoord));
 	  	mesh.updateBound();
 		Geometry res = new Geometry(getUID(), mesh);
 		res.setMaterial(material);

@@ -16,6 +16,8 @@ import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetLocator;
+import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -33,6 +35,8 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture.WrapMode;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
@@ -46,6 +50,8 @@ public class WorldView extends SimpleApplication implements Observer {
 	private LinkedList<Change> _queuedChanges = null;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	private boolean _isCreated = false;
+	
+	
 	/**
 	 * WorldView's Constructor
 	 * @param newController The view's controller
@@ -64,6 +70,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		}
 		this.setDisplayStatView(false);
 		_project.addObserver(this);
+
 	}
 	
 	/**
@@ -89,6 +96,8 @@ public class WorldView extends SimpleApplication implements Observer {
 		// Notify our controller that initialisation is done
 		this.setPauseOnLostFocus(false);
 		this.setCreated();
+		this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/assets/", FileLocator.class);
+
 	}
 	
 	/**
@@ -136,7 +145,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		gridGeo.rotate(roll90);
 		
 		//Moves the center of the grid 
-		gridGeo.center().move(new Vector3f(0,-50,0));
+		gridGeo.center().move(new Vector3f(0,-50,-0.01f));
 		rootNode.attachChild(gridGeo);
 	}
 	
@@ -153,20 +162,30 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	/**
-	 * This creates a basic colored material which is going to be affected by lighting
-	 * @param color
-	 * @return The material created
+	 * Create the materials with their texture
+	 * @param mesh
+	 * @param texture
+	 * @return
 	 */
-	private Material _makeLightedMaterial(ColorRGBA color){
-		Material res = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+	private Material _makeMaterial(Meshable mesh){	
+		 String texture=mesh.getTexture();
+		 if (texture.equals("Gray")){
+			texture="Colors/Gray";
+		}
+		Material res= new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		res.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		res.setBoolean("UseMaterialColors", true);
+		ColorRGBA color = new ColorRGBA(ColorRGBA.Gray);
 		res.setColor("Diffuse", color);
 		res.setColor("Ambient", color);
-		res.setColor("Specular", color);
+		res.setColor("Specular",color); 
+		 if (mesh.isSelected()){
+				res.setColor("Ambient",new ColorRGBA(0f,1.2f,0f, 0.5f));
+			}
+		res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		return res;
-	}
-	
+	 }
 
 	/**
 	 * Redraw the entire 3D scene
@@ -242,22 +261,22 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void _drawWall(Wall wall){
 		if (! wall.isVisible())
 			return;
-		Material material = _makeLightedMaterial(_getColor(wall));
+		Material material = _makeMaterial(wall);
 		rootNode.attachChild(wall.toSpatial(material));
 	}
 	
 	private void _drawGround(Ground gnd){
 		if (! gnd.isVisible())
 			return;
-		Material mat = _makeBasicMaterial(_getColor(gnd));
-		rootNode.attachChild(gnd.toSpatial(mat));
+		Material material = _makeMaterial(gnd);
+		rootNode.attachChild(gnd.toSpatial(material));
 	}
 	
 	private void _drawRoof(Roof roof){
 		if (! roof.isVisible())
 			return;
-		Material mat = _makeBasicMaterial(_getColor(roof));
-		rootNode.attachChild(roof.toSpatial(mat));
+		Material material = _makeMaterial(roof);
+		rootNode.attachChild(roof.toSpatial(material));
 	}
 	
 	/**
@@ -275,31 +294,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		mat.setColor("Color", color);
 		rootNode.attachChild(axisGeo);
 	}
-	
-	/**
-	 * @param meshable a Meshable item
-	 * @return The color it should have in 3D view
-	 * @throws SQLException 
-	 */
-	private ColorRGBA _getColor(Meshable meshable) {
-		ColorRGBA color = ColorRGBA.Gray;
-		if (meshable.isSelected()){
-			color = new ColorRGBA(0f,1.2f,0f, 0.5f);
-		}
-		else if (meshable instanceof Ground) {
-			color = ColorRGBA.LightGray;	
-		}
-		else if (meshable instanceof Roof){
-			Roof roof = (Roof) meshable;
-			int hash = roof.getRoom().getFloor().getId();
-			double r = Math.sin(hash)/4 + 0.25;
-			double g = Math.sin(hash + Math.PI/3)/4 + 0.25;
-			double b = Math.sin(hash + 2*Math.PI/3)/4 + 0.25;
-			color = new ColorRGBA((float)r, (float)g, (float)b, 0.3f);
-		}
-		return color;
-	}
-	
+		
 	/**
 	 * Update view when a Point has changed
 	 * @param change

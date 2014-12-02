@@ -100,8 +100,8 @@ public class TestProject {
 	}
 	
 	/**
-	 * Test that the database handler of a Project has been
-	 * replaced by a new one
+	 * Test that the database handler of a Project has moved from
+	 * memory to disk
 	 * @throws SQLException
 	 */
 	@Test

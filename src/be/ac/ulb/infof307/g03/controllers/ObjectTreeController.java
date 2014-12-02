@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import be.ac.ulb.infof307.g03.models.*;
@@ -105,7 +106,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			System.out.println("[DEBUG] ObjectTree switched to object edition mode.");
 			_view.clearTree();
 		}
-		_view.updateUI();
+		((DefaultTreeModel) _view.getModel()).reload();
 	}
 
 	/**
@@ -351,10 +352,14 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			int row = _view.getClosestRowForLocation(e.getX(), e.getY());
 			_view.setSelectionRow(row);
 			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) _view.getLastSelectedPathComponent();
-			Geometric clickedItem = (Geometric) clickedNode.getUserObject();
-			JPopupMenu menuForItem = _view.createPopupMenu(clickedItem);
-			if (menuForItem != null) 
-				menuForItem.show(e.getComponent(), e.getX(), e.getY());
+			if (clickedNode == null){
+				Log.error("Right-clicked null node");
+			} else {
+				Geometric clickedItem = (Geometric) clickedNode.getUserObject();;
+				JPopupMenu menuForItem = _view.createPopupMenu(clickedItem);
+				if (menuForItem != null) 
+					menuForItem.show(e.getComponent(), e.getX(), e.getY());
+			}
 		}
 	}
 
@@ -363,7 +368,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof Project) {
@@ -372,6 +377,17 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				updateEditionMode(config.getValue());
 			}
 		}		
+	}
+
+	/**
+	 * @param clickedItem
+	 * @param newTexture
+	 * @throws SQLException 
+	 */
+	public void setTexture(Meshable clickedItem,String newTexture) throws SQLException {
+		clickedItem.setTexture(newTexture);
+		_dao.update(clickedItem);
+		_dao.notifyObservers();
 	}
 	
 }

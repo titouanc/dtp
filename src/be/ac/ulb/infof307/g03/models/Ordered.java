@@ -4,15 +4,11 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
-import com.j256.ormlite.table.DatabaseTable;
-
 /**
  * Base class for indexed items
  * @author Titouan Christophe
