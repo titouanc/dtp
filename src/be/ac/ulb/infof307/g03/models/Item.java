@@ -55,7 +55,7 @@ public class Item extends Geometric {
 	}
 	
 	public Vector3f getPositionVector(){
-		return new Vector3f((float)positionx,(float)positiony,(float)positionz);
+		return new Vector3f((float)positionx,(float)positiony,(float)positionz + (float)floor.getBaseHeight());
 	}
 	
 	public void setEntity(Entity entityToSet){
