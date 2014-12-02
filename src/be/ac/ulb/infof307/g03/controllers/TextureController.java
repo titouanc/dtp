@@ -126,9 +126,8 @@ public class TextureController implements ActionListener,MouseListener, Observer
 					}
 				}
 		    }
-		    catch (NullPointerException e){
-		    	Log.warn("NullPointerException catched.");
-		    	e.printStackTrace();	
+		    catch (NullPointerException ex){
+		    	Log.exception(ex);	
 		    }   
 	    }
 	}
@@ -211,8 +210,8 @@ public class TextureController implements ActionListener,MouseListener, Observer
 					try {
 						this.addNewTexture();
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						//e1.printStackTrace();
+						Log.exception(e1);
+						// TODO prévenir l'utilisateur pourquoi ça a pas marché
 					}
 				}
 			}

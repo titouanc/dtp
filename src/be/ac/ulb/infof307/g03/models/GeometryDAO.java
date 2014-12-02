@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
+import be.ac.ulb.infof307.g03.utils.Log;
+
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.j256.ormlite.dao.Dao;
@@ -375,8 +377,8 @@ public class GeometryDAO extends Observable {
 				else if (prefix.equals(new Item().getUIDPrefix()))
 					res = getItem(id);
 			}
-		} catch (SQLException e){
-			e.printStackTrace();
+		} catch (SQLException ex){
+			Log.exception(ex);
 		}
 		return res;
 		
@@ -731,8 +733,8 @@ public class GeometryDAO extends Observable {
 	 * @return A (possibly empty) list of all selected Meshables
 	 * @throws SQLException
 	 */
-	public List<Meshable> getSelectedMeshables() throws SQLException {
-		List<Meshable> res = new ArrayList<Meshable>();
+	public List<Area> getSelectedMeshables() throws SQLException {
+		List<Area> res = new ArrayList<Area>();
 		res.addAll(this.walls.queryForEq("selected", true));
 		res.addAll(this.grounds.queryForEq("selected", true));
 		res.addAll(this.roofs.queryForEq("selected", true));

@@ -17,6 +17,7 @@ import be.ac.ulb.infof307.g03.controllers.MainPaneController;
 import be.ac.ulb.infof307.g03.controllers.MenuBarController;
 import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author julianschembri, pierre
@@ -80,7 +81,8 @@ public class GUI extends JFrame {
 	        	try {
 		            Thread.sleep(2000);
 		        }
-		        	catch(InterruptedException e) {
+		        	catch(InterruptedException ex) {
+		        		Log.exception(ex);
 		        }
 	        }
 	        this.screen.close();

@@ -61,9 +61,8 @@ public class BootController {
 
 	/**
 	 * @return The project to be opened by the program
-	 * @throws SQLException
 	 */
-	public Project initProject() throws SQLException {
+	public Project initProject() {
 		Project proj = null;
 		try {
 			proj = loadLastProject();
@@ -72,8 +71,11 @@ public class BootController {
 		}
 		
 		if (proj == null)
-			proj = DemoProject.create();
-		
+			try {
+				proj = DemoProject.create();
+			} catch(SQLException e){
+				Log.error("Unable to load the demo project %s", getLastProjectPath());
+			}
 		return proj;
 	}
 }

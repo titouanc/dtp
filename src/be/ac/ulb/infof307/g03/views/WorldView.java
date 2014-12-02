@@ -67,8 +67,8 @@ public class WorldView extends SimpleApplication implements Observer {
 		try {
 			this.dao= project.getGeometryDAO();
 			this.dao.addObserver(this);
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
 		this.setDisplayStatView(false);
 		this.project.addObserver(this);
@@ -215,8 +215,8 @@ public class WorldView extends SimpleApplication implements Observer {
 								_drawRoof(room.getRoof());
 						}
 					}
-				} catch (SQLException e) {
-					e.printStackTrace();
+				} catch (SQLException ex) {
+					Log.exception(ex);
 				}
 	            return null;
 	        }
@@ -333,8 +333,8 @@ public class WorldView extends SimpleApplication implements Observer {
 			for (Room room : point.getBoundRooms()){
 				try {
 					this.dao.refresh(room);
-				} catch (SQLException e) {
-					e.printStackTrace();
+				} catch (SQLException ex) {
+					Log.exception(ex);
 				}
 				for (Meshable meshable : room.getMeshables())
 					_updateMeshable(Change.update(meshable));
@@ -423,7 +423,7 @@ public class WorldView extends SimpleApplication implements Observer {
 				for (Change change : this.queuedChanges){
 					if (change.isDeletion())
 						rootNode.detachChildNamed(change.getItem().getUID());
-					else if (change.getItem() instanceof Meshable)
+					else if (change.getItem() instanceof Area)
 						_updateMeshable(change);
 					else if (change.getItem() instanceof Point)
 						_updatePoint(change);

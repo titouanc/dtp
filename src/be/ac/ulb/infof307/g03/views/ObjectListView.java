@@ -101,8 +101,8 @@ public class ObjectListView extends JList implements Observer {
 		try {
 			_dao = project.getGeometryDAO();
 			Log.debug("DAO is %s", _dao.toString());
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
 		addMouseListener(_controller);
 		_dao.addObserver(this);
@@ -114,8 +114,8 @@ public class ObjectListView extends JList implements Observer {
 			List<Entity> entities = _dao.getEntities();
 			Log.debug("Entities: %s", entities.toString());
 			setListData(new Vector<Entity>(entities));
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			Log.exception(ex);
 		}
 		
 	}
