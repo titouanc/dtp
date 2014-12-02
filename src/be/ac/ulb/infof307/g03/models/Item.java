@@ -4,14 +4,16 @@
 package be.ac.ulb.infof307.g03.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 
 /**
  * @author brochape
  *
  */
-public class Item extends Geometric {
-
+public class Item extends Meshable {
 	@DatabaseField
 	private double positionx = 0;
 	@DatabaseField
@@ -24,9 +26,9 @@ public class Item extends Geometric {
 	private double normaly = 0;
 	@DatabaseField
 	private double normalz = 0;
-	@DatabaseField(foreign = true,canBeNull = false)
+	@DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
 	private Floor floor;
-	@DatabaseField(foreign = true,canBeNull = false)
+	@DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
 	private Entity entity;
 	
 
@@ -81,6 +83,18 @@ public class Item extends Geometric {
 	@Override
 	public String getUIDPrefix() {
 		return "item";
+	}
+
+	@Override
+	protected String innerToString() {
+		return entity.getName();
+	}
+
+	@Override
+	public Spatial toSpatial(Material material) {
+		Spatial res = entity.toSpatial(material);
+		res.setLocalTranslation(getAbsolutePositionVector());
+		return res;
 	}
 	
 

@@ -161,32 +161,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	/**
-	 * Create the materials with their texture
-	 * @param mesh
-	 * @param texture
-	 * @return
-	 */
-	private Material _makeMaterial(Meshable mesh){	
-		 String texture=mesh.getTexture();
-		 if (texture.equals("Gray")){
-			texture="Colors/Gray";
-		}
-		Material res= new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		res.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-		res.setBoolean("UseMaterialColors", true);
-		ColorRGBA color = new ColorRGBA(ColorRGBA.Gray);
-		res.setColor("Diffuse", color);
-		res.setColor("Ambient", color);
-		res.setColor("Specular",color); 
-		 if (mesh.isSelected()){
-				res.setColor("Ambient",new ColorRGBA(0f,1.2f,0f, 0.5f));
-			}
-		res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
-		return res;
-	 }
-
-	/**
 	 * Redraw the entire 3D scene
 	 */
 	public void makeScene(){
@@ -203,16 +177,15 @@ public class WorldView extends SimpleApplication implements Observer {
 	    		
 	    		try {
 					for (Floor floor : dao.getFloors()){
+						/* Draw rooms areas */
 						for (Room room : floor.getRooms()){
-							if (room.getGround() != null)
-								_drawGround(room.getGround());
-							if (room.getWall() != null)
-								_drawWall(room.getWall());
-							if (room.getRoof() != null)
-								_drawRoof(room.getRoof());
+							for (Meshable meshable : room.getMeshables()){
+								drawMeshable(meshable);
+							}
 						}
+						/* Draw objects */
 						for (Item item : floor.getItems()){
-							_drawItem(item);
+							drawMeshable(item);
 						}
 					}
 				} catch (SQLException ex) {
@@ -226,7 +199,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	public void makeScene(final Entity entity) {
 		enqueue(new Callable<Object>() {
 	        public Object call() {
-	        	_drawEntity(entity);
+	        	drawMeshable(entity);
 	            return null;
 	        }
 	    });
@@ -269,58 +242,10 @@ public class WorldView extends SimpleApplication implements Observer {
 		_attachAxis(origin, zAxis,ColorRGBA.Blue);
 	}
 	
-	private void _drawItem(Item item) {
-		Node asNode = createEntityNode(item.getEntity());
-		asNode.setLocalTranslation(item.getAbsolutePositionVector());
-		rootNode.attachChild(asNode);
-		Log.debug("Draw Item %s", item.getUID());
-	}
-	
-	private void _drawWall(Wall wall){
-		if (! wall.isVisible())
+	private void drawMeshable(Meshable meshable){
+		if (! meshable.isVisible())
 			return;
-		Material material = _makeMaterial(wall);
-		rootNode.attachChild(wall.toSpatial(material));
-	}
-	
-	private void _drawGround(Ground gnd){
-		if (! gnd.isVisible())
-			return;
-		Material material = _makeMaterial(gnd);
-		rootNode.attachChild(gnd.toSpatial(material));
-	}
-	
-	private void _drawRoof(Roof roof){
-		if (! roof.isVisible())
-			return;
-		Material material = _makeMaterial(roof);
-		rootNode.attachChild(roof.toSpatial(material));
-	}
-	
-	private Node createEntityNode(Entity entity){
-		try {
-			dao.refresh(entity);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		Node res = new Node(entity.getUID());
-		for (Primitive primitive : entity.getPrimitives()) {
-			Material mat = _makeMaterial(primitive);
-			res.attachChild(primitive.toSpatial(mat));
-		}
-		return res;
-	}
-	
-	private void _drawEntity(Entity entity) {
-		rootNode.attachChild(createEntityNode(entity));
-		Log.debug("Draw Entity %s", entity.getUID());
-	}
-	
-	private void drawPrimitive(Primitive primitive) {
-		if (! primitive.isVisible()) 
-			return;
-		Material mat = _makeMaterial(primitive);
-		rootNode.attachChild(primitive.toSpatial(mat));
+		rootNode.attachChild(meshable.toSpatial(assetManager));
 	}
 	
 	/**
@@ -382,16 +307,8 @@ public class WorldView extends SimpleApplication implements Observer {
 			rootNode.detachChildNamed(meshable.getUID());
 		
 		/* No need to redraw if it is a deletion */
-		if (! change.isDeletion()){
-			if (meshable instanceof Wall)
-				_drawWall((Wall) meshable);
-			else if (meshable instanceof Ground)
-				_drawGround((Ground) meshable);
-			else if (meshable instanceof Roof)
-				_drawRoof((Roof) meshable);
-			else if (meshable instanceof Primitive)
-				drawPrimitive((Primitive) meshable);
-		}
+		if (! change.isDeletion())
+			drawMeshable((Primitive) meshable);
 		
 		/* Conclusion: updates will do both (detach & redraw) */
 	}
