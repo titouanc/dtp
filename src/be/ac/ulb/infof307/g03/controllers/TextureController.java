@@ -40,7 +40,8 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	
 	//private final static String _CHANGETEXTURE	= "Change Texture";
 	private static String fileToDelete= new String();
-	
+	private String classPath= getClass().getResource("TextureView.class").toString();
+
 	
 	
 	/**
@@ -109,26 +110,31 @@ public class TextureController implements ActionListener,MouseListener, Observer
 		final JFileChooser fc = new JFileChooser();
 		int returnVal = fc.showOpenDialog(this.view);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
-		    try{
-				File fileToImport = fc.getSelectedFile();
-				File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToImport.getName());
-				File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToImport.getName());
-				copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
-				
-				String filename = fileToImport.getName();
-				if (!(filename).equals(this.view.getAddFile()) && (filename.contains(".png"))){
-					if(fileToImport.renameTo(destinationMini)){
-						reScale(destinationMini); // Set image to 20x20 format
-						this.view.updatePanel(filename);
+			if(!(classPath.subSequence(0, 3).equals("rsr"))){	
+			    try{
+					File fileToImport = fc.getSelectedFile();
+					File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToImport.getName());
+					File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToImport.getName());
+					copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
+					
+					String filename = fileToImport.getName();
+					if (!(filename).equals(this.view.getAddFile()) && (filename.contains(".png"))){
+						if(fileToImport.renameTo(destinationMini)){
+							reScale(destinationMini); // Set image to 20x20 format
+							this.view.updatePanel(filename);
+						}
+						else{
+							Log.debug("The new texture has not been imported. Error.");
+						}
 					}
-					else{
-						Log.debug("The new texture has not been imported. Error.");
-					}
-				}
-		    }
-		    catch (NullPointerException ex){
-		    	Log.exception(ex);	
-		    }   
+			    }
+			    catch (NullPointerException ex){
+			    	Log.exception(ex);	
+			    }   
+			}
+			else{
+				//
+			}
 	    }
 	}
 	

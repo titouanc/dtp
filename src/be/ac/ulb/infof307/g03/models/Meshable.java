@@ -15,6 +15,7 @@ public abstract class Meshable extends Geometric {
 	@DatabaseField
 	private Boolean visible = true;
 	@DatabaseField
+	
 	private Boolean selected = false;
 	@DatabaseField
 	private String texture = "Gray";
