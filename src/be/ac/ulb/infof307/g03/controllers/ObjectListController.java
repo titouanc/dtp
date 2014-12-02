@@ -55,17 +55,18 @@ public class ObjectListController implements MouseListener {
 	}
 	
 	public void onNewAction(String name) {
-		Entity entity = new Entity(name);
-		try {
-			_dao.create(entity);
-			_dao.notifyObservers();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (name != null) {
+			Entity entity = new Entity(name);
+			try {
+				_dao.create(entity);
+				_dao.notifyObservers();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			_project.config("entity.current", entity.getUID());
+			_project.config("edition.mode", "object");
 		}
-		_project.config("entity.current", entity.getUID());
-		_project.config("edition.mode", "object");
-
 	}
 	
 	public void onDeleteAction(Entity entity) {
@@ -84,19 +85,21 @@ public class ObjectListController implements MouseListener {
 	}
 	
 	public void onRenameAction(Entity entity, String newName) {
-		entity.setName(newName);
-		try {
-			_dao.update(entity);
-			_dao.notifyObservers();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (newName != null) {
+			entity.setName(newName);
+			try {
+				_dao.update(entity);
+				_dao.notifyObservers();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
 	public void onEditAction(Entity entity) {
-		_project.config("edition.mode", "object");
 		_project.config("entity.current", entity.getUID());
+		_project.config("edition.mode", "object");
 	}
 	
 	@Override
