@@ -104,7 +104,7 @@ public abstract class Meshable extends Geometric {
 	public abstract Spatial toSpatial(Material material);
 	
 	private final Material loadTexture(AssetManager assetManager){
-		if (texture.equals("Gray")){
+		if (texture.equals("Gray") || texture.equals("")){
 			texture = "Colors/Gray";
 		}
 		Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
