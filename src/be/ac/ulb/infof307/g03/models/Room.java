@@ -20,7 +20,7 @@ public class Room extends Geometric {
 	private String name = null;
 	@DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
 	private Floor floor = null;
-	@ForeignCollectionField(eager = false, orderColumnName = "_index")
+	@ForeignCollectionField(eager = false, orderColumnName = "index")
     private ForeignCollection<Binding> bindings;
 	@DatabaseField(foreign = true, canBeNull = true, foreignAutoRefresh = true, foreignAutoCreate = true)
 	private Ground ground;

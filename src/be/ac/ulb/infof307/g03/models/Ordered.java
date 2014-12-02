@@ -27,8 +27,8 @@ public abstract class Ordered extends Geometric {
 		return index;
 	}
 	
-	public final void setIndex(int index){
-		index = index;
+	public final void setIndex(int newIndex){
+		index = newIndex;
 	}
 	
 	/**
