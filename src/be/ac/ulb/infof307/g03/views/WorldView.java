@@ -308,7 +308,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		
 		/* No need to redraw if it is a deletion */
 		if (! change.isDeletion())
-			drawMeshable((Primitive) meshable);
+			drawMeshable(meshable);
 		
 		/* Conclusion: updates will do both (detach & redraw) */
 	}
