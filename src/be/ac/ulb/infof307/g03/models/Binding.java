@@ -16,12 +16,12 @@ public class Binding extends Ordered {
 	 * First point of the line
 	 */
 	@DatabaseField(canBeNull = false, foreign = true, uniqueCombo = true)
-	private Room _room = null;
+	private Room room = null;
 	/**
 	 * Second point of the line
 	 */
 	@DatabaseField(canBeNull = false, foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
-	private Point _point = null;
+	private Point point = null;
 	
 	public Binding(){
 		super();
@@ -35,19 +35,19 @@ public class Binding extends Ordered {
 	}
 
 	public void setPoint(Point point) {
-		_point = point;
+		this.point = point;
 	}
 	
 	public Point getPoint(){
-		return _point;
+		return this.point;
 	}
 
 	public void setRoom(Room room) {
-		_room = room;
+		this.room = room;
 	}
 	
 	public Room getRoom(){
-		return _room;
+		return this.room;
 	}
 	
 	@Override
@@ -61,6 +61,6 @@ public class Binding extends Ordered {
 	}
 	
 	protected <Subtype> Where<Subtype, Integer> getWhereForUniqueness(Where<Subtype, Integer> initialClause) throws SQLException {
-		return initialClause.and().eq("_room_id", _room.getId());
+		return initialClause.and().eq("_room_id", this.room.getId());
 	}
 }

@@ -13,9 +13,9 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class Config {
 	@DatabaseField(id = true)
-	private String _key = "";
+	private String key = "";
 	@DatabaseField
-	private String _value = "";
+	private String value = "";
 	
 	/**
 	 * Create a new empty key:value pair
@@ -30,22 +30,22 @@ public class Config {
 	 * @param value The configuration value for this key
 	 */
 	public Config(String key, String value){
-		_key = key;
-		_value = value;
+		this.key = key;
+		this.value = value;
 	}
 	
 	/**
 	 * @return The name of the configuration object
 	 */
 	public String getName(){
-		return _key;
+		return this.key;
 	}
 	
 	/**
 	 * @return The value of the configuration object
 	 */
 	public String getValue(){
-		return _value;
+		return this.value;
 	}
 
 	/**
@@ -53,6 +53,6 @@ public class Config {
 	 * @param value The new value
 	 */
 	public void setValue(String value) {
-		_value = value;
+		this.value = value;
 	}
 }

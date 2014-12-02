@@ -19,15 +19,15 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class Point extends Geometric {
 	@DatabaseField(uniqueCombo = true)
-	private double _x = 0;
+	private double x = 0;
 	@DatabaseField(uniqueCombo = true)
-	private double _y = 0;
+	private double y = 0;
 	@DatabaseField(uniqueCombo = true)
-	private double _z = 0;
+	private double z = 0;
 	@DatabaseField
-	private Boolean _selected = false;
+	private Boolean selected = false;
 	@ForeignCollectionField(eager = false, orderColumnName = "_room_id")
-    private ForeignCollection<Binding> _bindings;
+    private ForeignCollection<Binding> bindings;
 	
 	/**
 	 * Create a new (0,0,0) point
@@ -42,9 +42,9 @@ public class Point extends Geometric {
 	 * @param z coordinate
 	 */
 	public Point(double x, double y, double z) {
-		this._x = x;
-		this._y = y;
-		this._z = z;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
 	/**
@@ -52,30 +52,30 @@ public class Point extends Geometric {
 	 * @param xyz Coordinates in {x,y,z} format
 	 */
 	public Point(Vector3f xyz) {
-		this._x = xyz.x;
-		this._y = xyz.y;
-		this._z = xyz.z;
+		this.x = xyz.x;
+		this.y = xyz.y;
+		this.z = xyz.z;
 	}
 
 	/**
 	 * @return x coordinate
 	 */
 	public double getX() {
-		return this._x;
+		return this.x;
 	}
 
 	/**
 	 * @return y coordinate
 	 */
 	public double getY() {
-		return this._y;
+		return this.y;
 	}
 
 	/**
 	 * @return z coordinate
 	 */
 	public double getZ() {
-		return this._z;
+		return this.z;
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class Point extends Geometric {
 	 * @param x coordinate
 	 */
 	public void setX(double x) {
-		this._x = x;
+		this.x = x;
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class Point extends Geometric {
 	 * @param y coordinate
 	 */
 	public void setY(double y) {
-		this._y = y;
+		this.y = y;
 	}
 
 	/**
@@ -110,21 +110,21 @@ public class Point extends Geometric {
 	 * @param z coordinate
 	 */
 	public void setZ(double z) {
-		this._z = z;
+		this.z = z;
 	}
 	
 	/**
 	 * Select point
 	 */
 	public void select(){
-		_selected = true;
+		this.selected = true;
 	}
 	
 	/**
 	 * Deselect point
 	 */
 	public void deselect(){
-		_selected = false;
+		this.selected = false;
 	}
 	
 	/**
@@ -132,7 +132,7 @@ public class Point extends Geometric {
 	 * Deselects point if it is selected
 	 */
 	public void toggleSelect(){
-		_selected = !_selected;
+		this.selected = !this.selected;
 	}
 	
 	/**
@@ -140,11 +140,11 @@ public class Point extends Geometric {
 	 * @return true if this Point is selected
 	 */
 	public Boolean isSelected(){
-		return _selected;
+		return this.selected;
 	}
 	
 	public String toString(){
-		return String.format("(%f,%f,%f)", _x, _y, _z);
+		return String.format("(%f,%f,%f)", this.x, this.y, this.z);
 	}
 	
 	/**
@@ -169,14 +169,14 @@ public class Point extends Geometric {
 	 * @return The point as Vector3f
 	 */
 	public Vector3f toVector3f(){
-		return new Vector3f((float) _x, (float) _y, (float) _z);
+		return new Vector3f((float) this.x, (float) this.y, (float) this.z);
 	}
 	
 	/**
 	 * @return All bindings of this point
 	 */
 	public ForeignCollection<Binding> getBindings(){
-		return _bindings;
+		return this.bindings;
 	}
 	
 	/**
@@ -184,8 +184,8 @@ public class Point extends Geometric {
 	 */
 	public List<Room> getBoundRooms(){
 		List<Room> res = new LinkedList<Room>();
-		if (_bindings != null){
-			for (Binding b : _bindings)
+		if (this.bindings != null){
+			for (Binding b : this.bindings)
 				res.add(b.getRoom());
 		}
 		return res;

@@ -21,27 +21,27 @@ public class Primitive extends Geometric {
 	public static String SPHERE = "sphere";
 	
 	@DatabaseField(foreign = true, canBeNull = false)
-	private Entity _entity;
+	private Entity entity;
 	@DatabaseField
-	private double _translationx = 0;
+	private double translationx = 0;
 	@DatabaseField
-	private double _translationy = 0;
+	private double translationy = 0;
 	@DatabaseField
-	private double _translationz = 0;
+	private double translationz = 0;
 	@DatabaseField
-	private double _rotationx = 0;
+	private double rotationx = 0;
 	@DatabaseField
-	private double _rotationy = 0;
+	private double rotationy = 0;
 	@DatabaseField
-	private double _rotationz = 0;
+	private double rotationz = 0;
 	@DatabaseField
-	private double _scalex = 1;
+	private double scalex = 1;
 	@DatabaseField
-	private double _scaley = 1;
+	private double scaley = 1;
 	@DatabaseField
-	private double _scalez = 1;
+	private double scalez = 1;
 	@DatabaseField
-	private String _type = "";
+	private String type = "";
 	
 	public Primitive(){
 		
@@ -54,27 +54,27 @@ public class Primitive extends Geometric {
 	}
 	
 	public final void setType(String type){
-		_type = type;
+		this.type = type;
 	}
 	
 	public final void setEntity(Entity ent){
-		_entity = ent;
+		this.entity = ent;
 	}
 	
 	public final void setScale(Vector3f scale){
-		_scalex = scale.getX();
-		_scaley = scale.getY();
-		_scalez = scale.getZ();
+		this.scalex = scale.getX();
+		this.scaley = scale.getY();
+		this.scalez = scale.getZ();
 	}
 	
 	public final void setTranslation(Vector3f translation) {
-		_translationx = translation.getX();
-		_translationy = translation.getY();
-		_translationz = translation.getZ();
+		this.translationx = translation.getX();
+		this.translationy = translation.getY();
+		this.translationz = translation.getZ();
 	}
 	
 	public final Vector3f getScale(){
-		return new Vector3f((float) _scalex, (float) _scaley, (float) _scalez);
+		return new Vector3f((float) this.scalex, (float) this.scaley, (float) this.scalez);
 	}
 	
 	@Override
@@ -86,29 +86,29 @@ public class Primitive extends Geometric {
 	 * @return The XYZ components of the translation applied to this primitive object
 	 */
 	public Vector3f getTranslation(){
-		return new Vector3f((float) _translationx, (float) _translationy, (float) _translationz);
+		return new Vector3f((float) this.translationx, (float) this.translationy, (float) this.translationz);
 	}
 	
 	/**
 	 * @return The rotation applied to this primitive object, around X, Y and Z axis
 	 */
 	public Vector3f getRotation(){
-		return new Vector3f((float) _rotationx, (float) _rotationy, (float) _rotationz);
+		return new Vector3f((float) this.rotationx, (float) this.rotationy, (float) this.rotationz);
 	}
 
 	public Spatial toSpatial(Material mat) {
 		Mesh mesh = null;
-		if (_type.equals(Primitive.CUBE)) {
+		if (this.type.equals(Primitive.CUBE)) {
 			mesh = new Box(0.5f,0.5f,0.5f);
-		} else if (_type.equals(Primitive.SPHERE)) {
+		} else if (this.type.equals(Primitive.SPHERE)) {
 			mesh = new Sphere(32,32,1f);
 		}
 		
 		Geometry res = new Geometry(getUID(),mesh);
 		res.setMaterial(mat);
-		res.scale((float) _scalex, (float) _scaley, (float) _scalez);
-		res.rotate((float) _rotationx, (float) _rotationy, (float) _rotationz);
-		res.setLocalTranslation((float) _translationx, (float) _translationy, (float) _translationz);
+		res.scale((float) this.scalex, (float) this.scaley, (float) this.scalez);
+		res.rotate((float) this.rotationx, (float) this.rotationy, (float) this.rotationz);
+		res.setLocalTranslation((float) this.translationx, (float) this.translationy, (float) this.translationz);
 		return res;
 	}
 }

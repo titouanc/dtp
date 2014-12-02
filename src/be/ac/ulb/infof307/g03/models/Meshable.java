@@ -19,16 +19,16 @@ import com.jme3.scene.Spatial;
  */
 public abstract class Meshable extends Geometric {
 	@DatabaseField
-	private Boolean _visible = true;
+	private Boolean visible = true;
 	
 	@DatabaseField
-	private Boolean _selected = false;
+	private Boolean selected = false;
 	
 	@DatabaseField
-	private String _texture = "Gray";
+	private String texture = "Gray";
 	
 	@ForeignCollectionField
-	private ForeignCollection<Room> _room;
+	private ForeignCollection<Room> room;
 	
 	/**
 	 * Constructor of the class Meshable
@@ -42,42 +42,42 @@ public abstract class Meshable extends Geometric {
 	 * Set visibility to false;
 	 */
 	public final void hide(){
-		_visible = false;
+		this.visible = false;
 	}
 	
 	/**
 	 * @return current texture
 	 */
 	public final String getTexture(){
-		return _texture;
+		return this.texture;
 	}
 	
 	/**
 	 * @param newTexture
 	 */
 	public final void setTexture(String newTexture){
-		_texture=newTexture;
+		this.texture=newTexture;
 	}
 	
 	/**
 	 * Set visibility to true;
 	 */
 	public final void show(){
-		_visible = true;
+		this.visible = true;
 	}
 	
 	/**
 	 * Select object
 	 */
 	public final void select(){
-		_selected = true;
+		this.selected = true;
 	}
 	
 	/**
 	 * Deselect object
 	 */
 	public final void deselect(){
-		_selected = false;
+		this.selected = false;
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public abstract class Meshable extends Geometric {
 	 * Deselects object if it is selected
 	 */
 	public final void toggleSelect(){
-		_selected = !_selected;
+		this.selected = !this.selected;
 	}
 	
 	/**
@@ -93,7 +93,7 @@ public abstract class Meshable extends Geometric {
 	 * @return True if the Shape is visible
 	 */
 	public final Boolean isVisible(){
-		return _visible;
+		return this.visible;
 	}
 	
 	/**
@@ -101,7 +101,7 @@ public abstract class Meshable extends Geometric {
 	 * @return True if the Shape is selected
 	 */
 	public final Boolean isSelected(){
-		return _selected;
+		return this.selected;
 	}
 	
 	public final String toString(){
@@ -111,7 +111,7 @@ public abstract class Meshable extends Geometric {
 	}
 	
 	public Room getRoom(){
-		List<Room> room = new ArrayList<Room>(_room);
+		List<Room> room = new ArrayList<Room>(this.room);
 		if (room.size() != 1)
 			throw new AssertionError("No room contains " + getUID());
 		return room.get(0);

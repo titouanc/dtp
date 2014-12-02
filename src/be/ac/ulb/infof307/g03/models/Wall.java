@@ -21,7 +21,7 @@ import com.jme3.scene.shape.Box;
  */
 public class Wall extends Meshable {
 	@DatabaseField
-	private double _width = 0.2;
+	private double width = 0.2; 
 	
 	/**
 	 * Constructor of the class Wall.
@@ -36,11 +36,11 @@ public class Wall extends Meshable {
 	public void setWidth(double width){
 		// TODO possibly implement some better error management if the width is < 0
 		if (width < 0){
-			_width = 0;
+			this.width = 0;
 			// add print otherwise error would be pass under silence
 			Log.warn("Wall received an incoherent value for width. Value is under 0");
 		}else{
-			_width = width;
+			this.width = width;
 		}
 	}
 	
@@ -49,7 +49,7 @@ public class Wall extends Meshable {
 	 * @return The width of the Wall.
 	 */
 	public double getWidth(){
-		return _width;
+		return this.width;
 	}
 	
 	protected String innerToString(){

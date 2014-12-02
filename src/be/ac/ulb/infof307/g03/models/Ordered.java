@@ -15,7 +15,7 @@ import com.j256.ormlite.stmt.Where;
  */
 public abstract class Ordered extends Geometric {
 	@DatabaseField(uniqueCombo = true)
-	private int _index = 0;
+	private int index = 0; 
 	
 	/**
 	 * 
@@ -24,11 +24,11 @@ public abstract class Ordered extends Geometric {
 	}
 	
 	public final int getIndex(){
-		return _index;
+		return index;
 	}
 	
 	public final void setIndex(int index){
-		_index = index;
+		index = index;
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public abstract class Ordered extends Geometric {
 	 * @throws SQLException
 	 */
 	public final <Subtype> PreparedQuery<Subtype> getQueryForFollowing(Dao<Subtype, Integer> dao) throws SQLException{
-		return getWhereForUniqueness(dao.queryBuilder().orderBy("_index", true).where()).gt("_index", _index).prepare();
+		return getWhereForUniqueness(dao.queryBuilder().orderBy("index", true).where()).gt("index", index).prepare();
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public abstract class Ordered extends Geometric {
 	 * @throws SQLException
 	 */
 	public final <Subtype> PreparedQuery<Subtype> getQueryForPreceeding(Dao<Subtype, Integer> dao) throws SQLException{
-		return getWhereForUniqueness(dao.queryBuilder().orderBy("_index", false).where()).lt("_index", _index).prepare();
+		return getWhereForUniqueness(dao.queryBuilder().orderBy("index", false).where()).lt("index", index).prepare();
 	}
 	
 	/**
@@ -56,8 +56,8 @@ public abstract class Ordered extends Geometric {
 	 */
 	public final <Subtype> PreparedQuery<Subtype> getQueryForLast(Dao<Subtype, Integer> dao) throws SQLException{
 		if (getId() != 0)
-			return getWhereForUniqueness(dao.queryBuilder().orderBy("_index", false).where().lt("_index", _index)).prepare();
-		return getWhereForUniqueness(dao.queryBuilder().orderBy("_index", false).where().isNotNull("_index")).prepare();
+			return getWhereForUniqueness(dao.queryBuilder().orderBy("index", false).where().lt("index", index)).prepare();
+		return getWhereForUniqueness(dao.queryBuilder().orderBy("index", false).where().isNotNull("index")).prepare();
 	}
 	
 	/**
@@ -67,8 +67,8 @@ public abstract class Ordered extends Geometric {
 	 */
 	public final <Subtype> PreparedQuery<Subtype> getQueryForFirst(Dao<Subtype, Integer> dao) throws SQLException{
 		if (getId() != 0)
-			return getWhereForUniqueness(dao.queryBuilder().orderBy("_index", false).where().gt("_index", _index)).prepare();
-		return getWhereForUniqueness(dao.queryBuilder().orderBy("_index", true).where().isNotNull("_index")).prepare();
+			return getWhereForUniqueness(dao.queryBuilder().orderBy("index", false).where().gt("index", index)).prepare();
+		return getWhereForUniqueness(dao.queryBuilder().orderBy("index", true).where().isNotNull("index")).prepare();
 	}
 	
 	/**

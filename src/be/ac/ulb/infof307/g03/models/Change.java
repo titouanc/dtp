@@ -23,8 +23,8 @@ public class Change {
 	 * Define the integer 4 as delete
 	 */
 	public final static int DELETE=4;
-	private Integer _type;
-	private Geometric _item;
+	private Integer type;
+	private Geometric item;
 	
 	/**
 	 * Create a new change of a Geometric object
@@ -32,8 +32,8 @@ public class Change {
 	 * @param item The geometric item to wrap
 	 */
 	public Change(Integer type, Geometric item){
-		_type = type;
-		_item = item;
+		this.type = type;
+		this.item = item;
 	}
 	
 	/**
@@ -66,12 +66,12 @@ public class Change {
 	/**
 	 * @return The wrapped Geometric item
 	 */
-	public Geometric getItem(){return _item;}
+	public Geometric getItem(){return this.item;}
 	
 	/**
 	 * @return The change type (one of CREATE, UPDATE, DELETE)
 	 */
-	public Integer getType(){return _type;}
+	public Integer getType(){return this.type;}
 	
 	/**
 	 * @return True if change type is CREATE

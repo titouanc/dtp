@@ -14,9 +14,9 @@ import com.j256.ormlite.field.ForeignCollectionField;
  */
 public class Entity extends Geometric {
 	@ForeignCollectionField
-	private ForeignCollection<Primitive> _primitives;
+	private ForeignCollection<Primitive> primitives;
 	@DatabaseField
-	private String _name = "";
+	private String name = "";
 	
 	public Entity(){
 		super();
@@ -33,19 +33,19 @@ public class Entity extends Geometric {
 	}
 	
 	public final void setName(String name){
-		_name = name;
+		this.name = name;
 	}
 
 	public String getName(){
-		return _name;
+		return this.name;
 	}
 	
 	public ForeignCollection<Primitive> getPrimitives(){
-		return _primitives;
+		return this.primitives;
 	}
 	
 	@Override
 	public String toString(){
-		return _name;
+		return this.name;
 	}
 }

@@ -18,10 +18,10 @@ import com.j256.ormlite.table.TableUtils;
  */
 
 public class Project extends Observable {
-	private ConnectionSource _db = null;
-	private Dao<Config, String> _config = null;
-	private GeometryDAO _geo = null;
-	private String _filename = null;
+	private ConnectionSource db = null; 
+	private Dao<Config, String> config = null;
+	private GeometryDAO geo = null;
+	private String filename = null;
 
 	/**
 	 * Create a new Project object (needs to be initialized with load() or create())
@@ -37,13 +37,13 @@ public class Project extends Observable {
 	 */
 	public void create(String filename) throws SQLException {
 		load(filename);
-		TableUtils.createTableIfNotExists(_db, Config.class);
-		GeometryDAO.migrate(_db);
+		TableUtils.createTableIfNotExists(this.db, Config.class);
+		GeometryDAO.migrate(this.db);
 		
 		Floor initialFloor = new Floor(7);
 		getGeometryDAO().create(initialFloor);
 		
-		_filename = filename;
+		this.filename = filename;
 		config("floor.current", initialFloor.getUID());
 		config("edition.mode", "world");
 		config("camera.mode", "2D");
@@ -56,23 +56,23 @@ public class Project extends Observable {
 	 * @throws SQLException
 	 */
 	public void load(String filename) throws SQLException {
-		_db = new JdbcConnectionSource("jdbc:sqlite:" + filename);
-		_config = DaoManager.createDao(_db, Config.class);
-		_filename = filename;
+		this.db = new JdbcConnectionSource("jdbc:sqlite:" + filename);
+		this.config = DaoManager.createDao(this.db, Config.class);
+		this.filename = filename;
 	}
 	
 	/**
 	 * @return True if the project is not an in-memory database
 	 */
 	public Boolean isOnDisk(){
-		return ! _filename.equals(":memory:");
+		return ! this.filename.equals(":memory:");
 	}
 	
 	/**
 	 * @return Return the filename for this project
 	 */
 	public String getFilename(){
-		return _filename;
+		return this.filename;
 	}
 	
 	/**
@@ -93,16 +93,16 @@ public class Project extends Observable {
 		/* Copy data */
 		int res = 0;
 		res += new GeometryDAO(newDB).copyFrom(getGeometryDAO());
-		for (Config c : _config.queryForAll())
+		for (Config c : this.config.queryForAll())
 			newDAO.create(c);
 		
 		/* Replace current DB handler with new one */
 		getGeometryDAO().resetConnection(newDB);
-		_db.close();
-		_db = newDB;
-		_config = newDAO;
+		this.db.close();
+		this.db = newDB;
+		this.config = newDAO;
 		
-		_filename = filename;
+		this.filename = filename;
 		
 		return res;
 	}
@@ -115,10 +115,10 @@ public class Project extends Observable {
 	 */
 	public String config(String name) {
 		try {
-			Config entry = _config.queryForId(name);
+			Config entry = this.config.queryForId(name);
 			if (entry == null){
 				entry = new Config(name, "");
-				_config.create(entry);
+				this.config.create(entry);
 			}
 			return entry.getValue();
 		} catch (SQLException err){
@@ -135,13 +135,13 @@ public class Project extends Observable {
 	 */
 	public String config(String name, String value) {
 		try {
-			Config entry = _config.queryForId(name);
+			Config entry = this.config.queryForId(name);
 			if (entry != null){
 				entry.setValue(value);
-				_config.update(entry);
+				this.config.update(entry);
 			} else {
 				entry = new Config(name, value);
-				_config.create(entry);
+				this.config.create(entry);
 			}
 			setChanged();
 			notifyObservers(entry);
@@ -157,8 +157,8 @@ public class Project extends Observable {
 	 * @throws SQLException
 	 */
 	public GeometryDAO getGeometryDAO() throws SQLException {
-		if (_geo == null)
-			_geo = new GeometryDAO(_db);
-		return _geo;
+		if (this.geo == null)
+			this.geo = new GeometryDAO(this.db);
+		return this.geo;
 	}
 }

@@ -15,11 +15,11 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public class Floor extends Ordered {
 	@DatabaseField
-	private double _height = 1.0;
+	private double height = 1.0;
 	@DatabaseField
-	private double _baseHeight = 0.0;
+	private double baseHeight = 0.0;
 	@ForeignCollectionField
-	private ForeignCollection<Room> _rooms;
+	private ForeignCollection<Room> rooms;
 	
 	/**
 	 * Constructor of the class Floor.
@@ -41,28 +41,28 @@ public class Floor extends Ordered {
 	 * @param height The height to be set.
 	 */
 	public final void setHeight(double height){
-		_height = height;
+		this.height = height;
 	}
 	
 	/**
 	 * @return The height of the floor (height between roof and floor)
 	 */
 	public final double getHeight(){
-		return _height;
+		return this.height;
 	}
 	
 	/**
 	 * @return The base height of this floor (absolute elevation of the floor)
 	 */
 	public final double getBaseHeight() {
-		return _baseHeight;
+		return this.baseHeight;
 	}
 	
 	/**
 	 * @param baseHeight
 	 */
 	public final void setBaseHeight(double baseHeight){
-		_baseHeight = baseHeight;
+		this.baseHeight = baseHeight;
 	}
 	
 	public final String toString(){
@@ -78,6 +78,6 @@ public class Floor extends Ordered {
 	 * @return All the rooms of the floor
 	 */
 	public final ForeignCollection<Room> getRooms(){
-		return _rooms;
+		return this.rooms;
 	}
 }

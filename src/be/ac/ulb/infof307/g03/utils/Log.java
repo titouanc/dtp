@@ -11,26 +11,26 @@ import java.util.logging.Logger;
  */
 public class Log {
 	private static Level _level = Level.ALL;
-    static Logger _logger;
-    private ConsoleHandler _consoleHandler;
-    private LogFormatter _plainTextFormatter;
+    static Logger logger;
+    private ConsoleHandler consoleHandler;
+    private LogFormatter plainTextFormatter;
 
     private Log() {
-    	_logger = Logger.getLogger(Log.class.getName());
-    	_logger.setLevel(_level);
-        _consoleHandler = new ConsoleHandler();
-        _plainTextFormatter = new LogFormatter();
-        _consoleHandler.setFormatter(_plainTextFormatter);
-        _consoleHandler.setLevel(Level.ALL);
-        _logger.addHandler(_consoleHandler);
+    	logger = Logger.getLogger(Log.class.getName());
+    	logger.setLevel(_level);
+        consoleHandler = new ConsoleHandler();
+        plainTextFormatter = new LogFormatter();
+        consoleHandler.setFormatter(plainTextFormatter);
+        consoleHandler.setLevel(Level.ALL);
+        logger.addHandler(consoleHandler);
 
     }
     
     private static Logger getLogger(){
-        if(_logger == null){
+        if(logger == null){
         	new Log();
         }
-        return _logger;
+        return logger;
     }
     
     /**

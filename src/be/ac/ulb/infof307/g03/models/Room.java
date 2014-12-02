@@ -17,17 +17,17 @@ import com.j256.ormlite.field.ForeignCollectionField;
  */
 public class Room extends Geometric {
 	@DatabaseField(canBeNull = true, unique = true)
-	private String _name = null;
+	private String name = null;
 	@DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
-	private Floor _floor = null;
+	private Floor floor = null;
 	@ForeignCollectionField(eager = false, orderColumnName = "_index")
-    private ForeignCollection<Binding> _bindings;
+    private ForeignCollection<Binding> bindings;
 	@DatabaseField(foreign = true, canBeNull = true, foreignAutoRefresh = true, foreignAutoCreate = true)
-	private Ground _ground;
+	private Ground ground;
 	@DatabaseField(foreign = true, canBeNull = true, foreignAutoRefresh = true, foreignAutoCreate = true)
-	private Roof _roof;
+	private Roof roof;
 	@DatabaseField(foreign = true, canBeNull = true, foreignAutoRefresh = true, foreignAutoCreate = true)
-	private Wall _wall;
+	private Wall wall;
 	
 	/**
 	 * Create a new group project with an empty name;
@@ -65,21 +65,21 @@ public class Room extends Geometric {
 	 * @param floor The floor at which this group will be situated
 	 */
 	public final void setFloor(Floor floor){
-		_floor = floor;
+		this.floor = floor;
 	}
 	
 	/**
 	 * @return The floor at which this group is situated
 	 */
 	public final Floor getFloor(){
-		return _floor;
+		return this.floor;
 	}
 
 	/**
 	 * @return The name of this group
 	 */
 	public final String getName(){
-		return _name;
+		return this.name;
 	}
 	
 	/**
@@ -87,47 +87,47 @@ public class Room extends Geometric {
 	 * @param name The new name for this group
 	 */
 	public final void setName(String name){
-		_name = name;
+		this.name = name;
 	}
 	
 	public final Wall getWall(){
-		return _wall;
+		return this.wall;
 	}
 	
 	public final void setWall(Wall wall){
-		_wall = wall;
+		this.wall = wall;
 	}
 	
 	public final Ground getGround(){
-		return _ground;
+		return this.ground;
 	}
 	
 	public final void setGround(Ground gnd){
-		_ground = gnd;
+		this.ground = gnd;
 	}
 	
 	public final Roof getRoof(){
-		return _roof;
+		return this.roof;
 	}
 	
 	public final void setRoof(Roof roof){
-		_roof = roof;
+		this.roof = roof;
 	}
 		
 	public final List<Point> getPoints(){
 		List<Point> res = new LinkedList<Point>();
-		for (Binding b : _bindings)
+		for (Binding b : bindings)
 			res.add(b.getPoint());
 		return res;
 	}
 	
 	public final ForeignCollection<Binding> getBindings(){
-		return _bindings;
+		return bindings;
 	}
 	
 	@Override
 	public String toString(){
-		if (_name == null)
+		if (this.name == null)
 			return "<>";
 		return String.format("<%s>", getName());
 	}
@@ -138,21 +138,21 @@ public class Room extends Geometric {
 	}
 	
 	public final void addPoints(Point...points){
-		int i = _bindings.size();
+		int i = bindings.size();
 		for (Point p : points){
-			_bindings.add(new Binding(this, p, i));
+			bindings.add(new Binding(this, p, i));
 			i++;
 		}
 	}
 	
 	public final List<Meshable> getMeshables(){
 		List<Meshable> res = new ArrayList<Meshable>(3);
-		if (_wall != null)
-			res.add(_wall);
-		if (_ground != null)
-			res.add(_ground);
-		if (_roof != null)
-			res.add(_roof);
+		if (this.wall != null)
+			res.add(this.wall);
+		if (this.ground != null)
+			res.add(this.ground);
+		if (this.roof != null)
+			res.add(this.roof);
 		return res;
 	}
 }

@@ -10,7 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable
 public abstract class Geometric {
 	@DatabaseField(generatedId = true)
-	private int _id = 0;
+	private int id = 0; 
 	
 	/**
 	 * @return The UID of the Geometric
@@ -21,14 +21,14 @@ public abstract class Geometric {
 	 * @return The geometric ID
 	 */
 	public final int getId(){
-		return _id;
+		return this.id;
 	}
 	
 	/**
 	 * @param id The new if of the geometric
 	 */
 	public final void setId(int id){
-		_id = id;
+		this.id = id;
 	}
 	
 	/**
