@@ -20,6 +20,8 @@ public class Floor extends Ordered {
 	private double baseHeight = 0.0;
 	@ForeignCollectionField
 	private ForeignCollection<Room> rooms;
+	@ForeignCollectionField
+	private ForeignCollection<Item> items;
 	
 	/**
 	 * Constructor of the class Floor.
