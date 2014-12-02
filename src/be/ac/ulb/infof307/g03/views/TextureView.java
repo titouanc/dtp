@@ -54,6 +54,7 @@ public class TextureView extends JPanel implements ItemListener {
 
 	static private JList colorList   = new JList();
 	static private JPanel texturesPanel = new JPanel();
+	private String classPath= getClass().getResource("WorldView.class").toString();
 	
     private JPanel cards; //a panel that uses CardLayout 
     
@@ -112,26 +113,18 @@ public class TextureView extends JPanel implements ItemListener {
 	 * Get all files from a directory
 	 */
 	private void addAllFiles(){
-		String classPath = getClass().getResource("TextureView.class").toString();
-		String prefix="/";
-		if(classPath.subSequence(0, 3).equals("rsr")){
-			String path=getClass().getResource(prefix).toString();			
-    		File[] files = new File(path).listFiles(); 
+		if(classPath.subSequence(0, 3).equals("rsr")){			
+    		File[] files = new File("/").listFiles(); 
     		for (File file : files) {
     		    if (file.isFile()) {
-    		    	System.out.println(file.getName());
-    		    	this.colorFiles.add(file.getName().replace(".png", ""));
-    		    }
-    		}
-    		files = new File(path).listFiles(); 
-    		for (File file : files) {
-    		    if (file.isFile()) {
-    		    	if(!(file.getName().contains("Full"))){
-    		    		this.textureFiles.add(file.getName().replace(".png", ""));	
+    		    	if (file.toString().contains("Color")){
+    		    		this.colorFiles.add(file.getName().replace(".png", ""));
+    		    	}
+    		    	else if(file.toString().contains("Full")){
+    		    		this.textureFiles.add(file.getName().replace(".png", ""));
     		    	}
     		    }
     		}
-
     	} else {
     		File[] files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Colors/").listFiles(); 
     		for (File file : files) {
@@ -197,19 +190,28 @@ public class TextureView extends JPanel implements ItemListener {
 	 * @return the color List
 	 */
 	public String getSelectedColorAsString(){
-		System.out.println("Colors/" + colorList.getSelectedValue().toString()+"Color");
-		return ("Colors/" + colorList.getSelectedValue().toString());
+		if(classPath.subSequence(0, 3).equals("rsr")){		
+			return (colorList.getSelectedValue().toString());
+		}
+		else{
+			return ("Colors/" + colorList.getSelectedValue().toString());
+		}
 	}
 	
 	/**
 	 * @return the texture List
 	 */
 	public String getSelectedTexture(){
-		if (textureList.getSelectedValue().toString().equals(ADDTEXTURE)){
-			return ADDTEXTURE;
+		if(classPath.subSequence(0, 3).equals("rsr")){		
+			return (textureList.getSelectedValue().toString()+"Full");
 		}
 		else{
-			return ("Textures/Full/" + textureList.getSelectedValue().toString()+"Full");
+			if (textureList.getSelectedValue().toString().equals(ADDTEXTURE)){
+				return ADDTEXTURE;
+			}
+			else{
+				return ("Textures/Full/" + textureList.getSelectedValue().toString()+"Full");
+			}
 		}
 	}
 	
@@ -335,18 +337,15 @@ public class TextureView extends JPanel implements ItemListener {
 	            int index,
 	            boolean selected,
 	            boolean expanded) {
-
-
-	    	String classPath = getClass().getResource("TextureView.class").toString();
 	    	String prefix = "";
 	    	Icon imageIcon;
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
 	    		prefix = "/";
 	    		if (list.equals(textureList)){
-	    			imageIcon = new ImageIcon(getClass().getResource(prefix + value.toString()));
+	    			imageIcon = new ImageIcon(prefix +value.toString());
 	    		}
 	    		else{
-	    			imageIcon = new ImageIcon(getClass().getResource(prefix + value.toString()));
+	    			imageIcon = new ImageIcon(prefix +value.toString());
 
 	    		}
 	    	} else {

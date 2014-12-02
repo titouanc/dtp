@@ -52,6 +52,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	private LinkedList<Change> queuedChanges = null;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	private boolean isCreated = false;
+	private String classPath = getClass().getResource("WorldView.class").toString();
 	
 	
 	/**
@@ -97,8 +98,10 @@ public class WorldView extends SimpleApplication implements Observer {
 		
 		// Notify our controller that initialisation is done
 		this.setPauseOnLostFocus(false);
-		this.setCreated();
-		this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/assets/", FileLocator.class);
+		this.setCreated();		
+		if(!(classPath.subSequence(0, 3).equals("rsr"))){		
+			this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/assets/", FileLocator.class);
+		}
 
 	}
 	
@@ -170,13 +173,13 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * @return
 	 */
 	private Material _makeMaterial(Meshable mesh){	
-		 String texture=mesh.getTexture();
+		String texture=mesh.getTexture();		
 		 if (!(texture.contains("Full"))){
 		 String subStr= texture.substring(texture.length()-5);
 			 if (!(subStr.equals("Color"))){
 				texture=texture+"Color";
 			}
-		 }
+		 }	
 		Material res= new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		res.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
@@ -188,10 +191,9 @@ public class WorldView extends SimpleApplication implements Observer {
 		if (mesh.isSelected()){
 			res.setColor("Ambient",new ColorRGBA(0f,1.2f,0f, 0.5f));
 		}
-		String classPath = getClass().getResource("WorldView.class").toString();
-		if(classPath.subSequence(0, 3).equals("rsr")){
-			String path=(getClass().getResource("/")).toString();
-			res.setTexture("DiffuseMap",assetManager.loadTexture(path+".png"));
+		if(classPath.subSequence(0, 3).equals("rsr")){	
+			texture=texture.replace("Colors/", "");
+			res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		}
 		else{
 			res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
