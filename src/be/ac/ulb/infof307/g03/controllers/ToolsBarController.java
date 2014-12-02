@@ -3,6 +3,7 @@ package be.ac.ulb.infof307.g03.controllers;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.ToolsBarView;
 import be.ac.ulb.infof307.g03.models.Config;
+import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -246,19 +247,34 @@ public class ToolsBarController implements ActionListener, Observer {
         } else if (cmd.equals(WORLD)) {
         	onWorldMode();
         } else if (cmd.equals(OBJECT)) {
-        	onObjectMode();
+        	String aName = JOptionPane.showInputDialog("New object name ?");
+        	onObjectMode(aName);
         } else if (cmd.equals(CUBE)) {
         	onCubeCreation();
         } else if (cmd.equals(SPHERE)) {
         	onSphereCreation();
         }
 
-	}
+     }
 
-	private void onObjectMode() {
-		Log.log(Level.FINEST,"[DEBUG] User clicked on : object");
-		_project.config("edition.mode","object");
-	}
+     private void onObjectMode(String aName) {
+    	 Log.log(Level.FINEST,"[DEBUG] User clicked on : object");
+    	 if (aName != null) {
+    		 Entity entity = new Entity(aName);
+    		 try {
+    			 GeometryDAO dao = _project.getGeometryDAO();
+    			 dao.create(entity);
+    			 dao.notifyObservers();
+    		 } catch (SQLException e) {
+    			 // TODO Auto-generated catch block
+    			 e.printStackTrace();
+    		 }
+    		 _project.config("entity.current", entity.getUID());
+    		 _project.config("edition.mode", "object");
+    	 } else {
+    		 _view.setWorldModeSelected();
+    	 }
+     }
 
 	private void onWorldMode() {
 		Log.log(Level.FINEST,"[DEBUG] User clicked on : world");
