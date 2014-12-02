@@ -162,51 +162,8 @@ public class WorldView extends SimpleApplication implements Observer {
 		res.setColor("Color", color);
 		return res;
 	}
-	
-	/**
-<<<<<<< HEAD
-	 * Create the materials with their texture
-	 * @param mesh
-	 * @param texture
-	 * @return
-	 */
-	private Material _makeMaterial(Meshable mesh){	
-		String texture=mesh.getTexture();		
-		 if (!(texture.contains("Full"))){
-		 String subStr= texture.substring(texture.length()-5);
-			 if (!(subStr.equals("Color"))){
-				texture=texture+"Color";
-			}
-		 }	
-		Material res= new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		res.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-		res.setBoolean("UseMaterialColors", true);
-		ColorRGBA color = new ColorRGBA(ColorRGBA.Gray);
-		res.setColor("Diffuse", color);
-		res.setColor("Ambient", color);
-		res.setColor("Specular",color); 
-		if (mesh.isSelected()){
-			res.setColor("Ambient",new ColorRGBA(0f,1.2f,0f, 0.5f));
-		}
-		if(classPath.subSequence(0, 3).equals("rsr")){
-			if (texture.contains("Colors/")){
-				texture=texture.replace("Colors/", "");
-			}
-			else if (texture.contains("Textures/Full")){
-				texture=texture.replace("Textures/Full/","");
-			}
-			res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
-		}
-		else{
-			res.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
-		}
-		return res;
-	 }
 
 	/**
-=======
->>>>>>> refs/remotes/origin/stage
 	 * Redraw the entire 3D scene
 	 */
 	public void makeScene(){

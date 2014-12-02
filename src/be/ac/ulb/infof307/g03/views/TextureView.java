@@ -215,7 +215,7 @@ public class TextureView extends JPanel implements ItemListener {
 			return (colorList.getSelectedValue().toString());
 		}
 		else{
-			return ("Colors/" + colorList.getSelectedValue().toString());
+			return ("Colors/" + colorList.getSelectedValue().toString()+"Color");
 		}
 	}
 	
