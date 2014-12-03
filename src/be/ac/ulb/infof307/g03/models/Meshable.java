@@ -1,5 +1,9 @@
 package be.ac.ulb.infof307.g03.models;
 
+import java.io.File;
+
+import be.ac.ulb.infof307.g03.utils.Log;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.AssetNotFoundException;
@@ -15,6 +19,7 @@ public abstract class Meshable extends Geometric {
 	@DatabaseField
 	private Boolean visible = true;
 	@DatabaseField
+	
 	private Boolean selected = false;
 	@DatabaseField
 	private String texture = "Gray";
@@ -119,7 +124,7 @@ public abstract class Meshable extends Geometric {
 		ColorRGBA color = new ColorRGBA(ColorRGBA.Gray);
 		mat.setColor("Diffuse", color);
 		mat.setColor("Ambient", color);
-		mat.setColor("Specular",color); 
+		mat.setColor("Specular",color);
 		if (isSelected()){
 			mat.setColor("Ambient",new ColorRGBA(0f, 1.2f, 0f, 0.33f));
 		}
@@ -131,8 +136,19 @@ public abstract class Meshable extends Geometric {
 				if (!(texture.contains("Full"))){
 					texture=texture+"Color";
 				}
+				if (texture.contains(File.separator)){
+					String[] parts = texture.split(File.separator);
+					String path = "";
+					for ( int i = 0;i<parts.length-1;++i){
+						path +=File.separator+ parts[i];
+					}
+					texture = parts[parts.length-1];
+					assetManager.registerLocator(path, FileLocator.class);
+
+				}
 			}
-			mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
+		
+		mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		} catch (AssetNotFoundException ex){
 			texture = "GrayColor";
 			mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
