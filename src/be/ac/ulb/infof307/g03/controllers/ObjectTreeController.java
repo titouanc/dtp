@@ -99,6 +99,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		} else if (this.currentEditionMode.equals(_OBJECTMODE)) {
 			System.out.println("[DEBUG] ObjectTree switched to object edition mode.");
 			this.view.clearTree();
+			this.view.createObjectTree();
 		}
 		((DefaultTreeModel) this.view.getModel()).reload();
 	}
@@ -170,6 +171,16 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				// TODO Auto-generated catch block
 				err.printStackTrace();
 			}
+		} else if (element instanceof Primitive) {
+			Primitive primitive = (Primitive) element;
+			primitive.deselect();
+			try {
+				this.dao.update(primitive);
+				this.dao.notifyObservers(primitive);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -208,6 +219,16 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		
 			} catch (SQLException err){
 				Log.exception(err);
+			}
+		} else if (element instanceof Primitive) {
+			Primitive primitive = (Primitive) element;
+			primitive.select();
+			try {
+				this.dao.update(primitive);
+				this.dao.notifyObservers(primitive);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
@@ -367,6 +388,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			Config config = (Config) arg;
 			if (config.getName().equals("edition.mode")) {
 				updateEditionMode(config.getValue());
+			} else if (config.getName().equals("entity.current")) {
+				updateEditionMode();
 			}
 		}		
 	}

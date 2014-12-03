@@ -17,8 +17,8 @@ import com.jme3.scene.shape.Sphere;
  * @author brochape, Titouan, jschembr
  */
 public class Primitive extends Meshable {
-	public static String CUBE = "cube";
-	public static String SPHERE = "sphere";
+	public static String CUBE = "Cube";
+	public static String SPHERE = "Sphere";
 	
 	@DatabaseField(foreign = true, canBeNull = false)
 	private Entity entity;
@@ -114,7 +114,6 @@ public class Primitive extends Meshable {
 
 	@Override
 	protected String innerToString() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String(type+" "+getId());
 	}
 }

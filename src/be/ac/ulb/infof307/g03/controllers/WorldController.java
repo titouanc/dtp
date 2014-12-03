@@ -54,7 +54,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	
 	private Vector2f savedCenter = null;
 	private boolean leftClickPressed = false;
-	private Geometry builtGeometric = null;
+	private Primitive builtPrimitive = null;
 	private Entity currentEntity = null;
     
     // Edition mode alias
@@ -376,31 +376,20 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     private void updateShapeDisplay(boolean finalUpdate) {
     	Vector2f currPos = getXYForMouse(0);
     	float dist = currPos.distance(this.savedCenter);
-    	
-    	if (this.mouseMode.equals("cube")) {
-    		float d = dist / FastMath.sqr(2);
-    		Vector3f center = new Vector3f(this.savedCenter.x-d,this.savedCenter.y-d,dist/2);
-    		this.builtGeometric.setLocalTranslation(center);
-    		this.builtGeometric.setLocalScale(dist); // h^2 = 2a^2 <=> h = sqrt(2) a <=> a = h/sqrt(2)
-    	} else if (this.mouseMode.equals("sphere")) {
-    		Vector3f center = new Vector3f(this.savedCenter.x,this.savedCenter.y,dist);
-    		this.builtGeometric.setLocalTranslation(center);
-    		this.builtGeometric.setLocalScale(dist);
-    	}
+		float dn = dist / FastMath.pow(3, 0.3333f);
+    	this.builtPrimitive.setScale(new Vector3f(dn,dn,dn));
     	
     	try {
 			GeometryDAO dao = this.project.getGeometryDAO();
-			Primitive primitive = (Primitive) dao.getByUID(this.builtGeometric.getName());
-			primitive.setScale(this.builtGeometric.getLocalScale());
-			primitive.setTranslation(this.builtGeometric.getLocalTranslation());
-			dao.update(primitive);
+			dao.update(this.builtPrimitive);
+			dao.notifyObservers(this.builtPrimitive);
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
     	
     	
     	if (finalUpdate){
-    		this.builtGeometric = null;
+    		this.builtPrimitive = null;
     		this.savedCenter = null;
     	}
     }
@@ -411,7 +400,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     			dropMovingPoint(false);
     		else if (movingGeometric instanceof Primitive)
     			dropMovingPrimitive(false);
-    	} else if (this.builtGeometric != null) {
+    	} else if (this.builtPrimitive != null) {
     		if (this.leftClickPressed)
     			updateShapeDisplay(false);
     	}
@@ -474,45 +463,32 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     
     public void initSphere() {
     	Sphere sphere = new Sphere(32,32,1f);
+    	this.savedCenter = getXYForMouse(0f);
 		try {
 			GeometryDAO dao = this.project.getGeometryDAO();
-			Primitive primitive = new Primitive(this.currentEntity,Primitive.SPHERE);
-			dao.create(primitive);
-			this.builtGeometric = new Geometry(primitive.getUID(), sphere);
+			this.builtPrimitive = new Primitive(this.currentEntity,Primitive.SPHERE);
+			this.builtPrimitive.setScale(new Vector3f(0,0,0));
+			this.builtPrimitive.setTranslation(new Vector3f(this.savedCenter.x,this.savedCenter.y,0));
+			dao.create(this.builtPrimitive);
+			dao.notifyObservers(this.builtPrimitive);
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
-    	this.savedCenter = getXYForMouse(0f);
-		
-		sphere.setTextureMode(Sphere.TextureMode.Projected);
-		Material sphereMat = new Material(this.view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
-		sphereMat.setBoolean("UseMaterialColors",true);    
-		sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
-		sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		this.builtGeometric.setMaterial(sphereMat);
-		this.builtGeometric.setLocalScale(0);
-		this.view.getRootNode().attachChild(this.builtGeometric);
     }
     
     public void initCube() {
     	Box box = new Box(0.5f,0.5f,0.5f);
+    	this.savedCenter = getXYForMouse(0f);
     	try {
 			GeometryDAO dao = this.project.getGeometryDAO();
-			Primitive primitive = new Primitive(this.currentEntity,Primitive.CUBE);
-			dao.create(primitive);
-			this.builtGeometric = new Geometry(primitive.getUID(), box);
+			this.builtPrimitive = new Primitive(this.currentEntity,Primitive.CUBE);
+			this.builtPrimitive.setScale(new Vector3f(0,0,0));
+			this.builtPrimitive.setTranslation(new Vector3f(this.savedCenter.x,this.savedCenter.y,0));
+			dao.create(this.builtPrimitive);
+			dao.notifyObservers(this.builtPrimitive);
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
-    	
-    	this.savedCenter = getXYForMouse(0f);
-		Material boxMat = new Material(this.view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
-		boxMat.setBoolean("UseMaterialColors",true);    
-		boxMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
-		boxMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		this.builtGeometric.setMaterial(boxMat);
-		this.builtGeometric.setLocalScale(0);
-		this.view.getRootNode().attachChild(this.builtGeometric);
     }
     
     /**
@@ -545,7 +521,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 						dropMovingPoint(true);
 					else if (movingGeometric instanceof Primitive) 
 						dropMovingPrimitive(true);
-				} else if (this.builtGeometric != null) {
+				} else if (this.builtPrimitive != null) {
 	    			updateShapeDisplay(true);					
 				}
 			}
@@ -562,7 +538,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 						} catch (SQLException ex) {
 							Log.exception(ex);
 						}
-						
 					}
 				}
 			} else { // on release
@@ -603,6 +578,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			} else if (config.getName().equals("entity.current")) {
 				try {
 					this.currentEntity = (Entity) this.project.getGeometryDAO().getByUID(config.getValue());
+					updateEditionMode();
 				} catch (SQLException ex) {
 					Log.exception(ex);
 				}

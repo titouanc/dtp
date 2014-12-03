@@ -386,7 +386,15 @@ public class WorldView extends SimpleApplication implements Observer {
 			if (this.queuedChanges.size() > 0){
 				for (Change change : this.queuedChanges){
 					if (change.isDeletion())
-						rootNode.detachChildNamed(change.getItem().getUID());
+						if (change.getItem() instanceof Primitive) {
+							Meshable meshable = (Meshable) change.getItem();
+							Spatial node = rootNode.getChild(meshable.getUID());
+							Node parent = rootNode;
+							if (node != null){
+								node.getParent().detachChild(node);
+							}
+						} else 
+							rootNode.detachChildNamed(change.getItem().getUID());
 					else if (change.getItem() instanceof Meshable)
 						_updateMeshable(change);
 					else if (change.getItem() instanceof Point)

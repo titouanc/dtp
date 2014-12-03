@@ -4,6 +4,7 @@
 package be.ac.ulb.infof307.g03.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -93,6 +94,13 @@ public class Item extends Meshable {
 	@Override
 	public Spatial toSpatial(Material material) {
 		Spatial res = entity.toSpatial(material);
+		res.setLocalTranslation(getAbsolutePositionVector());
+		return res;
+	}
+	
+	@Override
+	public Spatial toSpatial(AssetManager assetManager) {
+		Spatial res = entity.toSpatial(assetManager);
 		res.setLocalTranslation(getAbsolutePositionVector());
 		return res;
 	}
