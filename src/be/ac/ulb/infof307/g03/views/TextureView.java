@@ -24,8 +24,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
@@ -59,6 +63,7 @@ public class TextureView extends JPanel implements ItemListener {
 	static private JList colorList   = new JList();
 	static private JPanel texturesPanel = new JPanel();
 	private String classPath= getClass().getResource("TextureView.class").toString();
+	private String addedFilePath = "textureAdded" ;
 	
     private JPanel cards; //a panel that uses CardLayout 
     
@@ -125,7 +130,7 @@ public class TextureView extends JPanel implements ItemListener {
 		if(classPath.subSequence(0, 3).equals("rsr")){	
 			JarFile jarFile;
 			String filename;
-			try {
+			try { // first we will check all the files that the jar contents
 				String file;
 				jarFile = new JarFile("HomePlans.jar");
 			    Enumeration ta = jarFile.entries();
@@ -141,7 +146,13 @@ public class TextureView extends JPanel implements ItemListener {
     		    		filename=filename.replace(".png", "");
     		    		this.textureFiles.add(filename);
     		    	}
-			     }			  
+			     }
+			    File fileAdd =new File(addedFilePath);
+	    		if(fileAdd.exists()){
+	    			readFile(new File(addedFilePath));
+	    		}			    
+			    // Then we will read the file that contents the added texture path of the user
+			    
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -166,6 +177,21 @@ public class TextureView extends JPanel implements ItemListener {
     		
     		
     	}    	
+	}
+	
+	private void readFile(File file) throws IOException {
+		BufferedReader buffer = null;
+		try {	 
+			String filename;
+			buffer = new BufferedReader(new FileReader(addedFilePath));
+			while ((filename = buffer.readLine()) != null) {
+				filename=filename.replace(".png", "");
+				this.textureFiles.add(filename);
+			}
+			buffer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
 	}
 	
 	
@@ -250,6 +276,13 @@ public class TextureView extends JPanel implements ItemListener {
 	 */
 	public String getCurrentMode(){
 		return CURRENTMODE;
+	}
+	
+	/**
+	 * @return filename
+	 */
+	public String getAddedFilePath(){
+		return addedFilePath;
 	}
 	
 	/**
@@ -371,7 +404,7 @@ public class TextureView extends JPanel implements ItemListener {
 	    	Icon imageIcon;
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
 	    		if (list.equals(textureList)){
-	    			if (!(value.toString()==ADDTEXTURE)){
+	    			if (!(value.toString()==ADDTEXTURE)){	    				
 	    				if(value.toString().contains(File.separator)){
 	    					imageIcon = new ImageIcon(value.toString().replace("Full", "Mini")+".png");
 	    				}

@@ -11,8 +11,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -128,7 +134,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 						}
 					}
 					else{
-						Log.debug("Only PNG allowed");
+						Log.debug("Only " +	"png allowed");
 					}
 			    }
 			    catch (NullPointerException ex){
@@ -146,13 +152,14 @@ public class TextureController implements ActionListener,MouseListener, Observer
 						if(fileToImport.renameTo(destinationMini)){
 							reScale(destinationMini); // Set image to 20x20 format
 							this.view.updatePanel(destinationFull.getAbsolutePath());
+							this.writeToFile(destinationFull.getAbsolutePath()+"\n");			
 						}
 						else{
 							Log.debug("The new texture has not been imported. Error.");
 						}
 					}
 					else{
-						Log.debug("Only PNG allowed");
+						Log.debug("Only .png allowed");
 					}
 				}
 				catch(NullPointerException ex){
@@ -161,6 +168,56 @@ public class TextureController implements ActionListener,MouseListener, Observer
 			}
 	    }
 	}
+	
+	private void writeToFile(String addedFilePath){
+		try{
+    		File file =new File(view.getAddedFilePath());
+    		//if file doesnt exists, then create it
+    		if(!file.exists()){
+    			file.createNewFile();
+    		}
+    		FileWriter fileWritter = new FileWriter(file.getName(),true);
+    	        BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+    	        bufferWritter.write(addedFilePath);
+    	        bufferWritter.close();
+    	}catch(IOException e){
+    		e.printStackTrace();
+    	}
+	}
+	
+	private void deleteLineInFile(String lineToRemove) { 
+	    try { 
+	      File inFile = new File(view.getAddedFilePath());  // File ending by Full    	      
+	      File tempFile = new File(inFile.getAbsolutePath() + ".tmp");   
+	      BufferedReader buffer = new BufferedReader(new FileReader(view.getAddedFilePath()));
+	      PrintWriter pw = new PrintWriter(new FileWriter(tempFile));     
+	      String line = "";
+	      while ((line = buffer.readLine()) != null) {       
+	    	  if (!line.trim().equals(lineToRemove)) { 
+		          pw.println(line);
+		          pw.flush();
+		      }
+	      }
+	      pw.close();
+	      buffer.close();
+	      String destinationFull=lineToRemove;
+	      String destinationMini=lineToRemove.replace("Full", "Mini");
+	      File fileFull=new File(destinationFull);
+	      File fileMini=new File(destinationMini);
+	      fileFull.delete();
+	      fileMini.delete();
+	      inFile.delete();  // On supprime le Full
+	      fileMini.delete(); // Et le Mini
+	      
+	      tempFile.renameTo(inFile);	      
+	    }
+	    catch (FileNotFoundException ex) {
+	      ex.printStackTrace();
+	    }
+	    catch (IOException ex) {
+	      ex.printStackTrace();
+	    }
+	  }
 	
 	private static void copyImage(File toBeCopied,File destination)throws IOException {			    
 		ImageInputStream input = new FileImageInputStream(toBeCopied);
@@ -203,6 +260,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 		   return fileToDelete;
 	   }
 	   else{
+		   deleteLineInFile(fileToDelete+".png");
 		   return fileToDelete;
 	   }
    }

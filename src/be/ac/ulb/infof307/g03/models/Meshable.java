@@ -136,7 +136,7 @@ public abstract class Meshable extends Geometric {
 				if (!(texture.contains("Full"))){
 					texture=texture+"Color";
 				}
-				if (texture.contains("/")){
+				if (texture.contains(File.separator)){
 					String[] parts = texture.split(File.separator);
 					String path = "";
 					for ( int i = 0;i<parts.length-1;++i){
