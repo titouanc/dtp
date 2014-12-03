@@ -185,6 +185,7 @@ public class FileChooserController {
 				// save the path of the current project to the BootController
 				BootController bc = new BootController();
 				bc.saveCurrentProjectPath(filename);
+				gui.updateTitle();
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(this.parent, "Unable to save as " + filename + ": " + e.toString());
 			}
