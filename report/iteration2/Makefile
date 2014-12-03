@@ -4,6 +4,7 @@ main.tex: substories
 	/bin/echo "\\chapter{Itération 2}"> $@
 	/bin/echo "\\section{Histoires utilisateur}" >> $@
 	cat substories/*.tex >> $@
+	cat report.tex >> $@
 	
 .PHONY: pv substories clean
 
