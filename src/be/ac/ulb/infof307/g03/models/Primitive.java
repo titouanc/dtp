@@ -130,7 +130,7 @@ public class Primitive extends Meshable {
 		} else if (this.type.equals(Primitive.PYRAMID)) {
 			mesh = new Dome(2, 4, 1);
 		} else if (this.type.equals(Primitive.CYLINDER)) {
-			mesh = new Cylinder(32, 32, 1f, 1f);
+			mesh = new Cylinder(4, 20, 1f,0.9f, 1f, false, false);
 		}
 		
 		Geometry res = new Geometry(getUID(),mesh);
