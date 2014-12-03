@@ -116,7 +116,8 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	private void addTexture(File fileToImport) throws IOException{
 		try{
 			File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToImport.getName());
-			File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToImport.getName());
+			String destinationBig=fileToImport.getName().replace(".png", "Full.png");
+			File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+destinationBig);
 			copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
 			
 			String filename = fileToImport.getName();
