@@ -248,7 +248,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void drawMeshable(Node parent, Meshable meshable){
 		if (! meshable.isVisible())
 			return;
-		
 		parent.attachChild(meshable.toSpatial(assetManager));
 	}
 	
@@ -333,7 +332,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	private void _updateFloor(Change change){
-		Floor floor = (Floor) change.getItem();
 		cleanScene();
 		makeScene();
 	}

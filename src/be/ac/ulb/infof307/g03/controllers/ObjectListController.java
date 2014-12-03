@@ -4,13 +4,13 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import be.ac.ulb.infof307.g03.models.Entity;
-import be.ac.ulb.infof307.g03.models.GeometryDAO;
-import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.ObjectListView;
 
@@ -18,10 +18,11 @@ import be.ac.ulb.infof307.g03.views.ObjectListView;
  * @author titou
  *
  */
-public class ObjectListController implements MouseListener {
+public class ObjectListController implements MouseListener, Observer {
 	private ObjectListView view = null;
 	private Project project = null;
 	private GeometryDAO dao = null;
+	private Floor currentFloor = null;
 	
 	/**
 	 * @param project the main project
@@ -34,6 +35,10 @@ public class ObjectListController implements MouseListener {
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
+		Geometric newFloor = this.dao.getByUID(project.config("floor.current"));
+		if (newFloor != null)
+			this.currentFloor = (Floor) newFloor;
+		project.addObserver(this);
 	}
 	
 	/**
@@ -102,6 +107,32 @@ public class ObjectListController implements MouseListener {
 		this.project.config("edition.mode", "object");
 	}
 	
+	/**
+	 * Called when the user select the "Insert on floor" 
+	 * option in contextual menu
+	 * @param selectedEntity The clicked entity
+	 */
+	public void onInsertAction(Entity selectedEntity) {
+		this.project.config("edition.mode", "world");
+		String currentFloorUID = this.project.config("floor.current");
+		Floor currentFloor = (Floor) this.dao.getByUID(currentFloorUID);
+		Item newItem = new Item(currentFloor, selectedEntity);
+		try {
+			this.dao.create(newItem);
+			this.dao.notifyObservers();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * @return The currently selected floor
+	 */
+	public Floor getCurrentFloor(){
+		return this.currentFloor;
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -136,4 +167,13 @@ public class ObjectListController implements MouseListener {
 		}
 	}
 
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		Config changed = (Config) arg1;
+		if (changed.getName().equals("floor.current")){
+			Geometric newFloor = this.dao.getByUID(changed.getValue());
+			if (newFloor != null)
+				this.currentFloor = (Floor) newFloor;
+		}
+	}
 }

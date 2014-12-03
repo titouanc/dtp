@@ -55,7 +55,7 @@ public class DemoProject {
 		createRoom(groundFloor, "Irregular room", a, d, c, c, g,k, i,j, h);
 		createRoom(groundFloor, "Rectangular room", f, d, c, l, m);
 		
-		createGround(groundFloor, "Jardin", "GreenColor", n , o , p ,q);
+		createGround(groundFloor, "Jardin", "GrassFull", n , o , p ,q);
 		createGround(groundFloor, "Chemin", "Gray", r , s , t ,u);
 		
 		dao.createFloorOnTop(7);
@@ -67,12 +67,12 @@ public class DemoProject {
 		//createRoom(firstFloor, "Square room 2", a, e, f, d);
 		createRoom(firstFloor, "Irregular room 2", a, d, c, c, g,k, i,j, h);
 		createRoom(firstFloor, "Rectangular room 2 ", f, d, c, l, m);
-		
+		/*
 		Entity entity = new Entity("Cube");
 		dao.create(entity);
 		Primitive prim = new Primitive(entity, Primitive.CUBE);
 		dao.create(prim);
-
+		
 		dao.refresh(firstFloor);
 		for	(Room room : firstFloor.getRooms()){
 			showRoof(room,dao); // nothing on the top of this room
@@ -81,6 +81,24 @@ public class DemoProject {
 		Item placedObject = new Item(firstFloor, entity);
 		placedObject.setPosition(new Vector3f(-10, -10, 3));
 		dao.create(placedObject);
+		*/
+		
+		Entity door = new Entity("Door");
+		dao.create(door);
+		Primitive doorPrim = new Primitive(door, Primitive.CUBE);
+		doorPrim.setScale(new Vector3f(2,1,4));
+		doorPrim.setTexture("DoorFull");
+		dao.create(doorPrim);
+		
+		
+		Item doorObject = new Item(groundFloor, door);
+		doorObject.setPosition(new Vector3f(-4, 0, 2));
+		dao.create(doorObject);
+		
+		dao.refresh(firstFloor);
+		for	(Room room : firstFloor.getRooms()){
+			showRoof(room,dao); // nothing on the top of this room
+		}
 		
 		dao.notifyObservers();
 		return proj;

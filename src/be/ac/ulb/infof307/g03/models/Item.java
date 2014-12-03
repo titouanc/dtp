@@ -31,7 +31,6 @@ public class Item extends Meshable {
 	private Floor floor;
 	@DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
 	private Entity entity;
-	
 
 	public Item(){}
 	
@@ -93,17 +92,19 @@ public class Item extends Meshable {
 
 	@Override
 	public Spatial toSpatial(Material material) {
+		if (isSelected()) entity.select(); else entity.deselect();
 		Spatial res = entity.toSpatial(material);
 		res.setLocalTranslation(getAbsolutePositionVector());
+		res.setName(getUID());
 		return res;
 	}
 	
 	@Override
 	public Spatial toSpatial(AssetManager assetManager) {
+		if (isSelected()) entity.select(); else entity.deselect();
 		Spatial res = entity.toSpatial(assetManager);
 		res.setLocalTranslation(getAbsolutePositionVector());
+		res.setName(getUID());
 		return res;
 	}
-	
-
 }

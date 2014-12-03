@@ -272,7 +272,7 @@ public class GeometryDAO extends Observable {
 			res= this.primitives.update((Primitive) object);
 		else if (object instanceof Entity)
 			res = this.entities.update((Entity) object);
-		else if (object instanceof Entity)
+		else if (object instanceof Item)
 			res = this.items.update((Item) object);
 		if (res != 0){
 			setChanged();
@@ -297,8 +297,11 @@ public class GeometryDAO extends Observable {
 	}
 	
 	private int delete(Floor floor) throws SQLException {
-		for (Room room : getRooms(floor)){
+		for (Room room : floor.getRooms()){
 			delete(room);
+		}
+		for (Item item : floor.getItems()){
+			delete(item);
 		}
 		int res = this.floors.delete(floor);
 		for (Floor above : getFloorsAbove(floor)){

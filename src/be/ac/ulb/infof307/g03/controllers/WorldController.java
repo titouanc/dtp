@@ -20,19 +20,12 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.material.Material;
-import com.jme3.material.RenderState.BlendMode;
-import com.jme3.material.RenderState.FaceCullMode;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Box;
-import com.jme3.scene.shape.Line;
-import com.jme3.scene.shape.Sphere;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 
@@ -61,7 +54,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	static final private String WORLDMODE = "world";
 	static final private String OBJECTMODE = "object";
 
-    private double currentHeight;
     private AppSettings appSettings;
     
     // Input alias
@@ -193,22 +185,29 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * @return The clicked Geometric item, or null if not found
      */
     public Geometric getClickedObject(){
+    	Geometric clicked = null;
         CollisionResults results = new CollisionResults();
         this.view.getRootNode().collideWith(getRayForMousePosition(), results);
         
         if (results.size() > 0){
         	// Get 3D object from scene
-            Geometry selected = results.getClosestCollision().getGeometry();         
-            GeometryDAO dao = null;
+            Geometry selected = results.getClosestCollision().getGeometry();
+            
             try {
-                dao = this.project.getGeometryDAO();
+            	GeometryDAO dao = this.project.getGeometryDAO();
                 // Get associated Geometric from database
-                return dao.getByUID(selected.getName());
+                clicked = dao.getByUID(selected.getName());
+                
+        		if (this.currentEditionMode.equals(WORLDMODE) && clicked instanceof Primitive){
+        			/* In world mode, select the whole Item (not only one of its Primitive) */
+        			Node parentNode = selected.getParent();
+        			clicked = dao.getByUID(parentNode.getName());
+        		}
             } catch (SQLException e1) {
             	Log.exception(e1);
             }
         }
-        return null;
+        return clicked;
     }
     
     /**
@@ -254,6 +253,24 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     	}
     }
     
+    private void dropMovingItem(boolean finalMove) {
+		Item moving = (Item) movingGeometric;
+		if (moving == null)
+			return;
+		
+		Vector2f pos = getXYForMouse(moving.getAbsolutePositionVector().z);
+		moving.setPosition(new Vector3f(pos.x, pos.y, moving.getPositionVector().z));
+		try {
+    		GeometryDAO dao = this.project.getGeometryDAO();
+    		dao.update(moving);
+    		if (finalMove) 
+    			movingGeometric = null;
+    		dao.notifyObservers();
+    	} catch (SQLException err){
+    		Log.exception(err);
+    	}
+	}
+    
     /**
      * Return X and Y position when user click on the screen.
      * @param Z
@@ -282,7 +299,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
      * Toggle selection for a Area item, save to database and notify observers
      * @param area The Area item to select
      */
-	public void selectObject(Area area) {
+	public void selectArea(Area area) {
 		try {
 			area.toggleSelect();
 			GeometryDAO dao = this.project.getGeometryDAO();
@@ -303,20 +320,34 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		}
 	}
 	
-	public void selectObject(Primitive primitive) {
+	/**
+     * Toggle selection for an Item, save to database and notify observers
+     * @param item The Item to select
+     */
+	public void selectItem(Item item) {
+		try {
+			item.toggleSelect();
+			GeometryDAO dao = this.project.getGeometryDAO();
+			dao.update(item);
+			dao.notifyObservers();
+			
+			String floorUID = item.getFloor().getUID();
+			if (! currentFloor.getUID().equals(floorUID)){
+				this.project.config("floor.current", floorUID);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void selectPrimitive(Primitive primitive) {
 		try {
 			primitive.toggleSelect();
 			GeometryDAO dao = this.project.getGeometryDAO();
 			dao.update(primitive);
 			dao.notifyObservers(primitive);
 			Vector3f center = primitive.getTranslation();
-			//Node parent = view.getRootNode().getChild(primitive.getUID()).getParent();
-			//view.drawHandles(parent, center, new Vector3f(1,0,0), ColorRGBA.Blue);
-			//view.drawHandles(parent, center, new Vector3f(0,1,0), ColorRGBA.Red);
-			//view.drawHandles(parent, center, new Vector3f(0,0,1), ColorRGBA.Green);
-			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -407,6 +438,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     			dropMovingPoint(false);
     		else if (movingGeometric instanceof Primitive)
     			dropMovingPrimitive(false);
+    		else if (movingGeometric instanceof Item)
+    			dropMovingItem(false);
     	} else if (this.builtPrimitive != null) {
     		if (this.leftClickPressed)
     			updateShapeDisplay(false);
@@ -423,15 +456,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		inputManager.addMapping(LEFT,			new MouseAxisTrigger(0, true));
 		inputManager.addMapping(RIGHT,			new MouseAxisTrigger(0, false));
 		
-		inputManager.addListener(this, 
-										RIGHTCLICK, 
-										LEFTCLICK,
-										
-										UP,
-										DOWN,
-										LEFT,
-										RIGHT
-								);
+		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT);
 	}
     
     private void dragSelectHandlerW() {
@@ -442,15 +467,18 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         if (clicked == null)
         	return;
         
-        /* If it is a Meshable (Wall, Ground): select it */
+        /* If it is an Area (Wall, Ground, Roof): select it */
         if (clicked instanceof Area)
-        	selectObject((Area) clicked);
+        	selectArea((Area) clicked);
+        
+        else if (clicked instanceof Item){
+        	selectItem((Item) clicked);
+        	this.movingGeometric = clicked;
+        }
         
         /* If it is a Point: initiate drag'n drop */
         else if (clicked instanceof Point)
-    		this.movingGeometric = (Point) clicked;
-        
-        
+    		this.movingGeometric = clicked;
     }
     
     private void dragSelectHandlerO() {
@@ -463,7 +491,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         
         /* If it is a Primitive : select it */
         if (clicked instanceof Primitive) {
-        	selectObject((Primitive) clicked);
+        	selectPrimitive((Primitive) clicked);
         	this.movingGeometric = (Primitive) clicked;
         }
     }
@@ -516,6 +544,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 						dropMovingPoint(true);
 					else if (movingGeometric instanceof Primitive) 
 						dropMovingPrimitive(true);
+					else if (movingGeometric instanceof Item)
+						dropMovingItem(true);
 				} else if (this.builtPrimitive != null) {
 	    			updateShapeDisplay(true);					
 				}
@@ -583,13 +613,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 
 	@Override
 	public void onAnalog(String name, float value, float tpf) {
-		if (name.equals(UP)) {
-			mouseMoved(value);
-		} else if (name.equals(DOWN)) {
-			mouseMoved(value);
-		} else if (name.equals(LEFT)) {
-			mouseMoved(value);
-		} else if (name.equals(RIGHT)) {
+		if (name.equals(UP) || name.equals(DOWN) || name.equals(LEFT) || name.equals(RIGHT)) {
 			mouseMoved(value);
 		}
 	}
