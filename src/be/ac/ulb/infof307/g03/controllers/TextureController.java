@@ -305,6 +305,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 		   File fullDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
 		   fullDimension.delete();
 		   fileToDelete=fileToDelete.replace("Textures/Full/", "Textures/");
+		   fileToDelete=fileToDelete.replace("Full", "");
 		   File miniDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
 		   miniDimension.delete();
 		   fileToDelete =fileToDelete.replace("Textures/", "");

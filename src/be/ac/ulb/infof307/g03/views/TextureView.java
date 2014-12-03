@@ -316,17 +316,10 @@ public class TextureView extends JPanel implements ItemListener {
 	 */
 	private void update(){
 		textureList = new JList(this.textureFiles.toArray());
-        textureList.setCellRenderer(new ColorCellRenderer());	
-        SwingUtilities.invokeLater(new Runnable(){
-			@Override
-			public void run() {
-				/* Update GUI if needed */
-				texturesPanel.removeAll();
-		        texturesPanel.add(textureList);
-				texturesPanel.updateUI();
-				
-			}
-		});
+        textureList.setCellRenderer(new ColorCellRenderer());
+        texturesPanel.removeAll();
+        texturesPanel.add(textureList);
+		texturesPanel.updateUI();
 		textureList.addMouseListener(this.controller);
 	}
 	
@@ -439,7 +432,7 @@ public class TextureView extends JPanel implements ItemListener {
 	    	Icon imageIcon;
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
 	    		if (list.equals(textureList)){
-	    			if (!(value.toString()==ADDTEXTURE)){	    				
+	    			if (!(value.toString()==ADDTEXTURE)){
 	    				if(value.toString().contains(File.separator)){
 	    					imageIcon = new ImageIcon(value.toString().replace("Full", "Mini")+".png");
 	    				}
