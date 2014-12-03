@@ -108,11 +108,11 @@ public class WorldView extends SimpleApplication implements Observer {
 	private void _addSun(){
 		DirectionalLight sun = new DirectionalLight();
 		sun.setColor(ColorRGBA.Gray);
-		sun.setDirection(new Vector3f(-.5f,-.5f,-1f).normalizeLocal());
+		sun.setDirection(new Vector3f(-.3f,-.3f,-1f).normalizeLocal());
 		rootNode.addLight(sun);
 		
 		AmbientLight ambient = new AmbientLight();
-		ambient.setColor(ColorRGBA.White.mult(1.3f));
+		ambient.setColor(ColorRGBA.White.mult(1f));
 		rootNode.addLight(ambient);
 	}
 	
