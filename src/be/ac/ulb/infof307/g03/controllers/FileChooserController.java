@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.io.File;
 import java.sql.SQLException;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.DemoProject;
@@ -103,22 +104,27 @@ public class FileChooserController {
 	public void openProject(File fileToOpen){
 		Log.info("Open %s", fileToOpen.getName());
 		final String filename = fileToOpen.getAbsolutePath();
-		this.gui.dispose();
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run(){
-				try{
-					Project prj = new Project();
-					prj.load(filename);
-					// save the path of the current project to the BootController
-					BootController bc = new BootController();
-					bc.saveCurrentProjectPath(filename);
-					new GUI(prj);
-					
-				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(parent, "Unable to open project named " + filename + ": " + e.toString());
+		if(new File(filename).exists()){
+			this.gui.dispose();
+			java.awt.EventQueue.invokeLater(new Runnable() {
+				public void run(){
+					try{
+						Project prj = new Project();
+						prj.load(filename);
+						// save the path of the current project to the BootController
+						BootController bc = new BootController();
+						bc.saveCurrentProjectPath(filename);
+						new GUI(prj);
+						
+					} catch (SQLException e) {
+						JOptionPane.showMessageDialog(parent, "Unable to open project named " + filename + ": " + e.toString());
+					}
 				}
-			}
-		});	
+			});	
+		}
+		else{
+			JOptionPane.showMessageDialog(new JFrame(), "File does not exist!", "Erreur",JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	/**
@@ -128,22 +134,31 @@ public class FileChooserController {
 	public void newProject(File fileToCreate){
 		Log.info("New project %s", fileToCreate.getName());
 		final String filename = fileToCreate.getAbsolutePath() + ".hpj";
-		this.gui.dispose();
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run(){
-				try{
-					Project prj = new Project();
-					prj.create(filename);
-					// save the path of the current project to the BootController
-					BootController bc = new BootController();
-					bc.saveCurrentProjectPath(filename);
-					new GUI(prj);
-					
-				}catch (SQLException e) {
-					JOptionPane.showMessageDialog(parent, "Unable to create a new project named " + filename + ": " + e.toString());
+		int dialogResult = JOptionPane.YES_OPTION;
+		if(new File(filename).exists()){
+			int dialogButton = JOptionPane.YES_NO_OPTION;
+			dialogResult = JOptionPane.showConfirmDialog (null,
+					"This project already exists! Would you like you replace it?","Warning",dialogButton);
+		}
+		if(dialogResult == JOptionPane.YES_OPTION){
+			new File(filename).delete();
+			this.gui.dispose();
+			java.awt.EventQueue.invokeLater(new Runnable() {
+				public void run(){
+					try{
+						Project prj = new Project();
+						prj.create(filename);
+						// save the path of the current project to the BootController
+						BootController bc = new BootController();
+						bc.saveCurrentProjectPath(filename);
+						new GUI(prj);
+						
+					}catch (SQLException e) {
+						JOptionPane.showMessageDialog(parent, "Unable to create a new project named " + filename + ": " + e.toString());
+					}
 				}
-			}
-		});
+			});
+		}
 		
 	}
 
@@ -153,14 +168,27 @@ public class FileChooserController {
 	 */
 	public void saveAsProject(File fileToSave) {
 		Log.info("Save as %s", fileToSave.getName());
-		String filename = fileToSave.getAbsolutePath() + ".hpj";
-		try {
-			this.project.saveAs(filename);
-			// save the path of the current project to the BootController
-			BootController bc = new BootController();
-			bc.saveCurrentProjectPath(filename);
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(this.parent, "Unable to save as " + filename + ": " + e.toString());
+		String filename = fileToSave.getAbsolutePath();
+		
+		if(!filename.endsWith(".hpj")){	filename+=".hpj";}
+		
+		int dialogResult = JOptionPane.YES_OPTION;
+		if(new File(filename).exists()){
+			int dialogButton = JOptionPane.YES_NO_OPTION;
+			dialogResult = JOptionPane.showConfirmDialog (null,
+					"This project already exists! Would you like you replace it?","Warning",dialogButton);
+		}
+		if(dialogResult == JOptionPane.YES_OPTION){
+			try {
+				new File(filename).delete();
+				this.project.saveAs(filename);
+				// save the path of the current project to the BootController
+				BootController bc = new BootController();
+				bc.saveCurrentProjectPath(filename);
+				gui.updateTitle();
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(this.parent, "Unable to save as " + filename + ": " + e.toString());
+			}
 		}
 	}
 }

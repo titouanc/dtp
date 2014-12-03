@@ -49,6 +49,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	private LinkedList<Change> queuedChanges = null;
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	private boolean isCreated = false;
+	private String classPath = getClass().getResource("WorldView.class").toString();
 	
 	
 	/**
@@ -94,8 +95,10 @@ public class WorldView extends SimpleApplication implements Observer {
 		
 		// Notify our controller that initialisation is done
 		this.setPauseOnLostFocus(false);
-		this.setCreated();
-		this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/assets/", FileLocator.class);
+		this.setCreated();		
+		if(!(classPath.subSequence(0, 3).equals("rsr"))){		
+			this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/assets/", FileLocator.class);
+		}
 
 	}
 	
@@ -159,7 +162,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		res.setColor("Color", color);
 		return res;
 	}
-	
+
 	/**
 	 * Redraw the entire 3D scene
 	 */
@@ -264,6 +267,16 @@ public class WorldView extends SimpleApplication implements Observer {
 		mat.setColor("Color", color);
 		rootNode.attachChild(axisGeo);
 	}
+	
+	public void drawHandles(Node node, Vector3f center, Vector3f dir, ColorRGBA color) {
+		Line axis = new Line(center,center.add(dir));
+		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		Geometry axisGeo = new Geometry("Axis", axis);
+		axisGeo.setMaterial(mat);
+		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		mat.setColor("Color", color);
+		node.attachChild(axisGeo);
+	}
 		
 	/**
 	 * Update view when a Point has changed
@@ -334,7 +347,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	/**
-
 	 * @param node
 	 */
 	public void generateShapesList(Node node){
@@ -374,7 +386,15 @@ public class WorldView extends SimpleApplication implements Observer {
 			if (this.queuedChanges.size() > 0){
 				for (Change change : this.queuedChanges){
 					if (change.isDeletion())
-						rootNode.detachChildNamed(change.getItem().getUID());
+						if (change.getItem() instanceof Primitive) {
+							Meshable meshable = (Meshable) change.getItem();
+							Spatial node = rootNode.getChild(meshable.getUID());
+							Node parent = rootNode;
+							if (node != null){
+								node.getParent().detachChild(node);
+							}
+						} else 
+							rootNode.detachChildNamed(change.getItem().getUID());
 					else if (change.getItem() instanceof Meshable)
 						_updateMeshable(change);
 					else if (change.getItem() instanceof Point)

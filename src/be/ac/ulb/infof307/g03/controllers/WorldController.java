@@ -22,13 +22,16 @@ import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
+import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
@@ -51,7 +54,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 	
 	private Vector2f savedCenter = null;
 	private boolean leftClickPressed = false;
-	private Geometry builtGeometric = null;
+	private Primitive builtPrimitive = null;
 	private Entity currentEntity = null;
     
     // Edition mode alias
@@ -85,8 +88,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 
         String floorUID = project.config("floor.current");
         this.currentFloor = (Floor) project.getGeometryDAO().getByUID(floorUID);
-        if (this.currentFloor == null)
-        	this.currentFloor = project.getGeometryDAO().getFloors().get(0);
+        List<Floor> listFloor = project.getGeometryDAO().getFloors();
+        if (this.currentFloor == null && listFloor.size()>0)
+        	this.currentFloor = listFloor.get(0);
         this.currentEditionMode = project.config("edition.mode");
         if (this.currentEditionMode.equals("")) // set as default for the first time
         	this.currentEditionMode = WORLDMODE;
@@ -305,6 +309,11 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			GeometryDAO dao = this.project.getGeometryDAO();
 			dao.update(primitive);
 			dao.notifyObservers(primitive);
+			Vector3f center = primitive.getTranslation();
+			//Node parent = view.getRootNode().getChild(primitive.getUID()).getParent();
+			//view.drawHandles(parent, center, new Vector3f(1,0,0), ColorRGBA.Blue);
+			//view.drawHandles(parent, center, new Vector3f(0,1,0), ColorRGBA.Red);
+			//view.drawHandles(parent, center, new Vector3f(0,0,1), ColorRGBA.Green);
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -368,31 +377,20 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     private void updateShapeDisplay(boolean finalUpdate) {
     	Vector2f currPos = getXYForMouse(0);
     	float dist = currPos.distance(this.savedCenter);
-    	
-    	if (this.mouseMode.equals("cube")) {
-    		float d = dist / FastMath.sqr(2);
-    		Vector3f center = new Vector3f(this.savedCenter.x-d,this.savedCenter.y-d,dist/2);
-    		this.builtGeometric.setLocalTranslation(center);
-    		this.builtGeometric.setLocalScale(dist); // h^2 = 2a^2 <=> h = sqrt(2) a <=> a = h/sqrt(2)
-    	} else if (this.mouseMode.equals("sphere")) {
-    		Vector3f center = new Vector3f(this.savedCenter.x,this.savedCenter.y,dist);
-    		this.builtGeometric.setLocalTranslation(center);
-    		this.builtGeometric.setLocalScale(dist);
-    	}
+		float dn = dist / FastMath.pow(3, 0.3333f);
+    	this.builtPrimitive.setScale(new Vector3f(dn,dn,dn));
     	
     	try {
 			GeometryDAO dao = this.project.getGeometryDAO();
-			Primitive primitive = (Primitive) dao.getByUID(this.builtGeometric.getName());
-			primitive.setScale(this.builtGeometric.getLocalScale());
-			primitive.setTranslation(this.builtGeometric.getLocalTranslation());
-			dao.update(primitive);
+			dao.update(this.builtPrimitive);
+			dao.notifyObservers(this.builtPrimitive);
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
     	
     	
     	if (finalUpdate){
-    		this.builtGeometric = null;
+    		this.builtPrimitive = null;
     		this.savedCenter = null;
     	}
     }
@@ -403,7 +401,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     			dropMovingPoint(false);
     		else if (movingGeometric instanceof Primitive)
     			dropMovingPrimitive(false);
-    	} else if (this.builtGeometric != null) {
+    	} else if (this.builtPrimitive != null) {
     		if (this.leftClickPressed)
     			updateShapeDisplay(false);
     	}
@@ -464,47 +462,18 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         }
     }
     
-    public void initSphere() {
-    	Sphere sphere = new Sphere(32,32,1f);
-		try {
-			GeometryDAO dao = this.project.getGeometryDAO();
-			Primitive primitive = new Primitive(this.currentEntity,Primitive.SPHERE);
-			dao.create(primitive);
-			this.builtGeometric = new Geometry(primitive.getUID(), sphere);
-		} catch (SQLException ex) {
-			Log.exception(ex);
-		}
+    public void initShape(String type) {
     	this.savedCenter = getXYForMouse(0f);
-		
-		sphere.setTextureMode(Sphere.TextureMode.Projected);
-		Material sphereMat = new Material(this.view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
-		sphereMat.setBoolean("UseMaterialColors",true);    
-		sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
-		sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		this.builtGeometric.setMaterial(sphereMat);
-		this.builtGeometric.setLocalScale(0);
-		this.view.getRootNode().attachChild(this.builtGeometric);
-    }
-    
-    public void initCube() {
-    	Box box = new Box(0.5f,0.5f,0.5f);
     	try {
 			GeometryDAO dao = this.project.getGeometryDAO();
-			Primitive primitive = new Primitive(this.currentEntity,Primitive.CUBE);
-			dao.create(primitive);
-			this.builtGeometric = new Geometry(primitive.getUID(), box);
+			this.builtPrimitive = new Primitive(this.currentEntity,type);
+			this.builtPrimitive.setScale(new Vector3f(0,0,0));
+			this.builtPrimitive.setTranslation(new Vector3f(this.savedCenter.x,this.savedCenter.y,0));
+			dao.create(this.builtPrimitive);
+			dao.notifyObservers(this.builtPrimitive);
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
-    	
-    	this.savedCenter = getXYForMouse(0f);
-		Material boxMat = new Material(this.view.getAssetManager(),"Common/MatDefs/Light/Lighting.j3md");
-		boxMat.setBoolean("UseMaterialColors",true);    
-		boxMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
-		boxMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		this.builtGeometric.setMaterial(boxMat);
-		this.builtGeometric.setLocalScale(0);
-		this.view.getRootNode().attachChild(this.builtGeometric);
     }
     
     /**
@@ -522,13 +491,17 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 						dragSelectHandlerW();
 					} 
 				} else if (currentEditionMode.equals(WorldController.OBJECTMODE)) {
-					if(this.mouseMode.equals("sphere")){
-						initSphere();
-					} else if(this.mouseMode.equals("cube")){
-						initCube();
-					} else if (this.mouseMode.equals("dragSelect")) {
+					if (this.mouseMode.equals("dragSelect")) {
 						dragSelectHandlerO();
-					} 
+					} else if (this.mouseMode.equals("pyramid")) {
+						initShape(Primitive.PYRAMID);
+					} else if (this.mouseMode.equals("cylinder")) {
+						initShape(Primitive.CYLINDER);
+					} else if (this.mouseMode.equals("sphere")) {
+						initShape(Primitive.SPHERE);
+					} else if (this.mouseMode.equals("cube")) {
+						initShape(Primitive.CUBE);
+					}
 				}
 				
 			} else { // on release
@@ -537,7 +510,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 						dropMovingPoint(true);
 					else if (movingGeometric instanceof Primitive) 
 						dropMovingPrimitive(true);
-				} else if (this.builtGeometric != null) {
+				} else if (this.builtPrimitive != null) {
 	    			updateShapeDisplay(true);					
 				}
 			}
@@ -548,13 +521,12 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				}
 				else if (this.mouseMode.equals("dragSelect")){
 					Geometric clicked = getClickedObject();
-					if (clicked instanceof Area){
+					if (clicked instanceof Meshable){
 						try {
 							setTexture((Meshable)clicked,this.project.config("texture.selected"));
 						} catch (SQLException ex) {
 							Log.exception(ex);
 						}
-						
 					}
 				}
 			} else { // on release
@@ -583,7 +555,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				updateEditionMode(config.getValue());
 			} else if (config.getName().equals("floor.current")){
 				String newUID = config.getValue();
-				if (newUID.equals(this.currentFloor.getUID()))
+				if (this.currentFloor != null && newUID.equals(this.currentFloor.getUID()))
 					return;
 				try {
 					this.currentFloor = (Floor) this.project.getGeometryDAO().getByUID(config.getValue());
@@ -595,6 +567,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			} else if (config.getName().equals("entity.current")) {
 				try {
 					this.currentEntity = (Entity) this.project.getGeometryDAO().getByUID(config.getValue());
+					updateEditionMode();
 				} catch (SQLException ex) {
 					Log.exception(ex);
 				}
