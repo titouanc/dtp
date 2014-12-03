@@ -171,12 +171,12 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				// TODO Auto-generated catch block
 				err.printStackTrace();
 			}
-		} else if (element instanceof Primitive) {
-			Primitive primitive = (Primitive) element;
-			primitive.deselect();
+		} else if (element instanceof Meshable) {
+			Meshable meshable = (Meshable) element;
+			meshable.deselect();
 			try {
-				this.dao.update(primitive);
-				this.dao.notifyObservers(primitive);
+				this.dao.update(meshable);
+				this.dao.notifyObservers(meshable);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -221,12 +221,12 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			} catch (SQLException err){
 				Log.exception(err);
 			}
-		} else if (element instanceof Primitive) {
-			Primitive primitive = (Primitive) element;
-			primitive.select();
+		} else if (element instanceof Meshable) {
+			Meshable meshable = (Meshable) element;
+			meshable.select();
 			try {
-				this.dao.update(primitive);
-				this.dao.notifyObservers(primitive);
+				this.dao.update(meshable);
+				this.dao.notifyObservers(meshable);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
