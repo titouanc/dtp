@@ -36,16 +36,27 @@ public class DemoProject {
 			  j = new Point(2, -4, 0),
 			  k = new Point(6, -4, 0),
 			  l = new Point(8, 14, 0),
-			  m = new Point(-8, 14, 0);
-		
+			  m = new Point(-8, 14, 0),
+			  n = new Point(20,20,0),
+			  o = new Point(20,-15,0),
+			  p = new Point(-20,-15,0),
+			  q = new Point(-20,20,0),
+			  r = new Point(-5,0,0),
+			  s = new Point(-3,0,0),
+			  t = new Point(-3,-20,0),
+			  u = new Point(-5,-20,0);
+
 		Floor groundFloor = dao.getFloors().get(0);
 		proj.config("floor.current", groundFloor.getUID());
 		
-		Room r = createRoom(groundFloor, "Square room", a, e, f, d);
-		showRoof(r,dao); // nothing on the top of this room
+		Room r1 = createRoom(groundFloor, "Square room", a, e, f, d);
+		showRoof(r1,dao); // nothing on the top of this room
 		
 		createRoom(groundFloor, "Irregular room", a, d, c, c, g,k, i,j, h);
 		createRoom(groundFloor, "Rectangular room", f, d, c, l, m);
+		
+		createGround(groundFloor, "Jardin", "GreenColor", n , o , p ,q);
+		createGround(groundFloor, "Chemin", "Gray", r , s , t ,u);
 		
 		dao.createFloorOnTop(7);
 		String currentFloorUID = proj.config("floor.current");
@@ -81,6 +92,30 @@ public class DemoProject {
 		dao.update(roof);
 	}
 	
+	private static Room createGround(Floor floor, String name,String texture ,Point...points) throws SQLException{
+		Room room = new Room(name);
+		
+		//Wall wall = new Wall();
+		//wall.setTexture("BrickFull");
+		//room.setWall(wall);
+		
+		Ground ground = new Ground();
+		ground.setTexture(texture);
+		room.setGround(ground);
+		
+		//Roof roof = new Roof();
+		//roof.setTexture("WoodFull");
+		//room.setRoof(roof);
+		
+		floor.getRooms().add(room);
+		floor.getRooms().refresh(room);
+		
+		room.addPoints(points);
+		room.addPoints(points[0]);
+		floor.getRooms().update(room);
+		return room;
+	}
+	
 	/**
 	 * Create a room in a project
 	 * @param floor Floor where rooms will be added
@@ -91,9 +126,19 @@ public class DemoProject {
 	 */
 	private static Room createRoom(Floor floor, String name, Point...points) throws SQLException{
 		Room room = new Room(name);
-		room.setWall(new Wall());
-		room.setGround(new Ground());
-		room.setRoof(new Roof());
+		
+		Wall wall = new Wall();
+		wall.setTexture("BrickFull");
+		room.setWall(wall);
+		
+		Ground ground = new Ground();
+		ground.setTexture("ParquetFull");
+		room.setGround(ground);
+		
+		Roof roof = new Roof();
+		roof.setTexture("WoodFull");
+		room.setRoof(roof);
+		
 		floor.getRooms().add(room);
 		floor.getRooms().refresh(room);
 		
