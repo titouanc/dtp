@@ -20,6 +20,7 @@ import javax.swing.ListSelectionModel;
 import be.ac.ulb.infof307.g03.controllers.ObjectListController;
 import be.ac.ulb.infof307.g03.models.Change;
 import be.ac.ulb.infof307.g03.models.Entity;
+import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
@@ -120,6 +121,11 @@ public class ObjectListView extends JList implements Observer {
 		
 	}
 	
+	private String getFloorName(){
+		Floor floor = this._controller.getCurrentFloor();
+		return (floor == null) ? "current floor" : floor.toString();
+	}
+	
 	public JPopupMenu createPopupMenu(){
 		PopupActionListener listener = new PopupActionListener();
 		JPopupMenu res = new JPopupMenu();
@@ -129,7 +135,7 @@ public class ObjectListView extends JList implements Observer {
 		res.add(createPopupMenuItem("Edit", _EDIT, listener));
 		res.add(createPopupMenuItem("Delete", _DELETE, listener));
 		res.add(new JPopupMenu.Separator());
-		res.add(createPopupMenuItem("Create on current floor", _INSERT, listener));
+		res.add(createPopupMenuItem("Create on " + this.getFloorName(), _INSERT, listener));
 		return res;
 	}
 

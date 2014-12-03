@@ -31,7 +31,6 @@ public class Item extends Meshable {
 	private Floor floor;
 	@DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
 	private Entity entity;
-	
 
 	public Item(){}
 	
