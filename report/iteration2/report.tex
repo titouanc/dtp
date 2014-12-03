@@ -23,7 +23,11 @@ quelques changements ça et là qui sont détaillés par la suite.
 \subsection{Architecture}
 	
 	\subsubsection{Changements dans le modèle}
-	% TODO FILL
+	Durant cette seconde itération, nous avons opéré un refactoring de notre modèle, suite à plusieurs problèmes que nous avions rencontré durant la première itération. Nous avions initialement prévu de pouvoir imbriquer récursivement les structures, de façon à créer des groupes de pièces par exemple. Cette structure, bien que très modulaire, est cependant inadaptée à une structure de base de donnée relationnelle, puisqu'elle implique d'effectuer une requête pour chaque type d'élément à chaque niveau de la récursion, et demande beaucoup de vérifications de types, contraires aux principes du polymorphisme.
+
+	Nous l'avons remplacé par un modèle à la hiérarchie fixe: un étage comprend des pièces, sur lesquelles on peut construire un mur, un sol et un plafond.
+
+	Les objets qu'on peut placer dans la pièce sont construits à partir de primitives (cube, sphere, pyramide et cylindre), pour créer des entités. On peut ensuite instancier ces entités dans le bâtiment.
 
 	\subsubsection{Changements dans la GUI}
 
