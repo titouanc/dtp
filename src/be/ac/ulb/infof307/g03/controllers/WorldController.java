@@ -88,8 +88,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 
         String floorUID = project.config("floor.current");
         this.currentFloor = (Floor) project.getGeometryDAO().getByUID(floorUID);
-        if (this.currentFloor == null)
-        	this.currentFloor = project.getGeometryDAO().getFloors().get(0);
+        List<Floor> listFloor = project.getGeometryDAO().getFloors();
+        if (this.currentFloor == null && listFloor.size()>0)
+        	this.currentFloor = listFloor.get(0);
         this.currentEditionMode = project.config("edition.mode");
         if (this.currentEditionMode.equals("")) // set as default for the first time
         	this.currentEditionMode = WORLDMODE;
@@ -554,7 +555,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				updateEditionMode(config.getValue());
 			} else if (config.getName().equals("floor.current")){
 				String newUID = config.getValue();
-				if (newUID.equals(this.currentFloor.getUID()))
+				if (this.currentFloor != null && newUID.equals(this.currentFloor.getUID()))
 					return;
 				try {
 					this.currentFloor = (Floor) this.project.getGeometryDAO().getByUID(config.getValue());
