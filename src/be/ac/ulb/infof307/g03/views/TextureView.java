@@ -50,21 +50,23 @@ public class TextureView extends JPanel implements ItemListener {
 	private ArrayList<String> colorFiles=   new ArrayList <String>();
 	private ArrayList<String> textureFiles= new ArrayList <String>();
 	
+	// Different String
 	private final static String COLORPANEL = "Colors";
 	private final static String TEXTURESPANEL = "Textures";
 	private final static String ADDTEXTURE= "Add a new Texture...";
     private static String CURRENTMODE ="" ;
+	private String classPath= getClass().getResource("TextureView.class").toString();
+	private String addedFilePath = "textureAdded" ;
     
     // Action alias
     static private final String DELETE = "Delete";
 
+    // JList containing the colors and the textures
     static private JList textureList = new JList();
-
 	static private JList colorList   = new JList();
-	static private JPanel texturesPanel = new JPanel();
-	private String classPath= getClass().getResource("TextureView.class").toString();
-	private String addedFilePath = "textureAdded" ;
 	
+	// Panel that will containt the textureList
+	static private JPanel texturesPanel = new JPanel();	
     private JPanel cards; //a panel that uses CardLayout 
     
     /**
@@ -118,67 +120,89 @@ public class TextureView extends JPanel implements ItemListener {
         
     }
 	
+	/**
+	 * Read the Jar and get the fileName
+	 * @param obj
+	 * @return
+	 */
     private static String process(Object obj) {
         JarEntry entry = (JarEntry)obj;
         String name = entry.getName();
         return name;
       }
+    
+    /**
+     * Parse Jar File and add textures files to the right list
+     */
+    private void addFilesJar(){
+    	JarFile jarFile;
+		String filename;
+		try { // first we will check all the files that the jar contents
+			String file;
+			jarFile = new JarFile("HomePlans.jar");
+		    Enumeration item = jarFile.entries();
+		    while (item.hasMoreElements()) {
+		    	file=process(item.nextElement());
+		    	if (file.contains("Color") && !(file.contains(File.separator))){
+		    		filename=file.replace(".png", "");
+		    		filename=filename.replace("Color", "");
+		    		this.colorFiles.add(filename);    		    		
+		    	}
+		    	else if(file.contains("Full")){
+		    		filename=file.replace("Full","");
+		    		filename=filename.replace(".png", "");
+		    		this.textureFiles.add(filename);
+		    	}
+		     }
+		 // Then we will read the file that contents the added texture path of the user
+		    File fileAdd =new File(addedFilePath);
+    		if(fileAdd.exists()){
+    			readFile(new File(addedFilePath));
+    		}			    		   		    
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
 	/**
 	 * Get all files from a directory
 	 */
 	private void addAllFiles(){
 		if(classPath.subSequence(0, 3).equals("rsr")){	
-			JarFile jarFile;
-			String filename;
-			try { // first we will check all the files that the jar contents
-				String file;
-				jarFile = new JarFile("HomePlans.jar");
-			    Enumeration ta = jarFile.entries();
-			    while (ta.hasMoreElements()) {
-			    	file=process(ta.nextElement());
-			    	if (file.contains("Color") && !(file.contains("/"))){
-			    		filename=file.replace(".png", "");
-			    		filename=filename.replace("Color", "");
-    		    		this.colorFiles.add(filename);    		    		
-    		    	}
-    		    	else if(file.contains("Full")){
-    		    		filename=file.replace("Full","");
-    		    		filename=filename.replace(".png", "");
-    		    		this.textureFiles.add(filename);
-    		    	}
-			     }
-			    File fileAdd =new File(addedFilePath);
-	    		if(fileAdd.exists()){
-	    			readFile(new File(addedFilePath));
-	    		}			    
-			    // Then we will read the file that contents the added texture path of the user
-			    
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		    
+			this.addFilesJar();	    
     	} else {
-    		File[] files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Colors/").listFiles(); 
-    		for (File file : files) {
-    		    if (file.isFile()) {
-    		    	String filename=file.getName().replace("Color","");
-    		    	filename=filename.replace(".png", "");
-    		    	this.colorFiles.add(filename);
-    		    }
-    		}
-    		files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/").listFiles(); 
-    		for (File file : files) {
-    		    if (file.isFile()) {
-    		    	if(!(file.getName().contains("Full"))){
-    		    		this.textureFiles.add(file.getName().replace(".png", ""));	
-    		    	}
-    		    }
-    		}
-    		
-    		
+    		this.addFiles(); 		
     	}    	
 	}
 	
+	/**
+	 * Parse files from /Textures and /Colors in assets
+	 */
+	private void addFiles(){
+		File[] files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Colors/").listFiles(); 
+		for (File file : files) {
+		    if (file.isFile()) {
+		    	String filename=file.getName().replace("Color","");
+		    	filename=filename.replace(".png", "");
+		    	this.colorFiles.add(filename);
+		    }
+		}
+		files = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/").listFiles(); 
+		for (File file : files) {
+		    if (file.isFile()) {
+		    	if(!(file.getName().contains("Full"))){
+		    		this.textureFiles.add(file.getName().replace(".png", ""));	
+		    	}
+		    }
+		}
+	}
+	
+	/**
+	 * Read a given File and addtextures to textureList
+	 * @param file
+	 * @throws IOException
+	 */
 	private void readFile(File file) throws IOException {
 		BufferedReader buffer = null;
 		try {	 
@@ -227,7 +251,7 @@ public class TextureView extends JPanel implements ItemListener {
 	}
 	
 	/**
-	 * @return add tetxture
+	 * @return add texture
 	 */
 	public String getAddFile(){
 		return ADDTEXTURE;
