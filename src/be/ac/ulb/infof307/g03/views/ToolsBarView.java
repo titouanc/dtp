@@ -229,7 +229,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
 		 */
 		private static final long serialVersionUID = 1L;
 
-		JToggleButton _cubeButton, _sphereButton;
+		JToggleButton cubeButton, sphereButton, pyramidButton, cylinderButton;
 		
 		public ObjectEditionModule() {
 			super();
@@ -238,7 +238,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
 		}
 		
 		 private void addButtonsObject(){
-		    	Icon cubeIcon,sphereIcon;
+		    	Icon cubeIcon,sphereIcon, pyramidIcon, cylinderIcon;
 		    	String prefix;
 		    	String classPath = getClass().getResource("ToolsBarView.class").toString();
 		    	
@@ -246,17 +246,25 @@ public class ToolsBarView extends JToolBar implements Observer  {
 		    		prefix = "/";
 		    		cubeIcon = new ImageIcon(getClass().getResource(prefix + "cube.png"));
 		    		sphereIcon = new ImageIcon(getClass().getResource(prefix + "sphere.png"));
+		    		pyramidIcon = new ImageIcon(getClass().getResource(prefix + "pyramid.png"));
+		    		cylinderIcon = new ImageIcon(getClass().getResource(prefix + "cylinder.png"));
 		    	} else {
 		    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Tools/";
 		    		cubeIcon = new ImageIcon(prefix + "cube.png");
 		    		sphereIcon   = new ImageIcon(prefix + "sphere.png");
+		    		pyramidIcon = new ImageIcon(prefix + "pyramid.png");
+		    		cylinderIcon   = new ImageIcon(prefix + "cylinder.png");
 		    	}
 
-		    	_cubeButton = createJToggleButton(cubeIcon, ToolsBarController.CUBE, "Add a new cube");
-		    	_sphereButton = createJToggleButton(sphereIcon, ToolsBarController.SPHERE, "Add a new sphere");
+		    	cubeButton = createJToggleButton(cubeIcon, ToolsBarController.CUBE, "Add a new cube");
+		    	sphereButton = createJToggleButton(sphereIcon, ToolsBarController.SPHERE, "Add a new sphere");
+		    	pyramidButton = createJToggleButton(pyramidIcon, ToolsBarController.PYRAMID, "Add a new cube");
+		    	cylinderButton = createJToggleButton(cylinderIcon, ToolsBarController.CYLINDER, "Add a new sphere");
 	
-		    	add(_cubeButton);
-		    	add(_sphereButton);
+		    	add(cubeButton);
+		    	add(sphereButton);
+		    	add(pyramidButton);
+		    	add(cylinderButton);
 		 }
 		
 	}
@@ -290,8 +298,10 @@ public class ToolsBarView extends JToolBar implements Observer  {
     
     private void groupMouseAction() {
     	ButtonGroup bg = new ButtonGroup();
-    	bg.add(_objectEditionModule._cubeButton);
-    	bg.add(_objectEditionModule._sphereButton);
+    	bg.add(_objectEditionModule.cubeButton);
+    	bg.add(_objectEditionModule.sphereButton);
+    	bg.add(_objectEditionModule.pyramidButton);
+    	bg.add(_objectEditionModule.cylinderButton);
     	bg.add(_worldEditionModule._createButton);
     	bg.add(_navigationModule.cursorButton);
     	bg.add(_navigationModule.handButton);

@@ -45,6 +45,8 @@ public class ToolsBarController implements ActionListener, Observer {
 
 	static final public String CUBE = "TB_Cube";
 	static final public String SPHERE = "TB_Sphere";
+	static final public String PYRAMID = "TB_Pyramid";
+	static final public String CYLINDER = "TB_Cylinder";
 	
 	// Edition mode alias
 	static final private String WORLDMODE = "world";
@@ -255,8 +257,11 @@ public class ToolsBarController implements ActionListener, Observer {
         	onCubeCreation();
         } else if (cmd.equals(SPHERE)) {
         	onSphereCreation();
+        } else if (cmd.equals(PYRAMID)) {
+        	onPyramidCreation();
+        } else if (cmd.equals(CYLINDER)) {
+        	onCylinderCreation();
         }
-
      }
 
      private void onObjectMode(String aName) {
@@ -292,6 +297,16 @@ public class ToolsBarController implements ActionListener, Observer {
 	private void onSphereCreation() {
 		Log.log(Level.FINEST,"[DEBUG] User clicked on : sphere");
 		_project.config("mouse.mode", "sphere");
+	}
+	
+	private void onPyramidCreation() {
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : pyramid");
+		_project.config("mouse.mode", "pyramid");
+	}
+	
+	private void onCylinderCreation() {
+		Log.log(Level.FINEST,"[DEBUG] User clicked on : cylinder");
+		_project.config("mouse.mode", "cylinder");
 	}
 
 	@Override
