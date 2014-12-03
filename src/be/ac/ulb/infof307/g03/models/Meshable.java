@@ -117,10 +117,16 @@ public abstract class Meshable extends Geometric {
 		if (texture.equals("Gray") || texture.equals("")){
 			texture = "GrayColors";
 		}
-		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+		mat.setBoolean("UseMaterialColors", true);
+		ColorRGBA color = new ColorRGBA(ColorRGBA.Gray);
+		mat.setColor("Diffuse", color);
+		mat.setColor("Ambient", color);
+		mat.setColor("Specular",color);
 		if (isSelected()){
-			mat.setColor("Color",new ColorRGBA(0f, 1.2f, 0f, 0.33f));
+			mat.setColor("Ambient", new ColorRGBA(220,220,255,1f));
 		}
 		try{
 			if((classPath.subSequence(0, 3).equals("rsr"))){
@@ -142,10 +148,10 @@ public abstract class Meshable extends Geometric {
 				}
 			}
 		
-		mat.setTexture("ColorMap",assetManager.loadTexture(texture+".png"));
+		mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		} catch (AssetNotFoundException ex){
 			texture = "GrayColor";
-			mat.setTexture("ColorMap",assetManager.loadTexture(texture+".png"));
+			mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		}
 		return mat;
 	}
