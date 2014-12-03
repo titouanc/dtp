@@ -258,8 +258,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		if (moving == null)
 			return;
 		
-		Vector2f pos = getXYForMouse(0);
-		moving.setPosition(new Vector3f(pos.x, pos.y, 0));
+		Vector2f pos = getXYForMouse(moving.getAbsolutePositionVector().z);
+		moving.setPosition(new Vector3f(pos.x, pos.y, moving.getPositionVector().z));
 		try {
     		GeometryDAO dao = this.project.getGeometryDAO();
     		dao.update(moving);
