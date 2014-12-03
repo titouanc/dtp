@@ -1,0 +1,58 @@
+\section{Rapport de fin d'itération}
+
+La physionomie de l'itération 2 a été intrinsèquement différente de celle de son 
+antérieure. Nous n'avons eu la confirmation que nous pouvions développer
+l'histoire 2 que 8 jours avant la fin de l'itération 2, ce qui a entraîné un 
+rush plutôt conséquent. Toutefois, Nous y avions bien entendu déjà réfléchi et 
+profité du début de l'itération pour entreprendre quelques refactorings 
+rafraîchissants.\\
+
+Anecdotiquement, on peut noter que c'est la troisième fois qu'un des membres de
+l'équipe est malade et ne peut participer activement au développement pendant
+plusieurs jours. La communication du groupe est restée forte et ces accrocs 
+n'ont jamais eu d'impact; nous avons toujours réussi à rééquilibrer les 
+responsabilités sur les épaules de tous les membres.
+
+\subsection{Suivi du planning}
+
+
+\subsection{Architecture}
+	
+	\subsubsection{Changements dans le modèle}
+	% TODO FILL
+
+	\subsubsection{Changements dans la GUI}
+
+		\paragraph{CameraContext}
+		% TODO FILL
+
+		\paragraph{Lancement des contrôleurs}
+		Nous avons légèrement amélioré la manière dont nous lançons un contrôleur.
+		Ils possèdent désormais une méthode \texttt{run()} qu'il faut appeler
+		après leur construction; cela nous permet de les lancer sans instancier
+		de vue (pratique pour les tests, améliore le découplage). De plus, si 
+		quelque chose se passe mal dans cette fonction, on reste sûr que 
+		l'objet contrôleur a été bien construit, puisque son constructeur s'est
+		terminé bien avant. 
+
+	\subsubsection{Rajouts dans la GUI}
+
+		\paragraph{Texture Panel}
+		% TODO FILL
+
+		\paragraph{Création d'objets}
+		% TODO FILL 
+
+	\subsubsection{Architecture complète}
+	Voici les diagrammes complets pour cette itération.
+
+
+\subsection{Bonnes pratiques - Outils}
+
+Nous avons continué à utiliser toutes les bonnes pratiques listées dans le
+rapport de l'itération précédente. Nous avions toutefois omis de préciser que
+nous utilisons \textbf{Trello} pour nous aider à identifier, assigner, séparer 
+et préciser les tâches qui nous attendent. 
+
+\subsection{Conclusion - What's next}
+
