@@ -141,7 +141,7 @@ public class TextureView extends JPanel implements ItemListener {
 		String filename;
 		try { // first we will check all the files that the jar contents
 			String file;
-			jarFile = new JarFile("HomePlans.jar");
+			jarFile = new JarFile("g03-iteration-2.jar");
 		    Enumeration item = jarFile.entries();
 		    while (item.hasMoreElements()) {
 		    	file=process(item.nextElement());
