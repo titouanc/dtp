@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import be.ac.ulb.infof307.g03.controllers.BootController;
 import be.ac.ulb.infof307.g03.controllers.TextureController;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
@@ -32,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
@@ -141,7 +143,7 @@ public class TextureView extends JPanel implements ItemListener {
 		String filename;
 		try { // first we will check all the files that the jar contents
 			String file;
-			jarFile = new JarFile("HomePlans.jar");
+			jarFile = new JarFile("g03-iteration-2.jar");
 		    Enumeration item = jarFile.entries();
 		    while (item.hasMoreElements()) {
 		    	file=process(item.nextElement());
@@ -316,15 +318,12 @@ public class TextureView extends JPanel implements ItemListener {
 	 */
 	private void update(){
 		textureList = new JList(this.textureFiles.toArray());
-        textureList.setCellRenderer(new ColorCellRenderer());	
-        SwingUtilities.invokeLater(new Runnable(){
-			@Override
-			public void run() {
-				/* Update GUI if needed */
-				texturesPanel.removeAll();
+        textureList.setCellRenderer(new ColorCellRenderer());
+        java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run(){
+		        texturesPanel.removeAll();
 		        texturesPanel.add(textureList);
 				texturesPanel.updateUI();
-				
 			}
 		});
 		textureList.addMouseListener(this.controller);
@@ -439,7 +438,7 @@ public class TextureView extends JPanel implements ItemListener {
 	    	Icon imageIcon;
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
 	    		if (list.equals(textureList)){
-	    			if (!(value.toString()==ADDTEXTURE)){	    				
+	    			if (!(value.toString()==ADDTEXTURE)){
 	    				if(value.toString().contains(File.separator)){
 	    					imageIcon = new ImageIcon(value.toString().replace("Full", "Mini")+".png");
 	    				}

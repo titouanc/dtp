@@ -28,6 +28,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
@@ -131,7 +132,8 @@ public class TextureController implements ActionListener,MouseListener, Observer
 				}
 			}
 			else{
-				Log.debug("Only " +	"png allowed");
+				JOptionPane.showMessageDialog(view, "Only png allowed for the moment");
+				Log.debug("Only png allowed");
 			}
 	    }
 	    catch (NullPointerException ex){
@@ -303,6 +305,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 		   File fullDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
 		   fullDimension.delete();
 		   fileToDelete=fileToDelete.replace("Textures/Full/", "Textures/");
+		   fileToDelete=fileToDelete.replace("Full", "");
 		   File miniDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
 		   miniDimension.delete();
 		   fileToDelete =fileToDelete.replace("Textures/", "");

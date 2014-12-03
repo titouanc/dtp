@@ -459,13 +459,32 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT);
 	}
     
+	private void deselectAll() {
+		try {
+			GeometryDAO dao = project.getGeometryDAO();
+			for (Area area : dao.getSelectedMeshables()) {
+				for (Point p : area.getPoints()) {
+					p.deselect();
+					dao.update(p);
+				}
+				area.deselect();
+				dao.update(area);
+				dao.notifyObservers(area);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
     private void dragSelectHandlerW() {
     	/* Find the Geometric object where we clicked */
         Geometric clicked = getClickedObject();
         
         /* We're not interested if no object */
         if (clicked == null)
-        	return;
+        	deselectAll();
         
         /* If it is an Area (Wall, Ground, Roof): select it */
         if (clicked instanceof Area)
@@ -491,7 +510,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         
         /* If it is a Primitive : select it */
         if (clicked instanceof Primitive) {
-        	selectPrimitive((Primitive) clicked);
         	this.movingGeometric = (Primitive) clicked;
         }
     }
