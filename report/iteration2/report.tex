@@ -1,0 +1,85 @@
+\section{Rapport de fin d'itération}
+
+La physionomie de l'itération 2 a été intrinsèquement différente de celle de son 
+antérieure. Nous n'avons eu la confirmation que nous pouvions développer
+l'histoire 2 que 8 jours avant la fin de l'itération 2, ce qui a entraîné un 
+rush plutôt conséquent. Toutefois, Nous y avions bien entendu déjà réfléchi et 
+profité du début de l'itération pour entreprendre quelques refactorings 
+rafraîchissants.\\
+
+Anecdotiquement, on peut noter que c'est la troisième fois qu'un des membres de
+l'équipe est malade et ne peut participer activement au développement pendant
+plusieurs jours. La communication du groupe est restée forte et ces accrocs 
+n'ont jamais eu d'impact; nous avons toujours réussi à rééquilibrer les 
+responsabilités sur les épaules de tous les membres.
+
+\subsection{Suivi du planning}
+À nouveau, pour cette itération, nous avons réussi à implémenter toutes les 
+fonctionnalités que nous nous étions imposées, malgré le timeframe très court.\\
+
+Nous avons gardé globalement la même architecture pour le projet, malgré 
+quelques changements ça et là qui sont détaillés par la suite.
+
+\subsection{Architecture}
+	
+	\subsubsection{Changements dans le modèle}
+	Durant cette seconde itération, nous avons opéré un refactoring de notre modèle, suite à plusieurs problèmes que nous avions rencontré durant la première itération. Nous avions initialement prévu de pouvoir imbriquer récursivement les structures, de façon à créer des groupes de pièces par exemple. Cette structure, bien que très modulaire, est cependant inadaptée à une structure de base de donnée relationnelle, puisqu'elle implique d'effectuer une requête pour chaque type d'élément à chaque niveau de la récursion, et demande beaucoup de vérifications de types, contraires aux principes du polymorphisme.
+
+	Nous l'avons remplacé par un modèle à la hiérarchie fixe: un étage comprend des pièces, sur lesquelles on peut construire un mur, un sol et un plafond.
+
+	Les objets qu'on peut placer dans la pièce sont construits à partir de primitives (cube, sphere, pyramide et cylindre), pour créer des entités. On peut ensuite instancier ces entités dans le bâtiment.
+
+	\subsubsection{Changements dans la GUI}
+
+		\paragraph{CameraContext}
+		Le pattern state permet de gérer l'état des contrôleurs 2D et 3D de la caméra. Nous n'avons donc pas notre propre classe caméra, nous utilisons directement celle créée de la classe SimpleApplication. Afin de géré l'état, il nous a donc été nécessaire de créer une classe supplémentaire CameraContext. Cette classe sert de listener de tout les événement liés au interaction avec la caméra.
+
+		\paragraph{Lancement des contrôleurs}
+		Nous avons légèrement amélioré la manière dont nous lançons un contrôleur.
+		Ils possèdent désormais une méthode \texttt{run()} qu'il faut appeler
+		après leur construction; cela nous permet de les lancer sans instancier
+		de vue (pratique pour les tests, améliore le découplage). De plus, si 
+		quelque chose se passe mal dans cette fonction, on reste sûr que 
+		l'objet contrôleur a été bien construit, puisque son constructeur s'est
+		terminé bien avant. 
+
+	\subsubsection{Rajouts dans la GUI}
+
+		\paragraph{Texture Panel}
+		Il a fallu rajouter un panneau pour afficher les textures disponibles et
+		offrir une interface à l'utilisateur pour en rajouter. Grâce à 
+		l'architecture MVC que nous avions mise en place lors de la précédente 
+		itération, c'était très facile et il a suffi de rajouter une TextureView
+		et un TextureController.
+
+		\paragraph{Création d'objets}
+		Pour l'instant nous avons ajouté tout ce qui permet de manipuler les objets dans les contrôleurs existants. Les vues tel que la treeView et le canvas jmonkey sont réutilisé pour l'édition/affichage des objets. Par manque de temps nous n'avons pas pu fournir de solution architecturalement plus propre, cependant nous sommes conscient que le design pattern state pourrait largement améliorer et simplifier notre architecture. Nous avons comme projet de l'implémenter au plus vite avant de commencer la prochaine itération.
+
+
+\subsection{Bonnes pratiques - Outils}
+
+Nous avons continué à utiliser toutes les bonnes pratiques listées dans le
+rapport de l'itération précédente. Nous avions toutefois omis de préciser que
+nous utilisons \textbf{Trello} pour nous aider à identifier, assigner, séparer 
+et préciser les tâches qui nous attendent. 
+
+\subsection{Conclusion - What's next}
+Malgré une satisfaction générale de l'atteinte de nos objectifs, il nous reste 
+un goût de trop peu à la fin de cette itération. Il reste quelques points que 
+nous aurions aimé perfectionner.
+
+	\paragraph{Documentation et tests} 
+	La documentation couvre une bonne partie du code mais est dans certains cas 
+	lacunaire ou inexistante. Certaines parties du code restent aussi non-testées.
+
+	\paragraph{Usabilité} 
+	Certaines des actions que l'utilisateur peut faire dans l'application sont
+	quelque peu obscures. Cela est dû au rajout incrémental de fonctionnalités, 
+	qui empêche de prévoir facilement ce qu'il sera possible de faire par la suite, 
+	et qui requiert parfois de repenser entièrement l'interface. Nous n'avons
+	pas eu le temps de le faire lors de cette itération.
+
+	\paragraph{Responsabilités du GeometryDAO}
+	Comme expliqué dans les remarques fournies, le GeometryDAO a trop de 
+	responsabilités et doit être revu. Cela sera fait pour la prochaine 
+	itération.
