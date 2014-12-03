@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
 
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 
 
@@ -94,6 +95,21 @@ public class DemoProject {
 		Item doorObject = new Item(groundFloor, door);
 		doorObject.setPosition(new Vector3f(-4, 0, 2));
 		dao.create(doorObject);
+		
+		Entity window = new Entity("Window");
+		dao.create(window);
+		Primitive windowPrim = new Primitive(window, Primitive.CUBE);
+		windowPrim.setRotation(new Vector3f(FastMath.PI/2,0,0));
+		windowPrim.setScale(new Vector3f(1,8,4));
+		windowPrim.setTexture("DoorFull");
+		dao.create(windowPrim);
+		
+		
+		Item windowObject = new Item(groundFloor, window);
+		windowObject.setPosition(new Vector3f(10, 10, 2));
+		dao.create(windowObject);
+		
+		
 		
 		dao.refresh(firstFloor);
 		for	(Room room : firstFloor.getRooms()){
