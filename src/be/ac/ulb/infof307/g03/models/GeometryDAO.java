@@ -178,7 +178,7 @@ public class GeometryDAO extends Observable {
 		else if (object instanceof Wall)
 			res = this.walls.create((Wall) object);
 		else if (object instanceof Floor)
-			create((Floor) object);
+			res = create((Floor) object);
 		else if (object instanceof Roof)
 			res = this.roofs.create((Roof) object);
 		else if (object instanceof Primitive)
@@ -265,7 +265,7 @@ public class GeometryDAO extends Observable {
 		else if (object instanceof Wall)
 			res = this.walls.update((Wall) object);
 		else if (object instanceof Floor)
-			update((Floor) object);
+			res = update((Floor) object);
 		else if (object instanceof Roof)
 			res= this.roofs.update((Roof) object);
 		else if (object instanceof Primitive)

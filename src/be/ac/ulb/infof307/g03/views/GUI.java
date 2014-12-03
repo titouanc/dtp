@@ -30,25 +30,28 @@ public class GUI extends JFrame {
 	private ToolsBarController toolsBar;
 	private MainPaneController workspace;
 	private SplashScreen screen;
+	private Project project;
 	
 	/**
 	 * Constructor of GUI.
 	 * It put every frame needed at the right place on the main frame
 	 * Menu, toolsbar and the main workspace (splitpane)
-	 * @param project The project to be display on the GUI.
+	 * @param aProject The project to be display on the GUI.
 	 * @throws SQLException 
 	 */
-	public GUI(Project project) throws SQLException {
+	public GUI(Project aProject) throws SQLException {
 		
 		// Create and set up the window
-		super("HomePlans - " + (project.isOnDisk() ? project.getFilename() : "Unsaved"));
+		super();
+		project = aProject;
+		updateTitle();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		//Sets up the loading screen
         this.screen = SplashScreen.getSplashScreen();
    
         // Create the menuBar
-        this.menuBar = new MenuBarController(project, this);
+        this.menuBar = new MenuBarController(aProject, this);
         this.menuBar.run();
         this.setJMenuBar(this.menuBar.getView());
         
@@ -57,13 +60,13 @@ public class GUI extends JFrame {
         JPanel contentPane = new JPanel(new BorderLayout());
         
         // Create the toolbar
-        this.toolsBar = new ToolsBarController(project);
+        this.toolsBar = new ToolsBarController(aProject);
         this.toolsBar.run();
         contentPane.add(this.toolsBar.getView(), BorderLayout.PAGE_START);
      
         // Create the workspace
         // this one contains Jmonkey canvas and the left menu
-        this.workspace = new MainPaneController(project);
+        this.workspace = new MainPaneController(aProject);
         this.workspace.run();
         contentPane.add(this.workspace.getView(), BorderLayout.CENTER);
         
@@ -98,6 +101,10 @@ public class GUI extends JFrame {
         g.setPaintMode();
         g.setColor(Color.BLACK);
         g.drawString("Loading "+comps[(frame/5)%3]+"...", 120, 150);
+    }
+    
+    public void updateTitle(){
+    	setTitle("HomePlans - " + (project.isOnDisk() ? project.getFilename() : "Unsaved"));
     }
 
 }

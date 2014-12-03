@@ -88,8 +88,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 
         String floorUID = project.config("floor.current");
         this.currentFloor = (Floor) project.getGeometryDAO().getByUID(floorUID);
-        if (this.currentFloor == null)
-        	this.currentFloor = project.getGeometryDAO().getFloors().get(0);
+        List<Floor> listFloor = project.getGeometryDAO().getFloors();
+        if (this.currentFloor == null && listFloor.size()>0)
+        	this.currentFloor = listFloor.get(0);
         this.currentEditionMode = project.config("edition.mode");
         if (this.currentEditionMode.equals("")) // set as default for the first time
         	this.currentEditionMode = WORLDMODE;
@@ -461,27 +462,11 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         }
     }
     
-    public void initSphere() {
-    	Sphere sphere = new Sphere(32,32,1f);
-    	this.savedCenter = getXYForMouse(0f);
-		try {
-			GeometryDAO dao = this.project.getGeometryDAO();
-			this.builtPrimitive = new Primitive(this.currentEntity,Primitive.SPHERE);
-			this.builtPrimitive.setScale(new Vector3f(0,0,0));
-			this.builtPrimitive.setTranslation(new Vector3f(this.savedCenter.x,this.savedCenter.y,0));
-			dao.create(this.builtPrimitive);
-			dao.notifyObservers(this.builtPrimitive);
-		} catch (SQLException ex) {
-			Log.exception(ex);
-		}
-    }
-    
-    public void initCube() {
-    	Box box = new Box(0.5f,0.5f,0.5f);
+    public void initShape(String type) {
     	this.savedCenter = getXYForMouse(0f);
     	try {
 			GeometryDAO dao = this.project.getGeometryDAO();
-			this.builtPrimitive = new Primitive(this.currentEntity,Primitive.CUBE);
+			this.builtPrimitive = new Primitive(this.currentEntity,type);
 			this.builtPrimitive.setScale(new Vector3f(0,0,0));
 			this.builtPrimitive.setTranslation(new Vector3f(this.savedCenter.x,this.savedCenter.y,0));
 			dao.create(this.builtPrimitive);
@@ -506,13 +491,17 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 						dragSelectHandlerW();
 					} 
 				} else if (currentEditionMode.equals(WorldController.OBJECTMODE)) {
-					if(this.mouseMode.equals("sphere")){
-						initSphere();
-					} else if(this.mouseMode.equals("cube")){
-						initCube();
-					} else if (this.mouseMode.equals("dragSelect")) {
+					if (this.mouseMode.equals("dragSelect")) {
 						dragSelectHandlerO();
-					} 
+					} else if (this.mouseMode.equals("pyramid")) {
+						initShape(Primitive.PYRAMID);
+					} else if (this.mouseMode.equals("cylinder")) {
+						initShape(Primitive.CYLINDER);
+					} else if (this.mouseMode.equals("sphere")) {
+						initShape(Primitive.SPHERE);
+					} else if (this.mouseMode.equals("cube")) {
+						initShape(Primitive.CUBE);
+					}
 				}
 				
 			} else { // on release
@@ -566,7 +555,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 				updateEditionMode(config.getValue());
 			} else if (config.getName().equals("floor.current")){
 				String newUID = config.getValue();
-				if (newUID.equals(this.currentFloor.getUID()))
+				if (this.currentFloor != null && newUID.equals(this.currentFloor.getUID()))
 					return;
 				try {
 					this.currentFloor = (Floor) this.project.getGeometryDAO().getByUID(config.getValue());
@@ -578,6 +567,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			} else if (config.getName().equals("entity.current")) {
 				try {
 					this.currentEntity = (Entity) this.project.getGeometryDAO().getByUID(config.getValue());
+					updateEditionMode();
 				} catch (SQLException ex) {
 					Log.exception(ex);
 				}

@@ -4,8 +4,15 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -13,16 +20,28 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
+import com.jme3.math.FastMath;
+import com.jme3.math.Vector3f;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.*;
@@ -36,6 +55,164 @@ public class ObjectTreeView extends JTree implements Observer {
 	/**
 	 * 
 	 */
+	class ModificationFrame extends JFrame implements ActionListener, PropertyChangeListener {
+		private Primitive primitive = null;
+		private JFormattedTextField scalex, scaley, scalez, posz, rotx, roty, rotz;
+		private JSlider sliderRotx, sliderRoty, sliderRotz;
+		
+		private static final String OK = "ok";
+		private static final String CANCEL = "cancel";
+		
+		public ModificationFrame(Primitive prim) {
+			super("Modification Panel");
+			this.primitive = prim;
+			
+			JPanel panel = new JPanel();
+			this.add(panel);
+			Dimension dimension = new Dimension(400,300);
+			this.setPreferredSize(dimension);
+			this.setMaximumSize(dimension);
+			this.setMinimumSize(dimension);
+			this.setResizable(false);
+			GridBagLayout layout = new GridBagLayout();
+			panel.setLayout(layout);
+			
+			GridBagConstraints constraints = new GridBagConstraints();
+			constraints.gridx = 0;
+			constraints.gridy = 0;
+			constraints.gridwidth = 1;
+			
+			panel.add(new JLabel("Scale x : "),constraints);
+			++constraints.gridy;
+			panel.add(new JLabel("Scale y : "), constraints);
+			++constraints.gridy;
+			panel.add(new JLabel("Scale z : "), constraints);
+			++constraints.gridy;
+			panel.add(new JLabel("Translation z : "), constraints);
+			constraints.gridwidth = 1;
+			++constraints.gridy;
+			panel.add(new JLabel("Rotation x : "), constraints);
+			++constraints.gridy;
+			panel.add(new JLabel("Rotation y : "), constraints);
+			++constraints.gridy;
+			panel.add(new JLabel("Rotation z : "), constraints);
+			
+			constraints.gridx = 2;
+			constraints.gridy = 0;
+			scalex = new JFormattedTextField((int) prim.getScale().getX());
+			scalex.setColumns(3);
+			panel.add(scalex, constraints);
+			scalex.addPropertyChangeListener(this);
+			++constraints.gridy;
+			scaley = new JFormattedTextField(prim.getScale().getY());
+			scaley.setColumns(3);
+			panel.add(scaley,constraints);
+			scaley.addPropertyChangeListener(this);
+			++constraints.gridy;
+			scalez = new JFormattedTextField(prim.getScale().getZ());
+			scalez.setColumns(3);
+			panel.add(scalez,constraints);
+			scalez.addPropertyChangeListener(this);
+			++constraints.gridy;
+			posz = new JFormattedTextField(prim.getTranslation().getZ());
+			posz.setColumns(3);
+			panel.add(posz,constraints);
+			posz.addPropertyChangeListener(this);
+			++constraints.gridy;
+			rotx = new JFormattedTextField(prim.getRotation().getX());
+			rotx.setColumns(3);
+			panel.add(rotx,constraints);
+			rotx.addPropertyChangeListener(this);
+			++constraints.gridy;
+			roty = new JFormattedTextField(prim.getRotation().getY());
+			roty.setColumns(3);
+			panel.add(roty,constraints);
+			roty.addPropertyChangeListener(this);
+			++constraints.gridy;
+			rotz = new JFormattedTextField(prim.getRotation().getZ());
+			rotz.setColumns(3);
+			panel.add(rotz,constraints);
+			rotz.addPropertyChangeListener(this);
+			
+			constraints.gridx = 1;
+			constraints.gridy = 4;
+			sliderRotx = new JSlider(JSlider.HORIZONTAL,0,360,(int)prim.getRotation().getX());
+			sliderRotx.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					
+					rotx.setValue(sliderRotx.getValue());
+				}
+			});
+			panel.add(sliderRotx ,constraints);
+			++constraints.gridy;
+			sliderRoty = new JSlider(JSlider.HORIZONTAL,0,360,(int)prim.getRotation().getY());
+			sliderRoty.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					roty.setValue(sliderRoty.getValue());
+				}
+			});
+			panel.add(sliderRoty ,constraints);
+			++constraints.gridy;
+			sliderRotz = new JSlider(JSlider.HORIZONTAL,0,360,(int)prim.getRotation().getZ());
+			sliderRotz.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					rotz.setValue(sliderRotz.getValue());
+				}
+			});
+			panel.add(sliderRotz ,constraints);
+			
+			++constraints.gridy;
+			JButton applyButton = new JButton("Ok");
+			applyButton.setActionCommand(OK);
+			applyButton.addActionListener(this);
+			panel.add(applyButton, constraints);
+			++constraints.gridx;
+			JButton cancelButton = new JButton("Cancel");
+			cancelButton.setActionCommand(CANCEL);
+			cancelButton.addActionListener(this);
+			panel.add(cancelButton, constraints);
+		}
+		
+		public void applyModif() {
+			primitive.setScale(new Vector3f(((Number)scalex.getValue()).floatValue(),
+					((Number)scaley.getValue()).floatValue(),
+					((Number)scalez.getValue()).floatValue()));
+			primitive.setTranslation(new Vector3f(	primitive.getTranslation().getX(),
+					primitive.getTranslation().getY(),
+					((Number)posz.getValue()).floatValue()));
+			primitive.setRotation(new Vector3f(	((Number)rotx.getValue()).floatValue()*FastMath.PI/180,
+					((Number)roty.getValue()).floatValue()*FastMath.PI/180,
+					((Number)rotz.getValue()).floatValue()*FastMath.PI/180));
+			try {
+				dao.update(primitive);
+				dao.notifyObservers(primitive);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String cmd = e.getActionCommand();
+			if (cmd.equals(OK)) {
+				this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+			} else if (cmd.equals(CANCEL)) {
+				// restore
+				this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			applyModif();
+		}
+
+	}
+	
 	private static final long serialVersionUID = 1L;
 	
 	// Attribute
@@ -53,6 +230,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	static private final String WIDTH   		 = "Width";
 	static private final String HEIGHT	 		 = "Height";
 	static private final String CHANGETEXTURE	 = "Change Texture";
+	static private final String MODIFY	 		 = "Modify";
 	
 	/**
 	 * This class implements a ActionListener to be 
@@ -85,8 +263,7 @@ public class ObjectTreeView extends JTree implements Observer {
 			} else if (cmd.equals(HEIGHT)){
 				String userInput = JOptionPane.showInputDialog("Height ?");
 				controller.setHeight((Floor) clickedItem, userInput);
-			}
-			else if (cmd.equals(CHANGETEXTURE)){
+			} else if (cmd.equals(CHANGETEXTURE)){
 				String currentTexture=project.config("texture.selected");
 				// On va assigner à l'objet cliqué la texture sélectionnée
 				if (clickedItem instanceof Meshable){
@@ -97,6 +274,10 @@ public class ObjectTreeView extends JTree implements Observer {
 					}
 				}
 				
+			} else if (cmd.equals(MODIFY)) {
+				ModificationFrame mf = new ModificationFrame((Primitive) clickedItem);
+				mf.pack();
+				mf.setVisible(true);
 			}
 		}
 
@@ -221,6 +402,10 @@ public class ObjectTreeView extends JTree implements Observer {
 			res.add(createJMenuItem("Change Texture",CHANGETEXTURE,listener));
 		} else if (geo instanceof Floor){
 			res.add(createJMenuItem(HEIGHT, HEIGHT, listener));
+		}
+		
+		if (geo instanceof Primitive) {
+			res.add(createJMenuItem("Modify", MODIFY, listener));
 		}
 		
 		return res;
