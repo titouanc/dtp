@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import be.ac.ulb.infof307.g03.controllers.BootController;
 import be.ac.ulb.infof307.g03.controllers.TextureController;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
@@ -32,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
@@ -317,9 +319,13 @@ public class TextureView extends JPanel implements ItemListener {
 	private void update(){
 		textureList = new JList(this.textureFiles.toArray());
         textureList.setCellRenderer(new ColorCellRenderer());
-        texturesPanel.removeAll();
-        texturesPanel.add(textureList);
-		texturesPanel.updateUI();
+        java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run(){
+		        texturesPanel.removeAll();
+		        texturesPanel.add(textureList);
+				texturesPanel.updateUI();
+			}
+		});
 		textureList.addMouseListener(this.controller);
 	}
 	
