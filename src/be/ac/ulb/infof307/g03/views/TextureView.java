@@ -9,6 +9,8 @@ import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+
 import be.ac.ulb.infof307.g03.controllers.TextureController;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
@@ -315,9 +317,16 @@ public class TextureView extends JPanel implements ItemListener {
 	private void update(){
 		textureList = new JList(this.textureFiles.toArray());
         textureList.setCellRenderer(new ColorCellRenderer());	
-        texturesPanel.removeAll();
-        texturesPanel.add(textureList);
-		texturesPanel.updateUI();
+        SwingUtilities.invokeLater(new Runnable(){
+			@Override
+			public void run() {
+				/* Update GUI if needed */
+				texturesPanel.removeAll();
+		        texturesPanel.add(textureList);
+				texturesPanel.updateUI();
+				
+			}
+		});
 		textureList.addMouseListener(this.controller);
 	}
 	

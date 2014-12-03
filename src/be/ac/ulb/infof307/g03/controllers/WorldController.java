@@ -491,7 +491,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         
         /* If it is a Primitive : select it */
         if (clicked instanceof Primitive) {
-        	selectPrimitive((Primitive) clicked);
         	this.movingGeometric = (Primitive) clicked;
         }
     }
