@@ -416,6 +416,8 @@ public class TextureView extends JPanel implements ItemListener {
 	        _label = new JLabel();
 	        _label.setOpaque(true);
 	    }
+	    
+	    
 
 	    @Override
 	    public Component getListCellRendererComponent(

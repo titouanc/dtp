@@ -109,58 +109,80 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	}
 */
 	/**
+	 * Add textures from assets/Colors and assets/Textures
+	 * @param fileToImport
+	 * @throws IOException
+	 */
+	private void addTexture(File fileToImport) throws IOException{
+		try{
+			File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToImport.getName());
+			File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToImport.getName());
+			copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
+			
+			String filename = fileToImport.getName();
+			if (!(filename).equals(this.view.getAddFile()) && (filename.endsWith(".png"))){
+				if(fileToImport.renameTo(destinationMini)){
+					reScale(destinationMini); // Set image to 20x20 format
+					this.view.updatePanel(filename);
+				}
+				else{
+					Log.debug("The new texture has not been imported. Error.");
+				}
+			}
+			else{
+				Log.debug("Only " +	"png allowed");
+			}
+	    }
+	    catch (NullPointerException ex){
+	    	Log.exception(ex);	
+	    } 
+	}
+	
+	/**
+	 * Add Textures from a Jar File
+	 * @param fileToImport
+	 * @throws IOException
+	 */
+	private void addTextureJar(File fileToImport) throws IOException{
+		File destinationMini = new File(fileToImport.getAbsolutePath().replace(".png", "") + "Mini.png");
+		File destinationFull = new File(fileToImport.getAbsolutePath().replace(".png", "") + "Full.png");
+		copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
+		String filename = fileToImport.getName();
+		if (!(filename).equals(this.view.getAddFile()) && (filename.endsWith(".png"))){
+			if(fileToImport.renameTo(destinationMini)){
+				reScale(destinationMini); // Set image to 20x20 format
+				this.view.updatePanel(destinationFull.getAbsolutePath());
+				this.writeToFile(destinationFull.getAbsolutePath()+"\n");			
+			}
+			else{
+				Log.debug("The new texture has not been imported. Error.");
+			}
+		}
+		else{
+			Log.debug("Only .png allowed");
+		}
+	}
+	
+	/**
 	 * Add a new texture 
 	 * @throws IOException 
 	 */
 	public void addNewTexture() throws IOException{
 		final JFileChooser fc = new JFileChooser();
+		File fileToImport = fc.getSelectedFile();
 		int returnVal = fc.showOpenDialog(this.view);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
 			if(!(classPath.subSequence(0, 3).equals("rsr"))){	
 			    try{
-					File fileToImport = fc.getSelectedFile();
-					File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToImport.getName());
-					File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+fileToImport.getName());
-					copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
-					
-					String filename = fileToImport.getName();
-					if (!(filename).equals(this.view.getAddFile()) && (filename.endsWith(".png"))){
-						if(fileToImport.renameTo(destinationMini)){
-							reScale(destinationMini); // Set image to 20x20 format
-							this.view.updatePanel(filename);
-						}
-						else{
-							Log.debug("The new texture has not been imported. Error.");
-						}
-					}
-					else{
-						Log.debug("Only " +	"png allowed");
-					}
+					this.addTexture(fileToImport);
 			    }
 			    catch (NullPointerException ex){
 			    	Log.exception(ex);	
 			    }   
 			}
 			else{
-				try{
-					File fileToImport = fc.getSelectedFile();
-					File destinationMini = new File(fileToImport.getAbsolutePath().replace(".png", "") + "Mini.png");
-					File destinationFull = new File(fileToImport.getAbsolutePath().replace(".png", "") + "Full.png");
-					copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
-					String filename = fileToImport.getName();
-					if (!(filename).equals(this.view.getAddFile()) && (filename.endsWith(".png"))){
-						if(fileToImport.renameTo(destinationMini)){
-							reScale(destinationMini); // Set image to 20x20 format
-							this.view.updatePanel(destinationFull.getAbsolutePath());
-							this.writeToFile(destinationFull.getAbsolutePath()+"\n");			
-						}
-						else{
-							Log.debug("The new texture has not been imported. Error.");
-						}
-					}
-					else{
-						Log.debug("Only .png allowed");
-					}
+				try{					
+					this.addTextureJar(fileToImport);
 				}
 				catch(NullPointerException ex){
 			    	Log.exception(ex);				
@@ -169,10 +191,13 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	    }
 	}
 	
+	/**
+	 * Write the path to a texture in a file
+	 * @param addedFilePath
+	 */
 	private void writeToFile(String addedFilePath){
 		try{
     		File file =new File(view.getAddedFilePath());
-    		//if file doesnt exists, then create it
     		if(!file.exists()){
     			file.createNewFile();
     		}
@@ -185,6 +210,10 @@ public class TextureController implements ActionListener,MouseListener, Observer
     	}
 	}
 	
+	/**
+	 * Delete a Line (which here egals to the path to a texture added from a user)
+	 * @param lineToRemove
+	 */
 	private void deleteLineInFile(String lineToRemove) { 
 	    try { 
 	      File inFile = new File(view.getAddedFilePath());  // File ending by Full    	      
@@ -219,6 +248,12 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	    }
 	  }
 	
+	/**
+	 * Copy an image
+	 * @param toBeCopied
+	 * @param destination
+	 * @throws IOException
+	 */
 	private static void copyImage(File toBeCopied,File destination)throws IOException {			    
 		ImageInputStream input = new FileImageInputStream(toBeCopied);
 		ImageOutputStream output = new FileImageOutputStream(destination);
@@ -231,6 +266,11 @@ public class TextureController implements ActionListener,MouseListener, Observer
 		output.close();
 	}
 	
+	/**
+	 * Rescale an image
+	 * @param file
+	 * @throws IOException
+	 */
 	private static void reScale(File file) throws IOException{
 		BufferedImage originalImage = ImageIO.read(file);
 		int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
@@ -238,6 +278,12 @@ public class TextureController implements ActionListener,MouseListener, Observer
 		ImageIO.write(resizeImagePng,"png",file);
 	}
 	
+	/**
+	 * Rescale
+	 * @param originalImage
+	 * @param type
+	 * @return
+	 */
    private static BufferedImage rescaleImage(BufferedImage originalImage, int type){
 		BufferedImage resizedImage = new BufferedImage(_IMG_WIDTH, _IMG_HEIGHT, type);
 		Graphics2D image = resizedImage.createGraphics();
@@ -247,8 +293,9 @@ public class TextureController implements ActionListener,MouseListener, Observer
    }
    
    /**
- * @return the name of the file to be deleted
- */
+    * Delete a File and call the right function
+    * @return
+    */
    public String deleteFile(){
 	   if(!(classPath.subSequence(0, 3).equals("rsr"))){
 		   File fullDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
