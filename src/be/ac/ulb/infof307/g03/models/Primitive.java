@@ -73,6 +73,12 @@ public class Primitive extends Meshable {
 		this.translationz = translation.getZ();
 	}
 	
+	public final void setRotation(Vector3f rotation) {
+		this.rotationx = rotation.getX();
+		this.rotationy = rotation.getY();
+		this.rotationz = rotation.getZ();
+	}
+	
 	public final Vector3f getScale(){
 		return new Vector3f((float) this.scalex, (float) this.scaley, (float) this.scalez);
 	}
