@@ -55,7 +55,7 @@ public class DemoProject {
 		createRoom(groundFloor, "Irregular room", a, d, c, c, g,k, i,j, h);
 		createRoom(groundFloor, "Rectangular room", f, d, c, l, m);
 		
-		createGround(groundFloor, "Jardin", "GreenColor", n , o , p ,q);
+		createGround(groundFloor, "Jardin", "GrassFull", n , o , p ,q);
 		createGround(groundFloor, "Chemin", "Gray", r , s , t ,u);
 		
 		dao.createFloorOnTop(7);
