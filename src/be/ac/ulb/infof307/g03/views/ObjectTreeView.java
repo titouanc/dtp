@@ -99,44 +99,44 @@ public class ObjectTreeView extends JTree implements Observer {
 			
 			constraints.gridx = 2;
 			constraints.gridy = 0;
-			scalex = new JFormattedTextField((int) prim.getScale().getX());
+			scalex = new JFormattedTextField(prim.getScale().x);
 			scalex.setColumns(3);
 			panel.add(scalex, constraints);
 			scalex.addPropertyChangeListener(this);
 			++constraints.gridy;
-			scaley = new JFormattedTextField(prim.getScale().getY());
+			scaley = new JFormattedTextField(prim.getScale().y);
 			scaley.setColumns(3);
 			panel.add(scaley,constraints);
 			scaley.addPropertyChangeListener(this);
 			++constraints.gridy;
-			scalez = new JFormattedTextField(prim.getScale().getZ());
+			scalez = new JFormattedTextField(prim.getScale().z);
 			scalez.setColumns(3);
 			panel.add(scalez,constraints);
 			scalez.addPropertyChangeListener(this);
 			++constraints.gridy;
-			posz = new JFormattedTextField(prim.getTranslation().getZ());
+			posz = new JFormattedTextField(prim.getTranslation().z);
 			posz.setColumns(3);
 			panel.add(posz,constraints);
 			posz.addPropertyChangeListener(this);
 			++constraints.gridy;
-			rotx = new JFormattedTextField(prim.getRotation().getX());
+			rotx = new JFormattedTextField(prim.getRotation().x);
 			rotx.setColumns(3);
 			panel.add(rotx,constraints);
 			rotx.addPropertyChangeListener(this);
 			++constraints.gridy;
-			roty = new JFormattedTextField(prim.getRotation().getY());
+			roty = new JFormattedTextField(prim.getRotation().y);
 			roty.setColumns(3);
 			panel.add(roty,constraints);
 			roty.addPropertyChangeListener(this);
 			++constraints.gridy;
-			rotz = new JFormattedTextField(prim.getRotation().getZ());
+			rotz = new JFormattedTextField(prim.getRotation().z);
 			rotz.setColumns(3);
 			panel.add(rotz,constraints);
 			rotz.addPropertyChangeListener(this);
 			
 			constraints.gridx = 1;
 			constraints.gridy = 4;
-			sliderRotx = new JSlider(JSlider.HORIZONTAL,0,360,(int)prim.getRotation().getX());
+			sliderRotx = new JSlider(JSlider.HORIZONTAL, -180, 180,(int)prim.getRotation().x);
 			sliderRotx.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
@@ -146,7 +146,7 @@ public class ObjectTreeView extends JTree implements Observer {
 			});
 			panel.add(sliderRotx ,constraints);
 			++constraints.gridy;
-			sliderRoty = new JSlider(JSlider.HORIZONTAL,0,360,(int)prim.getRotation().getY());
+			sliderRoty = new JSlider(JSlider.HORIZONTAL, -180, 180, (int)prim.getRotation().y);
 			sliderRoty.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
@@ -155,7 +155,7 @@ public class ObjectTreeView extends JTree implements Observer {
 			});
 			panel.add(sliderRoty ,constraints);
 			++constraints.gridy;
-			sliderRotz = new JSlider(JSlider.HORIZONTAL,0,360,(int)prim.getRotation().getZ());
+			sliderRotz = new JSlider(JSlider.HORIZONTAL, -180, 180, (int)prim.getRotation().z);
 			sliderRotz.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
@@ -223,14 +223,15 @@ public class ObjectTreeView extends JTree implements Observer {
 	private Map<String,DefaultMutableTreeNode> nodes = new HashMap<String,DefaultMutableTreeNode>();
 		
 	// Action alias
-	static private final String RENAME  		 = "Rename" ;
-	static private final String DELETE 		 = "Delete";
-	static private final String HIDE   		 = "Hide";
-	static private final String SHOW   		 = "Show";
-	static private final String WIDTH   		 = "Width";
-	static private final String HEIGHT	 		 = "Height";
-	static private final String CHANGETEXTURE	 = "Change Texture";
-	static private final String MODIFY	 		 = "Modify";
+	static private final String RENAME        = "Rename" ;
+	static private final String DELETE        = "Delete";
+	static private final String HIDE          = "Hide";
+	static private final String SHOW          = "Show";
+	static private final String WIDTH         = "Width";
+	static private final String HEIGHT        = "Height";
+	static private final String CHANGETEXTURE = "Change Texture";
+	static private final String MODIFY        = "Modify";
+	static private final String DUPLICATE     = "Duplicate";
 	
 	/**
 	 * This class implements a ActionListener to be 
@@ -278,6 +279,8 @@ public class ObjectTreeView extends JTree implements Observer {
 				ModificationFrame mf = new ModificationFrame((Primitive) clickedItem);
 				mf.pack();
 				mf.setVisible(true);
+			} else if (cmd.equals(DUPLICATE)){
+				controller.duplicate(clickedItem);
 			}
 		}
 
@@ -406,6 +409,7 @@ public class ObjectTreeView extends JTree implements Observer {
 		
 		if (geo instanceof Primitive) {
 			res.add(createJMenuItem("Modify", MODIFY, listener));
+			res.add(createJMenuItem("Duplicate", DUPLICATE, listener));
 		}
 		
 		return res;

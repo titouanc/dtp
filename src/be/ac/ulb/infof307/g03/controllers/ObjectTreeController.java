@@ -405,5 +405,18 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		this.dao.update(clickedItem);
 		this.dao.notifyObservers();
 	}
+
+	public void duplicate(Geometric clickedItem) {
+		if (clickedItem instanceof Primitive){
+			Primitive original = (Primitive) clickedItem;
+			try {
+				dao.create(original.clone());
+				dao.notifyObservers();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+		}
+	}
 	
 }
