@@ -297,8 +297,11 @@ public class GeometryDAO extends Observable {
 	}
 	
 	private int delete(Floor floor) throws SQLException {
-		for (Room room : getRooms(floor)){
+		for (Room room : floor.getRooms()){
 			delete(room);
+		}
+		for (Item item : floor.getItems()){
+			delete(item);
 		}
 		int res = this.floors.delete(floor);
 		for (Floor above : getFloorsAbove(floor)){
