@@ -60,6 +60,14 @@ public class Primitive extends Meshable {
 		}
 	}
 	
+	public Primitive clone(){
+		Primitive copy = new Primitive(this.entity, this.type);
+		copy.setRotation(this.getRotation());
+		copy.setTranslation(this.getTranslation());
+		copy.setScale(this.getScale());
+		return copy;
+	}
+	
 	public final void setType(String type){
 		this.type = type;
 	}
