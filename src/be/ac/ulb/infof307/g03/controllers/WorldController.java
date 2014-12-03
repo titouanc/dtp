@@ -379,7 +379,13 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     	float dist = currPos.distance(this.savedCenter);
 		float dn = dist / FastMath.pow(3, 0.3333f);
     	this.builtPrimitive.setScale(new Vector3f(dn,dn,dn));
-    	
+    	if (!this.builtPrimitive.getType().equals(Primitive.PYRAMID)) {
+    		if (this.builtPrimitive.getType().equals(Primitive.SPHERE)) {
+    			this.builtPrimitive.setTranslation(new Vector3f(this.savedCenter.x,this.savedCenter.y,dn));
+    		} else {
+    			this.builtPrimitive.setTranslation(new Vector3f(this.savedCenter.x,this.savedCenter.y,dn/2));
+    		}
+    	}
     	try {
 			GeometryDAO dao = this.project.getGeometryDAO();
 			dao.update(this.builtPrimitive);

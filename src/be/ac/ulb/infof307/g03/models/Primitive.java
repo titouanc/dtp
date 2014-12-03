@@ -55,6 +55,9 @@ public class Primitive extends Meshable {
 		super();
 		setEntity(entity);
 		setType(type);
+		if (type.equals(PYRAMID)) {
+			this.rotationx = 1.5707; this.rotationz = 0.7853;
+		}
 	}
 	
 	public final void setType(String type){
@@ -85,6 +88,10 @@ public class Primitive extends Meshable {
 	
 	public final Vector3f getScale(){
 		return new Vector3f((float) this.scalex, (float) this.scaley, (float) this.scalez);
+	}
+	
+	public final String getType() {
+		return this.type;
 	}
 	
 	@Override
