@@ -100,13 +100,13 @@ public class DemoProject {
 		dao.create(window);
 		Primitive windowPrim = new Primitive(window, Primitive.CUBE);
 		windowPrim.setRotation(new Vector3f(FastMath.PI/2,0,0));
-		windowPrim.setScale(new Vector3f(1,8,4));
-		windowPrim.setTexture("DoorFull");
+		windowPrim.setScale(new Vector3f(1,4,8));
+		windowPrim.setTexture("WindowFull");
 		dao.create(windowPrim);
 		
 		
 		Item windowObject = new Item(groundFloor, window);
-		windowObject.setPosition(new Vector3f(10, 10, 2));
+		windowObject.setPosition(new Vector3f(8, 6, 5));
 		dao.create(windowObject);
 		
 		
