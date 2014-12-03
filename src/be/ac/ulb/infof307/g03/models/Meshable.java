@@ -120,7 +120,7 @@ public abstract class Meshable extends Geometric {
 		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		if (isSelected()){
-			mat.setColor("Ambient",new ColorRGBA(0f, 1.2f, 0f, 0.33f));
+			mat.setColor("Color",new ColorRGBA(0f, 1.2f, 0f, 0.33f));
 		}
 		try{
 			if((classPath.subSequence(0, 3).equals("rsr"))){
