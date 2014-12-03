@@ -126,8 +126,7 @@ public abstract class Meshable extends Geometric {
 		mat.setColor("Ambient", color);
 		mat.setColor("Specular",color);
 		if (isSelected()){
-			mat.setColor("Ambient", new ColorRGBA(220,220,255,1f));
-		}
+			mat.setColor("Ambient",new ColorRGBA(0f, 1.2f, 0f, 0.33f));		}
 		try{
 			if((classPath.subSequence(0, 3).equals("rsr"))){
 				if (texture.contains("Colors/")){
