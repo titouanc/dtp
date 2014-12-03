@@ -24,7 +24,7 @@ responsabilités sur les épaules de tous les membres.
 	\subsubsection{Changements dans la GUI}
 
 		\paragraph{CameraContext}
-		% TODO FILL
+		Le pattern state permet de gérer l'état des contrôleurs 2D et 3D de la caméra. Nous n'avons donc pas notre propre classe caméra, nous utilisons directement celle créée de la classe SimpleApplication. Afin de géré l'état, il nous a donc été nécessaire de créer une classe supplémentaire CameraContext. Cette classe sert de listener de tout les événement liés au interaction avec la caméra.
 
 		\paragraph{Lancement des contrôleurs}
 		Nous avons légèrement amélioré la manière dont nous lançons un contrôleur.
@@ -45,7 +45,7 @@ responsabilités sur les épaules de tous les membres.
 		et un TextureController.
 
 		\paragraph{Création d'objets}
-		% TODO FILL 
+		Pour l'instant nous avons ajouté tout ce qui permet de manipuler les objets dans les contrôleurs existants. Les vues tel que la treeView et le canvas jmonkey sont réutilisé pour l'édition/affichage des objets. Par manque de temps nous n'avons pas pu fournir de solution architecturalement plus propre, cependant nous sommes conscient que le design pattern state pourrait largement améliorer et simplifier notre architecture. Nous avons comme projet de l'implémenter au plus vite avant de commencer la prochaine itération.
 
 	\subsubsection{Architecture complète}
 	Voici les diagrammes complets pour cette itération.
