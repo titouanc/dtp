@@ -57,6 +57,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	 */
 	class ModificationFrame extends JFrame implements ActionListener, PropertyChangeListener {
 		private Primitive primitive = null;
+		private Item item = null;
 		private JFormattedTextField scalex, scaley, scalez, posz, rotx, roty, rotz;
 		private JSlider sliderRotx, sliderRoty, sliderRotz;
 		
@@ -176,6 +177,49 @@ public class ObjectTreeView extends JTree implements Observer {
 			panel.add(cancelButton, constraints);
 		}
 		
+		public ModificationFrame(Item it){
+			super("Modification Panel");
+			this.item = it;
+			
+			JPanel panel = new JPanel();
+			this.add(panel);
+			Dimension dimension = new Dimension(400,300);
+			this.setPreferredSize(dimension);
+			this.setMaximumSize(dimension);
+			this.setMinimumSize(dimension);
+			this.setResizable(false);
+			GridBagLayout layout = new GridBagLayout();
+			panel.setLayout(layout);
+			
+			GridBagConstraints constraints = new GridBagConstraints();
+			constraints.gridx = 0;
+			constraints.gridy = 0;
+			++constraints.gridy;
+			panel.add(new JLabel("Rotation x : "), constraints);
+			++constraints.gridy;
+			panel.add(new JLabel("Rotation y : "), constraints);
+			++constraints.gridy;
+			panel.add(new JLabel("Rotation z : "), constraints);
+			
+			/*
+			rotx = new JFormattedTextField(item.getRotation().x);
+			rotx.setColumns(3);
+			panel.add(rotx,constraints);
+			rotx.addPropertyChangeListener(this);
+			++constraints.gridy;
+			roty = new JFormattedTextField(prim.getRotation().y);
+			roty.setColumns(3);
+			panel.add(roty,constraints);
+			roty.addPropertyChangeListener(this);
+			++constraints.gridy;
+			rotz = new JFormattedTextField(prim.getRotation().z);
+			rotz.setColumns(3);
+			panel.add(rotz,constraints);
+			rotz.addPropertyChangeListener(this);
+			*/
+			
+		}
+		
 		public void applyModif() {
 			primitive.setScale(new Vector3f(((Number)scalex.getValue()).floatValue(),
 					((Number)scaley.getValue()).floatValue(),
@@ -276,9 +320,13 @@ public class ObjectTreeView extends JTree implements Observer {
 				}
 				
 			} else if (cmd.equals(MODIFY)) {
-				ModificationFrame mf = new ModificationFrame((Primitive) clickedItem);
-				mf.pack();
-				mf.setVisible(true);
+				if(clickedItem instanceof Primitive){
+					ModificationFrame mf = new ModificationFrame((Primitive) clickedItem);
+					mf.pack();
+					mf.setVisible(true);
+				}else if(clickedItem instanceof Item){
+					
+				}
 			} else if (cmd.equals(DUPLICATE)){
 				controller.duplicate(clickedItem);
 			}
@@ -407,7 +455,7 @@ public class ObjectTreeView extends JTree implements Observer {
 			res.add(createJMenuItem(HEIGHT, HEIGHT, listener));
 		}
 		
-		if (geo instanceof Primitive) {
+		if (geo instanceof Primitive || geo instanceof Item) {
 			res.add(createJMenuItem("Modify", MODIFY, listener));
 			res.add(createJMenuItem("Duplicate", DUPLICATE, listener));
 		}
