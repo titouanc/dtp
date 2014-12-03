@@ -77,8 +77,9 @@ public class ObjectListView extends JList implements Observer {
 				_controller.onEditAction(selectedEntity);
 			} else if (cmd.equals(_DELETE)) {
 				_controller.onDeleteAction(selectedEntity);
+			} else if (cmd.equals(_INSERT)) {
+				_controller.onInsertAction(selectedEntity);
 			}
- 			
 		}
 		
 	}
@@ -90,6 +91,7 @@ public class ObjectListView extends JList implements Observer {
 	private static final String _RENAME = "PAL_rename";
 	private static final String _EDIT = "PAL_edit";
 	private static final String _DELETE = "PAL_delete";
+	private static final String _INSERT = "PAL_insert";
 	
 	public ObjectListView(ObjectListController controller, Project project) {
 		super();
@@ -100,7 +102,6 @@ public class ObjectListView extends JList implements Observer {
 		setCellRenderer(new MyCellRenderer());
 		try {
 			_dao = project.getGeometryDAO();
-			Log.debug("DAO is %s", _dao.toString());
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
@@ -112,7 +113,6 @@ public class ObjectListView extends JList implements Observer {
 	private void createList() {
 		try {
 			List<Entity> entities = _dao.getEntities();
-			Log.debug("Entities: %s", entities.toString());
 			setListData(new Vector<Entity>(entities));
 		} catch (SQLException ex) {
 			Log.exception(ex);
@@ -124,9 +124,12 @@ public class ObjectListView extends JList implements Observer {
 		PopupActionListener listener = new PopupActionListener();
 		JPopupMenu res = new JPopupMenu();
 		res.add(createPopupMenuItem("New", _NEW, listener));
+		res.add(new JPopupMenu.Separator());
 		res.add(createPopupMenuItem("Rename", _RENAME, listener));
 		res.add(createPopupMenuItem("Edit", _EDIT, listener));
 		res.add(createPopupMenuItem("Delete", _DELETE, listener));
+		res.add(new JPopupMenu.Separator());
+		res.add(createPopupMenuItem("Create on current floor", _INSERT, listener));
 		return res;
 	}
 
