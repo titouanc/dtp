@@ -143,7 +143,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	 * @param fileToImport
 	 * @throws IOException
 	 */
-	private void addTextureJar(File fileToImport) throws IOException{
+	private void addTextureJar(File fileToImport) throws IOException {
 		File destinationMini = new File(fileToImport.getAbsolutePath().replace(".png", "") + "Mini.png");
 		File destinationFull = new File(fileToImport.getAbsolutePath().replace(".png", "") + "Full.png");
 		copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
@@ -167,13 +167,13 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	 * Add a new texture 
 	 * @throws IOException 
 	 */
-	public void addNewTexture() throws IOException{
+	public void addNewTexture() throws IOException{	
 		final JFileChooser fc = new JFileChooser();
-		File fileToImport = fc.getSelectedFile();
 		int returnVal = fc.showOpenDialog(this.view);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
 			if(!(classPath.subSequence(0, 3).equals("rsr"))){	
 			    try{
+			    	File fileToImport = fc.getSelectedFile();
 					this.addTexture(fileToImport);
 			    }
 			    catch (NullPointerException ex){
@@ -181,7 +181,8 @@ public class TextureController implements ActionListener,MouseListener, Observer
 			    }   
 			}
 			else{
-				try{					
+				try{		
+					File fileToImport = fc.getSelectedFile();
 					this.addTextureJar(fileToImport);
 				}
 				catch(NullPointerException ex){
@@ -211,7 +212,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	}
 	
 	/**
-	 * Delete a Line (which here egals to the path to a texture added from a user)
+	 * Delete a Line (which here equals to the path to a texture added from a user)
 	 * @param lineToRemove
 	 */
 	private void deleteLineInFile(String lineToRemove) { 
@@ -267,7 +268,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	}
 	
 	/**
-	 * Rescale an image
+	 * Re-scale an image
 	 * @param file
 	 * @throws IOException
 	 */
@@ -279,7 +280,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	}
 	
 	/**
-	 * Rescale
+	 * Re-scale
 	 * @param originalImage
 	 * @param type
 	 * @return
@@ -294,7 +295,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
    
    /**
     * Delete a File and call the right function
-    * @return
+    * @return file to be deleted
     */
    public String deleteFile(){
 	   if(!(classPath.subSequence(0, 3).equals("rsr"))){
