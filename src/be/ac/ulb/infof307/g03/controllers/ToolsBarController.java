@@ -62,6 +62,11 @@ public class ToolsBarController implements ActionListener, Observer {
 	public ToolsBarController(Project aProject){	
 		_project = aProject;  
 		aProject.addObserver(this);
+		try {
+			_project.getGeometryDAO().addObserver(this);
+		} catch (SQLException ex) {
+			Log.exception(ex);
+		}
 	}
 	
 	/**
@@ -198,15 +203,27 @@ public class ToolsBarController implements ActionListener, Observer {
      * is clicked. It will communicate with the controller
      */ 
     public void onConstruction(){
-    	Log.info("Switch to construction mode");
-    	_project.config("mouse.mode", "construct");
+    	try {
+			if( _project.getGeometryDAO().getFloors().isEmpty()){
+				Log.info("User try to switch to construction mode, but there is no floor");
+				JOptionPane.showMessageDialog(_view, "You have to create a floor first");
+				_view.setDragSelectSelected(true);
+				onDragSelectMode();
+			}
+			else{
+				Log.info("Switch to construction mode");
+		    	_project.config("mouse.mode", "construct");
+			}
+		} catch (SQLException ex) {
+			Log.exception(ex);
+		}
     }
     
 	private void updateEditionMode(String value) {
 		if (this.currentObjectMode!=value)  {
 			this.currentObjectMode = value;
 			updateEditionMode();
-		}
+		}	
 	}
 	
 	private void updateEditionMode() {
@@ -317,7 +334,18 @@ public class ToolsBarController implements ActionListener, Observer {
 				updateEditionMode(config.getValue());
 			}
 		}
-		
+		else if (obs instanceof GeometryDAO){
+			if (_project.config("mouse.mode").equals("construct")){
+				try {
+					if( _project.getGeometryDAO().getFloors().isEmpty()){
+						// if no more floor and user has selected the construct
+						_view.setDragSelectSelected(true);
+						onDragSelectMode();
+					}
+				} catch (SQLException ex) {
+					Log.exception(ex);
+				}
+			}
+		}
 	}
-
 }
