@@ -272,7 +272,7 @@ public class GeometryDAO extends Observable {
 			res= this.primitives.update((Primitive) object);
 		else if (object instanceof Entity)
 			res = this.entities.update((Entity) object);
-		else if (object instanceof Entity)
+		else if (object instanceof Item)
 			res = this.items.update((Item) object);
 		if (res != 0){
 			setChanged();
