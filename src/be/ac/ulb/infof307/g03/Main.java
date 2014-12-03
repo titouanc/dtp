@@ -28,17 +28,18 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		/* Configure log level (should not be above INFO in production) */
+		// Mac OS X specific configuration
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
+		System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "info");
+		
 		Log.setLevel(Level.ALL);
 		
 		// first log
 		Log.debug("The program started");
 		
 		new SplashWindow(null, 15);
-		
-		// Mac OS X specific configuration
-		System.setProperty("apple.laf.useScreenMenuBar", "true");
-		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HomePlans");
-		System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "info");
+	
 		
 		// Enqueue a new GUI in main dispatcher
 		java.awt.EventQueue.invokeLater(new Runnable() {
