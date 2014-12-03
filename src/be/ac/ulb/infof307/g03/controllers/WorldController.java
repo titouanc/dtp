@@ -253,6 +253,24 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     	}
     }
     
+    private void dropMovingItem(boolean finalMove) {
+		Item moving = (Item) movingGeometric;
+		if (moving == null)
+			return;
+		
+		Vector2f pos = getXYForMouse(0);
+		moving.setPosition(new Vector3f(pos.x, pos.y, 0));
+		try {
+    		GeometryDAO dao = this.project.getGeometryDAO();
+    		dao.update(moving);
+    		if (finalMove) 
+    			movingGeometric = null;
+    		dao.notifyObservers();
+    	} catch (SQLException err){
+    		Log.exception(err);
+    	}
+	}
+    
     /**
      * Return X and Y position when user click on the screen.
      * @param Z
@@ -314,8 +332,9 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			dao.notifyObservers();
 			
 			String floorUID = item.getFloor().getUID();
-			if (! this.project.config("floor.current").equals(floorUID))
+			if (! currentFloor.getUID().equals(floorUID)){
 				this.project.config("floor.current", floorUID);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -328,13 +347,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 			dao.update(primitive);
 			dao.notifyObservers(primitive);
 			Vector3f center = primitive.getTranslation();
-			//Node parent = view.getRootNode().getChild(primitive.getUID()).getParent();
-			//view.drawHandles(parent, center, new Vector3f(1,0,0), ColorRGBA.Blue);
-			//view.drawHandles(parent, center, new Vector3f(0,1,0), ColorRGBA.Red);
-			//view.drawHandles(parent, center, new Vector3f(0,0,1), ColorRGBA.Green);
-			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -425,6 +438,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
     			dropMovingPoint(false);
     		else if (movingGeometric instanceof Primitive)
     			dropMovingPrimitive(false);
+    		else if (movingGeometric instanceof Item)
+    			dropMovingItem(false);
     	} else if (this.builtPrimitive != null) {
     		if (this.leftClickPressed)
     			updateShapeDisplay(false);
@@ -441,15 +456,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 		inputManager.addMapping(LEFT,			new MouseAxisTrigger(0, true));
 		inputManager.addMapping(RIGHT,			new MouseAxisTrigger(0, false));
 		
-		inputManager.addListener(this, 
-										RIGHTCLICK, 
-										LEFTCLICK,
-										
-										UP,
-										DOWN,
-										LEFT,
-										RIGHT
-								);
+		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT);
 	}
     
     private void dragSelectHandlerW() {
@@ -472,8 +479,6 @@ public class WorldController implements ActionListener, AnalogListener, Observer
         /* If it is a Point: initiate drag'n drop */
         else if (clicked instanceof Point)
     		this.movingGeometric = clicked;
-        
-        
     }
     
     private void dragSelectHandlerO() {
@@ -539,6 +544,8 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 						dropMovingPoint(true);
 					else if (movingGeometric instanceof Primitive) 
 						dropMovingPrimitive(true);
+					else if (movingGeometric instanceof Item)
+						dropMovingItem(true);
 				} else if (this.builtPrimitive != null) {
 	    			updateShapeDisplay(true);					
 				}
@@ -606,13 +613,7 @@ public class WorldController implements ActionListener, AnalogListener, Observer
 
 	@Override
 	public void onAnalog(String name, float value, float tpf) {
-		if (name.equals(UP)) {
-			mouseMoved(value);
-		} else if (name.equals(DOWN)) {
-			mouseMoved(value);
-		} else if (name.equals(LEFT)) {
-			mouseMoved(value);
-		} else if (name.equals(RIGHT)) {
+		if (name.equals(UP) || name.equals(DOWN) || name.equals(LEFT) || name.equals(RIGHT)) {
 			mouseMoved(value);
 		}
 	}

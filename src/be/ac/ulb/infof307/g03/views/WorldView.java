@@ -332,7 +332,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	private void _updateFloor(Change change){
-		Floor floor = (Floor) change.getItem();
 		cleanScene();
 		makeScene();
 	}
