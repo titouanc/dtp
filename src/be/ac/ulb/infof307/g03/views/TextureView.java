@@ -201,7 +201,7 @@ public class TextureView extends JPanel implements ItemListener {
 	}
 	
 	/**
-	 * Read a given File and addtextures to textureList
+	 * Read a given File and add textures to textureList
 	 * @param file
 	 * @throws IOException
 	 */
