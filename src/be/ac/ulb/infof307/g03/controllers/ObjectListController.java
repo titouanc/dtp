@@ -179,6 +179,10 @@ public class ObjectListController implements MouseListener, Observer {
 		}
 	}
 	
+	/**
+	 * @param fileToSave The File to create as an export
+	 * @param extension The extension of the file (obj, kmz, ..)
+	 */
 	public void exportAs(File fileToSave,String extension) {
 		Log.info("Export as %s", fileToSave.getName());
 		String filename = fileToSave.getAbsolutePath();
@@ -190,12 +194,11 @@ public class ObjectListController implements MouseListener, Observer {
 		int dialogResult = JOptionPane.YES_OPTION;
 		if(new File(filename).exists()){
 			int dialogButton = JOptionPane.YES_NO_OPTION;
-			dialogResult = JOptionPane.showConfirmDialog (null,
-					"This project already exists! Would you like you replace it?","Warning",dialogButton);
+			dialogResult = JOptionPane.showConfirmDialog (null,"This project already exists! Would you like you replace it?","Warning",dialogButton);
 		}
 		if(dialogResult == JOptionPane.YES_OPTION){
 				// OPTIONS D EXPORT ICI
-				// TODO Export save the path of the current project to the BootController
+				// TODO Export 
 
 		}
 	}

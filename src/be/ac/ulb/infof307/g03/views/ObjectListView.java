@@ -181,20 +181,11 @@ public class ObjectListView extends JList implements Observer {
 		}
 	}
 	
-	class MyItemListener implements ItemListener {
+	class FormatButtonListener implements ItemListener {
 		 
         public void itemStateChanged(ItemEvent ev) {
-            boolean selected = (ev.getStateChange() == ItemEvent.SELECTED);
             AbstractButton button = (AbstractButton) ev.getItemSelectable();
             String command = button.getActionCommand();
-            // build message
-            String state;
-            if (selected) {
-                state = "selected";
-            } else {
-                state = "unselected";
-            }
-            String message = "";
             if (command.equals("OBJ")) {
                 displayExport(null,"obj"); //TODO trouvé un parent mieux que null
             } else if (command.equals("DAE")) {
@@ -211,6 +202,9 @@ public class ObjectListView extends JList implements Observer {
 
 
 	
+	/**
+	 * @param parent The parent of the frame/window where you choose the extension
+	 */
 	public void displayExport(Component parent){
 	    // creates radio button and set corresponding action
 	    // commands
@@ -232,7 +226,7 @@ public class ObjectListView extends JList implements Observer {
 	    kmzButton.setActionCommand("KMZ");
 
 	    // add event handler
-	    MyItemListener myItemListener = new MyItemListener();
+	    FormatButtonListener myItemListener = new FormatButtonListener();
 	    objButton.addItemListener(myItemListener);
 	    daeButton.addItemListener(myItemListener);
 	    dsButton.addItemListener(myItemListener);
@@ -262,6 +256,10 @@ public class ObjectListView extends JList implements Observer {
 		
 	}
 	
+	/**
+	 * @param parent The parent of the frame/window
+	 * @param extension The extension of the file to be exported
+	 */
 	public void displayExport(Component parent, String extension){
 		this.chooser.setSelectedFile(new File("*." + extension));
 	    int returnVal = this.chooser.showDialog(parent, "Export As..");
