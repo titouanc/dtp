@@ -31,9 +31,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -139,9 +142,16 @@ public class TextureView extends JPanel implements ItemListener {
     private void addFilesJar(){
     	JarFile jarFile;
 		String filename;
+		String file;
+		//String path = TextureView.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		try { // first we will check all the files that the jar contents
-			String file;
-			jarFile = new JarFile("g03-iteration-2.jar");
+			String path = this.getClass().getResource(this.getClass().getSimpleName() + ".class").getFile();
+		    path = ClassLoader.getSystemClassLoader().getResource(path).getFile();
+		    path=path.substring(0, path.lastIndexOf('!'));
+		    int start = path.lastIndexOf('/') + 1;
+		    int end = path.lastIndexOf('.');
+		    path = path.substring(start, end)+".jar";	    
+			jarFile = new JarFile(path);
 		    Enumeration item = jarFile.entries();
 		    while (item.hasMoreElements()) {
 		    	file=process(item.nextElement());
@@ -201,7 +211,7 @@ public class TextureView extends JPanel implements ItemListener {
 	}
 	
 	/**
-	 * Read a given File and add textures to textureList
+	 * Read a given File and addtextures to textureList
 	 * @param file
 	 * @throws IOException
 	 */

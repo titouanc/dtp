@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -63,13 +64,19 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	 * Run the View
 	 */
 	public void run(){
-		initView(this.project);
+		try {
+			initView(this.project);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
 	 * @param aProject
+	 * @throws UnsupportedEncodingException 
 	 */
-	public void initView(Project aProject){
+	public void initView(Project aProject) throws UnsupportedEncodingException{
 		this.view = new TextureView(this,aProject);
 	}
 	
@@ -91,62 +98,13 @@ public class TextureController implements ActionListener,MouseListener, Observer
 		}
 		
 	}
-
-	/*
-	@SuppressWarnings("deprecation")
-	private void updateTextureMode(String value) {
-		if (value.equals("shown")){
-			_view.show();
-			Log.debug("SHOW");
-		}
-		else{
-			Log.debug("HIDE");
-
-			_view.hide();
-		}
-		else if (value.equals("hidden")){
-			_view.hide();
-		}	
-	}
-*/
-	/**
-	 * Add textures from assets/Colors and assets/Textures
-	 * @param fileToImport
-	 * @throws IOException
-	 */
-	private void addTexture(File fileToImport) throws IOException{
-		try{
-			File destinationMini = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/"+fileToImport.getName());
-			String destinationBig=fileToImport.getName().replace(".png", "Full.png");
-			File destinationFull = new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Textures/Full/"+destinationBig);
-			copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
-			
-			String filename = fileToImport.getName();
-			if (!(filename).equals(this.view.getAddFile()) && (filename.endsWith(".png"))){
-				if(fileToImport.renameTo(destinationMini)){
-					reScale(destinationMini); // Set image to 20x20 format
-					this.view.updatePanel(filename);
-				}
-				else{
-					Log.debug("The new texture has not been imported. Error.");
-				}
-			}
-			else{
-				JOptionPane.showMessageDialog(view, "Only png allowed for the moment");
-				Log.debug("Only png allowed");
-			}
-	    }
-	    catch (NullPointerException ex){
-	    	Log.exception(ex);	
-	    } 
-	}
 	
 	/**
 	 * Add Textures from a Jar File
 	 * @param fileToImport
 	 * @throws IOException
 	 */
-	private void addTextureJar(File fileToImport) throws IOException {
+	private void addTexture(File fileToImport) throws IOException {
 		File destinationMini = new File(fileToImport.getAbsolutePath().replace(".png", "") + "Mini.png");
 		File destinationFull = new File(fileToImport.getAbsolutePath().replace(".png", "") + "Full.png");
 		copyImage(fileToImport, destinationFull); // On récupère l'image avec sa taille originale
@@ -173,26 +131,15 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	public void addNewTexture() throws IOException{	
 		final JFileChooser fc = new JFileChooser();
 		int returnVal = fc.showOpenDialog(this.view);
-		if(returnVal == JFileChooser.APPROVE_OPTION) {
-			if(!(classPath.subSequence(0, 3).equals("rsr"))){	
-			    try{
-			    	File fileToImport = fc.getSelectedFile();
-					this.addTexture(fileToImport);
-			    }
-			    catch (NullPointerException ex){
-			    	Log.exception(ex);	
-			    }   
-			}
-			else{
-				try{		
-					File fileToImport = fc.getSelectedFile();
-					this.addTextureJar(fileToImport);
-				}
-				catch(NullPointerException ex){
-			    	Log.exception(ex);				
-				}
-			}
-	    }
+		if(returnVal == JFileChooser.APPROVE_OPTION) {	
+		    try{
+		    	File fileToImport = fc.getSelectedFile();
+				this.addTexture(fileToImport);
+		    }
+		    catch (NullPointerException ex){
+		    	Log.exception(ex);	
+		    }  
+		}
 	}
 	
 	/**
@@ -297,24 +244,12 @@ public class TextureController implements ActionListener,MouseListener, Observer
    }
    
    /**
-    * Delete a File and call the right function
+    * Delete a File 
     * @return file to be deleted
     */
    public String deleteFile(){
-	   if(!(classPath.subSequence(0, 3).equals("rsr"))){
-		   File fullDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
-		   fullDimension.delete();
-		   fileToDelete=fileToDelete.replace("Textures/Full/", "Textures/");
-		   fileToDelete=fileToDelete.replace("Full", "");
-		   File miniDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
-		   miniDimension.delete();
-		   fileToDelete =fileToDelete.replace("Textures/", "");
-		   return fileToDelete;
-	   }
-	   else{
-		   deleteLineInFile(fileToDelete+".png");
-		   return fileToDelete;
-	   }
+	   deleteLineInFile(fileToDelete+".png");
+	   return fileToDelete;
    }
 	
 	@Override
