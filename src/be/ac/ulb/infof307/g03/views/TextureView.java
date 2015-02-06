@@ -336,13 +336,9 @@ public class TextureView extends JPanel implements ItemListener {
 	private void update(){
 		textureList = new JList(this.textureFiles.toArray());
         textureList.setCellRenderer(new ColorCellRenderer());
-        java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run(){
-		        texturesPanel.removeAll();
-		        texturesPanel.add(textureList);
-				texturesPanel.updateUI();
-			}
-		});
+        texturesPanel.removeAll();
+        texturesPanel.add(textureList);
+		texturesPanel.updateUI();
 		textureList.addMouseListener(this.controller);
 	}
 	
@@ -452,7 +448,7 @@ public class TextureView extends JPanel implements ItemListener {
 	            boolean selected,
 	            boolean expanded) {
 	    	String prefix = "/";
-	    	Icon imageIcon;
+	    	Icon imageIcon = null;
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
 	    		if (list.equals(textureList)){
 	    			if (!(value.toString()==ADDTEXTURE)){
@@ -489,7 +485,7 @@ public class TextureView extends JPanel implements ItemListener {
 	    		}
 	    		
 	    	}
-	        _label.setIcon(imageIcon);	        
+	        _label.setIcon(imageIcon);
 	        if (value.toString().contains("/")){
 		        // If the filename contains / , it means it's a path so we want just the end of it
 	        	String name="";
