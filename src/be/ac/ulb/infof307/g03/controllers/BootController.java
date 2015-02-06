@@ -15,10 +15,9 @@ import be.ac.ulb.infof307.g03.utils.Log;
  * This class will try to open the last projet.
  */
 public class BootController {
-
 	
 	static final private String LAST_PROJECT = "LastOpenedProject";
-	private Preferences prefs; 
+	private Preferences prefs = null; 
 	
 	/**
 	 * Constructor of the class Bootcontroller

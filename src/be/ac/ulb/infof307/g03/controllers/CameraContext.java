@@ -45,7 +45,7 @@ public class CameraContext implements AnalogListener, ActionListener, Observer {
 	static private final String ROTATELEFT 	= "RotateLeft";
 	static private final String ROTATERIGHT	= "RotateRight";
 	
-    // Carera mode alias
+    // Camera mode alias
 	static private final String MODE_DRAGROTATE = "dragRotate";
     static private final String MODE_DRAGSELECT = "dragSelect";
     static private final String MODE_DRAGMOVE = "dragMove";
@@ -54,40 +54,40 @@ public class CameraContext implements AnalogListener, ActionListener, Observer {
     private boolean canMove	= false;
     private boolean canRotate	= false;
 	
-	private CameraController state;
+	private CameraController controller;
 	private InputManager inputManager;
-	private WorldView wv;
+	private WorldView worldView;
 	private Vector3f previousMousePosition;
-	private Camera cam;
+	private Camera camera;
 	private String mouseMode;
 	
 	/**
-	 * @param proj
-	 * @param cam
+	 * @param projet
+	 * @param camera
 	 * @param interManager
-	 * @param wv
+	 * @param worldView
 	 */
-	public CameraContext(Project proj, Camera cam, InputManager interManager, WorldView wv){
-		proj.addObserver(this);
-		this.cam = cam;
+	public CameraContext(Project projet, Camera camera, InputManager interManager, WorldView worldView){
+		projet.addObserver(this);
+		this.camera = camera;
 		this.inputManager = interManager;
-		this.wv = wv;
+		this.worldView = worldView;
 		inputSetUp();
-		String camMode = proj.config("camera.mode");
+		String camMode = projet.config("camera.mode");
 		if (camMode.isEmpty()){
 			camMode = "2D";
-			proj.config("camera.mode", camMode);
+			projet.config("camera.mode", camMode);
 		}
-		updateState(camMode);
-		this.mouseMode = proj.config("mouse.mode");
+		updateController(camMode);
+		this.mouseMode = projet.config("mouse.mode");
 	}
 	
-	CameraController getState() {
-		return this.state;
+	CameraController getcontroller() {
+		return this.controller;
 	}
 	
-	void setState(CameraController state) {
-		this.state = state;
+	void setcontroller(CameraController controller) {
+		this.controller = controller;
 	}
 
 	/**
@@ -96,8 +96,8 @@ public class CameraContext implements AnalogListener, ActionListener, Observer {
 	 */
 	private Vector3f mouseOnGroundCoords() {
 		Vector2f click2d = this.inputManager.getCursorPosition();
-		Vector3f click3d = this.cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
-		Vector3f dir = this.cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+		Vector3f click3d = this.camera.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
+		Vector3f dir = this.camera.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
 		float mul = click3d.z / dir.z;
 		return new Vector3f(click3d.x - (mul*dir.x),click3d.y - (mul*dir.y),0);
 	}
@@ -157,21 +157,21 @@ public class CameraContext implements AnalogListener, ActionListener, Observer {
 	 */
 	private void clickAndGrab(float value,Vector3f axis) {
 		if (this.canMove) {
-			this.state.moveCameraByGrab(this.previousMousePosition, mouseOnGroundCoords());
+			this.controller.moveCameraByGrab(this.previousMousePosition, mouseOnGroundCoords());
 			this.previousMousePosition = mouseOnGroundCoords();
 		} else if (this.canRotate) { 
-			this.state.rotateCameraByGrab(value,axis);
+			this.controller.rotateCameraByGrab(value,axis);
 		}
 	}
 	
-	private void updateState(String value) {
-		Log.debug("[DEBUG] CameraContext state updated : " + value);
+	private void updateController(String value) {
+		Log.debug("[DEBUG] CameraContext controller updated : " + value);
 		if (value.equals("2D")) {
-			setState(new Camera2D(this.cam));
+			setcontroller(new Camera2D(this.camera));
 		} else if (value.equals("3D")) {
-			setState(new Camera3D(this.cam));
+			setcontroller(new Camera3D(this.camera));
 		}
-		this.state.resetCamera(this.wv);
+		this.controller.resetCamera(this.worldView);
 	}
 	
 	@Override
@@ -193,29 +193,29 @@ public class CameraContext implements AnalogListener, ActionListener, Observer {
 	@Override
 	public void onAnalog(String name, float value, float tpf) {
 		if (name.equals(STRAFERIGHT)) {
-			this.state.moveCamera(-value,false);
+			this.controller.moveCamera(-value,false);
 		} else if (name.equals(STRAFELEFT)) {
-			this.state.moveCamera(value,false);
+			this.controller.moveCamera(value,false);
 		} else if (name.equals(FORWARD)) {
-			this.state.moveCamera(value,true);
+			this.controller.moveCamera(value,true);
 		} else if (name.equals(BACKWARD)) {
-			this.state.moveCamera(-value,true);
+			this.controller.moveCamera(-value,true);
 		} else if (name.equals(LEFT)) {
-			clickAndGrab(-value, this.cam.getUp());
+			clickAndGrab(-value, this.camera.getUp());
 		} else if (name.equals(RIGHT)) {
-			clickAndGrab(value, this.cam.getUp());
+			clickAndGrab(value, this.camera.getUp());
 		} else if (name.equals(UP)) {
-			clickAndGrab(value, this.cam.getLeft());
+			clickAndGrab(value, this.camera.getLeft());
 		} else if (name.equals(DOWN)) {
-			clickAndGrab(-value, this.cam.getLeft());
+			clickAndGrab(-value, this.camera.getLeft());
 		} else if (name.equals(ROTATELEFT)) {
-			this.state.rotateCamera(value,true);
+			this.controller.rotateCamera(value,true);
 		} else if (name.equals(ROTATERIGHT)) {
-			this.state.rotateCamera(-value,false);
+			this.controller.rotateCamera(-value,false);
 		} else if (name.equals(ZOOMIN)) {
-			this.state.zoomCamera(-value);
+			this.controller.zoomCamera(-value);
 		} else if (name.equals(ZOOMOUT)) {
-			this.state.zoomCamera(value);
+			this.controller.zoomCamera(value);
 		}
 	}
 	
@@ -226,7 +226,7 @@ public class CameraContext implements AnalogListener, ActionListener, Observer {
 		if (obs instanceof Project){
 			Config param = (Config) arg;
 			if (param.getName().equals("camera.mode")) {
-				updateState(param.getValue());
+				updateController(param.getValue());
 			} else if (param.getName().equals("mouse.mode")){
 				Log.info("Change mouse mode to %s", param.getValue());
 				this.mouseMode = param.getValue();

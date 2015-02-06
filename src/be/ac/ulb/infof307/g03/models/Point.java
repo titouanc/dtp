@@ -113,6 +113,12 @@ public class Point extends Geometric {
 		this.z = z;
 	}
 	
+	public void setPosition(Vector3f v){
+		this.x = v.getX();
+		this.y = v.getY();
+		this.z = v.getZ();
+	}
+	
 	/**
 	 * Select point
 	 */
