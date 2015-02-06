@@ -12,6 +12,7 @@ import com.jme3.system.JmeCanvasContext;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.MainPaneView;
+import be.ac.ulb.infof307.g03.views.WorldView;
 
 /**
  * @author fhennecker, pierre
@@ -20,7 +21,7 @@ import be.ac.ulb.infof307.g03.views.MainPaneView;
  */
 public class MainPaneController {
 	private MainPaneView view;
-	private WorldController world;
+	private WorldView world;
 	private Project project;
 	
 	/**
@@ -37,7 +38,7 @@ public class MainPaneController {
         settings.setUseInput(true);
         settings.setSamples(4); // enables antialiasing
         // Create jme3 canvas
-        this.world = new WorldController(settings, project);
+        this.world = new WorldView(project, settings);
 	}
 	
 	/**
@@ -46,18 +47,18 @@ public class MainPaneController {
 	 */
 	public void run(){
 		
-		this.world.run();
+		this.world.createCanvas();
 		
         // Set up event listener
-        JmeCanvasContext context = (JmeCanvasContext) this.world.getViewContext();
-        context.setSystemListener(this.world.getView());
+        JmeCanvasContext context = (JmeCanvasContext) this.world.getContext();
+        context.setSystemListener(this.world);
         
         // Set up resize behavior
         Dimension jme3Dimension = new Dimension(640, 480);
         context.getCanvas().setMinimumSize(jme3Dimension);
         context.getCanvas().setPreferredSize(jme3Dimension);
         // Start jme3 canvas
-        this.world.startViewCanvas();
+        //this.world.startViewCanvas();
         
 		// Creating the MainPaneView, with the jMonkey Canvas we just created
 		initView(this.project, context);
@@ -70,10 +71,6 @@ public class MainPaneController {
 	 */
 	public void initView(Project project, JmeCanvasContext context){
 		this.view = new MainPaneView(this, project, context.getCanvas());
-	}
-	
-	public WorldController getWc(){
-		return this.world;
 	}
 	
 	/**
