@@ -30,13 +30,13 @@ public class FileChooserView {
 	    this.chooserProject.setFileFilter(filterProject);
 	    
 	    this.chooserImport = new JFileChooser();
-	    FileNameExtensionFilter filterImportObj = new FileNameExtensionFilter("Obj Object", "obj");
+	    FileNameExtensionFilter filterImportObj = new FileNameExtensionFilter("Wavefront file (.obj)", "obj");
 	    this.chooserImport.setFileFilter(filterImportObj);
-	    FileNameExtensionFilter filterImportDae = new FileNameExtensionFilter("DAE Object", "dae");
+	    FileNameExtensionFilter filterImportDae = new FileNameExtensionFilter("COLLADA file (.dae)", "dae");
 	    this.chooserImport.setFileFilter(filterImportDae);
-	    FileNameExtensionFilter filterImport3ds = new FileNameExtensionFilter("3DS Object", "3ds");
+	    FileNameExtensionFilter filterImport3ds = new FileNameExtensionFilter("Autodesk 3ds Max file (.3ds)", "3ds");
 	    this.chooserImport.setFileFilter(filterImport3ds);
-	    FileNameExtensionFilter filterImportKmz = new FileNameExtensionFilter("KMZ Object", "kmz");
+	    FileNameExtensionFilter filterImportKmz = new FileNameExtensionFilter("Keyhole Markup Language Archive (.kmz)", "kmz");
 	    this.chooserImport.setFileFilter(filterImportKmz);
 	}
 	

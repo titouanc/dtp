@@ -91,7 +91,6 @@ public class ObjectListView extends JList implements Observer {
 			} else if (cmd.equals(_INSERT)) {
 				_controller.onInsertAction(selectedEntity);
 			} else if (cmd.equals(_EXPORT)) {
-				System.out.println("Woué");
 				displayExport(null); // TODO trouvé un parent autre que null
 			}
 		}

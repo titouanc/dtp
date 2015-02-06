@@ -51,7 +51,7 @@ public class MenuBarView extends JMenuBar {
         // Separator
         menu.addSeparator();
         // Build Import Action
-        menu.add(createMenuItem("Import", KeyEvent.VK_S, MenuBarController.IMPORT, "Import an object."));
+        menu.add(createMenuItem("Import", KeyEvent.VK_I, MenuBarController.IMPORT, "Import an object."));
         // Separator
         menu.addSeparator();
         // Build Quit action
