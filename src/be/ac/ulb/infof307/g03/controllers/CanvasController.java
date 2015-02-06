@@ -93,14 +93,14 @@ public abstract class CanvasController {
      * @param Z
      * @return Vector of coordinates
      */
-	public Vector2f getXYForMouse(float Z){
+	public Vector3f getXYForMouse(float Z){
     	Ray ray = getRayForMousePosition();
         Vector3f pos = ray.getOrigin();
         Vector3f dir = ray.getDirection();
         /* Get the position of the point along the ray, given its Z coordinate */
         float t = (Z - pos.getZ())/dir.getZ();
         Vector3f onPlane = pos.add(dir.mult(t));
-        return new Vector2f(onPlane.getX(),onPlane.getY());
+        return new Vector3f(onPlane.getX(),onPlane.getY(), Z);
     }
     
     protected void deselectAll() {

@@ -6,12 +6,9 @@ import java.util.Observer;
 
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Entity;
-import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.Geometric;
 import be.ac.ulb.infof307.g03.models.GeometryDAO;
-import be.ac.ulb.infof307.g03.models.Item;
 import be.ac.ulb.infof307.g03.models.Meshable;
-import be.ac.ulb.infof307.g03.models.Point;
 import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
@@ -22,15 +19,22 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 
+/**
+ * @author julianschembri
+ *
+ */
 public class ObjectController extends CanvasController implements Observer {
 	private Vector2f savedCenter = null;
 	private Primitive builtPrimitive = null;
 	private Entity currentEntity = null;
 	private boolean leftClickPressed = false;
 	
+	/**
+	 * @param view
+	 * @param appSettings
+	 */
 	public ObjectController(WorldView view, AppSettings appSettings){
 		super(view, appSettings);
 
@@ -47,7 +51,8 @@ public class ObjectController extends CanvasController implements Observer {
 	}
 
 	private void updateShapeDisplay(boolean finalUpdate) {
-    	Vector2f currPos = getXYForMouse(0);
+    	Vector3f mousePos = getXYForMouse(0);
+    	Vector2f currPos = new Vector2f(mousePos.x,mousePos.y);
     	float dist = currPos.distance(this.savedCenter);
 		float dn = dist / FastMath.pow(3, 0.3333f);
     	this.builtPrimitive.setScale(new Vector3f(dn,dn,dn));
@@ -66,7 +71,6 @@ public class ObjectController extends CanvasController implements Observer {
 			Log.exception(ex);
 		}
     	
-    	
     	if (finalUpdate){
     		this.builtPrimitive = null;
     		this.savedCenter = null;
@@ -74,12 +78,15 @@ public class ObjectController extends CanvasController implements Observer {
  
     }
 	
+	/**
+	 * @param finalMove
+	 */
 	public void dropMovingPrimitive(boolean finalMove) {
     	Primitive movingPrimitive = (Primitive) movingGeometric;
     	if (movingPrimitive == null)
     		return;
     	
-    	Vector2f v = getXYForMouse(0);
+    	Vector3f v = getXYForMouse(0);
     	movingPrimitive.setTranslation(new Vector3f(v.x,v.y,movingPrimitive.getTranslation().z));
 
     	try {
@@ -93,21 +100,29 @@ public class ObjectController extends CanvasController implements Observer {
     	}
     }
 	
+	/**
+	 * Select a primitive
+	 * @param primitive
+	 */
 	public void selectPrimitive(Primitive primitive) {
 		try {
 			primitive.toggleSelect();
 			GeometryDAO dao = this.project.getGeometryDAO();
 			dao.update(primitive);
 			dao.notifyObservers(primitive);
-			Vector3f center = primitive.getTranslation();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 	}
 	
+	/**
+	 * Create the shape
+	 * @param type Describe the shape render
+	 */
 	public void initShape(String type) {
-		this.savedCenter = getXYForMouse(0f);
+		Vector3f mousePos = getXYForMouse(0f);
+		this.savedCenter = new Vector2f(mousePos.x,mousePos.y);
 		try {
 			GeometryDAO dao = this.project.getGeometryDAO();
 			this.builtPrimitive = new Primitive(this.currentEntity,type);

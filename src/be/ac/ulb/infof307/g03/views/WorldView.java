@@ -11,8 +11,6 @@ import java.util.Observer;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 
-import org.hamcrest.core.IsInstanceOf;
-
 import be.ac.ulb.infof307.g03.controllers.CameraContext;
 import be.ac.ulb.infof307.g03.controllers.CanvasController;
 import be.ac.ulb.infof307.g03.controllers.ObjectController;
@@ -20,7 +18,6 @@ import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
@@ -38,7 +35,6 @@ import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -71,8 +67,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	
 	/**
 	 * WorldView's Constructor
-	 * @param newController The view's controller
-	 * @param model The DAO pattern model class
+	 * @param project Model of the view.
+	 * @param settings Settings of the SimpleApplication
 	 */
 	public WorldView(Project project, AppSettings settings){
 		super();
@@ -89,6 +85,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		this.project.addObserver(this);
 	}
 	
+	/**
+	 * @return The model
+	 */
 	public Project getProject() {
 		return this.project;
 	}
@@ -135,6 +134,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		rootNode.addLight(ambient);
 	}
 	
+	/**
+	 * @return The shapes of the 3D environment
+	 */
 	public Vector<Geometry> getShapes(){
 		shapes = new Vector<Geometry>();
 		this.generateShapesList(rootNode);
@@ -217,6 +219,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	    });
 	}
 	
+	/**
+	 * Draw the 3D scene from an entity
+	 * @param entity The entity to display
+	 */
 	public void makeScene(final Entity entity) {
 		enqueue(new Callable<Object>() {
 	        public Object call() {
@@ -377,7 +383,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 						if (change.getItem() instanceof Primitive) {
 							Meshable meshable = (Meshable) change.getItem();
 							Spatial node = rootNode.getChild(meshable.getUID());
-							Node parent = rootNode;
 							if (node != null){
 								node.getParent().detachChild(node);
 							}
@@ -395,6 +400,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 	}
 
+	/**
+	 * Set up all the key event
+	 * @param inputManager 
+	 */
 	public void inputSetUp(InputManager inputManager){
 		// Mouse event mapping
 		inputManager.addMapping(RIGHTCLICK, 	new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
