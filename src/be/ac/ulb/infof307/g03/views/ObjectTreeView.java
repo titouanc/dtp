@@ -190,7 +190,6 @@ public class ObjectTreeView extends JTree implements Observer {
 				dao.update(primitive);
 				dao.notifyObservers(primitive);
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -492,6 +491,7 @@ public class ObjectTreeView extends JTree implements Observer {
 			}
 			/* Creation: insert in right place in tree */
 			else if (change.isCreation() && ! this.nodes.containsKey(changed.getUID())){
+				Log.debug("Tree view create node for %s", changed.getUID());
 				if (! isShown(changed))
 					continue;
 				
@@ -506,8 +506,9 @@ public class ObjectTreeView extends JTree implements Observer {
 				if (changed instanceof Room){
 					Room room = (Room) changed;
 					parentNode = this.nodes.get(room.getFloor().getUID());
-					parentNode.add(newNode);
-					refreshUI(parentNode);
+				} else if (changed instanceof Item){
+					Item item = (Item) changed;
+					parentNode = this.nodes.get(item.getFloor().getUID());
 				}
 				
 				parentNode.add(newNode);
@@ -526,6 +527,7 @@ public class ObjectTreeView extends JTree implements Observer {
 			item instanceof Floor ||
 			item instanceof Room  ||
 			item instanceof Area  ||
+			item instanceof Item  ||
 			item instanceof Primitive
 		);
 	}

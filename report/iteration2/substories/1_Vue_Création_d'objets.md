@@ -2,4 +2,4 @@
 
 Il faut rajouter une autre vue 3D que celle de l'éditeur principal, dans laquelle on peut créer des objets, et les modifier.
 
-**Statut: TODO** | **Remarques:** 
+**Statut: fait** | **Remarques:** 

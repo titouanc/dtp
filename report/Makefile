@@ -32,7 +32,7 @@ pv:
 	make -C $@
 
 clean:
-	rm -f report.aux report.log stories.*
+	rm -f report.aux report.log stories.aux stories.log stories.pdf
 	make -C iteration1 clean
 	make -C iteration2 clean
 	make -C pv clean
