@@ -137,22 +137,30 @@ public class TextureView extends JPanel implements ItemListener {
       }
     
     /**
+     * Get the name of the jar currently running so we don't need to hardcode it
+     * @return the name of the JAR currently reunning
+     */
+    private String getRunningJarName(){
+    	String name = this.getClass().getResource(this.getClass().getSimpleName() + ".class").getFile();
+    	name = ClassLoader.getSystemClassLoader().getResource(name).getFile();
+    	name=name.substring(0, name.lastIndexOf('!'));
+	    int start = name.lastIndexOf('/') + 1;
+	    int end = name.lastIndexOf('.');
+	    name = name.substring(start, end)+".jar";
+	    return name ;
+    }
+    
+    /**
      * Parse Jar File and add textures files to the right list
      */
     private void addFilesJar(){
     	JarFile jarFile;
 		String filename;
 		String file;
-		//String path = TextureView.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		try { // first we will check all the files that the jar contents
-			String path = this.getClass().getResource(this.getClass().getSimpleName() + ".class").getFile();
-		    path = ClassLoader.getSystemClassLoader().getResource(path).getFile();
-		    path=path.substring(0, path.lastIndexOf('!'));
-		    int start = path.lastIndexOf('/') + 1;
-		    int end = path.lastIndexOf('.');
-		    path = path.substring(start, end)+".jar";	    
+			String path = getRunningJarName() ;	    
 			jarFile = new JarFile(path);
-		    Enumeration item = jarFile.entries();
+		    Enumeration<JarEntry> item = jarFile.entries();
 		    while (item.hasMoreElements()) {
 		    	file=process(item.nextElement());
 		    	if (file.contains("Color") && !(file.contains(File.separator))){
@@ -476,9 +484,18 @@ public class TextureView extends JPanel implements ItemListener {
 	    		}
 	    		
 	    	}
-	        _label.setIcon(imageIcon);
-	        _label.setText(value.toString());
-	        //label.setToolTipText();
+	        _label.setIcon(imageIcon);	        
+	        if (value.toString().contains("/")){
+		        // If the filename contains / , it means it's a path so we want just the end of it
+	        	String name="";
+	        	int start = value.toString().lastIndexOf('/') + 1;
+	        	name=value.toString().substring(start);
+	        	name=name.toString().replace("Full","");
+	        	_label.setText(name);
+	        }
+	        else{
+	        	_label.setText(value.toString());
+	        }
 
 	        if (selected) {
 	            _label.setBackground(_backgroundSelectionColor);
