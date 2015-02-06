@@ -60,6 +60,10 @@ public class MenuBarController implements ActionListener {
 	 * About alias
 	 */
 	static public final String ABOUT = "about";
+	/**
+	 * Import object
+	 */
+	static public final String IMPORT = "import";
 	
 	/**
 	 * Constructor of MenuBarController.
@@ -134,6 +138,15 @@ public class MenuBarController implements ActionListener {
 	public void onSaveAs() {
 		this.fileController.notifyDisplaySaveAs();
 	}
+	
+	/**
+	 * Handler launched when menu item "Import" is clicked
+	 */
+	public void onImport() {
+		this.fileController.notifyDisplayImport();
+	}
+	
+	
 	
 	/**
 	 * Handler launched when menu item "Quit" is clicked
@@ -218,6 +231,8 @@ public class MenuBarController implements ActionListener {
 			onTools();
 		}else if(cmd.equals(ABOUT)) {
 			onAbout();
+		}else if(cmd.equals(IMPORT)) {
+			onImport();
 		}
 	} 
 }
