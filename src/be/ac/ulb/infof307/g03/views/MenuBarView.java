@@ -50,6 +50,10 @@ public class MenuBarView extends JMenuBar {
         menu.add(createMenuItem("Save As", KeyEvent.VK_A , MenuBarController.SAVE_AS, "Save the current project as a new file."));
         // Separator
         menu.addSeparator();
+        // Build Import Action
+        menu.add(createMenuItem("Import", KeyEvent.VK_I, MenuBarController.IMPORT, "Import an object."));
+        // Separator
+        menu.addSeparator();
         // Build Quit action
         menu.add(createMenuItem("Quit", KeyEvent.VK_Q, MenuBarController.QUIT, "Quit HomePlans application."));    
         

@@ -1,19 +1,29 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
@@ -80,6 +90,8 @@ public class ObjectListView extends JList implements Observer {
 				_controller.onDeleteAction(selectedEntity);
 			} else if (cmd.equals(_INSERT)) {
 				_controller.onInsertAction(selectedEntity);
+			} else if (cmd.equals(_EXPORT)) {
+				displayExport(null); // TODO trouvé un parent autre que null
 			}
 		}
 		
@@ -87,15 +99,20 @@ public class ObjectListView extends JList implements Observer {
 	
 	private ObjectListController _controller = null;
 	private GeometryDAO _dao = null;
+	private JFileChooser chooser;
 	
 	private static final String _NEW = "PAL_new";
 	private static final String _RENAME = "PAL_rename";
 	private static final String _EDIT = "PAL_edit";
 	private static final String _DELETE = "PAL_delete";
 	private static final String _INSERT = "PAL_insert";
+	private static final String _EXPORT = "PAL_export";
+	
+	JFrame frameExport;
 	
 	public ObjectListView(ObjectListController controller, Project project) {
 		super();
+		this.chooser = new JFileChooser();
 		_controller = controller;
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setLayoutOrientation(JList.VERTICAL_WRAP);
@@ -129,6 +146,8 @@ public class ObjectListView extends JList implements Observer {
 	public JPopupMenu createPopupMenu(){
 		PopupActionListener listener = new PopupActionListener();
 		JPopupMenu res = new JPopupMenu();
+		res.add(createPopupMenuItem("Export ..", _EXPORT, listener));
+		res.add(new JPopupMenu.Separator());
 		res.add(createPopupMenuItem("New", _NEW, listener));
 		res.add(new JPopupMenu.Separator());
 		res.add(createPopupMenuItem("Rename", _RENAME, listener));
@@ -159,5 +178,93 @@ public class ObjectListView extends JList implements Observer {
 		if (mustRedraw) {
 			createList();
 		}
+	}
+	
+	class FormatButtonListener implements ItemListener {
+		 
+        public void itemStateChanged(ItemEvent ev) {
+            AbstractButton button = (AbstractButton) ev.getItemSelectable();
+            String command = button.getActionCommand();
+            if (command.equals("OBJ")) {
+                displayExport(null,"obj"); //TODO trouvé un parent mieux que null
+            } else if (command.equals("DAE")) {
+            	displayExport(null,"dae"); //TODO trouvé un parent mieux que null
+            } else if (command.equals("3DS")) {
+            	displayExport(null,"3ds"); //TODO trouvé un parent mieux que null
+            } else if (command.equals("KMZ")) {
+            	displayExport(null,"kmz"); //TODO trouvé un parent mieux que null
+            }
+            frameExport.setVisible(false);
+        }
+    }
+
+
+
+	
+	/**
+	 * @param parent The parent of the frame/window where you choose the extension
+	 */
+	public void displayExport(Component parent){
+	    // creates radio button and set corresponding action
+	    // commands
+		frameExport = new JFrame("Export Format");
+		
+		
+		// format OBJ, DAE, 3DS, KMZ
+		
+	    JRadioButton objButton = new JRadioButton("OBJ");
+	    objButton.setActionCommand("OBJ");
+
+	    JRadioButton daeButton = new JRadioButton("DAE");
+	    daeButton.setActionCommand("DAE");
+
+	    JRadioButton dsButton = new JRadioButton("3DS");
+	    dsButton.setActionCommand("3DS");
+	    
+	    JRadioButton kmzButton = new JRadioButton("KMZ");
+	    kmzButton.setActionCommand("KMZ");
+
+	    // add event handler
+	    FormatButtonListener myItemListener = new FormatButtonListener();
+	    objButton.addItemListener(myItemListener);
+	    daeButton.addItemListener(myItemListener);
+	    dsButton.addItemListener(myItemListener);
+	    kmzButton.addItemListener(myItemListener);
+
+	    // add radio buttons to a ButtonGroup
+	    final ButtonGroup group = new ButtonGroup();
+	    group.add(objButton);
+	    group.add(daeButton);
+	    group.add(kmzButton);
+
+	    // Frame setting
+	    //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    
+	    frameExport.setSize(300, 200);
+	    Container cont = frameExport.getContentPane();
+
+	    cont.setLayout(new GridLayout(0, 1));
+	    cont.add(new JLabel("Please choose the export format:"));
+	    cont.add(objButton);
+	    cont.add(daeButton);
+	    cont.add(dsButton);
+	    cont.add(kmzButton);
+
+	    frameExport.setVisible(true);
+		
+		
+	}
+	
+	/**
+	 * @param parent The parent of the frame/window
+	 * @param extension The extension of the file to be exported
+	 */
+	public void displayExport(Component parent, String extension){
+		this.chooser.setSelectedFile(new File("*." + extension));
+	    int returnVal = this.chooser.showDialog(parent, "Export As..");
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	    	this._controller.exportAs(this.chooser.getSelectedFile(), extension);
+	    }
+		
 	}
 }
