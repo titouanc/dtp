@@ -10,7 +10,6 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.MainPaneView;
 
 /**
@@ -72,6 +71,9 @@ public class MainPaneController {
 		this.view = new MainPaneView(this, project, context.getCanvas());
 	}
 	
+	/**
+	 * @return WorldController
+	 */
 	public WorldController getWc(){
 		return this.world;
 	}

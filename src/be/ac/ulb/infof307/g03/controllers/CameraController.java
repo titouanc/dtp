@@ -12,6 +12,9 @@ import com.jme3.renderer.Camera;
 public abstract class CameraController {
 	protected Camera cam;
 	
+	/**
+	 * @param newCam New cam to be set.
+	 */
 	public CameraController(Camera newCam) {
 		this.cam = newCam;
 	}

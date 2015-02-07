@@ -57,10 +57,17 @@ public class ObjectListController implements MouseListener, Observer {
 		this.view = new ObjectListView(this, project);
 	}
 	
+	/**
+	 * @return The controller view.
+	 */
 	public ObjectListView getView() {
 		return this.view;
 	}
 	
+	/**
+	 * When user click on New.
+	 * @param name The name of the new object to be created.
+	 */
 	public void onNewAction(String name) {
 		if (name != null) {
 			Entity entity = new Entity(name);
@@ -75,6 +82,10 @@ public class ObjectListController implements MouseListener, Observer {
 		}
 	}
 	
+	/**
+	 * When user click on delete.
+	 * @param entity The entity to be deleted
+	 */
 	public void onDeleteAction(Entity entity) {
 		if (this.project.config("edition.mode").equals("object")) {
 			if (this.project.config("entity.current").equals(entity.getUID())) {
