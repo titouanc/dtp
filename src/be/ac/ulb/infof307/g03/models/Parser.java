@@ -23,4 +23,5 @@ public abstract class Parser {
 	 */
 	public abstract List getNormals();
 
+	
 }
