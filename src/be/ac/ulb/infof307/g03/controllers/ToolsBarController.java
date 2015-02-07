@@ -49,8 +49,8 @@ public class ToolsBarController implements ActionListener, Observer {
 	static final public String CYLINDER = "TB_Cylinder";
 	
 	// Edition mode alias
-	static final private String WORLDMODE = "world";
-	static final private String OBJECTMODE = "object";
+	static final public String WORLDMODE = "world";
+	static final public String OBJECTMODE = "object";
 	
 	private String currentObjectMode = null;
 	

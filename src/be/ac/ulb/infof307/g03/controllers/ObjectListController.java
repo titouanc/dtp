@@ -101,6 +101,10 @@ public class ObjectListController implements MouseListener, Observer {
 		}
 	}
 	
+	/**
+	 * @param entity The entity to be renamed
+	 * @param newName The new name of the entity
+	 */
 	public void onRenameAction(Entity entity, String newName) {
 		if (newName != null) {
 			entity.setName(newName);
@@ -113,6 +117,9 @@ public class ObjectListController implements MouseListener, Observer {
 		}
 	}
 
+	/**
+	 * @param entity The entity to be edited
+	 */
 	public void onEditAction(Entity entity) {
 		this.project.config("entity.current", entity.getUID());
 		this.project.config("edition.mode", "object");

@@ -31,10 +31,20 @@ import be.ac.ulb.infof307.g03.utils.Log;
  */
 public class ObjectListView extends JList implements Observer {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	class MyCellRenderer extends JLabel implements ListCellRenderer {
 	     //final static ImageIcon longIcon = new ImageIcon("long.gif");
 	     //final static ImageIcon shortIcon = new ImageIcon("short.gif");
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		/**
 		 * This is the only method defined by ListCellRenderer.
 		 * We just reconfigure the JLabel each time we're called.
@@ -94,6 +104,10 @@ public class ObjectListView extends JList implements Observer {
 	private static final String _DELETE = "PAL_delete";
 	private static final String _INSERT = "PAL_insert";
 	
+	/**
+	 * @param controller The view's controller
+	 * @param project The main project
+	 */
 	public ObjectListView(ObjectListController controller, Project project) {
 		super();
 		_controller = controller;
@@ -126,6 +140,10 @@ public class ObjectListView extends JList implements Observer {
 		return (floor == null) ? "current floor" : floor.toString();
 	}
 	
+	/**
+	 * Create the right click popup menu
+	 * @return the menu selected by the user.
+	 */
 	public JPopupMenu createPopupMenu(){
 		PopupActionListener listener = new PopupActionListener();
 		JPopupMenu res = new JPopupMenu();
@@ -148,7 +166,7 @@ public class ObjectListView extends JList implements Observer {
 	
 	@Override
 	public void update(Observable obs, Object arg) {
-		List<Change> changes = (List<Change>) arg;
+		List<Change> changes = ((List<Change>) arg);
 		boolean mustRedraw = false;
 		for (Change change : changes) {
 			if (change.getItem() instanceof Entity) {

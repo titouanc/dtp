@@ -87,6 +87,10 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		}
 	}
 	
+	/**
+	 * Switch between world mode/objectMode 
+	 * Clear/edit the tree view 
+	 */
 	public void updateEditionMode() {
 		if (this.currentEditionMode.equals(_WORLDMODE)) {
 			System.out.println("[DEBUG] ObjectTree switched to world edition mode.");
@@ -262,6 +266,11 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		}
 	}
 
+	/**
+	 * Set the width of a Wall
+	 * @param wall
+	 * @param userInput
+	 */
 	public void setWidth(Wall wall, String userInput){
 		double width = wall.getWidth();
 		try {
@@ -406,6 +415,10 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		this.dao.notifyObservers();
 	}
 
+	/**
+	 * Duplicate an object
+	 * @param clickedItem The geometric to be duplicated.
+	 */
 	public void duplicate(Geometric clickedItem) {
 		if (clickedItem instanceof Primitive){
 			Primitive original = (Primitive) clickedItem;

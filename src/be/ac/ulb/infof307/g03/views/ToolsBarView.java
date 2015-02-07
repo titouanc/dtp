@@ -281,6 +281,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
      * Constructor of the class ToolsBar.
      * It add property to the bar: Buttons, not floatable, lay out
      * @param newControler The view's controller
+     * @param project The main project
      */
     public ToolsBarView(ToolsBarController newControler, Project project) {
     	super("HomePlan Toolbox");
@@ -308,11 +309,17 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	bg.add(_navigationModule.rotateButton);
     }
     
+    /**
+     * Set world mode selected
+     */
     public void setWorldModeSelected() {
 		Log.debug("Switch to world mode");
     	_navigationModule.worldButton.setSelected(true);
     }
     
+    /**
+     *  Set object mode selected
+     */
     public void setObjectModeSelected() {
     	Log.debug("Switch to object mode");
     	_navigationModule.objectButton.setSelected(true);
@@ -331,20 +338,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	add(_objectEditionModule);
     }
     
-    /**
-     * Create a JButton 
-     * @param label A string to display on the button.
-     * @param action A string who's an action alias.
-     * @param desc A string who describes what happens when the button is pressed.
-     * @return The created button.
-     */
-    private JButton createJButton(String label, String action, String desc) {
-    	JButton button = new JButton(label);
-        button.setActionCommand(action);
-        button.setToolTipText(desc);
-        button.addActionListener(_controller);
-    	return button;
-    }
+
     
     /**
      * Create a JButton 
@@ -391,10 +385,18 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	return button;
     }
     
+    /**
+     * set world edition module visible/ not visible
+     * @param visible
+     */
     public void setWorldEditionModuleVisible(boolean visible) {
     	_worldEditionModule.setVisible(visible);
     }
     
+    /**
+     * set object edition module visible/ not visible
+     * @param visible
+     */
     public void setObjectEditionModuleVisible(boolean visible) {
     	_objectEditionModule.setVisible(visible);
     }
@@ -409,6 +411,10 @@ public class ToolsBarView extends JToolBar implements Observer  {
     	}
  	}
 
+	/**
+	 * set the tool drag/select
+	 * @param b true or false
+	 */
 	public void setDragSelectSelected(boolean b) {
 		_navigationModule.cursorButton.setSelected(b);
 	}

@@ -16,7 +16,6 @@ import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
@@ -55,7 +54,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	/**
 	 * WorldView's Constructor
 	 * @param newController The view's controller
-	 * @param model The DAO pattern model class
+	 * @param project The main project
 	 */
 	public WorldView(WorldController newController, Project project){
 		super();
@@ -116,6 +115,9 @@ public class WorldView extends SimpleApplication implements Observer {
 		rootNode.addLight(ambient);
 	}
 	
+	/**
+	 * @return A shape
+	 */
 	public Vector<Geometry> getShapes(){
 		shapes = new Vector<Geometry>();
 		this.generateShapesList(rootNode);
@@ -199,6 +201,9 @@ public class WorldView extends SimpleApplication implements Observer {
 	    });
 	}
 	
+	/**
+	 * @param entity
+	 */
 	public void makeScene(final Entity entity) {
 		enqueue(new Callable<Object>() {
 	        public Object call() {
@@ -267,6 +272,13 @@ public class WorldView extends SimpleApplication implements Observer {
 		rootNode.attachChild(axisGeo);
 	}
 	
+	/**
+	 * Create the handle around the object for moving it
+	 * @param node The handle node
+	 * @param center The center of the Handle
+	 * @param dir
+	 * @param color Color of the Handle
+	 */
 	public void drawHandles(Node node, Vector3f center, Vector3f dir, ColorRGBA color) {
 		Line axis = new Line(center,center.add(dir));
 		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -336,12 +348,18 @@ public class WorldView extends SimpleApplication implements Observer {
 		makeScene();
 	}
 	
+	/**
+	 * @return true/false world view is created
+	 */
 	public boolean isCreated() {
 		return this.isCreated;
 	}
 
+	/**
+	 * Set the view as created
+	 */
 	public void setCreated() {
-		this.isCreated = !this.isCreated;
+		this.isCreated = !this.isCreated; // TODO = true instead ?
 	}
 	
 	/**

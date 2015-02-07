@@ -7,7 +7,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -29,7 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -56,6 +54,10 @@ public class ObjectTreeView extends JTree implements Observer {
 	 * 
 	 */
 	class ModificationFrame extends JFrame implements ActionListener, PropertyChangeListener {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private Primitive primitive = null;
 		private JFormattedTextField scalex, scaley, scalez, posz, rotx, roty, rotz;
 		private JSlider sliderRotx, sliderRoty, sliderRotz;
@@ -336,6 +338,10 @@ public class ObjectTreeView extends JTree implements Observer {
 		return res;
 	}
 	
+	/**
+	 * Create a tree from the dao
+	 * @throws SQLException
+	 */
 	public void createTree() throws SQLException{
 		Log.debug("createTree");
 		root.removeAllChildren();
@@ -353,6 +359,9 @@ public class ObjectTreeView extends JTree implements Observer {
 		}
 	}
 	
+	/**
+	 * Create the object tree
+	 */
 	public void createObjectTree() {
 		root.removeAllChildren();
 		Entity entity = (Entity) dao.getByUID(project.config("entity.current"));
@@ -365,6 +374,9 @@ public class ObjectTreeView extends JTree implements Observer {
 		}
 	}
 	
+	/**
+	 *  Clear the object tree
+	 */
 	public void clearTree() {
 		Log.debug("clearTree");
 		for (DefaultMutableTreeNode node : this.nodes.values()) {
@@ -383,7 +395,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	/**
 	 * Build a contextual menu for a clicked item
 	 * @param geo
-	 * @return
+	 * @return The pop up menu
 	 */
 	public JPopupMenu createPopupMenu(Geometric geo){
 		if (geo instanceof Binding)
@@ -450,7 +462,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	
 	/**
 	 * @param path
-	 * @return
+	 * @return the selected geometric
 	 */
 	public Geometric getGeometric(TreePath path){
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
