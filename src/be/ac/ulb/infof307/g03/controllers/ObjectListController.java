@@ -1,16 +1,23 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.text.Utilities;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
@@ -128,6 +135,74 @@ public class ObjectListController implements MouseListener, Observer {
 		}
 	}
 	
+	private FileFilter fileFilter(final String extention) {
+		return new FileFilter() {
+
+			@Override
+			public String getDescription() {
+				return extention;
+			}
+
+			@Override
+			public boolean accept(File arg0) {
+				return true;
+			}
+		};
+	}
+	
+	private String getFileName(String fileName) {
+		int pos = fileName.lastIndexOf(".");
+		if (pos > 0) {
+		    return fileName.substring(0, pos);
+		}
+		return fileName;
+	}
+	
+	private String formatFileName(String fileName, String extention) {
+		if (fileName.endsWith(extention)) return fileName;
+		return fileName+extention;
+	}
+	
+	public void onExport(Entity selectedEntity) {
+		FileFilter objFilter = fileFilter(".obj");
+		FileFilter daeFilter = fileFilter(".dae");
+		FileFilter tdsFilter = fileFilter(".3ds");
+		FileFilter kmzFilter = fileFilter(".kmz");
+
+		
+		JFileChooser fileChooser = new JFileChooser(); 
+		fileChooser.setSelectedFile(new File(selectedEntity.getName()+".obj"));
+		
+		fileChooser.addChoosableFileFilter(daeFilter);
+		fileChooser.addChoosableFileFilter(tdsFilter);
+		fileChooser.addChoosableFileFilter(kmzFilter);
+		fileChooser.addChoosableFileFilter(objFilter);
+		
+		PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {	
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+		        if (JFileChooser.FILE_FILTER_CHANGED_PROPERTY.equals(evt.getPropertyName())) {
+		            JFileChooser fileChooser = (JFileChooser) evt.getSource();
+		        	String fileName = fileChooser.getSelectedFile().getName();
+		        	fileChooser.setSelectedFile(new File(getFileName(fileName)+fileChooser.getFileFilter().getDescription()));
+		        }
+		    }
+		};
+		
+		fileChooser.addPropertyChangeListener(propertyChangeListener);
+		int rVal = fileChooser.showSaveDialog(view);
+		
+		if (rVal == JFileChooser.APPROVE_OPTION) {
+			// THIS IS ALL YOU NEED TO SAVE THE FILE
+			System.out.println(fileChooser.getSelectedFile().getName());
+			System.out.println(fileChooser.getFileFilter().getDescription());
+			// USE "formatFileName" TO PREVENT EXTENTION DELETION BY USER
+			System.out.println(formatFileName(fileChooser.getSelectedFile().getName(),fileChooser.getFileFilter().getDescription()));
+			System.out.println(fileChooser.getCurrentDirectory().toString());
+		}
+		
+	}
+	
 	/**
 	 * @return The currently selected floor
 	 */
@@ -179,27 +254,4 @@ public class ObjectListController implements MouseListener, Observer {
 		}
 	}
 	
-	/**
-	 * @param fileToSave The File to create as an export
-	 * @param extension The extension of the file (obj, kmz, ..)
-	 */
-	public void exportAs(File fileToSave,String extension) {
-		Log.info("Export as %s", fileToSave.getName());
-		String filename = fileToSave.getAbsolutePath();
-		
-		if(!filename.endsWith(extension)){
-			filename+=extension;
-		}
-		
-		int dialogResult = JOptionPane.YES_OPTION;
-		if(new File(filename).exists()){
-			int dialogButton = JOptionPane.YES_NO_OPTION;
-			dialogResult = JOptionPane.showConfirmDialog (null,"This project already exists! Would you like you replace it?","Warning",dialogButton);
-		}
-		if(dialogResult == JOptionPane.YES_OPTION){
-				// OPTIONS D EXPORT ICI
-				// TODO Export 
-
-		}
-	}
 }

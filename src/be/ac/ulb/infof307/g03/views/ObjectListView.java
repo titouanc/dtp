@@ -91,7 +91,7 @@ public class ObjectListView extends JList implements Observer {
 			} else if (cmd.equals(_INSERT)) {
 				_controller.onInsertAction(selectedEntity);
 			} else if (cmd.equals(_EXPORT)) {
-				displayExport(null); // TODO trouvé un parent autre que null
+				_controller.onExport(selectedEntity);
 			}
 		}
 		
@@ -180,91 +180,5 @@ public class ObjectListView extends JList implements Observer {
 		}
 	}
 	
-	class FormatButtonListener implements ItemListener {
-		 
-        public void itemStateChanged(ItemEvent ev) {
-            AbstractButton button = (AbstractButton) ev.getItemSelectable();
-            String command = button.getActionCommand();
-            if (command.equals("OBJ")) {
-                displayExport(null,"obj"); //TODO trouvé un parent mieux que null
-            } else if (command.equals("DAE")) {
-            	displayExport(null,"dae"); //TODO trouvé un parent mieux que null
-            } else if (command.equals("3DS")) {
-            	displayExport(null,"3ds"); //TODO trouvé un parent mieux que null
-            } else if (command.equals("KMZ")) {
-            	displayExport(null,"kmz"); //TODO trouvé un parent mieux que null
-            }
-            frameExport.setVisible(false);
-        }
-    }
-
-
-
 	
-	/**
-	 * @param parent The parent of the frame/window where you choose the extension
-	 */
-	public void displayExport(Component parent){
-	    // creates radio button and set corresponding action
-	    // commands
-		frameExport = new JFrame("Export Format");
-		
-		
-		// format OBJ, DAE, 3DS, KMZ
-		
-	    JRadioButton objButton = new JRadioButton("OBJ");
-	    objButton.setActionCommand("OBJ");
-
-	    JRadioButton daeButton = new JRadioButton("DAE");
-	    daeButton.setActionCommand("DAE");
-
-	    JRadioButton dsButton = new JRadioButton("3DS");
-	    dsButton.setActionCommand("3DS");
-	    
-	    JRadioButton kmzButton = new JRadioButton("KMZ");
-	    kmzButton.setActionCommand("KMZ");
-
-	    // add event handler
-	    FormatButtonListener myItemListener = new FormatButtonListener();
-	    objButton.addItemListener(myItemListener);
-	    daeButton.addItemListener(myItemListener);
-	    dsButton.addItemListener(myItemListener);
-	    kmzButton.addItemListener(myItemListener);
-
-	    // add radio buttons to a ButtonGroup
-	    final ButtonGroup group = new ButtonGroup();
-	    group.add(objButton);
-	    group.add(daeButton);
-	    group.add(kmzButton);
-
-	    // Frame setting
-	    //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    
-	    frameExport.setSize(300, 200);
-	    Container cont = frameExport.getContentPane();
-
-	    cont.setLayout(new GridLayout(0, 1));
-	    cont.add(new JLabel("Please choose the export format:"));
-	    cont.add(objButton);
-	    cont.add(daeButton);
-	    cont.add(dsButton);
-	    cont.add(kmzButton);
-
-	    frameExport.setVisible(true);
-		
-		
-	}
-	
-	/**
-	 * @param parent The parent of the frame/window
-	 * @param extension The extension of the file to be exported
-	 */
-	public void displayExport(Component parent, String extension){
-		this.chooser.setSelectedFile(new File("*." + extension));
-	    int returnVal = this.chooser.showDialog(parent, "Export As..");
-	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	    	this._controller.exportAs(this.chooser.getSelectedFile(), extension);
-	    }
-		
-	}
 }
