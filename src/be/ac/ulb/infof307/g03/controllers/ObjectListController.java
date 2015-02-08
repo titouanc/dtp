@@ -137,12 +137,10 @@ public class ObjectListController implements MouseListener, Observer {
 	
 	private FileFilter fileFilter(final String extention) {
 		return new FileFilter() {
-
 			@Override
 			public String getDescription() {
 				return extention;
 			}
-
 			@Override
 			public boolean accept(File arg0) {
 				return true;
@@ -172,6 +170,7 @@ public class ObjectListController implements MouseListener, Observer {
 		
 		JFileChooser fileChooser = new JFileChooser(); 
 		fileChooser.setSelectedFile(new File(selectedEntity.getName()+".obj"));
+		fileChooser.setAcceptAllFileFilterUsed(false);
 		
 		fileChooser.addChoosableFileFilter(daeFilter);
 		fileChooser.addChoosableFileFilter(tdsFilter);
