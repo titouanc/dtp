@@ -12,14 +12,20 @@ import java.util.Vector;
 import java.util.concurrent.Callable;
 
 import be.ac.ulb.infof307.g03.controllers.CameraContext;
+import be.ac.ulb.infof307.g03.controllers.CanvasController;
+import be.ac.ulb.infof307.g03.controllers.ObjectController;
 import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
+import com.jme3.input.MouseInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.MouseAxisTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
@@ -36,32 +42,39 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.system.AppSettings;
 
 /**
  * This class is a jMonkey canvas that can be added in a Swing GUI.
  * @author fhennecker, julianschembri, brochape, Titouan, wmoulart
  */
-public class WorldView extends SimpleApplication implements Observer {	
+public class WorldView extends SimpleApplication implements Observer, ActionListener, AnalogListener {	
 	
 	private Project project = null;
 	private GeometryDAO dao = null;
-	private WorldController controller; 
-	private LinkedList<Change> queuedChanges = null;
+	private CanvasController controller = null; 
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
-	private boolean isCreated = false;
 	private String classPath = getClass().getResource("WorldView.class").toString();
+	private LinkedList<Change> queuedChanges = null;
 	
+	// Input Aliases
+	static private final String RIGHTCLICK 		= "WC_SelectObject";
+	static private final String LEFTCLICK 		= "WC_Select";
+	static private final String LEFT 			= "WC_Left";
+	static private final String RIGHT			= "WC_Right";
+	static private final String UP				= "WC_Up";
+	static private final String DOWN			= "WC_Down";
 	
 	/**
 	 * WorldView's Constructor
-	 * @param newController The view's controller
-	 * @param model The DAO pattern model class
+	 * @param project Model of the view.
+	 * @param settings Settings of the SimpleApplication
 	 */
-	public WorldView(WorldController newController, Project project){
+	public WorldView(Project project, AppSettings settings){
 		super();
-		this.controller = newController;
 		this.project = project;
 		this.queuedChanges = new LinkedList<Change>();
+		this.setSettings(settings);
 		try {
 			this.dao= project.getGeometryDAO();
 			this.dao.addObserver(this);
@@ -70,7 +83,13 @@ public class WorldView extends SimpleApplication implements Observer {
 		}
 		this.setDisplayStatView(false);
 		this.project.addObserver(this);
-
+	}
+	
+	/**
+	 * @return The model
+	 */
+	public Project getProject() {
+		return this.project;
 	}
 	
 	/**
@@ -81,21 +100,20 @@ public class WorldView extends SimpleApplication implements Observer {
 		// !!! cam only exist when this function is called !!!
 		flyCam.setEnabled(false);
 		
+		// Update the edition mode
+		updateController(this.project.config("edition.mode"));
+		
 		// Update the camera mode
 		this.controller.setCameraContext(new CameraContext(this.project,cam,inputManager, this));
-		
-		// Update the edition mode
-		this.controller.updateEditionMode();
 		
 		// Change the default background
 		viewPort.setBackgroundColor(ColorRGBA.White);
 
 		// listen for clicks on the canvas
-		this.controller.inputSetUp(inputManager);
+		this.inputSetUp(inputManager);
 		
 		// Notify our controller that initialisation is done
 		this.setPauseOnLostFocus(false);
-		this.setCreated();		
 		if(!(classPath.subSequence(0, 3).equals("rsr"))){		
 			this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/assets/", FileLocator.class);
 		}
@@ -105,7 +123,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	/**
 	 * Creates a directional light across the whole world. 
 	 */
-	private void _addSun(){
+	private void addSun(){
 		DirectionalLight sun = new DirectionalLight();
 		sun.setColor(ColorRGBA.Gray);
 		sun.setDirection(new Vector3f(-.3f,-.3f,-1f).normalizeLocal());
@@ -116,6 +134,9 @@ public class WorldView extends SimpleApplication implements Observer {
 		rootNode.addLight(ambient);
 	}
 	
+	/**
+	 * @return The shapes of the 3D environment
+	 */
 	public Vector<Geometry> getShapes(){
 		shapes = new Vector<Geometry>();
 		this.generateShapesList(rootNode);
@@ -130,7 +151,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * This methods created the grid and adds it to the background
 	 */
 	private void attachGrid(){
-		
 		//Grid size
 		int gridLength = 1000;
 		int gridWidth = 1000;
@@ -139,7 +159,7 @@ public class WorldView extends SimpleApplication implements Observer {
 		//Sets a material to the grid (needed by jme)
 		Grid grid = new Grid(gridLength,gridWidth,squareSpace);
 		Geometry gridGeo = new Geometry("Grid", grid);
-		gridGeo.setMaterial(_makeBasicMaterial(ColorRGBA.LightGray));
+		gridGeo.setMaterial(makeBasicMaterial(ColorRGBA.LightGray));
 		
 		//The quaternion defines the rotation
 		Quaternion roll90 = new Quaternion(); 
@@ -156,7 +176,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * @param color
 	 * @return The material created
 	 */
-	private Material _makeBasicMaterial(ColorRGBA color){
+	private Material makeBasicMaterial(ColorRGBA color){
 		Material res = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		res.setColor("Color", color);
@@ -173,10 +193,10 @@ public class WorldView extends SimpleApplication implements Observer {
 	    		attachGrid();
 	    		
 	    		//Generate the axes
-	    		_attachAxes();
+	    		attachAxes();
 	    		
 	    		// Add a bit of sunlight into our lives
-	    		_addSun();
+	    		addSun();
 	    		
 	    		try {
 					for (Floor floor : dao.getFloors()){
@@ -199,9 +219,22 @@ public class WorldView extends SimpleApplication implements Observer {
 	    });
 	}
 	
+	/**
+	 * Draw the 3D scene from an entity
+	 * @param entity The entity to display
+	 */
 	public void makeScene(final Entity entity) {
 		enqueue(new Callable<Object>() {
 	        public Object call() {
+	        	//Generates the grid
+	    		attachGrid();
+	    		
+	    		//Generate the axes
+	    		attachAxes();
+	    		
+	    		// Add a bit of sunlight into our lives
+	    		addSun();
+	        	
 	        	drawMeshable(rootNode, entity);
 	            return null;
 	        }
@@ -218,14 +251,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	        	for (Light light : rootNode.getWorldLightList()) {
 					rootNode.removeLight(light);
 				}
-	        	//Generates the grid
-	    		attachGrid();
-	    		
-	    		//Generate the axes
-	    		_attachAxes();
-	    		
-	    		// Add a bit of sunlight into our lives
-	    		_addSun();
 	            return null;
 	        }
 	    });
@@ -234,15 +259,15 @@ public class WorldView extends SimpleApplication implements Observer {
 	/**
 	 * Method used to generate the XYZ Axes
 	 */
-	private void _attachAxes(){
+	private void attachAxes(){
 		Vector3f origin = new Vector3f(0,0,0);
 		Vector3f xAxis = new Vector3f(50,0,0);
 		Vector3f yAxis = new Vector3f(0,50,0);
 		Vector3f zAxis = new Vector3f(0,0,50);
 		
-		_attachAxis(origin, xAxis,ColorRGBA.Red);
-		_attachAxis(origin, yAxis,ColorRGBA.Green);
-		_attachAxis(origin, zAxis,ColorRGBA.Blue);
+		attachAxis(origin, xAxis,ColorRGBA.Red);
+		attachAxis(origin, yAxis,ColorRGBA.Green);
+		attachAxis(origin, zAxis,ColorRGBA.Blue);
 	}
 	
 	private void drawMeshable(Node parent, Meshable meshable){
@@ -257,7 +282,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * @param end End of the vector
 	 * @param color Color of the vector
 	 */
-	private void _attachAxis(Vector3f start, Vector3f end,ColorRGBA color){		
+	private void attachAxis(Vector3f start, Vector3f end,ColorRGBA color){		
 		Line axis = new Line(start,end);
 		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		Geometry axisGeo = new Geometry("Axis", axis);
@@ -266,24 +291,18 @@ public class WorldView extends SimpleApplication implements Observer {
 		mat.setColor("Color", color);
 		rootNode.attachChild(axisGeo);
 	}
-	
-	public void drawHandles(Node node, Vector3f center, Vector3f dir, ColorRGBA color) {
-		Line axis = new Line(center,center.add(dir));
-		Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		Geometry axisGeo = new Geometry("Axis", axis);
-		axisGeo.setMaterial(mat);
-		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-		mat.setColor("Color", color);
-		node.attachChild(axisGeo);
-	}
+
 		
 	/**
 	 * Update view when a Point has changed
 	 * @param change
 	 */
-	private void _updatePoint(Change change){
+	private void updatePoint(Change change){
 		Point point = (Point) change.getItem();
-		Floor floor = this.controller.getCurrentFloor();
+		Floor floor = null;
+		if (this.controller instanceof WorldController) {
+			floor = ((WorldController) this.controller).getCurrentFloor();
+		}
 		rootNode.detachChildNamed(point.getUID());
 		if (point.isSelected()){			
 			Sphere mySphere = new Sphere(32,32, 1.0f);
@@ -303,7 +322,7 @@ public class WorldView extends SimpleApplication implements Observer {
 					Log.exception(ex);
 				}
 				for (Meshable meshable : room.getMeshables())
-					_updateMeshable(Change.update(meshable));
+					updateMeshable(Change.update(meshable));
 			}
 		}
 	}
@@ -312,7 +331,7 @@ public class WorldView extends SimpleApplication implements Observer {
 	 * Update view when a Meshable has changed
 	 * @param change
 	 */
-	private void _updateMeshable(Change change){
+	private void updateMeshable(Change change){
 		Meshable meshable = (Meshable) change.getItem();
 		Spatial node = rootNode.getChild(meshable.getUID());
 		Node parent = rootNode;
@@ -331,17 +350,9 @@ public class WorldView extends SimpleApplication implements Observer {
 		/* Conclusion: updates will do both (detach & redraw) */
 	}
 	
-	private void _updateFloor(Change change){
+	private void updateFloor(Change change){
 		cleanScene();
 		makeScene();
-	}
-	
-	public boolean isCreated() {
-		return this.isCreated;
-	}
-
-	public void setCreated() {
-		this.isCreated = !this.isCreated;
 	}
 	
 	/**
@@ -361,21 +372,6 @@ public class WorldView extends SimpleApplication implements Observer {
 	}
 	
 	/**
-	 * Called when the model fires a change notification
-	 * Enqueues Changes, they should be applied in render thread
-	 */
-	@Override
-	public void update(Observable obs, Object msg) {
-		if (msg == null)
-			return;
-		if (obs instanceof GeometryDAO) {
-			synchronized (this.queuedChanges) {
-				this.queuedChanges.addAll((List<Change>) msg);
-			}
-		}
-	}
-	
-	/**
 	 * Modify scene in render thread, if any Change
 	 */
 	@Override
@@ -387,22 +383,93 @@ public class WorldView extends SimpleApplication implements Observer {
 						if (change.getItem() instanceof Primitive) {
 							Meshable meshable = (Meshable) change.getItem();
 							Spatial node = rootNode.getChild(meshable.getUID());
-							Node parent = rootNode;
 							if (node != null){
 								node.getParent().detachChild(node);
 							}
 						} else 
 							rootNode.detachChildNamed(change.getItem().getUID());
 					else if (change.getItem() instanceof Meshable)
-						_updateMeshable(change);
+						updateMeshable(change);
 					else if (change.getItem() instanceof Point)
-						_updatePoint(change);
+						updatePoint(change);
 					else if (change.getItem() instanceof Floor)
-						_updateFloor(change);
+						updateFloor(change);
 				}		
 				this.queuedChanges.clear();
 			}
 		}
 	}
 
+	/**
+	 * Set up all the key event
+	 * @param inputManager 
+	 */
+	public void inputSetUp(InputManager inputManager){
+		// Mouse event mapping
+		inputManager.addMapping(RIGHTCLICK, 	new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+		inputManager.addMapping(LEFTCLICK,  	new MouseButtonTrigger(MouseInput.BUTTON_LEFT ));
+
+		inputManager.addMapping(UP, 			new MouseAxisTrigger(1, false));
+		inputManager.addMapping(DOWN, 			new MouseAxisTrigger(1, true));
+		inputManager.addMapping(LEFT,			new MouseAxisTrigger(0, true));
+		inputManager.addMapping(RIGHT,			new MouseAxisTrigger(0, false));
+		
+		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT);
+	}
+	
+	/**
+     * Update the screen according to the current edition mode.
+     * @param mode A string who's a valid mode.
+     */    
+    public void updateController(String mode) {
+    	cleanScene();
+    	if (mode.equals("world")) {
+    		this.controller = new WorldController(this, this.settings);
+    	} else if (mode.equals("object")) {
+    		this.controller = new ObjectController(this, this.settings);
+    	}
+    }
+	
+	@Override
+	public void update(Observable obs, Object msg) {
+		if (obs instanceof Project) {
+			Config config = (Config) msg;
+			if (config.getName().equals("edition.mode")) {
+				updateController(config.getValue());
+			}
+		} else if (obs instanceof GeometryDAO) {
+			synchronized (this.queuedChanges) {
+				this.queuedChanges.addAll((List<Change>) msg);
+			}
+		}
+	}
+
+	@Override
+	public void onAnalog(String name, float value, float tpf) {
+		if (name.equals(UP) || name.equals(DOWN) || name.equals(LEFT) || name.equals(RIGHT)) {
+			this.controller.mouseMoved(value);
+		}
+	}
+	
+	/**
+     * Handle click
+     */
+    @Override
+	public void onAction(String name, boolean value, float tpf) {	
+		if (name.equals(LEFTCLICK)) {
+			if (value) { // on click
+				this.controller.onLeftClick();
+			} else { // on release
+				this.controller.onLeftRelease();
+			}
+		} else if (name.equals(RIGHTCLICK)) {
+			if (value) { // on click
+				this.controller.onRightClick();
+			} else { // on release
+				
+			}
+		}
+		
+	}
+	
 }

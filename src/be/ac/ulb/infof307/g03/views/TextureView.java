@@ -32,10 +32,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -136,15 +138,30 @@ public class TextureView extends JPanel implements ItemListener {
       }
     
     /**
+     * Get the name of the jar currently running so we don't need to hardcode it
+     * @return the name of the JAR currently reunning
+     */
+    private String getRunningJarName(){
+    	String name = this.getClass().getResource(this.getClass().getSimpleName() + ".class").getFile();
+    	name = ClassLoader.getSystemClassLoader().getResource(name).getFile();
+    	name=name.substring(0, name.lastIndexOf('!'));
+	    int start = name.lastIndexOf('/') + 1;
+	    int end = name.lastIndexOf('.');
+	    name = name.substring(start, end)+".jar";
+	    return name ;
+    }
+    
+    /**
      * Parse Jar File and add textures files to the right list
      */
     private void addFilesJar(){
     	JarFile jarFile;
 		String filename;
+		String file;
 		try { // first we will check all the files that the jar contents
-			String file;
-			jarFile = new JarFile("g03-iteration-2.jar");
-		    Enumeration item = jarFile.entries();
+			String path = getRunningJarName() ;	    
+			jarFile = new JarFile(path);
+		    Enumeration<JarEntry> item = jarFile.entries();
 		    while (item.hasMoreElements()) {
 		    	file=process(item.nextElement());
 		    	if (file.contains("Color") && !(file.contains(File.separator))){
@@ -319,13 +336,9 @@ public class TextureView extends JPanel implements ItemListener {
 	private void update(){
 		textureList = new JList(this.textureFiles.toArray());
         textureList.setCellRenderer(new ColorCellRenderer());
-        java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run(){
-		        texturesPanel.removeAll();
-		        texturesPanel.add(textureList);
-				texturesPanel.updateUI();
-			}
-		});
+        texturesPanel.removeAll();
+        texturesPanel.add(textureList);
+		texturesPanel.updateUI();
 		textureList.addMouseListener(this.controller);
 	}
 	
@@ -435,7 +448,7 @@ public class TextureView extends JPanel implements ItemListener {
 	            boolean selected,
 	            boolean expanded) {
 	    	String prefix = "/";
-	    	Icon imageIcon;
+	    	Icon imageIcon = null;
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
 	    		if (list.equals(textureList)){
 	    			if (!(value.toString()==ADDTEXTURE)){
@@ -473,8 +486,17 @@ public class TextureView extends JPanel implements ItemListener {
 	    		
 	    	}
 	        _label.setIcon(imageIcon);
-	        _label.setText(value.toString());
-	        //label.setToolTipText();
+	        if (value.toString().contains("/")){
+		        // If the filename contains / , it means it's a path so we want just the end of it
+	        	String name="";
+	        	int start = value.toString().lastIndexOf('/') + 1;
+	        	name=value.toString().substring(start);
+	        	name=name.toString().replace("Full","");
+	        	_label.setText(name);
+	        }
+	        else{
+	        	_label.setText(value.toString());
+	        }
 
 	        if (selected) {
 	            _label.setBackground(_backgroundSelectionColor);
