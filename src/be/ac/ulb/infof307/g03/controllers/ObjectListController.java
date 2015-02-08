@@ -3,10 +3,12 @@ package be.ac.ulb.infof307.g03.controllers;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
@@ -15,7 +17,7 @@ import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.ObjectListView;
 
 /**
- * @author titou
+ * @author titou, pierre
  *
  */
 public class ObjectListController implements MouseListener, Observer {
@@ -174,6 +176,30 @@ public class ObjectListController implements MouseListener, Observer {
 			Geometric newFloor = this.dao.getByUID(changed.getValue());
 			if (newFloor != null)
 				this.currentFloor = (Floor) newFloor;
+		}
+	}
+	
+	/**
+	 * @param fileToSave The File to create as an export
+	 * @param extension The extension of the file (obj, kmz, ..)
+	 */
+	public void exportAs(File fileToSave,String extension) {
+		Log.info("Export as %s", fileToSave.getName());
+		String filename = fileToSave.getAbsolutePath();
+		
+		if(!filename.endsWith(extension)){
+			filename+=extension;
+		}
+		
+		int dialogResult = JOptionPane.YES_OPTION;
+		if(new File(filename).exists()){
+			int dialogButton = JOptionPane.YES_NO_OPTION;
+			dialogResult = JOptionPane.showConfirmDialog (null,"This project already exists! Would you like you replace it?","Warning",dialogButton);
+		}
+		if(dialogResult == JOptionPane.YES_OPTION){
+				// OPTIONS D EXPORT ICI
+				// TODO Export 
+
 		}
 	}
 }

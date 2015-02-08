@@ -191,4 +191,27 @@ public class FileChooserController {
 			}
 		}
 	}
+
+	/**
+	 * Ask the view to display the dialog
+	 */
+	public void notifyDisplayImport() {
+		this.view.displayImport(this.parent);
+		
+	}
+
+	/**
+	 * @param selectedFile The object to be imported
+	 */
+	public void importObject(File selectedFile) {
+		Log.info("Open %s", selectedFile.getName());
+		final String filename = selectedFile.getAbsolutePath();
+		if(new File(filename).exists()){
+			// TODO IMPORT ICI
+		}
+		else{
+			JOptionPane.showMessageDialog(new JFrame(), "File does not exist!", "Erreur",JOptionPane.ERROR_MESSAGE);
+		}
+		
+	}
 }
