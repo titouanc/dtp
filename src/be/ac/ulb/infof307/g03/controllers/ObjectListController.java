@@ -1,23 +1,21 @@
 package be.ac.ulb.infof307.g03.controllers;
 
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.text.Utilities;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
@@ -32,6 +30,12 @@ public class ObjectListController implements MouseListener, Observer {
 	private Project project = null;
 	private GeometryDAO dao = null;
 	private Floor currentFloor = null;
+	
+	// Supported file type
+	private static final String FILE_TYPE_OBJ = ".obj";
+	private static final String FILE_TYPE_DAE = ".dae";
+	private static final String FILE_TYPE_3DS = ".3ds";
+	private static final String FILE_TYPE_KMZ = ".kmz";
 	
 	/**
 	 * @param project the main project
@@ -135,15 +139,15 @@ public class ObjectListController implements MouseListener, Observer {
 		}
 	}
 	
-	private FileFilter fileFilter(final String extention) {
+	private FileFilter exportFileFilter(final String extention) {
 		return new FileFilter() {
 			@Override
 			public String getDescription() {
 				return extention;
 			}
 			@Override
-			public boolean accept(File arg0) {
-				return true;
+			public boolean accept(File file) {
+				return file.getName().endsWith(extention);
 			}
 		};
 	}
@@ -162,20 +166,14 @@ public class ObjectListController implements MouseListener, Observer {
 	}
 	
 	public void onExport(Entity selectedEntity) {
-		FileFilter objFilter = fileFilter(".obj");
-		FileFilter daeFilter = fileFilter(".dae");
-		FileFilter tdsFilter = fileFilter(".3ds");
-		FileFilter kmzFilter = fileFilter(".kmz");
-
-		
 		JFileChooser fileChooser = new JFileChooser(); 
-		fileChooser.setSelectedFile(new File(selectedEntity.getName()+".obj"));
+		fileChooser.setSelectedFile(new File(selectedEntity.getName()+FILE_TYPE_OBJ));
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		
-		fileChooser.addChoosableFileFilter(daeFilter);
-		fileChooser.addChoosableFileFilter(tdsFilter);
-		fileChooser.addChoosableFileFilter(kmzFilter);
-		fileChooser.addChoosableFileFilter(objFilter);
+		fileChooser.addChoosableFileFilter(exportFileFilter(FILE_TYPE_DAE));
+		fileChooser.addChoosableFileFilter(exportFileFilter(FILE_TYPE_3DS));
+		fileChooser.addChoosableFileFilter(exportFileFilter(FILE_TYPE_KMZ));
+		fileChooser.addChoosableFileFilter(exportFileFilter(FILE_TYPE_OBJ));
 		
 		PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {	
 			@Override
@@ -200,6 +198,46 @@ public class ObjectListController implements MouseListener, Observer {
 			System.out.println(fileChooser.getCurrentDirectory().toString());
 		}
 		
+	}
+	
+	private FileFilter importFileFilter(final ArrayList<String> extentions) {
+		return new FileFilter() {
+			@Override
+			public String getDescription() {
+				String res = "";
+				for (String extention : extentions) {
+					res += "*"+extention+", ";
+				}
+				return res.substring(0, res.length()-2);
+			}
+			@Override
+			public boolean accept(File file) {
+				for (String extention : extentions) {
+					if (file.getName().endsWith(extention)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+	}
+	
+	public void onImport() {
+		FileFilter fileFilter = importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_3DS,FILE_TYPE_DAE,FILE_TYPE_KMZ,FILE_TYPE_OBJ)));
+
+		JFileChooser fileChooser = new JFileChooser(); 
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		
+		fileChooser.addChoosableFileFilter(fileFilter);
+		
+		int rVal = fileChooser.showOpenDialog(view);
+		
+		if (rVal == JFileChooser.APPROVE_OPTION) {
+			// THIS IS ALL YOU NEED TO OPEN THE FILE
+			System.out.println(fileChooser.getSelectedFile().getName());
+			System.out.println(fileChooser.getCurrentDirectory().toString());
+		}
+
 	}
 	
 	/**
@@ -229,18 +267,25 @@ public class ObjectListController implements MouseListener, Observer {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		int proachestIndex = this.view.locationToIndex(e.getPoint());
+		Point proachest = this.view.indexToLocation(proachestIndex);
+		if (proachest!=null) {
+			if (Math.abs(e.getY()-proachest.getY())<20) {
+				if (! this.view.isSelectedIndex(proachestIndex)) {
+					this.view.setSelectedIndex(proachestIndex);
+				}
+			} else {
+				this.view.clearSelection();
+			}
+		}
+		if (e.getButton()==MouseEvent.BUTTON3) {
+			JPopupMenu popupMenu = this.view.createPopupMenu();
+			popupMenu.show(e.getComponent(), e.getX(), e.getY());
+		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (SwingUtilities.isRightMouseButton(e)) {
-			JPopupMenu popupMenu = this.view.createPopupMenu();
-			// Select the item
-			int row = this.view.locationToIndex(new Point(e.getX(),e.getY()));
-			this.view.setSelectedIndex(row);
-
-			popupMenu.show(e.getComponent(), e.getX(), e.getY());
-		}
 	}
 
 	@Override
