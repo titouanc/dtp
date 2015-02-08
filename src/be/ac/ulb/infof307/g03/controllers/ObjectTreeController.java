@@ -34,8 +34,8 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	private Project project;
 	private String currentEditionMode;
 	
-	static private final String _WORLDMODE = "world";
-	static private final String _OBJECTMODE = "object";
+	static private final String WORLDMODE = "world";
+	static private final String OBJECTMODE = "object";
 	
 	/**
 	 * @param project Project object from model
@@ -88,7 +88,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	}
 	
 	public void updateEditionMode() {
-		if (this.currentEditionMode.equals(_WORLDMODE)) {
+		if (this.currentEditionMode.equals(WORLDMODE)) {
 			System.out.println("[DEBUG] ObjectTree switched to world edition mode.");
 			this.view.clearTree();
 			try {
@@ -96,7 +96,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			} catch (SQLException ex) {
 				Log.exception(ex);
 			}
-		} else if (this.currentEditionMode.equals(_OBJECTMODE)) {
+		} else if (this.currentEditionMode.equals(OBJECTMODE)) {
 			System.out.println("[DEBUG] ObjectTree switched to object edition mode.");
 			this.view.clearTree();
 			this.view.createObjectTree();
@@ -369,7 +369,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			if (clickedNode == null){
 				Log.error("Right-clicked null node");
 			} else {
-				Geometric clickedItem = (Geometric) clickedNode.getUserObject();;
+				Geometric clickedItem = (Geometric) clickedNode.getUserObject();
 				JPopupMenu menuForItem = this.view.createPopupMenu(clickedItem);
 				if (menuForItem != null) 
 					menuForItem.show(e.getComponent(), e.getX(), e.getY());

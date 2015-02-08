@@ -52,166 +52,6 @@ import be.ac.ulb.infof307.g03.utils.Log;
  * 
  */
 public class ObjectTreeView extends JTree implements Observer {
-	/**
-	 * 
-	 */
-	class ModificationFrame extends JFrame implements ActionListener, PropertyChangeListener {
-		private Primitive primitive = null;
-		private JFormattedTextField scalex, scaley, scalez, posz, rotx, roty, rotz;
-		private JSlider sliderRotx, sliderRoty, sliderRotz;
-		
-		private static final String OK = "ok";
-		private static final String CANCEL = "cancel";
-		
-		public ModificationFrame(Primitive prim) {
-			super("Modification Panel");
-			this.primitive = prim;
-			
-			JPanel panel = new JPanel();
-			this.add(panel);
-			Dimension dimension = new Dimension(400,300);
-			this.setPreferredSize(dimension);
-			this.setMaximumSize(dimension);
-			this.setMinimumSize(dimension);
-			this.setResizable(false);
-			GridBagLayout layout = new GridBagLayout();
-			panel.setLayout(layout);
-			
-			GridBagConstraints constraints = new GridBagConstraints();
-			constraints.gridx = 0;
-			constraints.gridy = 0;
-			constraints.gridwidth = 1;
-			
-			panel.add(new JLabel("Scale x : "),constraints);
-			++constraints.gridy;
-			panel.add(new JLabel("Scale y : "), constraints);
-			++constraints.gridy;
-			panel.add(new JLabel("Scale z : "), constraints);
-			++constraints.gridy;
-			panel.add(new JLabel("Translation z : "), constraints);
-			constraints.gridwidth = 1;
-			++constraints.gridy;
-			panel.add(new JLabel("Rotation x : "), constraints);
-			++constraints.gridy;
-			panel.add(new JLabel("Rotation y : "), constraints);
-			++constraints.gridy;
-			panel.add(new JLabel("Rotation z : "), constraints);
-			
-			constraints.gridx = 2;
-			constraints.gridy = 0;
-			scalex = new JFormattedTextField(prim.getScale().x);
-			scalex.setColumns(3);
-			panel.add(scalex, constraints);
-			scalex.addPropertyChangeListener(this);
-			++constraints.gridy;
-			scaley = new JFormattedTextField(prim.getScale().y);
-			scaley.setColumns(3);
-			panel.add(scaley,constraints);
-			scaley.addPropertyChangeListener(this);
-			++constraints.gridy;
-			scalez = new JFormattedTextField(prim.getScale().z);
-			scalez.setColumns(3);
-			panel.add(scalez,constraints);
-			scalez.addPropertyChangeListener(this);
-			++constraints.gridy;
-			posz = new JFormattedTextField(prim.getTranslation().z);
-			posz.setColumns(3);
-			panel.add(posz,constraints);
-			posz.addPropertyChangeListener(this);
-			++constraints.gridy;
-			rotx = new JFormattedTextField(prim.getRotation().x);
-			rotx.setColumns(3);
-			panel.add(rotx,constraints);
-			rotx.addPropertyChangeListener(this);
-			++constraints.gridy;
-			roty = new JFormattedTextField(prim.getRotation().y);
-			roty.setColumns(3);
-			panel.add(roty,constraints);
-			roty.addPropertyChangeListener(this);
-			++constraints.gridy;
-			rotz = new JFormattedTextField(prim.getRotation().z);
-			rotz.setColumns(3);
-			panel.add(rotz,constraints);
-			rotz.addPropertyChangeListener(this);
-			
-			constraints.gridx = 1;
-			constraints.gridy = 4;
-			sliderRotx = new JSlider(JSlider.HORIZONTAL, -180, 180,(int)prim.getRotation().x);
-			sliderRotx.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					
-					rotx.setValue(sliderRotx.getValue());
-				}
-			});
-			panel.add(sliderRotx ,constraints);
-			++constraints.gridy;
-			sliderRoty = new JSlider(JSlider.HORIZONTAL, -180, 180, (int)prim.getRotation().y);
-			sliderRoty.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					roty.setValue(sliderRoty.getValue());
-				}
-			});
-			panel.add(sliderRoty ,constraints);
-			++constraints.gridy;
-			sliderRotz = new JSlider(JSlider.HORIZONTAL, -180, 180, (int)prim.getRotation().z);
-			sliderRotz.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					rotz.setValue(sliderRotz.getValue());
-				}
-			});
-			panel.add(sliderRotz ,constraints);
-			
-			++constraints.gridy;
-			JButton applyButton = new JButton("Ok");
-			applyButton.setActionCommand(OK);
-			applyButton.addActionListener(this);
-			panel.add(applyButton, constraints);
-			++constraints.gridx;
-			JButton cancelButton = new JButton("Cancel");
-			cancelButton.setActionCommand(CANCEL);
-			cancelButton.addActionListener(this);
-			panel.add(cancelButton, constraints);
-		}
-		
-		public void applyModif() {
-			primitive.setScale(new Vector3f(((Number)scalex.getValue()).floatValue(),
-					((Number)scaley.getValue()).floatValue(),
-					((Number)scalez.getValue()).floatValue()));
-			primitive.setTranslation(new Vector3f(	primitive.getTranslation().getX(),
-					primitive.getTranslation().getY(),
-					((Number)posz.getValue()).floatValue()));
-			primitive.setRotation(new Vector3f(	((Number)rotx.getValue()).floatValue()*FastMath.PI/180,
-					((Number)roty.getValue()).floatValue()*FastMath.PI/180,
-					((Number)rotz.getValue()).floatValue()*FastMath.PI/180));
-			try {
-				dao.update(primitive);
-				dao.notifyObservers(primitive);
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			String cmd = e.getActionCommand();
-			if (cmd.equals(OK)) {
-				this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-			} else if (cmd.equals(CANCEL)) {
-				// restore
-				this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-			}
-		}
-		
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			applyModif();
-		}
-
-	}
-	
 	private static final long serialVersionUID = 1L;
 	
 	// Attribute
@@ -275,7 +115,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				}
 				
 			} else if (cmd.equals(MODIFY)) {
-				ModificationFrame mf = new ModificationFrame((Primitive) clickedItem);
+				ModificationFrame mf = new ModificationFrame((Primitive) clickedItem, dao);
 				mf.pack();
 				mf.setVisible(true);
 			} else if (cmd.equals(DUPLICATE)){
@@ -317,7 +157,7 @@ public class ObjectTreeView extends JTree implements Observer {
 		}
 	}
 	
-	private DefaultMutableTreeNode _createNode(Geometric item){
+	private DefaultMutableTreeNode createNode(Geometric item){
 		DefaultMutableTreeNode res = new DefaultMutableTreeNode(item.toString());
 		res.setUserObject(item);
 		boolean hasChildren = (item instanceof Room || item instanceof Floor);
@@ -326,12 +166,12 @@ public class ObjectTreeView extends JTree implements Observer {
 		return res;
 	}
 	
-	private DefaultMutableTreeNode _createTree(Geometric root) throws SQLException{
-		DefaultMutableTreeNode res = _createNode(root);
+	private DefaultMutableTreeNode createTree(Geometric root) throws SQLException{
+		DefaultMutableTreeNode res = createNode(root);
 		if (root instanceof Room){
 			Room room = (Room) root;
 			for (Meshable meshable : room.getMeshables())
-				res.add(_createNode(meshable));
+				res.add(createNode(meshable));
 		}
 		return res;
 	}
@@ -340,14 +180,14 @@ public class ObjectTreeView extends JTree implements Observer {
 		Log.debug("createTree");
 		root.removeAllChildren();
 		for (Floor floor : this.dao.getFloors()){
-			DefaultMutableTreeNode floorNode = _createNode(floor);
+			DefaultMutableTreeNode floorNode = createNode(floor);
 			for (Room room : floor.getRooms()){
 				floor.getRooms().refresh(room);
-				floorNode.add(_createTree(room));
+				floorNode.add(createTree(room));
 			}
 			for (Item item : floor.getItems()){
 				floor.getItems().refresh(item);
-				floorNode.add(_createNode(item));
+				floorNode.add(createNode(item));
 			}
 			root.add(floorNode);
 		}
@@ -496,7 +336,7 @@ public class ObjectTreeView extends JTree implements Observer {
 					continue;
 				
 				DefaultMutableTreeNode newNode = null;
-				try {newNode = _createTree(changed);}
+				try {newNode = createTree(changed);}
 				catch (SQLException err){
 					Log.exception(err); 
 					continue;
@@ -518,7 +358,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	}
 	
 	/**
-	 * Return whether a geometric object is hown in tree view or not
+	 * Return whether a geometric object is shown in tree view or not
 	 * @param item A geometric item
 	 * @return True if this geometric should be displayed in the tree
 	 */
