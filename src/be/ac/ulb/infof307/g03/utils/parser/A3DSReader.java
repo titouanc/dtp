@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.models;
+package be.ac.ulb.infof307.g03.utils.parser;
 
 import java.io.BufferedInputStream;
 import java.io.EOFException;
