@@ -14,14 +14,18 @@ public abstract class Parser {
 	
 	private List normals;
 	/**
-	 * @return
+	 * @return the vertices list
 	 */
-	public abstract List getVertices();
+	public List getVertices(){
+		return vertices;
+	}
 	
 	/**
-	 * @return
+	 * @return the normals list
 	 */
-	public abstract List getNormals();
+	public List getNormals(){
+		return normals;
+	}
 
 	
 }

@@ -168,19 +168,4 @@ public class A3DSParser extends Parser {
     }
 
 
-	@Override
-	public List getVertices() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see be.ac.ulb.infof307.g03.models.Parser#getNormals()
-	 */
-	@Override
-	public List getNormals() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

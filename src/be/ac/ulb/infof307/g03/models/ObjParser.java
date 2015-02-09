@@ -24,20 +24,6 @@ public class ObjParser extends Parser {
 		// TODO : Material mat_default = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
 	}
 	
-	@Override
-	public List getVertices() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see be.ac.ulb.infof307.g03.models.Parser#getNormals()
-	 */
-	@Override
-	public List getNormals() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
     
     
