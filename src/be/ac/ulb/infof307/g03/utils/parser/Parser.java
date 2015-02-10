@@ -12,23 +12,11 @@ import com.jme3.math.Vector3f;
  * @author brochape
  *
  */
-public abstract class Parser {
-	protected Vector<Vector3f> vertices;
-	int [] indexes;
-	
-	/**
-	 * @return the vertices list
-	 */
-	public Vector<Vector3f> getVertices(){
-		return vertices;
-	}
-	
-	/**
-	 * @return the normals list
-	 */
-	public int[] getIndexes(){
-		return indexes;
-	}
+public class Parser {
 
+	protected Vector<PrimitiveData> datas = new Vector<PrimitiveData>();
 	
+	public Vector<PrimitiveData> getPrimitiveDatas() {
+		return datas;
+	}
 }
