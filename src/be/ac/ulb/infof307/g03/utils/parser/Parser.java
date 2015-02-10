@@ -10,9 +10,9 @@ import java.awt.List;
  *
  */
 public abstract class Parser {
-	private List vertices;
+	protected List vertices;
 	
-	private List normals;
+	protected List normals;
 	/**
 	 * @return the vertices list
 	 */
