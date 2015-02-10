@@ -12,9 +12,9 @@ import com.jme3.math.Vector3f;
  *
  */
 public abstract class Parser {
-	private Vector<Vector3f> vertices;
+	protected Vector<Vector3f> vertices;
 	
-	private int[] indexes ;
+	protected int[] indexes ;
 	
 	/**
 	 * @return the vertices list
