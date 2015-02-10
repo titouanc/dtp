@@ -4,27 +4,30 @@
 package be.ac.ulb.infof307.g03.utils.parser;
 
 import java.awt.List;
+import java.util.Vector;
+
+import com.jme3.math.Vector3f;
 
 /**
  * @author brochape
  *
  */
 public abstract class Parser {
-	protected List vertices;
+	protected Vector<Vector3f> vertices;
+	int [] indexes;
 	
-	protected List normals;
 	/**
 	 * @return the vertices list
 	 */
-	public List getVertices(){
+	public Vector<Vector3f> getVertices(){
 		return vertices;
 	}
 	
 	/**
 	 * @return the normals list
 	 */
-	public List getNormals(){
-		return normals;
+	public int[] getIndexes(){
+		return indexes;
 	}
 
 	

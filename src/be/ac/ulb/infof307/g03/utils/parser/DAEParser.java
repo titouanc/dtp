@@ -16,8 +16,6 @@ import com.jme3.math.Vector3f;
 
 public class DAEParser extends Parser {
 	Document document = null;
-	Vector<Vector3f> vertices = new Vector<Vector3f>();
-	Vector<Vector3f> normals = new Vector<Vector3f>();
 	int [] mappings;
 
 	public DAEParser(String fileName){ 
@@ -51,12 +49,6 @@ public class DAEParser extends Parser {
 		}
 	}
 	
-	public void addNormal(String data) {
-		String[] d = data.split(" ");
-		for (int i=0; i<d.length; i+=3) {
-			this.normals.addElement(new Vector3f(Float.parseFloat(d[i]),Float.parseFloat(d[i+1]),Float.parseFloat(d[i+2])));
-		}
-	}
 	
 	public void addMapping(String data) {
 		String[] d = data.split(" ");
@@ -78,7 +70,6 @@ public class DAEParser extends Parser {
 		for (int i=0; i<mappingNode.getLength(); ++i) {
 			String primitiveName = nodeList.item(i).getAttributes().getNamedItem("name").toString();
 			addPosition(vertexNode.item(i*3).getTextContent());
-			addNormal(vertexNode.item((i*3)+1).getTextContent());
 			addMapping(mappingNode.item(i).getTextContent());
 			
 		}
@@ -88,7 +79,6 @@ public class DAEParser extends Parser {
 		DAEParser d = new DAEParser("/Users/julianschembri/Downloads/test.dae");
 		d.parseVertices();
 		System.out.println(d.vertices);
-		System.out.println(d.normals);
 		System.out.println(d.mappings);
 
 	}
