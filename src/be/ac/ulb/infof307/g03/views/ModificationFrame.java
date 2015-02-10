@@ -19,7 +19,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import be.ac.ulb.infof307.g03.models.GeometryDAO;
+import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
 
 import com.jme3.math.FastMath;
@@ -29,12 +29,12 @@ class ModificationFrame extends JFrame implements ActionListener, PropertyChange
 	private Primitive primitive = null;
 	private JFormattedTextField scalex, scaley, scalez, posz, rotx, roty, rotz;
 	private JSlider sliderRotx, sliderRoty, sliderRotz;
-	private GeometryDAO dao = null;
+	private MasterDAO dao = null;
 	
 	private static final String OK = "ok";
 	private static final String CANCEL = "cancel";
 	
-	public ModificationFrame(Primitive prim, GeometryDAO dao) {
+	public ModificationFrame(Primitive prim, MasterDAO dao) {
 		super("Modification Panel");
 		this.primitive = prim;
 		this.dao = dao;
@@ -159,7 +159,7 @@ class ModificationFrame extends JFrame implements ActionListener, PropertyChange
 				((Number)roty.getValue()).floatValue()*FastMath.PI/180,
 				((Number)rotz.getValue()).floatValue()*FastMath.PI/180));
 		try {
-			dao.update(primitive);
+			dao.getDao(Primitive.class).modify(primitive);
 			dao.notifyObservers(primitive);
 		} catch (SQLException e1) {
 			e1.printStackTrace();

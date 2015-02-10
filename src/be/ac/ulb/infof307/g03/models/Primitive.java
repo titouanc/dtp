@@ -4,6 +4,7 @@
 package be.ac.ulb.infof307.g03.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -18,6 +19,7 @@ import com.jme3.scene.shape.Sphere;
  * A primitive shape used to build objects
  * @author brochape, Titouan, jschembr
  */
+@DatabaseTable(daoClass=GeometricDAO.class)
 public class Primitive extends Meshable {
 	public static String CUBE = "Cube";
 	public static String SPHERE = "Sphere";

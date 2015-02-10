@@ -1,29 +1,20 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
-import javax.swing.AbstractButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
+
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButton;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
@@ -31,7 +22,7 @@ import be.ac.ulb.infof307.g03.controllers.ObjectListController;
 import be.ac.ulb.infof307.g03.models.Change;
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Floor;
-import be.ac.ulb.infof307.g03.models.GeometryDAO;
+import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 
@@ -100,7 +91,7 @@ public class ObjectListView extends JList implements Observer {
 	}
 	
 	private ObjectListController controller = null;
-	private GeometryDAO dao = null;
+	private MasterDAO daoFactory = null;
 	
 	private static final String NEW = "PAL_new";
 	private static final String RENAME = "PAL_rename";
@@ -118,18 +109,18 @@ public class ObjectListView extends JList implements Observer {
 		setVisibleRowCount(-1);
 		setCellRenderer(new MyCellRenderer());
 		try {
-			dao = project.getGeometryDAO();
+			daoFactory = project.getGeometryDAO();
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
 		addMouseListener(controller);
-		dao.addObserver(this);
+		daoFactory.addObserver(this);
 		createList();
 	}
 	
 	private void createList() {
 		try {
-			List<Entity> entities = dao.getEntities();
+			List<Entity> entities = daoFactory.getDao(Entity.class).queryForAll();
 			setListData(new Vector<Entity>(entities));
 		} catch (SQLException ex) {
 			Log.exception(ex);

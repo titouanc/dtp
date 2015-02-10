@@ -5,12 +5,14 @@ import be.ac.ulb.infof307.g03.views.ToolsBarView;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Floor;
-import be.ac.ulb.infof307.g03.models.GeometryDAO;
+import be.ac.ulb.infof307.g03.models.GeometricDAO;
+import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Project;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -24,7 +26,7 @@ import javax.swing.JOptionPane;
 public class ToolsBarController implements ActionListener, Observer {
 	// Attributes
 	private ToolsBarView _view;
-	private Project _project;
+	private Project project;
 	
 	// Buttons actions alias
 	static final public String NEWELEMENT = "TB_NewElement";
@@ -60,10 +62,10 @@ public class ToolsBarController implements ActionListener, Observer {
 	 * @param aProject The main project
 	 */
 	public ToolsBarController(Project aProject){	
-		_project = aProject;  
+		project = aProject;  
 		aProject.addObserver(this);
 		try {
-			_project.getGeometryDAO().addObserver(this);
+			project.getGeometryDAO().addObserver(this);
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
@@ -74,12 +76,12 @@ public class ToolsBarController implements ActionListener, Observer {
 	 * Run the ToolsBar GUI
 	 */
 	public void run(){
-		initView(_project);
-		_project.addObserver(_view);
+		initView(project);
+		project.addObserver(_view);
 		//Sets the default mode
         this.onDragSelectMode();
         
-        this.currentObjectMode = _project.config("edition.mode");
+        this.currentObjectMode = project.config("edition.mode");
         if (this.currentObjectMode.equals(""))
         	this.currentObjectMode = WORLDMODE;
         else
@@ -106,13 +108,14 @@ public class ToolsBarController implements ActionListener, Observer {
      * is clicked. It will communicate with the controller
      */
     public void onFloorUp(){
-    	String currentFloorUID = _project.config("floor.current");
+    	String currentFloorUID = project.config("floor.current");
 		try {
-			GeometryDAO dao = _project.getGeometryDAO();
-			Floor floor = (Floor) dao.getByUID(currentFloorUID);
-	    	Floor nextFloor = dao.getNextFloor(floor);
+			MasterDAO daoFactory = project.getGeometryDAO();
+			Floor floor = (Floor) daoFactory.getByUID(currentFloorUID);
+			GeometricDAO<Floor> floorDao = daoFactory.getDao(Floor.class);
+	    	Floor nextFloor = floorDao.queryForFirst(floor.getQueryForFollowing(floorDao));
 	    	if (nextFloor != null)
-	    		_project.config("floor.current", nextFloor.getUID());
+	    		project.config("floor.current", nextFloor.getUID());
 	    	else
 	    		JOptionPane.showMessageDialog(_view, "No floor above");
 		} catch (SQLException ex) {
@@ -125,13 +128,14 @@ public class ToolsBarController implements ActionListener, Observer {
      * is clicked. It will communicate with the controller
      */
     public void onFloorDown(){
-    	String currentFloorUID = _project.config("floor.current");
+    	String currentFloorUID = project.config("floor.current");
 		try {
-			GeometryDAO dao = _project.getGeometryDAO();
-			Floor floor = (Floor) dao.getByUID(currentFloorUID);
-	    	Floor prevFloor = dao.getPreviousFloor(floor);
+			MasterDAO daoFactory = project.getGeometryDAO();
+			Floor floor = (Floor) daoFactory.getByUID(currentFloorUID);
+			GeometricDAO<Floor> floorDao = daoFactory.getDao(Floor.class);
+	    	Floor prevFloor = floorDao.queryForFirst(floor.getQueryForPreceeding(floorDao));
 	    	if (prevFloor != null)
-	    		_project.config("floor.current", prevFloor.getUID());
+	    		project.config("floor.current", prevFloor.getUID());
 	    	else
 	    		JOptionPane.showMessageDialog(_view, "No floor below");
 		} catch (SQLException ex) {
@@ -144,9 +148,21 @@ public class ToolsBarController implements ActionListener, Observer {
      */
     public void onFloorNew(){
 		try {
-			GeometryDAO dao = _project.getGeometryDAO();
-			dao.createFloorOnTop(7);
-	    	dao.notifyObservers();
+			MasterDAO daoFactory = project.getGeometryDAO();
+			GeometricDAO<Floor> floorDao = daoFactory.getDao(Floor.class);
+			List<Floor> allFloors = floorDao.queryForAll();
+			// Still no floors in the database, create just one
+			if (allFloors.isEmpty()){
+				floorDao.insert(new Floor());
+			} else {
+				int minFloorIndex = 0;
+				for (Floor floor : allFloors){
+					if (floor.getIndex() > minFloorIndex)
+						minFloorIndex = floor.getIndex();
+				}
+				floorDao.insert(new Floor(minFloorIndex + 1));
+			}
+	    	daoFactory.notifyObservers();
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
@@ -158,7 +174,7 @@ public class ToolsBarController implements ActionListener, Observer {
      */
     public void on2d(){
     	Log.info("Switch to 2D mode");
-    	_project.config("camera.mode", "2D");
+    	project.config("camera.mode", "2D");
   
     }
     
@@ -168,7 +184,7 @@ public class ToolsBarController implements ActionListener, Observer {
      */
     public void on3d() {
     	Log.info("Switch to 3D mode");
-    	_project.config("camera.mode", "3D");
+    	project.config("camera.mode", "3D");
     }
     
     /**
@@ -177,7 +193,7 @@ public class ToolsBarController implements ActionListener, Observer {
      */ 
     public void onDragRotateMode(){
     	Log.info("Switch to rotate mode");
-    	_project.config("mouse.mode", "dragRotate");
+    	project.config("mouse.mode", "dragRotate");
     }
 
     /**
@@ -186,7 +202,7 @@ public class ToolsBarController implements ActionListener, Observer {
      */ 
     public void onDragSelectMode(){
     	Log.info("Switch to drag-select mode");
-    	_project.config("mouse.mode", "dragSelect");
+    	project.config("mouse.mode", "dragSelect");
     }
     
     /**
@@ -195,16 +211,17 @@ public class ToolsBarController implements ActionListener, Observer {
      */ 
     public void onDragMoveMode(){
     	Log.info("Switch to drag-move mode");
-    	_project.config("mouse.mode", "dragMove");
+    	project.config("mouse.mode", "dragMove");
     }
     
     /**
      * The private method is called when the hand button 
      * is clicked. It will communicate with the controller
-     */ 
+     */
     public void onConstruction(){
     	try {
-			if( _project.getGeometryDAO().getFloors().isEmpty()){
+    		GeometricDAO<Floor> floorDao = project.getGeometryDAO().getDao(Floor.class);
+			if( floorDao.queryForAll().isEmpty()){
 				Log.info("User try to switch to construction mode, but there is no floor");
 				JOptionPane.showMessageDialog(_view, "You have to create a floor first");
 				_view.setDragSelectSelected(true);
@@ -212,7 +229,7 @@ public class ToolsBarController implements ActionListener, Observer {
 			}
 			else{
 				Log.info("Switch to construction mode");
-		    	_project.config("mouse.mode", "construct");
+		    	project.config("mouse.mode", "construct");
 			}
 		} catch (SQLException ex) {
 			Log.exception(ex);
@@ -236,7 +253,7 @@ public class ToolsBarController implements ActionListener, Observer {
 			_view.setWorldEditionModuleVisible(false);
 			_view.setObjectEditionModuleVisible(true);
 		}
-		_project.config("mouse.mode", "dragSelect");
+		project.config("mouse.mode", "dragSelect");
 		_view.setDragSelectSelected(true);
 	}
     
@@ -286,15 +303,16 @@ public class ToolsBarController implements ActionListener, Observer {
     	 if (aName != null) {
     		 Entity entity = new Entity(aName);
     		 try {
-    			 GeometryDAO dao = _project.getGeometryDAO();
-    			 dao.create(entity);
-    			 dao.notifyObservers();
+    			 MasterDAO daoFactory = project.getGeometryDAO();
+    			 GeometricDAO<Entity> dao = daoFactory.getDao(Entity.class);
+    			 dao.insert(entity);
+    			 daoFactory.notifyObservers();
     		 } catch (SQLException e) {
     			 // TODO Auto-generated catch block
     			 e.printStackTrace();
     		 }
-    		 _project.config("entity.current", entity.getUID());
-    		 _project.config("edition.mode", "object");
+    		 project.config("entity.current", entity.getUID());
+    		 project.config("edition.mode", "object");
     	 } else {
     		 _view.setWorldModeSelected();
     	 }
@@ -302,28 +320,28 @@ public class ToolsBarController implements ActionListener, Observer {
 
 	private void onWorldMode() {
 		Log.log(Level.FINEST,"[DEBUG] User clicked on : world");
-		_project.config("mouse.mode", "dragSelect");
-		_project.config("edition.mode", "world");	
+		project.config("mouse.mode", "dragSelect");
+		project.config("edition.mode", "world");	
 	}
 	
 	private void onCubeCreation() {
 		Log.log(Level.FINEST,"[DEBUG] User clicked on : cube");
-		_project.config("mouse.mode", "cube");
+		project.config("mouse.mode", "cube");
 	}
 	
 	private void onSphereCreation() {
 		Log.log(Level.FINEST,"[DEBUG] User clicked on : sphere");
-		_project.config("mouse.mode", "sphere");
+		project.config("mouse.mode", "sphere");
 	}
 	
 	private void onPyramidCreation() {
 		Log.log(Level.FINEST,"[DEBUG] User clicked on : pyramid");
-		_project.config("mouse.mode", "pyramid");
+		project.config("mouse.mode", "pyramid");
 	}
 	
 	private void onCylinderCreation() {
 		Log.log(Level.FINEST,"[DEBUG] User clicked on : cylinder");
-		_project.config("mouse.mode", "cylinder");
+		project.config("mouse.mode", "cylinder");
 	}
 
 	@Override
@@ -334,10 +352,10 @@ public class ToolsBarController implements ActionListener, Observer {
 				updateEditionMode(config.getValue());
 			}
 		}
-		else if (obs instanceof GeometryDAO){
-			if (_project.config("mouse.mode").equals("construct")){
+		else if (obs instanceof MasterDAO){
+			if (project.config("mouse.mode").equals("construct")){
 				try {
-					if( _project.getGeometryDAO().getFloors().isEmpty()){
+					if( project.getGeometryDAO().getDao(Floor.class).queryForAll().isEmpty()){
 						// if no more floor and user has selected the construct
 						_view.setDragSelectSelected(true);
 						onDragSelectMode();

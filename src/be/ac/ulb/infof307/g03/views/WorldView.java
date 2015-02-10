@@ -51,7 +51,7 @@ import com.jme3.system.AppSettings;
 public class WorldView extends SimpleApplication implements Observer, ActionListener, AnalogListener {	
 	
 	private Project project = null;
-	private GeometryDAO dao = null;
+	private MasterDAO daoFactory = null;
 	private CanvasController controller = null; 
 	protected Vector<Geometry> shapes = new Vector<Geometry>();
 	private String classPath = getClass().getResource("WorldView.class").toString();
@@ -76,8 +76,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		this.queuedChanges = new LinkedList<Change>();
 		this.setSettings(settings);
 		try {
-			this.dao= project.getGeometryDAO();
-			this.dao.addObserver(this);
+			this.daoFactory= project.getGeometryDAO();
+			this.daoFactory.addObserver(this);
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
@@ -199,10 +199,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	    		addSun();
 	    		
 	    		try {
-					for (Floor floor : dao.getFloors()){
+					for (Floor floor : daoFactory.getDao(Floor.class).queryForAll()){
 						/* Draw rooms areas */
 						for (Room room : floor.getRooms()){
-							for (Meshable meshable : room.getMeshables()){
+							for (Meshable meshable : room.getAreas()){
 								drawMeshable(rootNode,meshable);
 							}
 						}
@@ -315,14 +315,16 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		    sphere.setMaterial(sphereMat);
 		    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
 		    rootNode.attachChild(sphere);
-			for (Room room : point.getBoundRooms()){
-				try {
-					this.dao.refresh(room);
-				} catch (SQLException ex) {
-					Log.exception(ex);
+		    
+		    try {
+			    GeometricDAO<Room> dao = this.daoFactory.getDao(Room.class);
+				for (Room room : point.getBoundRooms()){
+					dao.refresh(room);
+					for (Meshable meshable : room.getAreas())
+						updateMeshable(Change.update(meshable));
 				}
-				for (Meshable meshable : room.getMeshables())
-					updateMeshable(Change.update(meshable));
+			} catch (SQLException ex) {
+				Log.exception(ex);
 			}
 		}
 	}
@@ -437,7 +439,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			if (config.getName().equals("edition.mode")) {
 				updateController(config.getValue());
 			}
-		} else if (obs instanceof GeometryDAO) {
+		} else if (obs instanceof MasterDAO) {
 			synchronized (this.queuedChanges) {
 				this.queuedChanges.addAll((List<Change>) msg);
 			}

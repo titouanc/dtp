@@ -7,6 +7,7 @@ import java.util.List;
 import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
@@ -19,6 +20,7 @@ import com.jme3.scene.shape.Box;
 /**
  * @author Titouan Christophe
  */
+@DatabaseTable(daoClass=GeometricDAO.class)
 public class Wall extends Area {
 	@DatabaseField
 	private double width = 0.2; 
@@ -28,6 +30,11 @@ public class Wall extends Area {
 	 */
 	public Wall(){
 		super();
+	}
+	
+	public Wall(Room forRoom){
+		super();
+		forRoom.setWall(this);
 	}
 	
 	/**

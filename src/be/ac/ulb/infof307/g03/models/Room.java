@@ -10,11 +10,13 @@ import java.util.List;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * @author Titouan Christophe
  * @brief A group is a shape constituted of multiple shapes
  */
+@DatabaseTable(daoClass=GeometricDAO.class)
 public class Room extends Geometric {
 	@DatabaseField(canBeNull = true, unique = true)
 	private String name = null;
@@ -113,7 +115,7 @@ public class Room extends Geometric {
 	public final void setRoof(Roof roof){
 		this.roof = roof;
 	}
-		
+	
 	public final List<Point> getPoints(){
 		List<Point> res = new LinkedList<Point>();
 		for (Binding b : bindings)
@@ -145,7 +147,7 @@ public class Room extends Geometric {
 		}
 	}
 	
-	public final List<Area> getMeshables(){
+	public final List<Area> getAreas(){
 		List<Area> res = new ArrayList<Area>(3);
 		if (this.wall != null)
 			res.add(this.wall);

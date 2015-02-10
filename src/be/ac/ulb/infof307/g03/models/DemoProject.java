@@ -25,7 +25,7 @@ public class DemoProject {
 		Project proj = new Project();
 		proj.create(":memory:");
 		
-		GeometryDAO dao = proj.getGeometryDAO();
+		MasterDAO daoFactory = proj.getGeometryDAO();
 		Point a = new Point(0, 0, 0),
 			  c = new Point(8, 8, 0),
 			  d = new Point(0, 8, 0),
@@ -51,11 +51,11 @@ public class DemoProject {
 			  x = new Point(-20,-15,0),
 			  y = new Point(-20,20,0);
 
-		Floor groundFloor = dao.getFloors().get(0);
+		Floor groundFloor = daoFactory.getDao(Floor.class).queryForEq("index", 0).get(0);
 		proj.config("floor.current", groundFloor.getUID());
 		
 		Room r1 = createRoom(groundFloor, "Square room", a, e, f, d);
-		showRoof(r1,dao); // nothing on the top of this room
+		showRoof(r1, daoFactory.getDao(Roof.class)); // nothing on the top of this room
 		
 		createRoom(groundFloor, "Irregular room", a, d, c, c, g,k, i,j, h);
 		createRoom(groundFloor, "Rectangular room", f, d, c, l, m);
@@ -65,11 +65,12 @@ public class DemoProject {
 		createGround(groundFloor, "Jardin-arrière", "GrassFull", q , s , r ,v);
 		createGround(groundFloor, "Chemin", "Gray", r , s , t ,u);
 		
-		dao.createFloorOnTop(7);
-		String currentFloorUID = proj.config("floor.current");
-		Floor floor = (Floor) dao.getByUID(currentFloorUID);
-    	Floor firstFloor = dao.getNextFloor(floor);
-    	firstFloor.setHeight(3);
+		Floor firstFloor = new Floor();
+		firstFloor.setBaseHeight(groundFloor.getHeight());
+		firstFloor.setHeight(7);
+		firstFloor.setIndex(1);
+		daoFactory.getDao(Floor.class).create(firstFloor);
+		daoFactory.getDao(Floor.class).refresh(firstFloor);
     	
 		//createRoom(firstFloor, "Square room 2", a, e, f, d);
 		createRoom(firstFloor, "Irregular room 2", a, d, c, c, g,k, i,j, h);
@@ -90,43 +91,43 @@ public class DemoProject {
 		dao.create(placedObject);
 		*/
 		
+		/* Create a door object */
 		Entity door = new Entity("Door");
-		dao.create(door);
+		daoFactory.getDao(Entity.class).create(door);
 		Primitive doorPrim = new Primitive(door, Primitive.CUBE);
 		doorPrim.setScale(new Vector3f(2,1,4));
 		doorPrim.setTexture("DoorFull");
-		dao.create(doorPrim);
+		daoFactory.getDao(Primitive.class).create(doorPrim);
 		
-		
+		/* Place the door in the world */
 		Item doorObject = new Item(groundFloor, door);
 		doorObject.setPosition(new Vector3f(-4, 0, 2));
-		dao.create(doorObject);
+		daoFactory.getDao(Item.class).create(doorObject);
 		
+		/* Create a window object */
 		Entity window = new Entity("Window");
-		dao.create(window);
+		daoFactory.getDao(Entity.class).create(window);
 		Primitive windowPrim = new Primitive(window, Primitive.CUBE);
 		windowPrim.setRotation(new Vector3f(FastMath.PI/2,0,0));
 		windowPrim.setScale(new Vector3f(1,4,8));
 		windowPrim.setTexture("WindowFull");
-		dao.create(windowPrim);
+		daoFactory.getDao(Primitive.class).create(windowPrim);
 		
-		
+		/* Place the window in the world */
 		Item windowObject = new Item(groundFloor, window);
 		windowObject.setPosition(new Vector3f(8, 6, 5));
-		dao.create(windowObject);
+		daoFactory.getDao(Item.class).create(windowObject);
 		
-		
-		
-		dao.refresh(firstFloor);
+		daoFactory.getDao(Floor.class).refresh(firstFloor);
 		for	(Room room : firstFloor.getRooms()){
-			showRoof(room,dao); // nothing on the top of this room
+			showRoof(room, daoFactory.getDao(Roof.class)); // nothing on the top of this room
 		}
 		
-		dao.notifyObservers();
+		daoFactory.notifyObservers();
 		return proj;
 	}
 	
-	private static void showRoof(Room room,GeometryDAO dao) throws SQLException{
+	private static void showRoof(Room room, GeometricDAO<Roof> dao) throws SQLException{
 		Roof roof = room.getRoof();
 		roof.show();
 		dao.update(roof);

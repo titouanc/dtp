@@ -3,20 +3,23 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.jme3.math.Vector3f;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * Primitive for all geometric constructions
  * @author Titouan Christophe
  */
-@DatabaseTable
+@DatabaseTable(daoClass=GeometricDAO.class)
 public class Point extends Geometric {
 	@DatabaseField(uniqueCombo = true)
 	private double x = 0;
@@ -200,5 +203,24 @@ public class Point extends Geometric {
 	@Override
 	public String getUIDPrefix() {
 		return "pnt";
+	}
+	
+	
+	/**
+	 * Create a query to find a point near this, within maximum distance
+	 * @param dao A Data Access Object to build the query
+	 * @param maxDistance The maximum distance for a valid point
+	 * @return A query, executable in given DAO
+	 * @throws SQLException
+	 */
+	public final PreparedQuery<Point> getQueryForNear(Dao<Point, Integer> dao, double maxDistance) throws SQLException {
+		double xmin = this.getX() - maxDistance, xmax = this.getX() + maxDistance;
+		double ymin = this.getY() - maxDistance, ymax = this.getY() + maxDistance;
+		double zmin = this.getZ() - maxDistance, zmax = this.getZ() + maxDistance;
+	
+		return dao.queryBuilder().where().
+				ge("x", xmin).and().le("x", xmax).and().
+				ge("y", ymin).and().le("y", ymax).and().
+				ge("z", zmin).and().le("z", zmax).and().prepare();
 	}
 }
