@@ -5,7 +5,10 @@ package be.ac.ulb.infof307.g03.utils.parser;
 
 import java.awt.List;
 import java.io.IOException;
+import java.util.Vector;
 import java.util.logging.Level;
+
+import com.jme3.math.Vector3f;
 
 import be.ac.ulb.infof307.g03.utils.Log;
 
@@ -110,9 +113,17 @@ public class A3DSParser extends Parser {
 
     private void parseVerticesList() throws IOException {
         short numVertices = reader.getShort();
-        float[] vertices = new float[numVertices * 3];
-        for (int i=0; i<vertices.length; i++) {
-            vertices[i] = reader.getFloat();
+        Vector<Vector3f> vertices = new Vector();
+        float x;
+        float y;
+        float z;
+        
+        for (int i=0; i<numVertices; i++) {
+        	x = reader.getFloat();
+        	y = reader.getFloat();
+        	z = reader.getFloat();
+        	
+            vertices.add(new Vector3f(x,y,z));
         }
 
         currentObject.setVertices(vertices);
@@ -121,12 +132,12 @@ public class A3DSParser extends Parser {
 
     private void parseFacesDescription() throws IOException {
         short numFaces = reader.getShort();
-        short[] faces = new short[numFaces * 3];
+        int[] faces = new int[numFaces * 3];
         for (int i=0; i<numFaces; i++) {
-            faces[i*3] = reader.getShort();
-            faces[i*3 + 1] = reader.getShort();
-            faces[i*3 + 2] = reader.getShort();
-            reader.getShort(); // Discard face flag
+            faces[i*3] = (int)reader.getShort();
+            faces[i*3 + 1] = (int)reader.getShort();
+            faces[i*3 + 2] = (int)reader.getShort();
+            reader.getShort(); 
         }
         Log.log(Level.FINEST,"[DEBUG]Found " + numFaces + " faces");
         currentObject.setPolygons(faces);
@@ -165,6 +176,10 @@ public class A3DSParser extends Parser {
         v[0] = reader.getFloat();
         v[1] = reader.getFloat();
         v[2] = reader.getFloat();
+    }
+    
+    public Vector<Vector3f> getVertices(){
+    	return currentObject.getVertices();
     }
 
 
