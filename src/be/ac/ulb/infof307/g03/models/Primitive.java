@@ -23,7 +23,8 @@ public class Primitive extends Meshable {
 	public static String SPHERE = "Sphere";
 	public static String PYRAMID = "Pyramid";
 	public static String CYLINDER = "Cylinder";
-	
+	public static String IMPORTED = "Imported";
+
 	@DatabaseField(foreign = true, canBeNull = false)
 	private Entity entity;
 	@DatabaseField
@@ -131,6 +132,8 @@ public class Primitive extends Meshable {
 			mesh = new Dome(2, 4, 1);
 		} else if (this.type.equals(Primitive.CYLINDER)) {
 			mesh = new Cylinder(4, 20, 1f,0.9f, 1f, false, false);
+		} else if (this.type.equals(Primitive.IMPORTED)) {
+			// TODO draw the primitive
 		}
 		
 		Geometry res = new Geometry(getUID(),mesh);
