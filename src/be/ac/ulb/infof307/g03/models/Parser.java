@@ -3,29 +3,30 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
-import java.awt.List;
+import java.util.Vector;
+
+import com.jme3.math.Vector3f;
 
 /**
  * @author brochape
  *
  */
 public abstract class Parser {
-	private List vertices;
+	private Vector<Vector3f> vertices;
 	
-	private List normals;
+	private int[] indexes ;
+	
 	/**
 	 * @return the vertices list
 	 */
-	public List getVertices(){
+	public Vector<Vector3f> getVertices(){
 		return vertices;
 	}
 	
-	/**
-	 * @return the normals list
-	 */
-	public List getNormals(){
-		return normals;
+	public int[] getIndexes(){
+		return indexes;
 	}
+	
 
 	
 }
