@@ -23,6 +23,9 @@ public abstract class Parser {
 		return vertices;
 	}
 	
+	/**
+	 * @return the order the vertices will be meshed with
+	 */
 	public int[] getIndexes(){
 		return indexes;
 	}
