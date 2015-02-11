@@ -12,7 +12,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * A Floor is a set of groups that are all on the same floor in a house.
  * @author Titouan Christophe
  */
-@DatabaseTable
+@DatabaseTable(daoClass=GeometricDAO.class)
 public class Floor extends Ordered {
 	@DatabaseField
 	private double height = 1.0;
@@ -71,8 +71,7 @@ public class Floor extends Ordered {
 		return String.format("Floor %d", getIndex());
 	}
 
-	@Override
-	public final String getUIDPrefix() {
+	public String getUIDPrefix() {
 		return "flr";
 	}
 	

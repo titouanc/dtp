@@ -5,16 +5,16 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 import be.ac.ulb.infof307.g03.models.Entity;
-import be.ac.ulb.infof307.g03.models.GeometryDAO;
+import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.utils.parser.DAEParser;
 import be.ac.ulb.infof307.g03.utils.parser.PrimitiveData;
 
 public class ImportEngine {
 
-	GeometryDAO dao = null;
+	MasterDAO dao = null;
 	
-	public ImportEngine(GeometryDAO dao) {
+	public ImportEngine(MasterDAO dao) {
 		this.dao = dao;
 	}
 	
@@ -43,16 +43,8 @@ public class ImportEngine {
 		DAEParser parser = new DAEParser(fileName);
 		Vector<PrimitiveData> datas = parser.getPrimitiveDatas();
 		Entity entity = new Entity();
-		try {
-			this.dao.create(entity);
-
-			for (PrimitiveData primData : datas) {
-				this.dao.create(new Primitive(entity,Primitive.IMPORTED),primData);
-			}
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for (PrimitiveData primData : datas) {
+			//this.dao.create(new Primitive(entity,Primitive.IMPORTED),primData);
 		}
 	}
 }

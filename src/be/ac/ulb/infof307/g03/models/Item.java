@@ -4,6 +4,7 @@
 package be.ac.ulb.infof307.g03.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
@@ -14,6 +15,7 @@ import com.jme3.scene.Spatial;
  * @author brochape
  *
  */
+@DatabaseTable(daoClass=GeometricDAO.class)
 public class Item extends Meshable {
 	@DatabaseField
 	private double positionx = 0;

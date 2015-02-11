@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * An abstract class for all elements that use an inner Room
@@ -22,9 +23,9 @@ public abstract class Area extends Meshable {
 	 * Constructor of the class Meshable
 	 * It creates a new group
 	 */
-	public Area() {
-		
-	}
+	public Area() {}
+	
+	public Area(Room forRoom){}
 	
 	public Room getRoom(){
 		List<Room> room = new ArrayList<Room>(this.room);

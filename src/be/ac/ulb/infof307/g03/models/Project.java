@@ -22,7 +22,7 @@ import com.j256.ormlite.table.TableUtils;
 public class Project extends Observable {
 	private ConnectionSource db = null; 
 	private Dao<Config, String> config = null;
-	private GeometryDAO geo = null;
+	private MasterDAO geo = null;
 	private String filename = null;
 
 	/**
@@ -40,10 +40,10 @@ public class Project extends Observable {
 	public void create(String filename) throws SQLException {
 		load(filename);
 		TableUtils.createTableIfNotExists(this.db, Config.class);
-		GeometryDAO.migrate(this.db);
+		MasterDAO.migrate(this.db);
 		
 		Floor initialFloor = new Floor(7);
-		getGeometryDAO().create(initialFloor);
+		getGeometryDAO().getDao(Floor.class).create(initialFloor);
 		
 		this.filename = filename;
 		config("floor.current", initialFloor.getUID());
@@ -83,30 +83,27 @@ public class Project extends Observable {
 	 * @param filename The new database filename
 	 * @throws SQLException
 	 */
-	public int saveAs(String filename) throws SQLException {
+	public void saveAs(String filename) throws SQLException {
 		/* Open new DB handler */
 		ConnectionSource newDB = new JdbcConnectionSource("jdbc:sqlite:" + filename);
 		Dao<Config, String> newDAO = DaoManager.createDao(newDB, Config.class);
 		
 		/* Migrate schemas */
 		TableUtils.createTableIfNotExists(newDB, Config.class);
-		GeometryDAO.migrate(newDB);
+		MasterDAO.migrate(newDB);
 		
 		/* Copy data */
-		int res = 0;
-		res += new GeometryDAO(newDB).copyFrom(getGeometryDAO());
+		new MasterDAO(newDB).copyFrom(getGeometryDAO());
 		for (Config c : this.config.queryForAll())
 			newDAO.create(c);
 		
 		/* Replace current DB handler with new one */
-		getGeometryDAO().resetConnection(newDB);
+		getGeometryDAO().resetConnection();
 		this.db.close();
 		this.db = newDB;
 		this.config = newDAO;
 		
 		this.filename = filename;
-		
-		return res;
 	}
 
 	/**
@@ -160,9 +157,9 @@ public class Project extends Observable {
 	 * @return A Data Access Object on all geometric models.
 	 * @throws SQLException
 	 */
-	public GeometryDAO getGeometryDAO() throws SQLException {
+	public MasterDAO getGeometryDAO() throws SQLException {
 		if (this.geo == null)
-			this.geo = new GeometryDAO(this.db);
+			this.geo = new MasterDAO(this.db);
 		return this.geo;
 	}
 }

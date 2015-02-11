@@ -1,5 +1,6 @@
 package be.ac.ulb.infof307.g03.controllers;
 
+import java.lang.reflect.Type;
 import java.sql.SQLException;
 
 import com.jme3.collision.CollisionResults;
@@ -14,7 +15,8 @@ import com.jme3.system.JmeContext;
 import be.ac.ulb.infof307.g03.models.Area;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.Geometric;
-import be.ac.ulb.infof307.g03.models.GeometryDAO;
+import be.ac.ulb.infof307.g03.models.GeometricDAO;
+import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Meshable;
 import be.ac.ulb.infof307.g03.models.Point;
 import be.ac.ulb.infof307.g03.models.Primitive;
@@ -105,18 +107,16 @@ public abstract class CanvasController {
     
     protected void deselectAll() {
 		try {
-			GeometryDAO dao = project.getGeometryDAO();
-			for (Area area : dao.getSelectedMeshables()) {
-				for (Point p : area.getPoints()) {
-					p.deselect();
-					dao.update(p);
+			MasterDAO master = project.getGeometryDAO();
+			for (Class klass : master.areaClasses){
+				GeometricDAO<? extends Area> dao = master.getDao(klass);
+				for (Area area : dao.queryForEq("selected", true)){
+					area.deselect();
+					dao.modify(area);
 				}
-				area.deselect();
-				dao.update(area);
-				dao.notifyObservers(area);
 			}
+			master.notifyObservers();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -129,7 +129,8 @@ public abstract class CanvasController {
 	 */
 	public void setTexture(Meshable clickedItem,String newTexture) throws SQLException {
 		clickedItem.setTexture(newTexture);
-		this.project.getGeometryDAO().update(clickedItem);
+		GeometricDAO<? extends Meshable> dao = this.project.getGeometryDAO().getDao(clickedItem.getClass());
+		dao.modify(clickedItem);
 		this.project.getGeometryDAO().notifyObservers();
 	}
 

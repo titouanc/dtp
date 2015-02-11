@@ -57,7 +57,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	// Attribute
 	private ObjectTreeController controller;
 	private Project project;
-	private GeometryDAO dao;
+	private MasterDAO daoFactory;
 	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
 	private Map<String,DefaultMutableTreeNode> nodes = new HashMap<String,DefaultMutableTreeNode>();
 		
@@ -115,7 +115,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				}
 				
 			} else if (cmd.equals(MODIFY)) {
-				ModificationFrame mf = new ModificationFrame((Primitive) clickedItem, dao);
+				ModificationFrame mf = new ModificationFrame((Primitive) clickedItem, daoFactory);
 				mf.pack();
 				mf.setVisible(true);
 			} else if (cmd.equals(DUPLICATE)){
@@ -170,7 +170,7 @@ public class ObjectTreeView extends JTree implements Observer {
 		DefaultMutableTreeNode res = createNode(root);
 		if (root instanceof Room){
 			Room room = (Room) root;
-			for (Meshable meshable : room.getMeshables())
+			for (Meshable meshable : room.getAreas())
 				res.add(createNode(meshable));
 		}
 		return res;
@@ -179,7 +179,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	public void createTree() throws SQLException{
 		Log.debug("createTree");
 		root.removeAllChildren();
-		for (Floor floor : this.dao.getFloors()){
+		for (Floor floor : this.daoFactory.getDao(Floor.class).queryForAll()){
 			DefaultMutableTreeNode floorNode = createNode(floor);
 			for (Room room : floor.getRooms()){
 				floor.getRooms().refresh(room);
@@ -195,7 +195,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	
 	public void createObjectTree() {
 		root.removeAllChildren();
-		Entity entity = (Entity) dao.getByUID(project.config("entity.current"));
+		Entity entity = (Entity) daoFactory.getByUID(project.config("entity.current"));
 		for (Primitive primitive : entity.getPrimitives()) {
 			DefaultMutableTreeNode primitiveNode = new DefaultMutableTreeNode(primitive.toString());
 			primitiveNode.setUserObject(primitive);
@@ -266,8 +266,8 @@ public class ObjectTreeView extends JTree implements Observer {
 		this.project = project;
 		
 		try {
-			this.dao = project.getGeometryDAO();
-			this.dao.addObserver(this);
+			this.daoFactory = project.getGeometryDAO();
+			this.daoFactory.addObserver(this);
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
@@ -305,7 +305,8 @@ public class ObjectTreeView extends JTree implements Observer {
 			Geometric changed = change.getItem();
 			
 			try {
-				this.dao.refresh(changed);
+				GeometricDAO dao = this.daoFactory.getDao(changed.getClass());
+				dao.refresh(changed);
 			} catch (SQLException ex) {
 				Log.exception(ex);
 			}

@@ -18,7 +18,7 @@ public class TestFloor extends DAOTest {
 			Floor floor = new Floor();
 			floor.setIndex(i);
 			floor.setHeight(1);
-			dao.create(floor);
+			dao.getDao(Floor.class).create(floor);
 		}
 	}
 	
@@ -35,14 +35,14 @@ public class TestFloor extends DAOTest {
 		Floor f1 = new Floor(),
 		      f2 = new Floor();
 		assertEquals(f1.getIndex(), f2.getIndex());
-		dao.create(f1);
-		dao.create(f2);
+		dao.getDao(Floor.class).create(f1);
+		dao.getDao(Floor.class).create(f2);
 	}
 	
 	@Test
 	public void test_floor_recompute() throws SQLException {
 		create3Floors();
-		List<Floor> floors = dao.getFloors();
+		List<Floor> floors = dao.getDao(Floor.class).getFloors();
 		assertEquals(0, floors.get(0).getBaseHeight(), 0);
 		assertEquals(1, floors.get(1).getBaseHeight(), 0);
 		assertEquals(2, floors.get(2).getBaseHeight(), 0);

@@ -19,7 +19,6 @@ import javax.swing.filechooser.FileFilter;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.utils.io.ImportEngine;
 import be.ac.ulb.infof307.g03.views.ObjectListView;
 
 /**
@@ -29,7 +28,7 @@ import be.ac.ulb.infof307.g03.views.ObjectListView;
 public class ObjectListController implements MouseListener, Observer {
 	private ObjectListView view = null;
 	private Project project = null;
-	private GeometryDAO dao = null;
+	private MasterDAO dao = null;
 	private Floor currentFloor = null;
 	
 	// Supported file type
@@ -79,7 +78,7 @@ public class ObjectListController implements MouseListener, Observer {
 		if (name != null) {
 			Entity entity = new Entity(name);
 			try {
-				this.dao.create(entity);
+				this.dao.getDao(Entity.class).create(entity);
 				this.dao.notifyObservers();
 			} catch (SQLException ex) {
 				Log.exception(ex);
@@ -97,7 +96,7 @@ public class ObjectListController implements MouseListener, Observer {
 			}
 		}
 		try {
-			this.dao.delete(entity);
+			this.dao.getDao(Entity.class).delete(entity);
 			this.dao.notifyObservers();
 		} catch (SQLException ex) {
 			Log.exception(ex);
@@ -108,7 +107,7 @@ public class ObjectListController implements MouseListener, Observer {
 		if (newName != null) {
 			entity.setName(newName);
 			try {
-				this.dao.update(entity);
+				this.dao.getDao(Entity.class).update(entity);
 				this.dao.notifyObservers();
 			} catch (SQLException ex) {
 				Log.exception(ex);
@@ -132,7 +131,7 @@ public class ObjectListController implements MouseListener, Observer {
 		Floor currentFloor = (Floor) this.dao.getByUID(currentFloorUID);
 		Item newItem = new Item(currentFloor, selectedEntity);
 		try {
-			this.dao.create(newItem);
+			this.dao.getDao(Item.class).create(newItem);
 			this.dao.notifyObservers();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -201,11 +200,15 @@ public class ObjectListController implements MouseListener, Observer {
 		
 	}
 	
-	private FileFilter importFileFilter(final ArrayList<String> extentions, final String description) {
+	private FileFilter importFileFilter(final ArrayList<String> extentions) {
 		return new FileFilter() {
 			@Override
 			public String getDescription() {
-				return description;
+				String res = "";
+				for (String extention : extentions) {
+					res += "*"+extention+", ";
+				}
+				return res.substring(0, res.length()-2);
 			}
 			@Override
 			public boolean accept(File file) {
@@ -219,21 +222,20 @@ public class ObjectListController implements MouseListener, Observer {
 		};
 	}
 	
-	public void onImport() {		
+	public void onImport() {
+		FileFilter fileFilter = importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_3DS,FILE_TYPE_DAE,FILE_TYPE_KMZ,FILE_TYPE_OBJ)));
+
 		JFileChooser fileChooser = new JFileChooser(); 
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		
-		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_OBJ)),"*"+FILE_TYPE_OBJ));
-		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_DAE)),"*"+FILE_TYPE_DAE));
-		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_3DS)),"*"+FILE_TYPE_3DS));
-		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_KMZ)),"*"+FILE_TYPE_KMZ));
-		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_3DS,FILE_TYPE_DAE,FILE_TYPE_KMZ,FILE_TYPE_OBJ)),"Tous les fichiers"));
-
+		fileChooser.addChoosableFileFilter(fileFilter);
+		
 		int rVal = fileChooser.showOpenDialog(view);
 		
 		if (rVal == JFileChooser.APPROVE_OPTION) {
-			ImportEngine i = new ImportEngine(this.dao);
-			i.handleImport(fileChooser.getSelectedFile().getName(),fileChooser.getCurrentDirectory().toString());
+			// THIS IS ALL YOU NEED TO OPEN THE FILE
+			System.out.println(fileChooser.getSelectedFile().getName());
+			System.out.println(fileChooser.getCurrentDirectory().toString());
 		}
 
 	}

@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.models;
 
 import java.util.List;
 
+import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
@@ -19,6 +20,7 @@ import com.jme3.util.BufferUtils;
  * A roof is a surface delimited by the height of wall
  * @author Walter Moulart
  */
+@DatabaseTable(daoClass=GeometricDAO.class)
 public class Roof extends Area {
 	/**
 	 * Create a new empty roof object, and create a new group for it
@@ -26,6 +28,12 @@ public class Roof extends Area {
 	public Roof() {
 		super();
 		this.hide();
+	}
+	
+	public Roof(Room forRoom){
+		super();
+		this.hide();
+		forRoom.setRoof(this);
 	}
 
 	@Override

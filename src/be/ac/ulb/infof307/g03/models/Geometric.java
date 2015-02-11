@@ -7,10 +7,10 @@ import com.j256.ormlite.table.DatabaseTable;
  * Interface for all objects managed by GeometryDAO
  * @author Titouan Christophe
  */
-@DatabaseTable
+@DatabaseTable(daoClass=GeometricDAO.class)
 public abstract class Geometric {
 	@DatabaseField(generatedId = true)
-	private int id = 0; 
+	private int id = 0;
 	
 	/**
 	 * @return The UID of the Geometric

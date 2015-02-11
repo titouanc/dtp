@@ -12,13 +12,13 @@ import com.j256.ormlite.support.ConnectionSource;
  */
 public abstract class DAOTest {
 
-	protected GeometryDAO dao = null;
+	protected MasterDAO dao = null;
 
 	@Before
 	public void setUp() throws Exception {
 		ConnectionSource db = new JdbcConnectionSource("jdbc:sqlite::memory:");
-		GeometryDAO.migrate(db);
-		dao = new GeometryDAO(db);
+		MasterDAO.migrate(db);
+		dao = new MasterDAO(db);
 	}
 
 	@After

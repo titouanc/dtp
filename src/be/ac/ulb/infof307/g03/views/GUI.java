@@ -103,6 +103,9 @@ public class GUI extends JFrame {
         g.drawString("Loading "+comps[(frame/5)%3]+"...", 120, 150);
     }
     
+    /**
+     * Update the window title
+     */
     public void updateTitle(){
     	setTitle("HomePlans - " + (project.isOnDisk() ? project.getFilename() : "Unsaved"));
     }

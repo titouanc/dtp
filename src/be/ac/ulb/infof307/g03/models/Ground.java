@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.models;
 
 import java.util.List;
 
+import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -18,12 +19,18 @@ import com.jme3.util.BufferUtils;
  * A ground is a surface delimited by a group of shapes
  * @author Titouan Christophe
  */
+@DatabaseTable(daoClass=GeometricDAO.class)
 public class Ground extends Area {
 	/**
 	 * Create a new empty ground object, and create a new group for it
 	 */
 	public Ground() {
 		super();
+	}
+	
+	public Ground(Room forRoom){
+		super();
+		forRoom.setGround(this);
 	}
 
 	@Override
