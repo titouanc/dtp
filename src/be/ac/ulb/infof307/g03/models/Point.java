@@ -221,6 +221,6 @@ public class Point extends Geometric {
 		return dao.queryBuilder().where().
 				ge("x", xmin).and().le("x", xmax).and().
 				ge("y", ymin).and().le("y", ymax).and().
-				ge("z", zmin).and().le("z", zmax).and().prepare();
+				ge("z", zmin).and().le("z", zmax).prepare();
 	}
 }
