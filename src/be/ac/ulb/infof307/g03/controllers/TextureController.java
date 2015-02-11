@@ -82,7 +82,6 @@ public class TextureController implements ActionListener,MouseListener, Observer
 
 	@Override
 	public void update(Observable obs, Object arg) {
-		Log.debug("UPDATE");
 		if (obs instanceof Project){
 			Config conf = (Config) arg ;
 			if (conf.getName().equals("texture.mode") ){
@@ -92,23 +91,6 @@ public class TextureController implements ActionListener,MouseListener, Observer
 		
 	}
 
-	/*
-	@SuppressWarnings("deprecation")
-	private void updateTextureMode(String value) {
-		if (value.equals("shown")){
-			_view.show();
-			Log.debug("SHOW");
-		}
-		else{
-			Log.debug("HIDE");
-
-			_view.hide();
-		}
-		else if (value.equals("hidden")){
-			_view.hide();
-		}	
-	}
-*/
 	/**
 	 * Add textures from assets/Colors and assets/Textures
 	 * @param fileToImport
@@ -382,7 +364,4 @@ public class TextureController implements ActionListener,MouseListener, Observer
 		
 	}
 	
-	
-	
-
 }

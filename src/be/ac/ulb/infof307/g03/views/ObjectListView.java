@@ -1,19 +1,29 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
@@ -68,52 +78,58 @@ public class ObjectListView extends JList implements Observer {
 		public void actionPerformed(ActionEvent e) {
 			String cmd = e.getActionCommand();
 			Entity selectedEntity = (Entity) getSelectedValue();
-			if (cmd.equals(_NEW)) {
+			if (cmd.equals(NEW)) {
 				String name = JOptionPane.showInputDialog("New object name ?");
-				_controller.onNewAction(name);
-			} else if (cmd.equals(_RENAME)) {
+				controller.onNewAction(name);
+			} else if (cmd.equals(RENAME)) {
 				String name = JOptionPane.showInputDialog("New object name ?");
-				_controller.onRenameAction(selectedEntity, name);
-			} else if (cmd.equals(_EDIT)) {
-				_controller.onEditAction(selectedEntity);
-			} else if (cmd.equals(_DELETE)) {
-				_controller.onDeleteAction(selectedEntity);
-			} else if (cmd.equals(_INSERT)) {
-				_controller.onInsertAction(selectedEntity);
+				controller.onRenameAction(selectedEntity, name);
+			} else if (cmd.equals(EDIT)) {
+				controller.onEditAction(selectedEntity);
+			} else if (cmd.equals(DELETE)) {
+				controller.onDeleteAction(selectedEntity);
+			} else if (cmd.equals(INSERT)) {
+				controller.onInsertAction(selectedEntity);
+			} else if (cmd.equals(EXPORT)) {
+				controller.onExport(selectedEntity);
+			} else if (cmd.equals(IMPORT)) {
+				controller.onImport();
 			}
 		}
 		
 	}
 	
-	private ObjectListController _controller = null;
-	private GeometryDAO _dao = null;
+	private ObjectListController controller = null;
+	private GeometryDAO dao = null;
 	
-	private static final String _NEW = "PAL_new";
-	private static final String _RENAME = "PAL_rename";
-	private static final String _EDIT = "PAL_edit";
-	private static final String _DELETE = "PAL_delete";
-	private static final String _INSERT = "PAL_insert";
+	private static final String NEW = "PAL_new";
+	private static final String RENAME = "PAL_rename";
+	private static final String EDIT = "PAL_edit";
+	private static final String DELETE = "PAL_delete";
+	private static final String INSERT = "PAL_insert";
+	private static final String EXPORT = "PAL_export";
+	private static final String IMPORT = "PAL_import";
 	
 	public ObjectListView(ObjectListController controller, Project project) {
 		super();
-		_controller = controller;
+		this.controller = controller;
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setLayoutOrientation(JList.VERTICAL_WRAP);
 		setVisibleRowCount(-1);
 		setCellRenderer(new MyCellRenderer());
 		try {
-			_dao = project.getGeometryDAO();
+			dao = project.getGeometryDAO();
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
-		addMouseListener(_controller);
-		_dao.addObserver(this);
+		addMouseListener(controller);
+		dao.addObserver(this);
 		createList();
 	}
 	
 	private void createList() {
 		try {
-			List<Entity> entities = _dao.getEntities();
+			List<Entity> entities = dao.getEntities();
 			setListData(new Vector<Entity>(entities));
 		} catch (SQLException ex) {
 			Log.exception(ex);
@@ -122,20 +138,30 @@ public class ObjectListView extends JList implements Observer {
 	}
 	
 	private String getFloorName(){
-		Floor floor = this._controller.getCurrentFloor();
+		Floor floor = this.controller.getCurrentFloor();
 		return (floor == null) ? "current floor" : floor.toString();
 	}
 	
 	public JPopupMenu createPopupMenu(){
 		PopupActionListener listener = new PopupActionListener();
 		JPopupMenu res = new JPopupMenu();
-		res.add(createPopupMenuItem("New", _NEW, listener));
+		if (!isSelectionEmpty()) {
+			res.add(createPopupMenuItem("Export...", EXPORT, listener));
+		}
+		res.add(createPopupMenuItem("Import...", IMPORT, listener));
+		
 		res.add(new JPopupMenu.Separator());
-		res.add(createPopupMenuItem("Rename", _RENAME, listener));
-		res.add(createPopupMenuItem("Edit", _EDIT, listener));
-		res.add(createPopupMenuItem("Delete", _DELETE, listener));
-		res.add(new JPopupMenu.Separator());
-		res.add(createPopupMenuItem("Create on " + this.getFloorName(), _INSERT, listener));
+		
+		res.add(createPopupMenuItem("New", NEW, listener));
+		
+		if (!isSelectionEmpty()) {
+			res.add(new JPopupMenu.Separator());
+			res.add(createPopupMenuItem("Rename", RENAME, listener));
+			res.add(createPopupMenuItem("Edit", EDIT, listener));
+			res.add(createPopupMenuItem("Delete", DELETE, listener));
+			res.add(new JPopupMenu.Separator());
+			res.add(createPopupMenuItem("Create on " + this.getFloorName(), INSERT, listener));
+		}
 		return res;
 	}
 
