@@ -28,7 +28,8 @@ import be.ac.ulb.infof307.g03.views.ObjectListView;
 public class ObjectListController implements MouseListener, Observer {
 	private ObjectListView view = null;
 	private Project project = null;
-	private MasterDAO dao = null;
+	private MasterDAO daoFactory = null;
+
 	private Floor currentFloor = null;
 	
 	// Supported file type
@@ -44,11 +45,11 @@ public class ObjectListController implements MouseListener, Observer {
 		this.view = new ObjectListView(this,project);
 		this.project = project;
 		try {
-			this.dao = project.getGeometryDAO();
+			this.daoFactory = project.getGeometryDAO();
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
-		Geometric newFloor = this.dao.getByUID(project.config("floor.current"));
+		Geometric newFloor = this.daoFactory.getByUID(project.config("floor.current"));
 		if (newFloor != null)
 			this.currentFloor = (Floor) newFloor;
 		project.addObserver(this);
@@ -78,8 +79,8 @@ public class ObjectListController implements MouseListener, Observer {
 		if (name != null) {
 			Entity entity = new Entity(name);
 			try {
-				this.dao.getDao(Entity.class).create(entity);
-				this.dao.notifyObservers();
+				this.daoFactory.getDao(Entity.class).insert(entity);
+				this.daoFactory.notifyObservers();
 			} catch (SQLException ex) {
 				Log.exception(ex);
 			}
@@ -96,8 +97,8 @@ public class ObjectListController implements MouseListener, Observer {
 			}
 		}
 		try {
-			this.dao.getDao(Entity.class).delete(entity);
-			this.dao.notifyObservers();
+			this.daoFactory.getDao(Entity.class).remove(entity);
+			this.daoFactory.notifyObservers();
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
@@ -107,8 +108,8 @@ public class ObjectListController implements MouseListener, Observer {
 		if (newName != null) {
 			entity.setName(newName);
 			try {
-				this.dao.getDao(Entity.class).update(entity);
-				this.dao.notifyObservers();
+				this.daoFactory.getDao(Entity.class).modify(entity);
+				this.daoFactory.notifyObservers();
 			} catch (SQLException ex) {
 				Log.exception(ex);
 			}
@@ -128,13 +129,12 @@ public class ObjectListController implements MouseListener, Observer {
 	public void onInsertAction(Entity selectedEntity) {
 		this.project.config("edition.mode", "world");
 		String currentFloorUID = this.project.config("floor.current");
-		Floor currentFloor = (Floor) this.dao.getByUID(currentFloorUID);
+		Floor currentFloor = (Floor) this.daoFactory.getByUID(currentFloorUID);
 		Item newItem = new Item(currentFloor, selectedEntity);
 		try {
-			this.dao.getDao(Item.class).create(newItem);
-			this.dao.notifyObservers();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			this.daoFactory.getDao(Item.class).insert(newItem);
+			this.daoFactory.notifyObservers();
+ 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -248,21 +248,15 @@ public class ObjectListController implements MouseListener, Observer {
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void mouseClicked(MouseEvent e) {		
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void mouseEntered(MouseEvent e) {		
 	}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void mouseExited(MouseEvent e) {		
 	}
 
 	@Override
@@ -292,7 +286,7 @@ public class ObjectListController implements MouseListener, Observer {
 	public void update(Observable arg0, Object arg1) {
 		Config changed = (Config) arg1;
 		if (changed.getName().equals("floor.current")){
-			Geometric newFloor = this.dao.getByUID(changed.getValue());
+			Geometric newFloor = this.daoFactory.getByUID(changed.getValue());
 			if (newFloor != null)
 				this.currentFloor = (Floor) newFloor;
 		}
