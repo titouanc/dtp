@@ -28,6 +28,7 @@ public class DAEParser extends Parser {
 			DocumentBuilder constructeur = fabrique.newDocumentBuilder(); 
 			File xml = new File(fileName); 
 			this.document = constructeur.parse(xml); 
+			parse();
 		} catch(ParserConfigurationException pce){ 
 			System.out.println("Erreur de configuration du parseur DOM"); 
 			System.out.println("lors de l'appel ˆ fabrique.newDocumentBuilder();"); 
@@ -58,7 +59,7 @@ public class DAEParser extends Parser {
 		return new ByteArrayInputStream(nodeContent.getBytes());
 	}
 	
-	public void parseVertices() {
+	public void parse() {
 		NodeList nodeList = document.getElementsByTagName("geometry");
 		for (int i=0; i<nodeList.getLength(); ++i) {
 			datas.addElement(new PrimitiveData());
@@ -85,19 +86,6 @@ public class DAEParser extends Parser {
 				}
 			}
 		}
-	}
-
-	public static void main(String[] args) {
-		
-		DAEParser d = new DAEParser("/Users/julianschembri/Downloads/test.dae");
-		d.parseVertices();
-		for (int i=0; i<d.datas.size(); ++i) {
-			
-			System.out.println(d.datas.elementAt(i).name);
-			System.out.println(d.datas.elementAt(i).indexes);
-			System.out.println(d.datas.elementAt(i).vertices);
-		}
-		
 	}
 	
 }
