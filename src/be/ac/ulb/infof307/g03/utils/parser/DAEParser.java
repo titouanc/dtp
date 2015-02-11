@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.jme3.app.SimpleApplication;
 import com.jme3.math.Vector3f;
 
 public class DAEParser extends Parser {
@@ -87,6 +88,7 @@ public class DAEParser extends Parser {
 	}
 
 	public static void main(String[] args) {
+		
 		DAEParser d = new DAEParser("/Users/julianschembri/Downloads/test.dae");
 		d.parseVertices();
 		for (int i=0; i<d.datas.size(); ++i) {

@@ -10,10 +10,10 @@ import java.util.logging.Level;
 import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.jme3.math.Vector3f;
-import com.owens.oobjloader.builder.Build;
+/*import com.owens.oobjloader.builder.Build;
 import com.owens.oobjloader.builder.VertexGeometric;
 import com.owens.oobjloader.parser.Parse;
-
+*/
 
 /**
  * @author Bruno
@@ -21,12 +21,12 @@ import com.owens.oobjloader.parser.Parse;
  */
 public class ObjParser extends Parser {
 
-	Build builder = new Build();
-	Parse parser = null;
+/*	Build builder = new Build();
+	Parse parser = null;*/
 	/**
 	 * @param filename
 	 */
-	public ObjParser(String filename){
+/*	public ObjParser(String filename){
         try {
 			parser = new Parse(builder, filename);
 		} catch (FileNotFoundException e) {
@@ -43,7 +43,7 @@ public class ObjParser extends Parser {
         Log.log(Level.FINEST, "[DEBUG] Loaded vertices : " + vertices);
 	}
 	
-	
+	*/
 	
 	
     
