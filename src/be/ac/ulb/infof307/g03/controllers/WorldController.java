@@ -201,7 +201,8 @@ public class WorldController extends CanvasController implements Observer {
 	    		}
 	    		
 	    		/* Create Room shape */
-	    		room.addPoints((Point[]) this.inConstruction.toArray());
+	    		for (Point p : this.inConstruction)
+	    			room.addPoints(p);
 	    		room.addPoints(this.inConstruction.get(0)); // close polygon
 	    		daoFactory.getDao(Room.class).modify(room);
 	    		daoFactory.getDao(Floor.class).refresh(this.currentFloor);
