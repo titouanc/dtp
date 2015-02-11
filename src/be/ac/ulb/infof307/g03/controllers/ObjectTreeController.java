@@ -131,7 +131,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			try {
 				Log.info("DELETE %s", item.toString());
 				this.daoFactory.getDao(item.getClass()).remove(item);
-				this.daoFactory.notifyObservers(item);
+				this.daoFactory.notifyObservers();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -153,7 +153,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 					p.deselect();
 					pointDao.modify(p);
 				}
-				this.daoFactory.getDao(Area.class).modify(area);
+				this.daoFactory.getDao(area.getClass()).modify(area);
 				this.daoFactory.notifyObservers();
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -201,7 +201,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			Log.debug("Select %s", area.getUID());
 			try {
 				GeometricDAO<Point> pointDao = this.daoFactory.getDao(Point.class);
-				GeometricDAO<Area> areaDao = this.daoFactory.getDao(Area.class);
+				GeometricDAO areaDao = this.daoFactory.getDao(area.getClass());
 				areaDao.refresh(area);
 				area.select();
 				for (Point p : area.getPoints()){
@@ -209,7 +209,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 					pointDao.modify(p);
 				}
 				areaDao.modify(area);
-				this.daoFactory.notifyObservers(area);
+				this.daoFactory.notifyObservers();
 			} catch (SQLException ex) {
 				Log.exception(ex);
 			}

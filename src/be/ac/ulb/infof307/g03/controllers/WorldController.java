@@ -91,7 +91,7 @@ public class WorldController extends CanvasController implements Observer {
 		
 		try {
     		MasterDAO daoFactory = this.project.getGeometryDAO();
-    		daoFactory.getDao(Item.class).update(moving);
+    		daoFactory.getDao(Item.class).modify(moving);
     		if (finalMove) 
     			movingGeometric = null;
     		daoFactory.notifyObservers();
