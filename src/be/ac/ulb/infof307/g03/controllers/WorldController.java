@@ -3,6 +3,7 @@
  */
 package be.ac.ulb.infof307.g03.controllers;
 
+import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -149,46 +150,73 @@ public class WorldController extends CanvasController implements Observer {
     /**
      * Add the points in the Point List when user click to create his wall
      */
-    public void construct(){
+	public void construct(){
     	Point lastPoint=new Point();
     	lastPoint.setPosition(getXYForMouse(0));
 		lastPoint.select();
 		
 		try {
-        	MasterDAO dao = this.project.getGeometryDAO();
-        	Point found = dao.findClosePoint(lastPoint, 1);
-        	if (found != null){
-        		lastPoint = found;
+        	MasterDAO daoFactory = this.project.getGeometryDAO();
+        	GeometricDAO<Point> pointDao = daoFactory.getDao(Point.class);
+        	Point near = pointDao.queryForFirst(lastPoint.getQueryForNear(pointDao, 1));
+        	if (near != null){
+        		lastPoint = near;
         		lastPoint.select();
-        		dao.update(found);
+        		pointDao.modify(lastPoint);
         	} else {
-        		dao.create(lastPoint);
+        		pointDao.insert(lastPoint);
         	}
-        	dao.notifyObservers();
+        	daoFactory.notifyObservers();
         } catch (SQLException err){
         	Log.exception(err);
         }
 		this.inConstruction.add(lastPoint);
     }
     
-    /**
+	 /**
      * Mesh the points together for the walls creation
      */
     public void finalizeConstruct(){
     	try {
-			GeometryDAO dao = this.project.getGeometryDAO();
+			MasterDAO daoFactory = this.project.getGeometryDAO();
+			// Minimum 3 points to build a room
 	    	if (this.inConstruction.size() >= 3){
-	    		dao.createRoom(this.currentFloor, this.inConstruction);
-	    	} 
+	    		Room room = new Room();
+	    		room.setFloor(this.currentFloor);
+	    		daoFactory.getDao(Room.class).insert(room);
+	    		daoFactory.getDao(Room.class).refresh(room);
+	    		room.setName(room.getUID());
+	    		
+	    		/* Create all areas of this room (Ground, Roof, Walls)  */
+	    		for (Class<? extends Area> klass : daoFactory.areaClasses){
+					try {
+						Constructor<? extends Area> constr = klass.getConstructor(Room.class);
+						Area newArea = constr.newInstance(room);
+		    			daoFactory.getDao(klass).insert(newArea);
+					} catch (Exception e) {
+						Log.error("Unable to use Area subclass constructor at runtime ! (Missing method ?)");
+						e.printStackTrace();
+					}
+	    		}
+	    		
+	    		/* Create Room shape */
+	    		for (Point p : this.inConstruction)
+	    			room.addPoints(p);
+	    		room.addPoints(this.inConstruction.get(0)); // close polygon
+	    		daoFactory.getDao(Room.class).modify(room);
+	    		daoFactory.getDao(Floor.class).refresh(this.currentFloor);
+	    	}
+	    	
+	    	GeometricDAO<Point> pointDao = daoFactory.getDao(Point.class);
 	    	for (Point p : this.inConstruction){
 	    		if (p.getBindings().size() == 0){
-	    			dao.delete(p);
+	    			pointDao.remove(p);
 	    		} else {
 	    			p.deselect();
-	    			dao.update(p);
+	    			pointDao.modify(p);
 	    		}
 	    	}
-	    	dao.notifyObservers();
+	    	daoFactory.notifyObservers();
 	    	
 	    	this.inConstruction.clear();
 		} catch (SQLException ex) {
@@ -210,7 +238,7 @@ public class WorldController extends CanvasController implements Observer {
             Geometry selected = results.getClosestCollision().getGeometry();
             
             try {
-            	GeometryDAO dao = this.project.getGeometryDAO();
+            	MasterDAO dao = this.project.getGeometryDAO();
                 // Get associated Geometric from database
                 clicked = dao.getByUID(selected.getName());
                 
