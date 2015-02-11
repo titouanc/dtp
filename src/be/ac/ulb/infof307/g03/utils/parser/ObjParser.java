@@ -3,11 +3,17 @@
  */
 package be.ac.ulb.infof307.g03.utils.parser;
 
-import java.awt.List;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
 
-import com.jme3.asset.AssetManager;
-import com.jme3.material.Material;
-import com.jme3.scene.Spatial;
+import be.ac.ulb.infof307.g03.utils.Log;
+
+import com.jme3.math.Vector3f;
+import com.owens.oobjloader.builder.Build;
+import com.owens.oobjloader.builder.VertexGeometric;
+import com.owens.oobjloader.parser.Parse;
+
 
 /**
  * @author Bruno
@@ -15,14 +21,29 @@ import com.jme3.scene.Spatial;
  */
 public class ObjParser extends Parser {
 
-	/* (non-Javadoc)
-	 * @see be.ac.ulb.infof307.g03.models.Parser#getVertices()
+	Build builder = new Build();
+	Parse parser = null;
+	/**
+	 * @param filename
 	 */
 	public ObjParser(String filename){
-		//Spatial teapot = assetManager.loadModel("Models/Teapot/Teapot.obj");
-		//-> access Vertices and normals or import directly?
-		// TODO : Material mat_default = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
+        try {
+			parser = new Parse(builder, filename);
+		} catch (FileNotFoundException e) {
+			Log.log(Level.FINEST, "[ERROR] File not found!");
+			e.printStackTrace();
+		} catch (IOException e) {
+			Log.log(Level.FINEST, "[ERROR] File not found!");
+			e.printStackTrace();
+		}
+        for (int i = 0; i< builder.verticesG.size(); ++i){
+        	VertexGeometric vertex = builder.verticesG.get(i);
+        	vertices.add(new Vector3f(vertex.x,vertex.y,vertex.z));
+        }
+        Log.log(Level.FINEST, "[DEBUG] Loaded vertices : " + vertices);
 	}
+	
+	
 	
 	
     

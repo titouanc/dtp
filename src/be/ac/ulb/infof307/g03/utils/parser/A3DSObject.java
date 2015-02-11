@@ -3,14 +3,18 @@
  */
 package be.ac.ulb.infof307.g03.utils.parser;
 
+import java.util.Vector;
+
+import com.jme3.math.Vector3f;
+
 /**
  * @author Bruno
  *
  */
 public class A3DSObject {
     private String name;
-    private float[] vertices;
-    private short[] polygons;
+    private Vector<Vector3f> vertices;
+    private int[] polygons;
     //private float[] textureCoordinates; TOTO : later
 
     /**
@@ -30,28 +34,28 @@ public class A3DSObject {
 	/**
 	 * @return
 	 */
-	public float[] getVertices() {
+	public Vector<Vector3f> getVertices() {
 		return vertices;
 	}
 
 	/**
 	 * @param vertices
 	 */
-	public void setVertices(float[] vertices) {
+	public void setVertices(Vector<Vector3f> vertices) {
 		this.vertices = vertices;
 	}
 
 	/**
 	 * @return the polygons
 	 */
-	public short[] getPolygons() {
+	public int[] getPolygons() {
 		return polygons;
 	}
 
 	/**
-	 * @param polygons the polygons to set
+	 * @param faces the polygons to set
 	 */
-	public void setPolygons(short[] polygons) {
-		this.polygons = polygons;
+	public void setPolygons(int[] faces) {
+		this.polygons = faces;
 	}
 }
