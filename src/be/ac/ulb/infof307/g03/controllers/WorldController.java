@@ -87,7 +87,7 @@ public class WorldController extends CanvasController implements Observer {
 		if (moving == null)
 			return;
 		
-		moving.setPosition(getXYForMouse(moving.getAbsolutePositionVector().z));
+		moving.setAbsolutePosition(getXYForMouse(moving.getAbsolutePositionVector().z));
 		
 		try {
     		MasterDAO daoFactory = this.project.getGeometryDAO();

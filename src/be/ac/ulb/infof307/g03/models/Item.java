@@ -66,6 +66,12 @@ public class Item extends Meshable {
 		return new Vector3f((float)positionx,(float)positiony,(float)positionz + (float)floor.getBaseHeight());
 	}
 	
+	public void setAbsolutePosition(Vector3f pos){
+		this.positionx = pos.x;
+		this.positiony = pos.y;
+		this.positionz = pos.z - floor.getBaseHeight();
+	}
+	
 	public void setEntity(Entity entityToSet){
 		entity = entityToSet;
 	}
