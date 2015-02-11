@@ -156,11 +156,16 @@ public class ToolsBarController implements ActionListener, Observer {
 				floorDao.insert(new Floor());
 			} else {
 				int minFloorIndex = 0;
+				double height = 0;
 				for (Floor floor : allFloors){
 					if (floor.getIndex() > minFloorIndex)
 						minFloorIndex = floor.getIndex();
+					height += floor.getHeight();
 				}
-				floorDao.insert(new Floor(minFloorIndex + 1));
+				Floor newFloor = new Floor(7);
+				newFloor.setBaseHeight(height);
+				newFloor.setIndex(minFloorIndex + 1);
+				floorDao.insert(newFloor);
 			}
 	    	daoFactory.notifyObservers();
 		} catch (SQLException ex) {
