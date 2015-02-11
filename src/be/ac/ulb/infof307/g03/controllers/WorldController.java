@@ -184,6 +184,7 @@ public class WorldController extends CanvasController implements Observer {
 	    		Room room = new Room();
 	    		room.setFloor(this.currentFloor);
 	    		daoFactory.getDao(Room.class).insert(room);
+	    		daoFactory.getDao(Room.class).refresh(room);
 	    		room.setName(room.getUID());
 	    		
 	    		/* Create all areas of this room (Ground, Roof, Walls)  */
