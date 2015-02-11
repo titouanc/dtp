@@ -131,7 +131,7 @@ public class ObjectListController implements MouseListener, Observer {
 		Floor currentFloor = (Floor) this.daoFactory.getByUID(currentFloorUID);
 		Item newItem = new Item(currentFloor, selectedEntity);
 		try {
-			this.daoFactory.getDao(Entity.class).insert(newItem);
+			this.daoFactory.getDao(Item.class).insert(newItem);
 			this.daoFactory.notifyObservers();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
