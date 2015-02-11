@@ -33,6 +33,7 @@ public class Roof extends Area {
 	public Roof(Room forRoom){
 		super();
 		this.hide();
+		forRoom.setRoof(this);
 	}
 
 	@Override

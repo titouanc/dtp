@@ -162,7 +162,7 @@ public class WorldController extends CanvasController implements Observer {
         	if (near != null){
         		lastPoint = near;
         		lastPoint.select();
-        		pointDao.modify(near);
+        		pointDao.modify(lastPoint);
         	} else {
         		pointDao.insert(lastPoint);
         	}
@@ -189,9 +189,8 @@ public class WorldController extends CanvasController implements Observer {
 	    		
 	    		/* Create all areas of this room (Ground, Roof, Walls)  */
 	    		for (Class<? extends Area> klass : daoFactory.areaClasses){
-	    			Constructor<? extends Area> constr;
 					try {
-						constr = klass.getConstructor(Room.class);
+						Constructor<? extends Area> constr = klass.getConstructor(Room.class);
 						Area newArea = constr.newInstance(room);
 		    			daoFactory.getDao(klass).insert(newArea);
 					} catch (Exception e) {
