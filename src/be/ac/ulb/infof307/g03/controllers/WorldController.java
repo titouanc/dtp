@@ -116,7 +116,7 @@ public class WorldController extends CanvasController implements Observer {
 					p.deselect();
 				pointDao.modify(p);
 			}
-			daoFactory.getDao(Area.class).modify(area);
+			daoFactory.getDao(area.getClass()).modify(area);
 			daoFactory.notifyObservers(area);
 			
 			String floorUID = area.getRoom().getFloor().getUID();
