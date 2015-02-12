@@ -102,6 +102,15 @@ public class MasterDAO extends Observable {
 		if (this.daos.containsKey(forType)){
 			dao = (GeometricDAO<T>) this.daos.get(forType);
 		} else {
+			Boolean found = false;
+			for (Class klass : managedTypes){
+				if (klass == forType){
+					found = true;
+					break;
+				}
+			}
+			if (! found)
+				throw new SQLException("This class cannot be managed by a MasterDAO !");
 			dao = DaoManager.createDao(this.database, forType);
 			dao.setMaster(this);
 			this.daos.put(forType, dao);
