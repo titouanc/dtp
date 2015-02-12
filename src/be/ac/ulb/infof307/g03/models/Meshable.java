@@ -23,6 +23,8 @@ public abstract class Meshable extends Geometric {
 	private Boolean selected = false;
 	@DatabaseField
 	private String texture = "Gray";
+	
+	private static ColorRGBA selectedColor = new ColorRGBA(0f, 1.2f, 0f, 0.33f);
 
 	private String classPath = getClass().getResource("Meshable.class").toString();
 
@@ -113,21 +115,20 @@ public abstract class Meshable extends Geometric {
 	 */
 	public abstract Spatial toSpatial(Material material);
 	
-	private final Material loadTexture(AssetManager assetManager){
+	private final Material loadMaterial(AssetManager assetManager){
 		if (texture.equals("Gray") || texture.equals("")){
-			texture = "GrayColors";
+			texture = "GrayColor";
 		}
 		Material mat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		mat.setBoolean("UseMaterialColors", true);
-		ColorRGBA color = new ColorRGBA(ColorRGBA.Gray);
-		mat.setColor("Diffuse", color);
-		mat.setColor("Ambient", color);
-		mat.setColor("Specular",color);
-		if (isSelected()){
-			mat.setColor("Ambient",new ColorRGBA(0f, 1.2f, 0f, 0.33f));		}
-		try{
+		
+		mat.setColor("Diffuse", ColorRGBA.Gray);
+		mat.setColor("Ambient", this.isSelected() ? selectedColor : ColorRGBA.Gray);
+		mat.setColor("Specular", ColorRGBA.Gray);
+		
+		try {
 			if((classPath.subSequence(0, 3).equals("rsr"))){
 				if (texture.contains("Colors/")){
 					texture=texture.replace("Colors/", "");					
@@ -146,15 +147,12 @@ public abstract class Meshable extends Geometric {
 					}
 					texture = parts[parts.length-1];
 					assetManager.registerLocator(path, FileLocator.class);
-
 				}
 			}
-		
-		mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		} catch (AssetNotFoundException ex){
 			texture = "GrayColor";
-			mat.setTexture("DiffuseMap",assetManager.loadTexture(texture+".png"));
 		}
+		mat.setTexture("DiffuseMap", assetManager.loadTexture(texture+".png"));
 		return mat;
 	}
 	
@@ -164,7 +162,7 @@ public abstract class Meshable extends Geometric {
 	 * @return A new Spatial object, that could be attached to a jMonkey context.
 	 */
 	public Spatial toSpatial(AssetManager assetManager){
-		return this.toSpatial(loadTexture(assetManager));
+		return this.toSpatial(loadMaterial(assetManager));
 	}
 
 }
