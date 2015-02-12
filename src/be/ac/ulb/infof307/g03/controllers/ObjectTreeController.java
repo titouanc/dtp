@@ -122,6 +122,50 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	}
 	
 	/**
+	 * Helper method to remove a floor's content
+	 * @param deletingFloor The floor to remove
+	 */
+	private void deleteFloorContent(Floor deletingFloor){
+		try {
+			GeometricDAO<Floor> floorDao = this.daoFactory.getDao(Floor.class);
+			/* If we delete the current floor, set current floor to previous, or next */
+			if (deletingFloor.getUID().equals(this.project.config("floor.current"))){
+				Floor previous = floorDao.queryForFirst(deletingFloor.getQueryForPreceeding(floorDao));
+				if (previous != null){
+					project.config("floor.current", previous.getUID());
+				} else {
+					Floor next = floorDao.queryForFirst(deletingFloor.getQueryForFollowing(floorDao));
+					if (next != null){
+						project.config("floor.current", next.getUID());
+					} else {
+						project.config("floor.current", "");
+					}
+				}
+			}
+			/* Adapt the base height of all floors above */
+			for (Floor floor : floorDao.query(deletingFloor.getQueryForFollowing(floorDao))){
+				floor.setBaseHeight(floor.getBaseHeight() - deletingFloor.getHeight());
+				floor.setIndex(floor.getIndex() - 1);
+				floorDao.modify(floor);
+			}
+			/* Remove all rooms on this floor */
+			for (Room room : deletingFloor.getRooms()){
+				for (Area area : room.getAreas()){
+					this.daoFactory.getDao(area.getClass()).remove(area);
+				}
+				this.daoFactory.getDao(Room.class).remove(room);
+			}
+			/* Remove all items on this floor */
+			GeometricDAO<Item> itemDao = this.daoFactory.getDao(Item.class);
+			for (Item item : deletingFloor.getItems()){
+				itemDao.remove(item);
+			}
+		} catch (SQLException err){
+			err.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Delete a Geometric node
 	 * @param object
 	 */
@@ -134,23 +178,16 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			if (item instanceof Floor){
-				Floor deletingFloor = (Floor) item;
+			if (item instanceof Floor)
+				this.deleteFloorContent((Floor) item);
+			else if (item instanceof Room){
+				Room room = (Room) item;
 				try {
-					GeometricDAO<Floor> floorDao = this.daoFactory.getDao(Floor.class);
-					for (Floor floor : floorDao.query(deletingFloor.getQueryForFollowing(floorDao))){
-						floor.setBaseHeight(floor.getBaseHeight() - deletingFloor.getHeight());
-						floor.setIndex(floor.getIndex() - 1);
-						floorDao.modify(floor);
-					}
-					for (Room room : deletingFloor.getRooms()){
-						for (Area area : room.getAreas()){
-							this.daoFactory.getDao(area.getClass()).remove(area);
-						}
-						this.daoFactory.getDao(Room.class).remove(room);
-					}
-				} catch (SQLException err){
-					err.printStackTrace();
+					/* Remove all the room's areas */
+					for (Area area : room.getAreas())
+						this.daoFactory.getDao(area.getClass()).remove(area);
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
 			}
 			this.daoFactory.notifyObservers();
