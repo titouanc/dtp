@@ -6,8 +6,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,10 +13,8 @@ import org.junit.Test;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
-import com.jme3.math.Vector3f;
-import com.jme3.scene.Mesh;
 
-public class TestGeometry {
+public class TestGeometricDAO {
 	private ConnectionSource db, db2;
 	
 	@Before
@@ -126,7 +122,7 @@ public class TestGeometry {
 	@Test
 	public void test_changes() throws SQLException{
 		MasterDAO master = new MasterDAO(db);
-		MockObserver observer = new MockObserver();
+		MockObserver<Change> observer = new MockObserver<Change>();
 		master.addObserver(observer);
 		
 		Floor flr = new Floor();
@@ -135,6 +131,7 @@ public class TestGeometry {
 		master.notifyObservers();
 		assertTrue(observer.hasBeenCalled());
 		assertEquals(1, observer.getCallNumber());
+		assertNotEquals(0, flr.getId());
 	}
 }
 
