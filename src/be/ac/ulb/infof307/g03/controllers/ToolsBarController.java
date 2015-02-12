@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
  */
 public class ToolsBarController implements ActionListener, Observer {
 	// Attributes
-	private ToolsBarView _view;
+	private ToolsBarView view;
 	private Project project;
 	
 	// Buttons actions alias
@@ -131,7 +131,7 @@ public class ToolsBarController implements ActionListener, Observer {
 	 */
 	public void run(){
 		initView(project);
-		project.addObserver(_view);
+		project.addObserver(view);
 		//Sets the default mode
         this.onDragSelectMode();
         
@@ -147,14 +147,14 @@ public class ToolsBarController implements ActionListener, Observer {
 	 * @param aProject The main project
 	 */
 	public void initView(Project aProject){
-		_view = new ToolsBarView(this,aProject);
+		view = new ToolsBarView(this,aProject);
 	}
 	
 	/**
 	 * @return The controller view 
 	 */
 	public ToolsBarView getView(){
-		return _view;
+		return view;
 	}
     
     /**
@@ -171,7 +171,7 @@ public class ToolsBarController implements ActionListener, Observer {
 	    	if (nextFloor != null)
 	    		project.config("floor.current", nextFloor.getUID());
 	    	else
-	    		JOptionPane.showMessageDialog(_view, "No floor above");
+	    		JOptionPane.showMessageDialog(view, "No floor above");
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
@@ -191,7 +191,7 @@ public class ToolsBarController implements ActionListener, Observer {
 	    	if (prevFloor != null)
 	    		project.config("floor.current", prevFloor.getUID());
 	    	else
-	    		JOptionPane.showMessageDialog(_view, "No floor below");
+	    		JOptionPane.showMessageDialog(view, "No floor below");
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
@@ -220,6 +220,7 @@ public class ToolsBarController implements ActionListener, Observer {
 				newFloor.setBaseHeight(height);
 				newFloor.setIndex(minFloorIndex + 1);
 				floorDao.insert(newFloor);
+				this.project.config("floor.curren", newFloor.getUID());
 			}
 	    	daoFactory.notifyObservers();
 		} catch (SQLException ex) {
@@ -282,8 +283,8 @@ public class ToolsBarController implements ActionListener, Observer {
     		GeometricDAO<Floor> floorDao = project.getGeometryDAO().getDao(Floor.class);
 			if( floorDao.queryForAll().isEmpty()){
 				Log.info("User try to switch to construction mode, but there is no floor");
-				JOptionPane.showMessageDialog(_view, "You have to create a floor first");
-				_view.setDragSelectSelected(true);
+				JOptionPane.showMessageDialog(view, "You have to create a floor first");
+				view.setDragSelectSelected(true);
 				onDragSelectMode();
 			}
 			else{
@@ -304,16 +305,16 @@ public class ToolsBarController implements ActionListener, Observer {
 	
 	private void updateEditionMode() {
 		if (this.currentObjectMode.equals(WORLDMODE)) {
-			_view.setWorldModeSelected();
-			_view.setWorldEditionModuleVisible(true);
-			_view.setObjectEditionModuleVisible(false);
+			view.setWorldModeSelected();
+			view.setWorldEditionModuleVisible(true);
+			view.setObjectEditionModuleVisible(false);
 		} else if (this.currentObjectMode.equals(OBJECTMODE)) {
-			_view.setObjectModeSelected();
-			_view.setWorldEditionModuleVisible(false);
-			_view.setObjectEditionModuleVisible(true);
+			view.setObjectModeSelected();
+			view.setWorldEditionModuleVisible(false);
+			view.setObjectEditionModuleVisible(true);
 		}
 		project.config("mouse.mode", "dragSelect");
-		_view.setDragSelectSelected(true);
+		view.setDragSelectSelected(true);
 	}
     
     /**
@@ -330,7 +331,6 @@ public class ToolsBarController implements ActionListener, Observer {
         	onFloorUp();
         } else if (cmd.equals(FLOOR_NEW)){
         	onFloorNew();
-        	onFloorUp();
         } else if (cmd.equals(VIEW2D)) {
         	on2d();
         } else if (cmd.equals(VIEW3D)) {
@@ -373,7 +373,7 @@ public class ToolsBarController implements ActionListener, Observer {
     		 project.config("entity.current", entity.getUID());
     		 project.config("edition.mode", "object");
     	 } else {
-    		 _view.setWorldModeSelected();
+    		 view.setWorldModeSelected();
     	 }
      }
 
@@ -416,7 +416,7 @@ public class ToolsBarController implements ActionListener, Observer {
 				try {
 					if( project.getGeometryDAO().getDao(Floor.class).queryForAll().isEmpty()){
 						// if no more floor and user has selected the construct
-						_view.setDragSelectSelected(true);
+						view.setDragSelectSelected(true);
 						onDragSelectMode();
 					}
 				} catch (SQLException ex) {

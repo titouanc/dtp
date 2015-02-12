@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JOptionPane;
+
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.WorldView;
@@ -265,7 +267,8 @@ public class WorldController extends CanvasController implements Observer {
     			if (this.currentFloor != null && newUID.equals(this.currentFloor.getUID()))
     				return;
     			try {
-    				this.currentFloor = (Floor) this.project.getGeometryDAO().getByUID(config.getValue());
+    				Geometric found = this.project.getGeometryDAO().getByUID(config.getValue());
+    				this.currentFloor = (found != null) ? (Floor) found : null;
     			} catch (SQLException ex) {
     				Log.exception(ex);
     			}
