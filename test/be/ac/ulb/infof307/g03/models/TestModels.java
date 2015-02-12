@@ -6,9 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	TestGeometry.class, TestBinding.class, TestPoint.class, 
-	TestProject.class, TestFloor.class, TestMeshable.class, 
-	TestRoom.class, TestEntity.class, TestItem.class})
+	TestGeometry.class})
 public class TestModels {
 
 }

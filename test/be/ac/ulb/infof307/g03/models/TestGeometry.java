@@ -126,7 +126,15 @@ public class TestGeometry {
 	@Test
 	public void test_changes() throws SQLException{
 		MasterDAO master = new MasterDAO(db);
+		MockObserver observer = new MockObserver();
+		master.addObserver(observer);
+		
 		Floor flr = new Floor();
+		GeometricDAO<Floor> dao = master.getDao(Floor.class);
+		dao.insert(flr);
+		master.notifyObservers();
+		assertTrue(observer.hasBeenCalled());
+		assertEquals(1, observer.getCallNumber());
 	}
 }
 

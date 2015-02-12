@@ -324,6 +324,11 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		}
 	}
 
+	/**
+	 * Change a wall width
+	 * @param wall The wall
+	 * @param userInput The with as a String (entered by user)
+	 */
 	public void setWidth(Wall wall, String userInput){
 		double width = wall.getWidth();
 		try {
