@@ -15,6 +15,7 @@ import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.collision.CollisionResults;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
@@ -45,7 +46,6 @@ public class WorldController extends CanvasController implements Observer {
 		}
         
         view.getProject().addObserver(this);
-        
         view.makeScene();
     }
     
@@ -69,7 +69,9 @@ public class WorldController extends CanvasController implements Observer {
     	if (movingPoint == null)
     		return;
     	
-    	movingPoint.setPosition(getXYForMouse((float)movingPoint.getZ()));
+    	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
+    	movingPoint.setX(newPos.x);
+    	movingPoint.setY(newPos.y);
     	
         try {
         	MasterDAO daoFactory = this.project.getGeometryDAO();
