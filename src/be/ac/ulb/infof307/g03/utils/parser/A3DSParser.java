@@ -30,7 +30,6 @@ public class A3DSParser extends Parser {
 	 */
 
     private A3DSReader reader;
-    private A3DSObject currentObject;
 
     public A3DSParser(A3DSReader reader) {
         this.reader = reader;
@@ -108,39 +107,26 @@ public class A3DSParser extends Parser {
     private void parseObjectChunk() throws IOException {
         String name = reader.readString();
         Log.log(Level.FINEST,"[DEBUG]Found object : " + name);
-        currentObject = new A3DSObject(name);
+        datas.addElement(new PrimitiveData()); 
+        datas.elementAt(datas.size()-1).setName(name);
     }
 
     private void parseVerticesList() throws IOException {
         short numVertices = reader.getShort();
-        Vector<Vector3f> vertices = new Vector();
-        float x;
-        float y;
-        float z;
-        
+        int index = datas.size()-1;
         for (int i=0; i<numVertices; i++) {
-        	x = reader.getFloat();
-        	y = reader.getFloat();
-        	z = reader.getFloat();
-        	
-            vertices.add(new Vector3f(x,y,z));
+        	datas.elementAt(index).appendVertex(new Vector3f(reader.getFloat(),reader.getFloat(),reader.getFloat()));
         }
-
-        currentObject.setVertices(vertices);
         Log.log(Level.FINEST,"[DEBUG]Found " + numVertices + " vertices");
     }
 
     private void parseFacesDescription() throws IOException {
         short numFaces = reader.getShort();
-        int[] faces = new int[numFaces * 3];
-        for (int i=0; i<numFaces; i++) {
-            faces[i*3] = (int)reader.getShort();
-            faces[i*3 + 1] = (int)reader.getShort();
-            faces[i*3 + 2] = (int)reader.getShort();
-            reader.getShort(); 
+        int index = datas.size()-1;
+        for (int i=0; i<numFaces*3; i++) {
+            datas.elementAt(index).indexes.addElement((int)reader.getShort());
         }
         Log.log(Level.FINEST,"[DEBUG]Found " + numFaces + " faces");
-        currentObject.setPolygons(faces);
     }
 
     private void parseLocalCoordinateSystem() throws IOException {
@@ -177,10 +163,9 @@ public class A3DSParser extends Parser {
         v[1] = reader.getFloat();
         v[2] = reader.getFloat();
     }
-    
-    public Vector<Vector3f> getVertices(){
-    	return currentObject.getVertices();
-    }
 
+	public static void main(String[] args) {
+		DAEParser d = new DAEParser("/Users/julianschembri/Downloads/test.3ds");
 
+	}
 }

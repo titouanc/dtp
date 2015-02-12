@@ -19,6 +19,7 @@ import javax.swing.filechooser.FileFilter;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
+import be.ac.ulb.infof307.g03.utils.io.ImportEngine;
 import be.ac.ulb.infof307.g03.views.ObjectListView;
 
 /**
@@ -29,6 +30,7 @@ public class ObjectListController implements MouseListener, Observer {
 	private ObjectListView view = null;
 	private Project project = null;
 	private MasterDAO daoFactory = null;
+
 	private Floor currentFloor = null;
 	
 	// Supported file type
@@ -133,8 +135,7 @@ public class ObjectListController implements MouseListener, Observer {
 		try {
 			this.daoFactory.getDao(Item.class).insert(newItem);
 			this.daoFactory.notifyObservers();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+ 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -200,15 +201,11 @@ public class ObjectListController implements MouseListener, Observer {
 		
 	}
 	
-	private FileFilter importFileFilter(final ArrayList<String> extentions) {
+	private FileFilter importFileFilter(final ArrayList<String> extentions, final String description) {
 		return new FileFilter() {
 			@Override
 			public String getDescription() {
-				String res = "";
-				for (String extention : extentions) {
-					res += "*"+extention+", ";
-				}
-				return res.substring(0, res.length()-2);
+				return description;
 			}
 			@Override
 			public boolean accept(File file) {
@@ -222,20 +219,21 @@ public class ObjectListController implements MouseListener, Observer {
 		};
 	}
 	
-	public void onImport() {
-		FileFilter fileFilter = importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_3DS,FILE_TYPE_DAE,FILE_TYPE_KMZ,FILE_TYPE_OBJ)));
-
+	public void onImport() {		
 		JFileChooser fileChooser = new JFileChooser(); 
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		
-		fileChooser.addChoosableFileFilter(fileFilter);
-		
+		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_OBJ)),"*"+FILE_TYPE_OBJ));
+		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_DAE)),"*"+FILE_TYPE_DAE));
+		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_3DS)),"*"+FILE_TYPE_3DS));
+		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_KMZ)),"*"+FILE_TYPE_KMZ));
+		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_3DS,FILE_TYPE_DAE,FILE_TYPE_KMZ,FILE_TYPE_OBJ)),"Tous les fichiers"));
+
 		int rVal = fileChooser.showOpenDialog(view);
 		
 		if (rVal == JFileChooser.APPROVE_OPTION) {
-			// THIS IS ALL YOU NEED TO OPEN THE FILE
-			System.out.println(fileChooser.getSelectedFile().getName());
-			System.out.println(fileChooser.getCurrentDirectory().toString());
+			ImportEngine i = new ImportEngine(this.daoFactory);
+			i.handleImport(fileChooser.getSelectedFile().getName(),fileChooser.getCurrentDirectory().toString());
 		}
 
 	}
@@ -248,21 +246,15 @@ public class ObjectListController implements MouseListener, Observer {
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void mouseClicked(MouseEvent e) {		
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void mouseEntered(MouseEvent e) {		
 	}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void mouseExited(MouseEvent e) {		
 	}
 
 	@Override

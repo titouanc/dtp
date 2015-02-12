@@ -76,11 +76,11 @@ public class WorldController extends CanvasController implements Observer {
     	movingPoint.setY(newPos.y);
     	
         try {
-        	MasterDAO daoFactory = this.project.getGeometryDAO();
-        	daoFactory.getDao(Point.class).modify(movingPoint);
+        	MasterDAO dao = this.project.getGeometryDAO();
+        	dao.getDao(Point.class).modify(movingPoint);
         	if (finalMove) 
         		movingGeometric = null;
-        	daoFactory.notifyObservers();
+        	dao.notifyObservers();
         } catch (SQLException err){
         	Log.exception(err);
         }
@@ -94,11 +94,11 @@ public class WorldController extends CanvasController implements Observer {
 		moving.setAbsolutePosition(getXYForMouse(moving.getAbsolutePositionVector().z));
 		
 		try {
-    		MasterDAO daoFactory = this.project.getGeometryDAO();
-    		daoFactory.getDao(Item.class).modify(moving);
+    		MasterDAO dao = this.project.getGeometryDAO();
+    		dao.getDao(Item.class).modify(moving);
     		if (finalMove) 
     			movingGeometric = null;
-    		daoFactory.notifyObservers();
+    		dao.notifyObservers();
     	} catch (SQLException err){
     		Log.exception(err);
     	}
@@ -111,17 +111,17 @@ public class WorldController extends CanvasController implements Observer {
 	public void selectArea(Area area) {
 		try {
 			area.toggleSelect();
-			MasterDAO daoFactory = this.project.getGeometryDAO();
-			GeometricDAO<Point> pointDao = daoFactory.getDao(Point.class);
+			MasterDAO dao = this.project.getGeometryDAO();
+			
 			for (Point p : area.getPoints()){
 				if (area.isSelected())
 					p.select();
 				else
 					p.deselect();
-				pointDao.modify(p);
+				dao.getDao(Point.class).modify(p);
 			}
-			daoFactory.getDao(area.getClass()).modify(area);
-			daoFactory.notifyObservers(area);
+			dao.getDao(area.getClass()).modify(area);
+			dao.notifyObservers(area);
 			
 			String floorUID = area.getRoom().getFloor().getUID();
 			if (! this.project.config("floor.current").equals(floorUID))
@@ -138,9 +138,9 @@ public class WorldController extends CanvasController implements Observer {
 	public void selectItem(Item item) {
 		try {
 			item.toggleSelect();
-			MasterDAO daoFactory = this.project.getGeometryDAO();
-			daoFactory.getDao(Item.class).modify(item);
-			daoFactory.notifyObservers();
+			MasterDAO dao = this.project.getGeometryDAO();
+			dao.getDao(Item.class).modify(item);
+			dao.notifyObservers();
 			
 			String floorUID = item.getFloor().getUID();
 			if (! currentFloor.getUID().equals(floorUID)){
@@ -177,7 +177,7 @@ public class WorldController extends CanvasController implements Observer {
 		this.inConstruction.add(lastPoint);
     }
     
-    /**
+	 /**
      * Mesh the points together for the walls creation
      */
     public void finalizeConstruct(){

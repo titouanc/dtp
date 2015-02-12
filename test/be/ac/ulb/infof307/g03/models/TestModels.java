@@ -5,7 +5,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({TestGeometricDAO.class, TestOrdered.class})
+@SuiteClasses({
+    TestGeometricDAO.class, TestOrdered.class, TestBinding.class,TestEntity.class
+})
 public class TestModels {
 
 }
