@@ -326,9 +326,15 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			JOptionPane.showMessageDialog(this.view, "A floor has to have a positive height!");
 			return;
 		}
+		double deltaHeight = height - floor.getHeight();
 		floor.setHeight(height);
 		try{
-			this.daoFactory.getDao(Floor.class).modify(floor);
+			GeometricDAO<Floor> floorDao = this.daoFactory.getDao(Floor.class);
+			floorDao.modify(floor);
+			for (Floor next : floorDao.query(floor.getQueryForFollowing(floorDao))){
+				next.setBaseHeight(next.getBaseHeight() + deltaHeight);
+				floorDao.modify(next);
+			}
 			this.daoFactory.notifyObservers();
 		} catch (SQLException ex){
 			Log.exception(ex);
