@@ -29,25 +29,79 @@ public class ToolsBarController implements ActionListener, Observer {
 	private Project project;
 	
 	// Buttons actions alias
+	/**
+	 * Draw room button identifier
+	 */
 	static final public String NEWELEMENT = "TB_NewElement";
 
+	/**
+	 * Floor up button identifier
+	 */
 	static final public String FLOOR_UP   = "TB_FloorUp";
+	
+	/**
+	 * Floor down button identifier
+	 */
 	static final public String FLOOR_DOWN = "TB_FloorDown";
+	
+	/**
+	 * New Floor button identifier
+	 */
 	static final public String FLOOR_NEW  = "TB_FloorNew";
 
+	/**
+	 * 2D mode button identifier
+	 */
 	static final public String VIEW2D = "TB_2D";
+	
+	/**
+	 * 3D mode button identifier
+	 */
 	static final public String VIEW3D = "TB_3D";
 
-	static final public String ROTATE = "TB_Rotate";	
-	static final public String HAND = "TB_Grab";  
+	/**
+	 * Rotate mouse mode button identifier
+	 */
+	static final public String ROTATE = "TB_Rotate";
+	
+	/**
+	 * Grab mouse mode button identifier
+	 */
+	static final public String HAND = "TB_Grab";
+	
+	/**
+	 * Select mouse mode button identifier
+	 */
 	static final public String CURSOR = "TB_Cursor";
 	
+	/**
+	 * World mode button identifier
+	 */
 	static final public String WORLD = "TB_World";
+	
+	/**
+	 * Object mode button identifier
+	 */
 	static final public String OBJECT = "TB_Object";
 
+	/**
+	 * Cube creation button identifier
+	 */
 	static final public String CUBE = "TB_Cube";
+	
+	/**
+	 * Sphere creation button identifier
+	 */
 	static final public String SPHERE = "TB_Sphere";
+	
+	/**
+	 * Pyramid creation button identifier
+	 */
 	static final public String PYRAMID = "TB_Pyramid";
+	
+	/**
+	 * Cylinder creation button identifier
+	 */
 	static final public String CYLINDER = "TB_Cylinder";
 	
 	// Edition mode alias
