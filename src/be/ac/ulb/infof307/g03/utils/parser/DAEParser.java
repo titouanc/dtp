@@ -23,6 +23,7 @@ public class DAEParser extends Parser {
 	Document document = null;
 
 	public DAEParser(String fileName){
+		System.out.println(fileName);
 		try{ 
 			DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance(); 
 			DocumentBuilder constructeur = fabrique.newDocumentBuilder(); 

@@ -21,7 +21,7 @@ public class ImportEngine {
 	public void handleImport(String fileName, String path) {
 		String extension = getExtension(fileName);
 		if (extension.equals("dae")) {
-			handleDae(path+fileName);
+			handleDae(path+"/"+fileName);
 		} else if (extension.equals("obj")) {
 			// TODO handle obj import
 		} else if (extension.equals("3ds")) {
@@ -44,7 +44,14 @@ public class ImportEngine {
 		Vector<PrimitiveData> datas = parser.getPrimitiveDatas();
 		Entity entity = new Entity();
 		for (PrimitiveData primData : datas) {
-			//this.dao.create(new Primitive(entity,Primitive.IMPORTED),primData);
+			//Primitivenew Primitive(entity,Primitive.IMPORTED)
+			try {
+				this.dao.getDao(Primitive.class).create(new Primitive(entity,Primitive.IMPORTED));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 	}
 }
