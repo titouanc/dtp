@@ -69,6 +69,12 @@ public class Change {
 	public Geometric getItem(){return this.item;}
 	
 	/**
+	 * Replace the referenced changed item
+	 * @param item The new changed item
+	 */
+	public void setItem(Geometric item){this.item = item;}
+	
+	/**
 	 * @return The change type (one of CREATE, UPDATE, DELETE)
 	 */
 	public Integer getType(){return this.type;}

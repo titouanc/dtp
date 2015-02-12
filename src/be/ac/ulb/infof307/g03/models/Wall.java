@@ -72,10 +72,10 @@ public class Wall extends Area {
 	public Spatial toSpatial(Material material) {
 		Node res = new Node(getUID());
 		List<Point> allPoints = getPoints();
-		Floor currentFloor = getRoom().getFloor();
+		Floor myFloor = getRoom().getFloor();
 		
-		float height = (float) currentFloor.getHeight();
-		float elevation = (float) currentFloor.getBaseHeight();
+		float height = (float) myFloor.getHeight();
+		float elevation = (float) myFloor.getBaseHeight();
 		float width = (float) getWidth();
 		
 		for (int i=0; i<allPoints.size()-1; i++){

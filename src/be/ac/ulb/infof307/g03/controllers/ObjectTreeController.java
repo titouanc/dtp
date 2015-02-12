@@ -131,10 +131,29 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			try {
 				Log.info("DELETE %s", item.toString());
 				this.daoFactory.getDao(item.getClass()).remove(item);
-				this.daoFactory.notifyObservers();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			if (item instanceof Floor){
+				Floor deletingFloor = (Floor) item;
+				try {
+					GeometricDAO<Floor> floorDao = this.daoFactory.getDao(Floor.class);
+					for (Floor floor : floorDao.query(deletingFloor.getQueryForFollowing(floorDao))){
+						floor.setBaseHeight(floor.getBaseHeight() - deletingFloor.getHeight());
+						floor.setIndex(floor.getIndex() - 1);
+						floorDao.modify(floor);
+					}
+					for (Room room : deletingFloor.getRooms()){
+						for (Area area : room.getAreas()){
+							this.daoFactory.getDao(area.getClass()).remove(area);
+						}
+						this.daoFactory.getDao(Room.class).remove(room);
+					}
+				} catch (SQLException err){
+					err.printStackTrace();
+				}
+			}
+			this.daoFactory.notifyObservers();
 		}
 	}
 
@@ -244,7 +263,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * Unset the visible flag of a Meshable item
 	 * @param meshable
 	 */
-	public void hideGrouped(Meshable meshable){
+	public void hideMeshable(Meshable meshable){
 		meshable.hide();
 		try {
 			this.daoFactory.getDao(meshable.getClass()).modify(meshable);
@@ -258,7 +277,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * Set the visible flag of a Meshable item
 	 * @param meshable
 	 */
-	public void showGrouped(Meshable meshable){
+	public void showMeshable(Meshable meshable){
 		meshable.show();
 		try {
 			this.daoFactory.getDao(meshable.getClass()).modify(meshable);

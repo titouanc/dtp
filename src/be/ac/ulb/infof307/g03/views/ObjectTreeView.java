@@ -94,9 +94,9 @@ public class ObjectTreeView extends JTree implements Observer {
 				controller.deselectElement(clickedItem);
 				controller.deleteNode(clickedItem);
 			} else if (cmd.equals(SHOW)){
-				controller.showGrouped((Meshable) clickedItem);
+				controller.showMeshable((Meshable) clickedItem);
 			} else if (cmd.equals(HIDE)){
-				controller.hideGrouped((Meshable) clickedItem);
+				controller.hideMeshable((Meshable) clickedItem);
 			} else if (cmd.equals(WIDTH)){
 				String userInput = JOptionPane.showInputDialog("Width ?");
 				controller.setWidth((Wall) clickedItem, userInput);

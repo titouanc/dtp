@@ -124,21 +124,31 @@ public class MasterDAO extends Observable {
 	 * @throws SQLException
 	 */
 	public void copyFrom(MasterDAO other) throws SQLException{
-		List<Geometric> toCopy = new ArrayList<Geometric>();
 		for (Class<? extends Geometric> klass : managedTypes){
 			GeometricDAO<? extends Geometric> dao = other.getDao(klass);
 			GeometricDAO<? extends Geometric> myDao = this.getDao(klass);
 			for (Geometric g : dao.queryForAll()){
 				myDao.insert(g);
 			}
-			//toCopy.addAll(other.getDao(klass).queryForAll());
 		}
-		System.out.println(toCopy);
 	}
 	
 	@Override
 	public void notifyObservers(){
-		List<Change> changes = this.changes;
+		List<Change> changes = new LinkedList<Change>();
+		for (Change chg : this.changes){
+			Change found = null;
+			for (Change last : changes){
+				if (last.getItem().getUID().equals(chg.getItem().getUID()))
+					found = last;
+			}
+			
+			/* 2 consecutive updates on the same obj -> keep the last update only */
+			if (found != null && chg.isUpdate() && (found.isUpdate() || found.isCreation())){
+				found.setItem(chg.getItem());
+			}
+			else {changes.add(chg);}
+		}
 		this.changes = new LinkedList<Change>();
 		super.notifyObservers(changes);
 	}

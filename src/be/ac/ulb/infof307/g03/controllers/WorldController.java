@@ -153,8 +153,8 @@ public class WorldController extends CanvasController implements Observer {
      * Add the points in the Point List when user click to create his wall
      */
     public void construct(){
-    	Point lastPoint=new Point();
-    	lastPoint.setPosition(getXYForMouse(0));
+    	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
+    	Point lastPoint=new Point(newPos.x, newPos.y, 0);
 		lastPoint.select();
 		
 		try {
