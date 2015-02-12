@@ -2,6 +2,8 @@ package be.ac.ulb.infof307.g03.models;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Observable;
@@ -17,121 +19,114 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 
 public class TestGeometry {
-	private ConnectionSource _db;
+	private ConnectionSource db, db2;
 	
 	@Before
 	public void setUp() throws Exception {
-		_db = new JdbcConnectionSource("jdbc:sqlite::memory:");
-		GeometryDAO.migrate(_db);
+		db = new JdbcConnectionSource("jdbc:sqlite::memory:");
+		db2 = new JdbcConnectionSource("jdbc:sqlite::memory:");
+		MasterDAO.migrate(db);
+		MasterDAO.migrate(db2);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		_db.close();
+		db.close();
+		db2.close();
+	}
+	
+	@Test
+	public void test_insert_point() throws SQLException {
+		MasterDAO master = new MasterDAO(db);
+		GeometricDAO<Point> dao = master.getDao(Point.class);
+		int res = dao.insert(new Point(1, 42, 3.14));
+		assertEquals(res, 1);
+		Point p = dao.queryForId(1);
+		assertEquals(p.getX(), 1, 0);
+		assertEquals(p.getY(), 42, 0);
+		assertEquals(p.getZ(), 3.14, 0);
+	}
+	
+	@Test
+	public void test_get_point_by_uid() throws SQLException {
+		MasterDAO master = new MasterDAO(db);
+		GeometricDAO<Point> dao = master.getDao(Point.class);
+		int res = dao.insert(new Point(1, 42, 3.14));
+		assertEquals(res, 1);
+		Point p = (Point) master.getByUID("pnt-1");
+		assertEquals(p.getX(), 1, 0);
+		assertEquals(p.getY(), 42, 0);
+		assertEquals(p.getZ(), 3.14, 0);
+	}
+	
+	@Test
+	public void test_copy_models() throws SQLException {
+		MasterDAO master = new MasterDAO(db);
+		GeometricDAO<Point> dao = master.getDao(Point.class);
+		int res = dao.insert(new Point(1, 42, 3.14));
+		assertEquals(res, 1);
+		
+		MasterDAO copy = new MasterDAO(db2);
+		copy.copyFrom(master);
+		System.out.println("Copied all from master to copy");
+		dao = copy.getDao(Point.class);
+		Point p = dao.queryForId(1);
+		assertNotNull(p);
+		assertEquals(p.getX(), 1, 0);
+		assertEquals(p.getY(), 42, 0);
+		assertEquals(p.getZ(), 3.14, 0);
 	}
 	
 	/**
-	 * Create a new Room named "room" maid of 4 lines with 4 points 
-	 * (in this order): 00 10 11 01.
-	 * Create a Wall and a Ground object using the group.
-	 * Insert everything in database
-	 * @param geo The data access object
-	 * @return The newly created Room
+	 * Test that we can automatically build all room areas
 	 * @throws SQLException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws IllegalArgumentException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
 	 */
-	private Room create_a_room(GeometryDAO geo) throws SQLException{
-		Floor floor = new Floor();
-		Room room = new Room("room", floor);
-		room.setWall(new Wall());
-		room.setGround(new Ground());
-		room.setRoof(new Roof());
-		geo.create(room);
-		geo.refresh(room);
+	@Test
+	public void test_generic_room_build() throws SQLException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		MasterDAO master = new MasterDAO(db);
+		Floor flr = new Floor(7);
+		master.getDao(Floor.class).insert(flr);
 		
-		room.addPoints(
-			new Point(0, 0, 0),
-			new Point(0, 1, 0),
-			new Point(1, 1, 0),
-			new Point(1, 0, 0)
-		);
-		return room;
+		Room room = new Room("Supayr");
+		room.setFloor(flr);
+		GeometricDAO<Room> roomDao = master.getDao(Room.class);
+		roomDao.create(room);
+		
+		for (Class<? extends Area> klass : master.areaClasses){
+			Constructor<? extends Area> constr = klass.getConstructor(Room.class);
+			Area newArea = constr.newInstance(room);
+			master.getDao(klass).insert(newArea);
+		}
+		roomDao.modify(room);
+		roomDao.refresh(room);
+		
+		assertNotNull(room.getRoof());
+		assertNotNull(room.getGround());
+		assertNotNull(room.getWall());
+		
+		List<Roof> roofs = master.getDao(Roof.class).queryForAll();
+		assertEquals(1, roofs.size());
+		assertEquals(room.getUID(), roofs.get(0).getRoom().getUID());
+		
+		List<Ground> grounds = master.getDao(Ground.class).queryForAll();
+		assertEquals(1, grounds.size());
+		assertEquals(room.getUID(), grounds.get(0).getRoom().getUID());
+		
+		List<Wall> walls = master.getDao(Wall.class).queryForAll();
+		assertEquals(1, walls.size());
+		assertEquals(room.getUID(), walls.get(0).getRoom().getUID());
 	}
 	
 	@Test
-	public void test_dao_no_changes() throws SQLException {
-		GeometryDAO geo = new GeometryDAO(_db);
-		MockObserver<List<Change>> mock = new MockObserver<List<Change>>();
-		create_a_room(geo);
-		
-		geo.addObserver(mock);
-		geo.notifyObservers();
-		assertNotNull(mock.changes);
-		assertFalse(mock.changes.isEmpty());
-	}
-	
-	@Test
-	public void test_dao_changes() throws SQLException {
-		GeometryDAO geo = new GeometryDAO(_db);
-		MockObserver<List<Change>> mock = new MockObserver<List<Change>>();
-		Room room = create_a_room(geo);
-		geo.notifyObservers();
-		
-		geo.addObserver(mock);
-		assertFalse(mock.hasBeenCalled());
-		
-		geo.delete(room);
-		geo.notifyObservers();
-		assertNotNull(mock.changes);
-		
-		Change firstChange = mock.changes.get(0);
-		assertFalse(firstChange.isCreation());
-		assertFalse(firstChange.isUpdate());
-		assertTrue(firstChange.isDeletion());
-		
-		mock.reset();
-		
-		geo.create(new Room("Hello", new Floor()));
-		geo.notifyObservers();
-		assertNotNull(mock.changes);
-		assertEquals(1, mock.changes.size());
-		assertTrue(mock.changes.get(0).isCreation());
-		assertEquals("Hello", ((Room) mock.changes.get(0).getItem()).getName());
-	}
-	
-	@Test
-	public void test_dao_no_changes_before_register() throws SQLException {
-		GeometryDAO geo = new GeometryDAO(_db);
-		MockObserver<List<Change>> mock = new MockObserver<List<Change>>();
-		create_a_room(geo);
-		
-		geo.notifyObservers();
-		assertNull(mock.changes);
-		geo.addObserver(mock);
-		geo.notifyObservers();
-		assertNull(mock.changes);
-	}
-	
-	@Test
-	public void test_close_point() throws SQLException{
-		GeometryDAO geo = new GeometryDAO(_db);
-		Point origin = new Point(0, 0, 0);
-		geo.create(origin);
-		Point p = new Point(0.3, 0, 0);
-		
-		Point res = geo.findClosePoint(p, 0.5);
-		assertNotNull(res);
-		assertTrue(res.equals(origin));
-	}
-	
-	@Test
-	public void test_close_point_too_high() throws SQLException{
-		GeometryDAO geo = new GeometryDAO(_db);
-		Point origin = new Point(0, 0, 0);
-		geo.create(origin);
-		Point p = new Point(0.3, 0, 1);
-		
-		Point res = geo.findClosePoint(p, 0.5);
-		assertNull(res);
+	public void test_changes() throws SQLException{
+		MasterDAO master = new MasterDAO(db);
+		Floor flr = new Floor();
 	}
 }
 
