@@ -4,18 +4,14 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
-import be.ac.ulb.infof307.g03.utils.Log;
-
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 
 /**
@@ -28,7 +24,8 @@ public class MasterDAO extends Observable {
 	private Map<String,Class<? extends Geometric>> uidMap = null;
 	private static Class managedTypes[] = {
 		Floor.class, Point.class, Binding.class, Wall.class, Ground.class,
-		Roof.class, Room.class, Entity.class, Primitive.class, Item.class
+		Roof.class, Room.class, Entity.class, Primitive.class, Item.class,
+		Vertex.class, Triangle.class
 	};
 	public static Class areaClasses[] = {Roof.class, Ground.class, Wall.class};
 	

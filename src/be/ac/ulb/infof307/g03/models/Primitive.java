@@ -3,17 +3,21 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Dome;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.util.BufferUtils;
 
 /**
  * A primitive shape used to build objects
@@ -49,6 +53,10 @@ public class Primitive extends Meshable {
 	private double scalez = 1;
 	@DatabaseField
 	private String type = "";
+	@ForeignCollectionField
+	private ForeignCollection<Vertex> vertices;
+	@ForeignCollectionField
+	private ForeignCollection<Triangle> triangles;
 	
 	public Primitive(){
 		
@@ -135,7 +143,28 @@ public class Primitive extends Meshable {
 		} else if (this.type.equals(Primitive.CYLINDER)) {
 			mesh = new Cylinder(4, 20, 1f,0.9f, 1f, false, false);
 		} else if (this.type.equals(Primitive.IMPORTED)) {
-			// TODO draw the primitive
+			int nVertices = this.vertices.size();
+			Vector3f[] vertices = new Vector3f[nVertices];
+			for (Vertex v : this.vertices){
+				int i = v.getIndex();
+				assert 0 <= i && i < nVertices;
+				vertices[i] = v.asVector3f();
+			}
+			
+			int nTriangles = this.triangles.size();
+			int[] triangles = new int[3*nTriangles];
+			for (Triangle t : this.triangles){
+				int i = t.getIndex();
+				assert 0 <= i && i < nTriangles;
+				triangles[3*i] = t.getV1().getIndex();
+				triangles[3*i+1] = t.getV2().getIndex();
+				triangles[3*i+2] = t.getV3().getIndex();
+			}
+			
+			mesh = new Mesh();
+		  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
+		  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(triangles));
+		  	mesh.updateBound();
 		}
 		
 		Geometry res = new Geometry(getUID(),mesh);
