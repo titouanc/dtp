@@ -1,7 +1,5 @@
 package be.ac.ulb.infof307.g03.utils;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -14,7 +14,6 @@ import java.util.Observer;
 
 import javax.swing.JFileChooser;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 import be.ac.ulb.infof307.g03.models.*;

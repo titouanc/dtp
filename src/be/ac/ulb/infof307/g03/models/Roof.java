@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;

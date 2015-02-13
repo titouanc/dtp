@@ -1,27 +1,20 @@
 package be.ac.ulb.infof307.g03.controllers;
 
-import java.lang.reflect.Type;
+
 import java.sql.SQLException;
 
-import com.jme3.collision.CollisionResults;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 
 import be.ac.ulb.infof307.g03.models.Area;
-import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.Geometric;
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Meshable;
-import be.ac.ulb.infof307.g03.models.Point;
-import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.WorldView;
 
 public abstract class CanvasController {

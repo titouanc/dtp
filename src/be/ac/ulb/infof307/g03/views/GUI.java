@@ -17,7 +17,6 @@ import be.ac.ulb.infof307.g03.controllers.MainPaneController;
 import be.ac.ulb.infof307.g03.controllers.MenuBarController;
 import be.ac.ulb.infof307.g03.controllers.ToolsBarController;
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author julianschembri, pierre

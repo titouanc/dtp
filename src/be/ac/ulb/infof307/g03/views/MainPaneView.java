@@ -22,6 +22,7 @@ import be.ac.ulb.infof307.g03.models.Project;
  * It contains a 3D view on the right. A tree on the left
  * @brief Main part of the Window
  */
+
 public class MainPaneView extends JPanel {
 	
 	private MainPaneController controller;
