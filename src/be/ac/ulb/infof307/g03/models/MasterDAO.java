@@ -51,8 +51,7 @@ public class MasterDAO extends Observable {
 	public MasterDAO(ConnectionSource database) throws SQLException{
 		super();
 		this.daos = new HashMap<Class<? extends Geometric>,GeometricDAO<? extends Geometric>>();
-		this.database = database;
-		resetConnection();
+		resetConnection(database);
 		this.uidMap = new HashMap<String,Class<? extends Geometric>>();
 		for (Class<? extends Geometric> klass : managedTypes){
 			/* Build an association UID prefix (object short name type) 
@@ -84,11 +83,13 @@ public class MasterDAO extends Observable {
 	
 	/**
 	 * Reset the inner database connection
+	 * @param newConnection The new database connection to use
 	 * @throws SQLException
 	 */
-	public final void resetConnection() throws SQLException {
+	public final void resetConnection(ConnectionSource newConnection) throws SQLException {
 		this.daos.clear();
 		this.changes = new LinkedList<Change>();
+		this.database = newConnection;
 	}
 	
 	/**
