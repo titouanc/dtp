@@ -24,10 +24,17 @@ public class Entity extends Meshable {
 	@DatabaseField
 	private String name = "";
 	
+	/**
+	 * Entity constructor.
+	 */
 	public Entity(){
 		super();
 	}
 	
+	/**
+	 * Entity constructor.
+	 * @param name The entity's name
+	 */
 	public Entity(String name){
 		super();
 		setName(name);
@@ -38,14 +45,23 @@ public class Entity extends Meshable {
 		return "ent";
 	}
 	
+	/**
+	 * @param name New entity name
+	 */
 	public final void setName(String name){
 		this.name = name;
 	}
 
+	/**
+	 * @return The entity name
+	 */
 	public String getName(){
 		return this.name;
 	}
 	
+	/**
+	 * @return All the entity primitive
+	 */
 	public ForeignCollection<Primitive> getPrimitives(){
 		return this.primitives;
 	}

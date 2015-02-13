@@ -25,14 +25,14 @@ public class A3DSObject {
     }
 
     /**
-     * @return
+     * @return The object name
      */
     public String getName() {
         return name;
     }
 
 	/**
-	 * @return
+	 * @return The vector of vertices
 	 */
 	public Vector<Vector3f> getVertices() {
 		return vertices;

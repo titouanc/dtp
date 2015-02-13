@@ -71,10 +71,17 @@ public class ObjectListController implements MouseListener, Observer {
 		this.view = new ObjectListView(this, project);
 	}
 	
+	/**
+	 * @return The controller's view
+	 */
 	public ObjectListView getView() {
 		return this.view;
 	}
 	
+	/**
+	 * Called when user want to create a new object
+	 * @param name The name of the new object
+	 */
 	public void onNewAction(String name) {
 		if (name != null) {
 			Entity entity = new Entity(name);
@@ -89,6 +96,10 @@ public class ObjectListController implements MouseListener, Observer {
 		}
 	}
 	
+	/**
+	 * When user click on delete on an object
+	 * @param entity The entity to delete.
+	 */
 	public void onDeleteAction(Entity entity) {
 		if (this.project.config("edition.mode").equals("object")) {
 			if (this.project.config("entity.current").equals(entity.getUID())) {
@@ -104,6 +115,11 @@ public class ObjectListController implements MouseListener, Observer {
 		}
 	}
 	
+	/**
+	 * Rename an object
+	 * @param entity The entity to rename
+	 * @param newName The new name
+	 */
 	public void onRenameAction(Entity entity, String newName) {
 		if (newName != null) {
 			entity.setName(newName);
@@ -116,6 +132,10 @@ public class ObjectListController implements MouseListener, Observer {
 		}
 	}
 
+	/**
+	 * Called when user edit an object. Switch to object mode.
+	 * @param entity The entity to edit
+	 */
 	public void onEditAction(Entity entity) {
 		this.project.config("entity.current", entity.getUID());
 		this.project.config("edition.mode", "object");
@@ -165,6 +185,10 @@ public class ObjectListController implements MouseListener, Observer {
 		return fileName+extention;
 	}
 	
+	/**
+	 * Create the dialog when the user click on export
+	 * @param selectedEntity The entity to export
+	 */
 	public void onExport(Entity selectedEntity) {
 		JFileChooser fileChooser = new JFileChooser(); 
 		fileChooser.setSelectedFile(new File(selectedEntity.getName()+FILE_TYPE_OBJ));
@@ -218,6 +242,9 @@ public class ObjectListController implements MouseListener, Observer {
 		};
 	}
 	
+	/**
+	 * Create the dialog when user click on import
+	 */
 	public void onImport() {		
 		JFileChooser fileChooser = new JFileChooser(); 
 		fileChooser.setAcceptAllFileFilterUsed(false);

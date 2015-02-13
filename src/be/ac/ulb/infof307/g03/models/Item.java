@@ -35,8 +35,16 @@ public class Item extends Meshable {
 	@DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
 	private Entity entity;
 
+	/**
+	 * Empty constructor of the Item class
+	 */
 	public Item(){}
 	
+	/**
+	 * Constructor of the Item class
+	 * @param floorToSet The item's floor (when added to the world)
+	 * @param entityToSet The item's entity
+	 */
 	public Item(Floor floorToSet, Entity entityToSet){
 		setFloor(floorToSet);
 		setEntity(entityToSet);	
@@ -71,7 +79,7 @@ public class Item extends Meshable {
 	
 	/**
 	 * Return the item position on its floor
-	 * @return
+	 * @return Vec3f of the item position on its floor
 	 */
 	public Vector3f getPositionVector(){
 		return new Vector3f((float)positionx,(float)positiony,(float)positionz);

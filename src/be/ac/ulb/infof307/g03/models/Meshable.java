@@ -12,6 +12,10 @@ import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Spatial;
 
+/**
+ * @author titou
+ *
+ */
 public abstract class Meshable extends Geometric {
 
 	@DatabaseField
@@ -26,6 +30,9 @@ public abstract class Meshable extends Geometric {
 	private String classPath = getClass().getResource("Meshable.class").toString();
 
 	
+	/**
+	 *  Constructor of meshable
+	 */
 	public Meshable() {
 		super();
 	}

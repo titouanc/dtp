@@ -92,30 +92,51 @@ public class Room extends Geometric {
 		this.name = name;
 	}
 	
+	/**
+	 * @return The room's wall
+	 */
 	public final Wall getWall(){
 		return this.wall;
 	}
 	
+	/**
+	 * @param wall The room's wall
+	 */
 	public final void setWall(Wall wall){
 		this.wall = wall;
 	}
 	
+	/**
+	 * @return The room's ground.
+	 */
 	public final Ground getGround(){
 		return this.ground;
 	}
 	
+	/**
+	 * @param gnd The room's ground.
+	 */
 	public final void setGround(Ground gnd){
 		this.ground = gnd;
 	}
 	
+	/**
+	 * @return The room's roof.
+	 */
 	public final Roof getRoof(){
 		return this.roof;
 	}
 	
+	/**
+	 * @param roof The room's roof.
+	 */
 	public final void setRoof(Roof roof){
 		this.roof = roof;
 	}
 	
+	/**
+	 * @return All of the room's points.
+	 */
 	public final List<Point> getPoints(){
 		List<Point> res = new LinkedList<Point>();
 		for (Binding b : bindings)
@@ -123,6 +144,9 @@ public class Room extends Geometric {
 		return res;
 	}
 	
+	/**
+	 * @return The room's binding
+	 */
 	public final ForeignCollection<Binding> getBindings(){
 		return bindings;
 	}
@@ -139,6 +163,10 @@ public class Room extends Geometric {
 		return "room";
 	}
 	
+	/**
+	 * Add multiple point to the room
+	 * @param points The points to be added
+	 */
 	public final void addPoints(Point...points){
 		int i = bindings.size();
 		for (Point p : points){
@@ -147,6 +175,9 @@ public class Room extends Geometric {
 		}
 	}
 	
+	/**
+	 * @return The room's area (wall,roof, ..)
+	 */
 	public final List<Area> getAreas(){
 		List<Area> res = new ArrayList<Area>(3);
 		if (this.wall != null)

@@ -32,6 +32,10 @@ public class Wall extends Area {
 		super();
 	}
 	
+	/**
+	 * Constructor of the class Wall.
+	 * @param forRoom The wall's Room
+	 */
 	public Wall(Room forRoom){
 		super();
 		forRoom.setWall(this);

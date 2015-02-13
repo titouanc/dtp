@@ -32,10 +32,20 @@ import be.ac.ulb.infof307.g03.utils.Log;
  */
 public class ObjectListView extends JList implements Observer {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	class MyCellRenderer extends JLabel implements ListCellRenderer {
 	     //final static ImageIcon longIcon = new ImageIcon("long.gif");
 	     //final static ImageIcon shortIcon = new ImageIcon("short.gif");
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		/**
 		 * This is the only method defined by ListCellRenderer.
 		 * We just reconfigure the JLabel each time we're called.
@@ -101,6 +111,11 @@ public class ObjectListView extends JList implements Observer {
 	private static final String EXPORT = "PAL_export";
 	private static final String IMPORT = "PAL_import";
 	
+	/**
+	 * The object list view constructor
+	 * @param controller The view's controller
+	 * @param project The main project
+	 */
 	public ObjectListView(ObjectListController controller, Project project) {
 		super();
 		this.controller = controller;
@@ -133,6 +148,10 @@ public class ObjectListView extends JList implements Observer {
 		return (floor == null) ? "current floor" : floor.toString();
 	}
 	
+	/**
+	 * Create a pop up when user right click on the object list
+	 * @return Which option the user click on
+	 */
 	public JPopupMenu createPopupMenu(){
 		PopupActionListener listener = new PopupActionListener();
 		JPopupMenu res = new JPopupMenu();

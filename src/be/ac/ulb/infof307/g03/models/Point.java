@@ -116,6 +116,10 @@ public class Point extends Geometric {
 		this.z = z;
 	}
 	
+	/**
+	 * Set the point position
+	 * @param v Vec3f 
+	 */
 	public void setPosition(Vector3f v){
 		this.x = v.getX();
 		this.y = v.getY();
@@ -159,7 +163,6 @@ public class Point extends Geometric {
 	/**
 	 * Compare two points for equality
 	 * @note two points are == if X1Y1Z1 == X2Y2Z2. If they have Id's, they should be == too.
-	 * @param other Another point
 	 * @return True if the two points are actually the same
 	 */
 	@Override

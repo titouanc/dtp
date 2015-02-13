@@ -29,6 +29,10 @@ public class Roof extends Area {
 		this.hide();
 	}
 	
+	/**
+	 * Constructor of the class Roof.
+	 * @param forRoom The roof's room
+	 */
 	public Roof(Room forRoom){
 		super();
 		this.hide();

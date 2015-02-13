@@ -87,6 +87,9 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		}
 	}
 	
+	/**
+	 * Switch between the word tree and the object Tree
+	 */
 	public void updateEditionMode() {
 		if (this.currentEditionMode.equals(WORLDMODE)) {
 			System.out.println("[DEBUG] ObjectTree switched to world edition mode.");
@@ -479,6 +482,10 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		this.daoFactory.notifyObservers();
 	}
 
+	/**
+	 * Called when user choose to duplicate primitive
+	 * @param clickedItem The primitive to be duplicated
+	 */
 	public void duplicate(Geometric clickedItem) {
 		if (clickedItem instanceof Primitive){
 			Primitive original = (Primitive) clickedItem;

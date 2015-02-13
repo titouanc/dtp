@@ -4,15 +4,9 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -20,28 +14,17 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
-import com.jme3.math.FastMath;
-import com.jme3.math.Vector3f;
 
 import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.*;
@@ -176,6 +159,10 @@ public class ObjectTreeView extends JTree implements Observer {
 		return res;
 	}
 	
+	/**
+	 * Create a world tree from the DAO
+	 * @throws SQLException
+	 */
 	public void createTree() throws SQLException{
 		Log.debug("createTree");
 		root.removeAllChildren();
@@ -193,6 +180,9 @@ public class ObjectTreeView extends JTree implements Observer {
 		}
 	}
 	
+	/**
+	 *  Create an object tree from the DAO
+	 */
 	public void createObjectTree() {
 		root.removeAllChildren();
 		Entity entity = (Entity) daoFactory.getByUID(project.config("entity.current"));
@@ -205,6 +195,9 @@ public class ObjectTreeView extends JTree implements Observer {
 		}
 	}
 	
+	/**
+	 * Empty the tree
+	 */
 	public void clearTree() {
 		Log.debug("clearTree");
 		for (DefaultMutableTreeNode node : this.nodes.values()) {
@@ -223,7 +216,7 @@ public class ObjectTreeView extends JTree implements Observer {
 	/**
 	 * Build a contextual menu for a clicked item
 	 * @param geo
-	 * @return
+	 * @return What the user click on
 	 */
 	public JPopupMenu createPopupMenu(Geometric geo){
 		if (geo instanceof Binding)
@@ -289,8 +282,8 @@ public class ObjectTreeView extends JTree implements Observer {
 	}
 	
 	/**
-	 * @param path
-	 * @return
+	 * @param path A path in the tree to a geometric
+	 * @return The geometric associated
 	 */
 	public Geometric getGeometric(TreePath path){
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
