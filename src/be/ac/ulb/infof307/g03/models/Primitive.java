@@ -4,6 +4,8 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.nio.FloatBuffer;
+import java.util.Vector;
+
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -157,7 +159,7 @@ public class Primitive extends Meshable {
 	public final Vector3f getScale(){
 		return new Vector3f((float) this.scalex, (float) this.scaley, (float) this.scalez);
 	}
-	
+		
 	/**
 	 * @return The primitive type (sphere,cube,...)
 	 */
