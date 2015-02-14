@@ -52,7 +52,6 @@ public class Project extends Observable {
 		config("edition.mode", "world");
 		config("camera.mode", "2D");
 		config("mouse.mode", "dragSelect");
-		config("creation.time", (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date()));
 		config("version.current", "0.3.0");
 	}
 

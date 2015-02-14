@@ -24,7 +24,8 @@ public class MasterDAO extends Observable {
 	private Map<String,Class<? extends Geometric>> uidMap = null;
 	private static Class managedTypes[] = {
 		Floor.class, Point.class, Binding.class, Wall.class, Ground.class,
-		Roof.class, Room.class, Entity.class, Primitive.class, Item.class
+		Roof.class, Room.class, Entity.class, Primitive.class, Item.class,
+		Vertex.class, Triangle.class
 	};
 	public static Class areaClasses[] = {Roof.class, Ground.class, Wall.class};
 	
