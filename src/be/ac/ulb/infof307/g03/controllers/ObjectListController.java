@@ -19,6 +19,7 @@ import javax.swing.filechooser.FileFilter;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
+import be.ac.ulb.infof307.g03.utils.io.ExportEngine;
 import be.ac.ulb.infof307.g03.utils.io.ImportEngine;
 import be.ac.ulb.infof307.g03.views.ObjectListView;
 
@@ -168,7 +169,8 @@ public class ObjectListController implements MouseListener, Observer {
 	
 	public void onExport(Entity selectedEntity) {
 		JFileChooser fileChooser = new JFileChooser(); 
-		fileChooser.setSelectedFile(new File(selectedEntity.getName()+FILE_TYPE_OBJ));
+		fileChooser.setSelectedFile(new File(selectedEntity.getName()));
+		fileChooser.getSelectedFile();
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		
 		fileChooser.addChoosableFileFilter(exportFileFilter(FILE_TYPE_DAE));
@@ -176,27 +178,11 @@ public class ObjectListController implements MouseListener, Observer {
 		fileChooser.addChoosableFileFilter(exportFileFilter(FILE_TYPE_KMZ));
 		fileChooser.addChoosableFileFilter(exportFileFilter(FILE_TYPE_OBJ));
 		
-		PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {	
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-		        if (JFileChooser.FILE_FILTER_CHANGED_PROPERTY.equals(evt.getPropertyName())) {
-		            JFileChooser fileChooser = (JFileChooser) evt.getSource();
-		        	String fileName = fileChooser.getSelectedFile().getName();
-		        	fileChooser.setSelectedFile(new File(getFileName(fileName)+fileChooser.getFileFilter().getDescription()));
-		        }
-		    }
-		};
-		
-		fileChooser.addPropertyChangeListener(propertyChangeListener);
 		int rVal = fileChooser.showSaveDialog(view);
 		
 		if (rVal == JFileChooser.APPROVE_OPTION) {
-			// THIS IS ALL YOU NEED TO SAVE THE FILE
-			System.out.println(fileChooser.getSelectedFile().getName());
-			System.out.println(fileChooser.getFileFilter().getDescription());
-			// USE "formatFileName" TO PREVENT EXTENTION DELETION BY USER
-			System.out.println(formatFileName(fileChooser.getSelectedFile().getName(),fileChooser.getFileFilter().getDescription()));
-			System.out.println(fileChooser.getCurrentDirectory().toString());
+			ExportEngine e = new ExportEngine(this.daoFactory);
+			e.handleExport(selectedEntity,formatFileName(fileChooser.getSelectedFile().getName(),fileChooser.getFileFilter().getDescription()),fileChooser.getCurrentDirectory().toString());
 		}
 		
 	}

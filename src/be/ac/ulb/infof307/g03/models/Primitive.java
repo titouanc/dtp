@@ -3,6 +3,8 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
+import java.nio.FloatBuffer;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
@@ -10,6 +12,9 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.VertexBuffer;
+import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Dome;
@@ -143,6 +148,60 @@ public class Primitive extends Meshable {
 		res.scale((float) this.scalex, (float) this.scaley, (float) this.scalez);
 		res.rotate((float) this.rotationx, (float) this.rotationy, (float) this.rotationz);
 		res.setLocalTranslation((float) this.translationx, (float) this.translationy, (float) this.translationz);
+		return res;
+	}
+	
+	public float[] getVertices() {
+		Mesh mesh = null;
+		if (this.type.equals(Primitive.CUBE)) {
+			mesh = new Box(0.5f,0.5f,0.5f);
+		} else if (this.type.equals(Primitive.SPHERE)) {
+			mesh = new Sphere(32,32,1f);
+		} else if (this.type.equals(Primitive.PYRAMID)) {
+			mesh = new Dome(2, 4, 1);
+		} else if (this.type.equals(Primitive.CYLINDER)) {
+			mesh = new Cylinder(4, 20, 1f,0.9f, 1f, false, false);
+		} else if (this.type.equals(Primitive.IMPORTED)) {
+			// TODO draw the primitive
+		}
+		Geometry geometry = new Geometry(getUID(),mesh);
+		geometry.scale((float) this.scalex, (float) this.scaley, (float) this.scalez);
+		geometry.rotate((float) this.rotationx, (float) this.rotationy, (float) this.rotationz);
+		geometry.setLocalTranslation((float) this.translationx, (float) this.translationy, (float) this.translationz);
+		mesh = geometry.getMesh();
+		
+		FloatBuffer buffer = mesh.getFloatBuffer(Type.Position);
+		float[] positions = new float[buffer.capacity()];
+		buffer.clear();
+		buffer.get(positions);
+		
+		return positions;
+ 	}
+	
+	public int[] getIndexes() {
+		Mesh mesh = null;
+		if (this.type.equals(Primitive.CUBE)) {
+			mesh = new Box(0.5f,0.5f,0.5f);
+		} else if (this.type.equals(Primitive.SPHERE)) {
+			mesh = new Sphere(32,32,1f);
+		} else if (this.type.equals(Primitive.PYRAMID)) {
+			mesh = new Dome(2, 4, 1);
+		} else if (this.type.equals(Primitive.CYLINDER)) {
+			mesh = new Cylinder(4, 20, 1f,0.9f, 1f, false, false);
+		} else if (this.type.equals(Primitive.IMPORTED)) {
+			// TODO draw the primitive
+		}
+		Geometry geometry = new Geometry(getUID(),mesh);
+		geometry.scale((float) this.scalex, (float) this.scaley, (float) this.scalez);
+		geometry.rotate((float) this.rotationx, (float) this.rotationy, (float) this.rotationz);
+		geometry.setLocalTranslation((float) this.translationx, (float) this.translationy, (float) this.translationz);
+		mesh = geometry.getMesh();
+		
+		IndexBuffer ib = mesh.getIndexBuffer();
+		int[] res = new int[ib.size()];
+		for (int i=0; i<res.length; ++i) {
+			res[i] = ib.get(i);
+		}
 		return res;
 	}
 
