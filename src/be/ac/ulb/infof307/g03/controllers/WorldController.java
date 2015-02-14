@@ -15,6 +15,7 @@ import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.collision.CollisionResults;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
@@ -45,7 +46,6 @@ public class WorldController extends CanvasController implements Observer {
 		}
         
         view.getProject().addObserver(this);
-        
         view.makeScene();
     }
     
@@ -69,11 +69,13 @@ public class WorldController extends CanvasController implements Observer {
     	if (movingPoint == null)
     		return;
     	
-    	movingPoint.setPosition(getXYForMouse((float)movingPoint.getZ()));
+    	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
+    	movingPoint.setX(newPos.x);
+    	movingPoint.setY(newPos.y);
     	
         try {
         	MasterDAO dao = this.project.getGeometryDAO();
-        	dao.getDao(Point.class).update(movingPoint);
+        	dao.getDao(Point.class).modify(movingPoint);
         	if (finalMove) 
         		movingGeometric = null;
         	dao.notifyObservers();
@@ -87,11 +89,11 @@ public class WorldController extends CanvasController implements Observer {
 		if (moving == null)
 			return;
 		
-		moving.setPosition(getXYForMouse(moving.getAbsolutePositionVector().z));
+		moving.setAbsolutePosition(getXYForMouse(moving.getAbsolutePositionVector().z));
 		
 		try {
     		MasterDAO dao = this.project.getGeometryDAO();
-    		dao.getDao(Item.class).update(moving);
+    		dao.getDao(Item.class).modify(moving);
     		if (finalMove) 
     			movingGeometric = null;
     		dao.notifyObservers();
@@ -114,9 +116,9 @@ public class WorldController extends CanvasController implements Observer {
 					p.select();
 				else
 					p.deselect();
-				dao.getDao(Point.class).update(p);
+				dao.getDao(Point.class).modify(p);
 			}
-			dao.getDao(Area.class).update(area);
+			dao.getDao(area.getClass()).modify(area);
 			dao.notifyObservers(area);
 			
 			String floorUID = area.getRoom().getFloor().getUID();
@@ -135,7 +137,7 @@ public class WorldController extends CanvasController implements Observer {
 		try {
 			item.toggleSelect();
 			MasterDAO dao = this.project.getGeometryDAO();
-			dao.getDao(Item.class).update(item);
+			dao.getDao(Item.class).modify(item);
 			dao.notifyObservers();
 			
 			String floorUID = item.getFloor().getUID();
@@ -150,9 +152,9 @@ public class WorldController extends CanvasController implements Observer {
     /**
      * Add the points in the Point List when user click to create his wall
      */
-	public void construct(){
-    	Point lastPoint=new Point();
-    	lastPoint.setPosition(getXYForMouse(0));
+    public void construct(){
+    	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
+    	Point lastPoint=new Point(newPos.x, newPos.y, 0);
 		lastPoint.select();
 		
 		try {
@@ -263,7 +265,8 @@ public class WorldController extends CanvasController implements Observer {
     			if (this.currentFloor != null && newUID.equals(this.currentFloor.getUID()))
     				return;
     			try {
-    				this.currentFloor = (Floor) this.project.getGeometryDAO().getByUID(config.getValue());
+    				Geometric found = this.project.getGeometryDAO().getByUID(config.getValue());
+    				this.currentFloor = (found != null) ? (Floor) found : null;
     			} catch (SQLException ex) {
     				Log.exception(ex);
     			}

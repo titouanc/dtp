@@ -26,6 +26,10 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 
 class ModificationFrame extends JFrame implements ActionListener, PropertyChangeListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Primitive primitive = null;
 	private JFormattedTextField scalex, scaley, scalez, posz, rotx, roty, rotz;
 	private JSlider sliderRotx, sliderRoty, sliderRotz;

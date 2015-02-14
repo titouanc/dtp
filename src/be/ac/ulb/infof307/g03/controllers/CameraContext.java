@@ -47,7 +47,7 @@ public class CameraContext implements AnalogListener, ActionListener, Observer {
 	
     // Camera mode alias
 	static private final String MODE_DRAGROTATE = "dragRotate";
-    static private final String MODE_DRAGSELECT = "dragSelect";
+    // static private final String MODE_DRAGSELECT = "dragSelect";
     static private final String MODE_DRAGMOVE = "dragMove";
 	
     // Flags

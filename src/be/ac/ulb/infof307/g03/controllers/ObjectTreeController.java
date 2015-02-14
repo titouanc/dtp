@@ -87,6 +87,9 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		}
 	}
 	
+	/**
+	 * Switch between the word tree and the object Tree
+	 */
 	public void updateEditionMode() {
 		if (this.currentEditionMode.equals(WORLDMODE)) {
 			System.out.println("[DEBUG] ObjectTree switched to world edition mode.");
@@ -122,6 +125,50 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	}
 	
 	/**
+	 * Helper method to remove a floor's content
+	 * @param deletingFloor The floor to remove
+	 */
+	private void deleteFloorContent(Floor deletingFloor){
+		try {
+			GeometricDAO<Floor> floorDao = this.daoFactory.getDao(Floor.class);
+			/* If we delete the current floor, set current floor to previous, or next */
+			if (deletingFloor.getUID().equals(this.project.config("floor.current"))){
+				Floor previous = floorDao.queryForFirst(deletingFloor.getQueryForPreceeding(floorDao));
+				if (previous != null){
+					project.config("floor.current", previous.getUID());
+				} else {
+					Floor next = floorDao.queryForFirst(deletingFloor.getQueryForFollowing(floorDao));
+					if (next != null){
+						project.config("floor.current", next.getUID());
+					} else {
+						project.config("floor.current", "");
+					}
+				}
+			}
+			/* Adapt the base height of all floors above */
+			for (Floor floor : floorDao.query(deletingFloor.getQueryForFollowing(floorDao))){
+				floor.setBaseHeight(floor.getBaseHeight() - deletingFloor.getHeight());
+				floor.setIndex(floor.getIndex() - 1);
+				floorDao.modify(floor);
+			}
+			/* Remove all rooms on this floor */
+			for (Room room : deletingFloor.getRooms()){
+				for (Area area : room.getAreas()){
+					this.daoFactory.getDao(area.getClass()).remove(area);
+				}
+				this.daoFactory.getDao(Room.class).remove(room);
+			}
+			/* Remove all items on this floor */
+			GeometricDAO<Item> itemDao = this.daoFactory.getDao(Item.class);
+			for (Item item : deletingFloor.getItems()){
+				itemDao.remove(item);
+			}
+		} catch (SQLException err){
+			err.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Delete a Geometric node
 	 * @param object
 	 */
@@ -131,10 +178,22 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			try {
 				Log.info("DELETE %s", item.toString());
 				this.daoFactory.getDao(item.getClass()).remove(item);
-				this.daoFactory.notifyObservers();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			if (item instanceof Floor)
+				this.deleteFloorContent((Floor) item);
+			else if (item instanceof Room){
+				Room room = (Room) item;
+				try {
+					/* Remove all the room's areas */
+					for (Area area : room.getAreas())
+						this.daoFactory.getDao(area.getClass()).remove(area);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			this.daoFactory.notifyObservers();
 		}
 	}
 
@@ -244,7 +303,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * Unset the visible flag of a Meshable item
 	 * @param meshable
 	 */
-	public void hideGrouped(Meshable meshable){
+	public void hideMeshable(Meshable meshable){
 		meshable.hide();
 		try {
 			this.daoFactory.getDao(meshable.getClass()).modify(meshable);
@@ -258,7 +317,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * Set the visible flag of a Meshable item
 	 * @param meshable
 	 */
-	public void showGrouped(Meshable meshable){
+	public void showMeshable(Meshable meshable){
 		meshable.show();
 		try {
 			this.daoFactory.getDao(meshable.getClass()).modify(meshable);
@@ -268,6 +327,11 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		}
 	}
 
+	/**
+	 * Change a wall width
+	 * @param wall The wall
+	 * @param userInput The with as a String (entered by user)
+	 */
 	public void setWidth(Wall wall, String userInput){
 		double width = wall.getWidth();
 		try {
@@ -307,9 +371,15 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			JOptionPane.showMessageDialog(this.view, "A floor has to have a positive height!");
 			return;
 		}
+		double deltaHeight = height - floor.getHeight();
 		floor.setHeight(height);
 		try{
-			this.daoFactory.getDao(Floor.class).modify(floor);
+			GeometricDAO<Floor> floorDao = this.daoFactory.getDao(Floor.class);
+			floorDao.modify(floor);
+			for (Floor next : floorDao.query(floor.getQueryForFollowing(floorDao))){
+				next.setBaseHeight(next.getBaseHeight() + deltaHeight);
+				floorDao.modify(next);
+			}
 			this.daoFactory.notifyObservers();
 		} catch (SQLException ex){
 			Log.exception(ex);
@@ -412,6 +482,10 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		this.daoFactory.notifyObservers();
 	}
 
+	/**
+	 * Called when user choose to duplicate primitive
+	 * @param clickedItem The primitive to be duplicated
+	 */
 	public void duplicate(Geometric clickedItem) {
 		if (clickedItem instanceof Primitive){
 			Primitive original = (Primitive) clickedItem;

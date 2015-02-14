@@ -98,7 +98,7 @@ public class Project extends Observable {
 			newDAO.create(c);
 		
 		/* Replace current DB handler with new one */
-		getGeometryDAO().resetConnection();
+		getGeometryDAO().resetConnection(newDB);
 		this.db.close();
 		this.db = newDB;
 		this.config = newDAO;

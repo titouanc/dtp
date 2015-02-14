@@ -25,10 +25,18 @@ public class Binding extends Ordered {
 	@DatabaseField(canBeNull = false, foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true)
 	private Point point = null;
 	
+	/**
+	 * Empty constructor of the Binding class.
+	 */
 	public Binding(){
 		super();
 	}
 	
+	/**
+	 * @param room First point of line
+	 * @param point Second point of line
+	 * @param index In ordered collection
+	 */
 	public Binding(Room room, Point point, int index) {
 		super();
 		setRoom(room);
@@ -36,18 +44,30 @@ public class Binding extends Ordered {
 		setIndex(index);
 	}
 
+	/**
+	 * @param point The second point of the line.
+	 */
 	public void setPoint(Point point) {
 		this.point = point;
 	}
 	
+	/**
+	 * @return The second point of the line.
+	 */
 	public Point getPoint(){
 		return this.point;
 	}
 
+	/**
+	 * @param room The room of the binding. First point of line.
+	 */
 	public void setRoom(Room room) {
 		this.room = room;
 	}
 	
+	/**
+	 * @return The room of the binding. First point of line.
+	 */
 	public Room getRoom(){
 		return this.room;
 	}

@@ -26,10 +26,29 @@ import com.jme3.scene.shape.Sphere;
  */
 @DatabaseTable(daoClass=GeometricDAO.class)
 public class Primitive extends Meshable {
+	/**
+	 * A cube primitive.
+	 */
 	public static String CUBE = "Cube";
+	
+	/**
+	 * A sphere primitive.
+	 */
 	public static String SPHERE = "Sphere";
+	
+	/**
+	 * A pyramid primitive.
+	 */
 	public static String PYRAMID = "Pyramid";
+	
+	/**
+	 * A cylinder primitive.
+	 */
 	public static String CYLINDER = "Cylinder";
+	
+	/**
+	 * Tag to check if a primitive is imported
+	 */
 	public static String IMPORTED = "Imported";
 
 	@DatabaseField(foreign = true, canBeNull = false)
@@ -55,10 +74,17 @@ public class Primitive extends Meshable {
 	@DatabaseField
 	private String type = "";
 	
+	/**
+	 * Primitive empty constructor
+	 */
 	public Primitive(){
 		
 	}
 	
+	/**
+	 * @param entity The primitive's entity
+	 * @param type The primitive type (sphere,cube,...)
+	 */
 	public Primitive(Entity entity, String type){
 		super();
 		setEntity(entity);
@@ -76,36 +102,60 @@ public class Primitive extends Meshable {
 		return copy;
 	}
 	
+	/**
+	 * @param type The primitive type (sphere,cube,...)
+	 */
 	public final void setType(String type){
 		this.type = type;
 	}
 	
+	/**
+	 * @param ent The primitive's entity
+	 */
 	public final void setEntity(Entity ent){
 		this.entity = ent;
 	}
 	
+	/**
+	 * Scale the primitive
+	 * @param scale
+	 */
 	public final void setScale(Vector3f scale){
 		this.scalex = scale.getX();
 		this.scaley = scale.getY();
 		this.scalez = scale.getZ();
 	}
 	
+	/**
+	 * Move the primitive
+	 * @param translation vec3f
+	 */
 	public final void setTranslation(Vector3f translation) {
 		this.translationx = translation.getX();
 		this.translationy = translation.getY();
 		this.translationz = translation.getZ();
 	}
 	
+	/**
+	 * Rotate the primitive
+	 * @param rotation vec3f
+	 */
 	public final void setRotation(Vector3f rotation) {
 		this.rotationx = rotation.getX();
 		this.rotationy = rotation.getY();
 		this.rotationz = rotation.getZ();
 	}
 	
+	/**
+	 * @return A vec3f of primitive scale
+	 */
 	public final Vector3f getScale(){
 		return new Vector3f((float) this.scalex, (float) this.scaley, (float) this.scalez);
 	}
 	
+	/**
+	 * @return The primitive type (sphere,cube,...)
+	 */
 	public final String getType() {
 		return this.type;
 	}

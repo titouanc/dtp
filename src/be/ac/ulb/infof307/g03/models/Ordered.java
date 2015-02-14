@@ -23,10 +23,16 @@ public abstract class Ordered extends Geometric {
 	public Ordered() {
 	}
 	
+	/**
+	 * @return The geometric's index
+	 */
 	public final int getIndex(){
 		return index;
 	}
 	
+	/**
+	 * @param newIndex The new index
+	 */
 	public final void setIndex(int newIndex){
 		index = newIndex;
 	}

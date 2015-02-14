@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * An abstract class for all elements that use an inner Room
@@ -25,8 +24,16 @@ public abstract class Area extends Meshable {
 	 */
 	public Area() {}
 	
-	public Area(Room forRoom){}
+	/**
+	 * @param forRoom ??
+	 */
+	public Area(Room forRoom){
+		// TODO forRoom not used ?
+	}
 	
+	/**
+	 * @return The area's room based on UID
+	 */
 	public Room getRoom(){
 		List<Room> room = new ArrayList<Room>(this.room);
 		if (room.size() != 1)
@@ -34,6 +41,9 @@ public abstract class Area extends Meshable {
 		return room.get(0);
 	}
 	
+	/**
+	 * @return The area's room points
+	 */
 	public final List<Point> getPoints(){
 		return getRoom().getPoints();
 	}

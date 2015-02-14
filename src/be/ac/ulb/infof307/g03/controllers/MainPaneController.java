@@ -10,7 +10,6 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.MainPaneView;
 import be.ac.ulb.infof307.g03.views.WorldView;
 

@@ -4,18 +4,14 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
-import be.ac.ulb.infof307.g03.utils.Log;
-
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 
 /**
@@ -51,8 +47,7 @@ public class MasterDAO extends Observable {
 	public MasterDAO(ConnectionSource database) throws SQLException{
 		super();
 		this.daos = new HashMap<Class<? extends Geometric>,GeometricDAO<? extends Geometric>>();
-		this.database = database;
-		resetConnection();
+		resetConnection(database);
 		this.uidMap = new HashMap<String,Class<? extends Geometric>>();
 		for (Class<? extends Geometric> klass : managedTypes){
 			/* Build an association UID prefix (object short name type) 
@@ -84,11 +79,13 @@ public class MasterDAO extends Observable {
 	
 	/**
 	 * Reset the inner database connection
+	 * @param newConnection The new database connection to use
 	 * @throws SQLException
 	 */
-	public final void resetConnection() throws SQLException {
+	public final void resetConnection(ConnectionSource newConnection) throws SQLException {
 		this.daos.clear();
 		this.changes = new LinkedList<Change>();
+		this.database = newConnection;
 	}
 	
 	/**
@@ -102,6 +99,15 @@ public class MasterDAO extends Observable {
 		if (this.daos.containsKey(forType)){
 			dao = (GeometricDAO<T>) this.daos.get(forType);
 		} else {
+			Boolean found = false;
+			for (Class klass : managedTypes){
+				if (klass == forType){
+					found = true;
+					break;
+				}
+			}
+			if (! found)
+				throw new SQLException("This class cannot be managed by a MasterDAO !");
 			dao = DaoManager.createDao(this.database, forType);
 			dao.setMaster(this);
 			this.daos.put(forType, dao);
@@ -115,21 +121,31 @@ public class MasterDAO extends Observable {
 	 * @throws SQLException
 	 */
 	public void copyFrom(MasterDAO other) throws SQLException{
-		List<Geometric> toCopy = new ArrayList<Geometric>();
 		for (Class<? extends Geometric> klass : managedTypes){
 			GeometricDAO<? extends Geometric> dao = other.getDao(klass);
 			GeometricDAO<? extends Geometric> myDao = this.getDao(klass);
 			for (Geometric g : dao.queryForAll()){
 				myDao.insert(g);
 			}
-			//toCopy.addAll(other.getDao(klass).queryForAll());
 		}
-		System.out.println(toCopy);
 	}
 	
 	@Override
 	public void notifyObservers(){
-		List<Change> changes = this.changes;
+		List<Change> changes = new LinkedList<Change>();
+		for (Change chg : this.changes){
+			Change found = null;
+			for (Change last : changes){
+				if (last.getItem().getUID().equals(chg.getItem().getUID()))
+					found = last;
+			}
+			
+			/* 2 consecutive updates on the same obj -> keep the last update only */
+			if (found != null && chg.isUpdate() && (found.isUpdate() || found.isCreation())){
+				found.setItem(chg.getItem());
+			}
+			else {changes.add(chg);}
+		}
 		this.changes = new LinkedList<Change>();
 		super.notifyObservers(changes);
 	}

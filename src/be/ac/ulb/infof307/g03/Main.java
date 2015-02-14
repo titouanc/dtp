@@ -3,7 +3,6 @@ package be.ac.ulb.infof307.g03;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
-import javax.swing.ImageIcon;
 
 import com.j256.ormlite.logger.LocalLog;
 

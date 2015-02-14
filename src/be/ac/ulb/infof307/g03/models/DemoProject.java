@@ -97,11 +97,12 @@ public class DemoProject {
 		Primitive doorPrim = new Primitive(door, Primitive.CUBE);
 		doorPrim.setScale(new Vector3f(2,1,4));
 		doorPrim.setTexture("DoorFull");
+		doorPrim.setTranslation(new Vector3f(0, 0, 2));
 		daoFactory.getDao(Primitive.class).create(doorPrim);
 		
 		/* Place the door in the world */
 		Item doorObject = new Item(groundFloor, door);
-		doorObject.setPosition(new Vector3f(-4, 0, 2));
+		doorObject.setPosition(new Vector3f(-4, 0, 0));
 		daoFactory.getDao(Item.class).create(doorObject);
 		
 		/* Create a window object */
@@ -111,11 +112,12 @@ public class DemoProject {
 		windowPrim.setRotation(new Vector3f(FastMath.PI/2,0,0));
 		windowPrim.setScale(new Vector3f(1,4,8));
 		windowPrim.setTexture("WindowFull");
+		windowPrim.setTranslation(new Vector3f(0, 0, 5));
 		daoFactory.getDao(Primitive.class).create(windowPrim);
 		
 		/* Place the window in the world */
 		Item windowObject = new Item(groundFloor, window);
-		windowObject.setPosition(new Vector3f(8, 6, 5));
+		windowObject.setPosition(new Vector3f(8, 6, 0));
 		daoFactory.getDao(Item.class).create(windowObject);
 		
 		daoFactory.getDao(Floor.class).refresh(firstFloor);

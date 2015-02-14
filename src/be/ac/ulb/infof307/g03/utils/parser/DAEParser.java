@@ -32,13 +32,13 @@ public class DAEParser extends Parser {
 			parse();
 		} catch(ParserConfigurationException pce){ 
 			System.out.println("Erreur de configuration du parseur DOM"); 
-			System.out.println("lors de l'appel à fabrique.newDocumentBuilder();"); 
+			System.out.println("lors de l'appel a fabrique.newDocumentBuilder();"); 
 		} catch(SAXException se){ 
 			System.out.println("Erreur lors du parsing du document"); 
-			System.out.println("lors de l'appel à construteur.parse(xml)"); 
+			System.out.println("lors de l'appel a construteur.parse(xml)"); 
 		} catch(IOException ioe){ 
-			System.out.println("Erreur d'entrée/sortie"); 
-			System.out.println("lors de l'appel à construteur.parse(xml)"); 
+			System.out.println("Erreur d'entree/sortie"); 
+			System.out.println("lors de l'appel a construteur.parse(xml)"); 
 		} 
 	}
 

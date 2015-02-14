@@ -125,8 +125,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 */
 	private void addSun(){
 		DirectionalLight sun = new DirectionalLight();
-		sun.setColor(ColorRGBA.Gray);
-		sun.setDirection(new Vector3f(-.3f,-.3f,-1f).normalizeLocal());
+		sun.setColor(ColorRGBA.White);
+		sun.setDirection(new Vector3f(.45f,.35f,-1f).normalizeLocal());
 		rootNode.addLight(sun);
 		
 		AmbientLight ambient = new AmbientLight();

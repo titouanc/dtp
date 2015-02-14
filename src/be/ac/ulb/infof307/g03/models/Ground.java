@@ -28,6 +28,10 @@ public class Ground extends Area {
 		super();
 	}
 	
+	/**
+	 * Constructor of the class Ground.
+	 * @param forRoom The Ground's Room
+	 */
 	public Ground(Room forRoom){
 		super();
 		forRoom.setGround(this);
