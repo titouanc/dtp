@@ -204,7 +204,7 @@ public class ObjectListController implements MouseListener, Observer {
 		int rVal = fileChooser.showSaveDialog(view);
 		
 		if (rVal == JFileChooser.APPROVE_OPTION) {
-			ExportEngine e = new ExportEngine(this.daoFactory);
+			ExportEngine e = new ExportEngine(this.project, this.daoFactory);
 			e.handleExport(selectedEntity,formatFileName(fileChooser.getSelectedFile().getName(),fileChooser.getFileFilter().getDescription()),fileChooser.getCurrentDirectory().toString());
 		}
 		

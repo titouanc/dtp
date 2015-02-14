@@ -219,13 +219,40 @@ public class Primitive extends Meshable {
 		geometry.rotate((float) this.rotationx, (float) this.rotationy, (float) this.rotationz);
 		geometry.setLocalTranslation((float) this.translationx, (float) this.translationy, (float) this.translationz);
 		mesh = geometry.getMesh();
-		
+				
 		FloatBuffer buffer = mesh.getFloatBuffer(Type.Position);
 		float[] positions = new float[buffer.capacity()];
 		buffer.clear();
 		buffer.get(positions);
 		
 		return positions;
+ 	}
+	
+	public float[] getNormals() {
+		Mesh mesh = null;
+		if (this.type.equals(Primitive.CUBE)) {
+			mesh = new Box(0.5f,0.5f,0.5f);
+		} else if (this.type.equals(Primitive.SPHERE)) {
+			mesh = new Sphere(32,32,1f);
+		} else if (this.type.equals(Primitive.PYRAMID)) {
+			mesh = new Dome(2, 4, 1);
+		} else if (this.type.equals(Primitive.CYLINDER)) {
+			mesh = new Cylinder(4, 20, 1f,0.9f, 1f, false, false);
+		} else if (this.type.equals(Primitive.IMPORTED)) {
+			// TODO draw the primitive
+		}
+		Geometry geometry = new Geometry(getUID(),mesh);
+		geometry.scale((float) this.scalex, (float) this.scaley, (float) this.scalez);
+		geometry.rotate((float) this.rotationx, (float) this.rotationy, (float) this.rotationz);
+		geometry.setLocalTranslation((float) this.translationx, (float) this.translationy, (float) this.translationz);
+		mesh = geometry.getMesh();
+				
+		FloatBuffer buffer = mesh.getFloatBuffer(Type.Normal);
+		float[] normals = new float[buffer.capacity()];
+		buffer.clear();
+		buffer.get(normals);
+		
+		return normals;
  	}
 	
 	public int[] getIndexes() {
