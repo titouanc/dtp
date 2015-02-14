@@ -24,7 +24,7 @@ Etant donné qu'un EA3D permet de concevoir une construction, il intègre un out
 Lorsque l'utilisateur fait appel à l'OCO, il se sert de formes basiques qu'il positionne dans une vue 3D. Un objet est composé de formes qui peuvent chacune avoir une texture. Enfin l'OCO propose de configurer des champs paramétrables (simples). Par exemple, un laptop est composé de deux formes : deux rectangles perpendiculaires qui possèdent chacun une texture (écran et coque). Ces textures sont des paramètres de cet objet tout comme la largeur du laptop, sa hauteur et sa longueur.
 Dans le mode édition de pièces, l'utilisateur peut choisir un objet qu'il veut positionner (précisément) et le configure comme souhaité. Les objets sont directement utilisables depuis le mode d'édition de pièces. Le sytème de sauvegarde évolue avec les nouvelles fonctionnalités.
 
-\textbf{Statut: en cours} \char124{} \textbf{Remarques:}
+\textbf{Statut: fait} \char124{} \textbf{Remarques: Le .jar de cette itération présente quelques problèmes liés aux textures. Ces problèmes sont toutefois réglés dans la release suivante.}
 \end{framed}
 
 \section{Itération 3}
@@ -36,6 +36,32 @@ Dans le mode édition de pièces, l'utilisateur peut choisir un objet qu'il veut
 
 L'utilisateur peut choisir parmi sa bibliothèque d'objets afin d'exporter ceux-ci aux formats : OBJ, DAE, 3DS ou KMZ.
 L'utilisateur peut également choisir d'importer un fichier enregistré sous l'un des formats précédemment cités. Lors de ce processus, l'OCO sera ouvert et l'objet importé sera considéré comme une forme de base.
+
+\textbf{Statut: en cours} \char124{} \textbf{Remarques:}
+\end{framed}
+
+\section{Itération 4}
+\begin{framed}
+\subsection{Statistiques + Finition}
+
+\textbf{Numéro d'histoire : 6} \char124{} 
+\textbf{Difficulté estimée: 1/3} \char124{} Groupe \textbf{3}
+
+Via le menu principal, l’utilisateur peut accéder aux statistiques de la construction. C’est-à-dire aux informations de :
+\begin{itemize}
+\item superficie
+\item nombre d’objets utilisés
+\item volume total des murs
+\item ...
+\end{itemize}
+ceci par pièce, par étage et pour toute la construction.
+
+Quelques autres fonctionnalités seront implémentées pour la facilité d'utilisation:
+\begin{itemize}
+\item undo/redo
+\item le snap to point lorsqu'on déplace un point existant vers un autre
+\item une interface graphique plus intégrée
+\end{itemize}
 
 \textbf{Statut: TODO} \char124{} \textbf{Remarques:}
 \end{framed}
