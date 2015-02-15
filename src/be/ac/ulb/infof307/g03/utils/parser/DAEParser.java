@@ -60,8 +60,9 @@ public class DAEParser extends Parser {
 		this.vertices = new Vector<Vertex>();
 		for (int i=0; i<d.length; i+=3) {
 			vertices.add(new Vertex(this.primitives.elementAt(pos), new Vector3f(Float.parseFloat(d[i]),Float.parseFloat(d[i+1]),Float.parseFloat(d[i+2]))));
+			vertices.lastElement().setIndex(i/3);
 			try {
-				this.dao.getDao(Vertex.class).create(vertices.lastElement());
+				this.dao.getDao(Vertex.class).insert(vertices.lastElement());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -78,7 +79,8 @@ public class DAEParser extends Parser {
 				Vertex v2 = this.vertices.get(Integer.parseInt(d[i+1]));
 				Vertex v3 = this.vertices.get(Integer.parseInt(d[i+2]));
 				Triangle triangle = new Triangle(p,v1,v2,v3);
-				this.dao.getDao(Triangle.class).create(triangle);
+				triangle.setIndex(i/3);
+				this.dao.getDao(Triangle.class).insert(triangle);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -94,7 +96,7 @@ public class DAEParser extends Parser {
 			primitives.addElement(new Primitive(this.entity,Primitive.IMPORTED));
 			int pos = primitives.size()-1;
 			try {
-				this.dao.getDao(Primitive.class).create(this.primitives.get(pos));
+				this.dao.getDao(Primitive.class).insert(this.primitives.get(pos));
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

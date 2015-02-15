@@ -43,8 +43,8 @@ public class ImportEngine {
 		Entity entity = new Entity("plop");
 		DAEParser parser = new DAEParser(fileName,entity,this.dao);
 		try {
-			this.dao.getDao(Entity.class).create(entity);
-			this.dao.notifyObservers(entity);
+			this.dao.getDao(Entity.class).insert(entity);
+			this.dao.notifyObservers();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
