@@ -7,6 +7,7 @@ import java.util.Vector;
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
+import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.utils.parser.DAEParser;
 import be.ac.ulb.infof307.g03.utils.parser.PrimitiveData;
@@ -14,10 +15,12 @@ import be.ac.ulb.infof307.g03.utils.parser.PrimitiveData;
 public class ImportEngine {
 
 	private MasterDAO dao = null;
+	private Project project = null;
 	private Entity entity = null;
 	
-	public ImportEngine(MasterDAO dao) {
+	public ImportEngine(MasterDAO dao, Project project) {
 		this.dao = dao;
+		this.project = project;
 	}
 	
 	public void handleImport(String fileName, String path) {
@@ -40,8 +43,10 @@ public class ImportEngine {
 		} else if (extension.equals("kmz")) {
 			// TODO handle kmz import
 		}
-		
+		this.project.config("entity.current", entity.getUID());
+		this.project.config("edition.mode", "object");
 		this.dao.notifyObservers();
+		
 	}
 	
 	private String getName(String fileName) {
