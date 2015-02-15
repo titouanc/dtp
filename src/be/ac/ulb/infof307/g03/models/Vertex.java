@@ -41,6 +41,14 @@ public class Vertex extends Ordered {
 		this.z = coords.z;
 	}
 	
+	public Vertex(Primitive primitive, float x, float y, float z){
+		super();
+		this.primitive = primitive;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
 	/**
 	 * @return The primitive this vertex belongs to
 	 */

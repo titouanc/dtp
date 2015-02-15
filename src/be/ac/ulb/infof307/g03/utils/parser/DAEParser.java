@@ -63,7 +63,7 @@ public class DAEParser extends Parser {
 			vertices.add(new Vertex(this.primitives.lastElement(), new Vector3f(Float.parseFloat(d[i]),Float.parseFloat(d[i+1]),Float.parseFloat(d[i+2]))));
 			vertices.lastElement().setIndex(i/3);
 			try {
-				this.dao.getDao(Vertex.class).insert(vertices.lastElement());
+				this.dao.getDao(Vertex.class).create(vertices.lastElement());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -82,7 +82,7 @@ public class DAEParser extends Parser {
 				Vertex v3 = this.vertices.get(Integer.parseInt(d[i+2]));
 				Triangle triangle = new Triangle(p,v1,v2,v3);
 				triangle.setIndex(i/3);
-				this.dao.getDao(Triangle.class).insert(triangle);
+				this.dao.getDao(Triangle.class).create(triangle);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
