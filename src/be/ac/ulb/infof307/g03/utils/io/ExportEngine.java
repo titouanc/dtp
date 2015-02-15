@@ -175,8 +175,10 @@ public class ExportEngine {
 	public void handleObj(String fileName){
 		try {
 			PrintWriter file = new PrintWriter(fileName,"UTF-8");
-			file.print("# Blender v2.73 (sub 0) OBJ File: ''");
-			file.print("# www.blender.org");
+			file.print("# Created with HomePlans");
+			file.println();
+			file.print("# www.supayr.ninja");
+			file.println();
 			for (Primitive primitive : this.exportable.getPrimitives()) {
 				//Vectrices
 				float[] vertices = primitive.getVertices();
@@ -193,7 +195,7 @@ public class ExportEngine {
 				int[] faces = primitive.getIndexes();
 				int facesNumber = faces.length/3;
 				for (int i=0; i<facesNumber; i+=3) {
-					file.print("v ");
+					file.print("f ");
 					file.print(String.valueOf(faces[i])+" ");
 					file.print(String.valueOf(faces[i+1])+" ");
 					file.print(String.valueOf(faces[i+2])+" ");
