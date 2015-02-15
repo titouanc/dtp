@@ -241,13 +241,8 @@ public class FileChooserController {
 		}
 		if(dialogResult == JOptionPane.YES_OPTION){
 			try {
-				ExportEngine e = new ExportEngine(this.project, this.project.getGeometryDAO());
-				String extension = "";
-				int index = selectedFile.getName().lastIndexOf('.');
-				if (index > 0) {
-				    extension = selectedFile.getName().substring(index+1);
-				}
-				e.handleExport(selectedEntity, extension,selectedFile.getParent());
+				ExportEngine exportengine = new ExportEngine(this.project, this.project.getGeometryDAO());
+				exportengine.handleExport(selectedEntity, selectedFile);
 			} catch (SQLException e) {
 				Log.exception(e);
 			}

@@ -1,5 +1,6 @@
 package be.ac.ulb.infof307.g03.utils.io;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -30,8 +31,10 @@ public class ExportEngine {
     return "";
   }
   
-  public void handleExport(Entity entity, String fileName, String path) {
+  public void handleExport(Entity entity, File fileToExport) {
     this.exportable = entity;
+    String fileName = fileToExport.getName();
+    String path = fileToExport.getParent();
     String extension = getExtension(fileName);
     if (extension.equals("dae")) {
       handleDae(path+"/"+fileName);
