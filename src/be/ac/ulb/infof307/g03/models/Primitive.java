@@ -4,7 +4,9 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.nio.FloatBuffer;
+
 import be.ac.ulb.infof307.g03.utils.Log;
+
 import java.util.Vector;
 
 import be.ac.ulb.infof307.g03.utils.Log;
@@ -14,6 +16,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
+import com.jme3.math.Matrix4f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -266,6 +270,15 @@ public class Primitive extends Meshable {
 		
 		return positions;
  	}
+	
+	public FloatBuffer getRotMatrix() {
+		Geometry geometry = this.getGeometry();
+		Transform t = geometry.getWorldTransform();
+		Quaternion q = t.getRotation();
+		Matrix4f m = new Matrix4f();
+		q.toRotationMatrix(m);
+		return m.toFloatBuffer();
+	}
 	
 	/**
 	 * @return the array of normals for this primitive
