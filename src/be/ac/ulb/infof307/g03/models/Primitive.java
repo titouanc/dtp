@@ -4,11 +4,14 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.nio.FloatBuffer;
+import be.ac.ulb.infof307.g03.utils.Log;
+
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -211,11 +214,22 @@ public class Primitive extends Meshable {
 				triangles[3*i] = t.getV1().getIndex();
 				triangles[3*i+1] = t.getV2().getIndex();
 				triangles[3*i+2] = t.getV3().getIndex();
+				Log.debug("Meshing triangle %s %s %s", t.getV1().toString(), t.getV2().toString(), t.getV3().toString());
 			}
+			
+			Vector2f[] texCoord = new Vector2f[7];
+		  	texCoord[0] = new Vector2f(0.5f, 0.5f);
+		  	texCoord[1] = new Vector2f(0, 0.5f);
+		  	texCoord[2] = new Vector2f(0.25f, 0);
+		  	texCoord[3] = new Vector2f(0.75f, 0);
+		  	texCoord[4] = new Vector2f(1, 0.5f);
+		  	texCoord[5] = new Vector2f(0.75f, 1);
+		  	texCoord[6] = new Vector2f(0.25f, 1);
 			
 			mesh = new Mesh();
 		  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
 		  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(triangles));
+		  	mesh.setBuffer(Type.TexCoord, 2, BufferUtils.createFloatBuffer(texCoord));
 		  	mesh.updateBound();
 		}
 		

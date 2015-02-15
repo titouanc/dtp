@@ -27,6 +27,12 @@ public class TestOrdered {
 	public void tearDown() throws Exception {
 		db.close();
 	}
+	
+	@Test
+	public void test_is_geometric_dao() throws SQLException {
+		Dao<ConcreteOrdered, Integer> dao = DaoManager.createDao(db, ConcreteOrdered.class);
+		assertEquals(GeometricDAO.class, dao.getClass());
+	}
 
 	@Test
 	public void test_order() throws SQLException {
