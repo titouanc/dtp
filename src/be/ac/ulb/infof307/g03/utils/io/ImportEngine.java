@@ -26,7 +26,9 @@ public class ImportEngine {
 		this.project = project;
 	}
 	
-	public void handleImport(String fileName, String path) {
+	public void handleImport(File fileToImport) {
+		String fileName = fileToImport.getName();
+		String path = fileToImport.getParent();
 		String name = getName(fileName);
 		this.entity = new Entity(name);
 		try {
