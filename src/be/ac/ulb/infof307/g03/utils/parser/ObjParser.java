@@ -66,6 +66,30 @@ public class ObjParser extends Parser {
 				e.printStackTrace();
 			}
         }
+        ArrayList<Integer> indexes = new ArrayList<Integer>();
+        ArrayList<Face> faces = builder.faces;
+        for (int i=0;i<faces.size();++i){
+			Primitive p = this.primitives.lastElement();
+			
+			ArrayList<FaceVertex> fv = faces.get(i).vertices;
+			VertexGeometric gv1 = fv.get(0).v;
+			Vertex v1 = new Vertex(p, new Vector3f(gv1.x,gv1.y,gv1.z));
+			VertexGeometric gv2 = fv.get(1).v;
+			Vertex v2 = new Vertex(p, new Vector3f(gv2.x,gv2.y,gv2.z));
+			VertexGeometric gv3 = fv.get(2).v;
+			Vertex v3 = new Vertex(p, new Vector3f(gv3.x,gv3.y,gv3.z));
+			Triangle triangle = new Triangle(p,v1,v2,v3);
+			triangle.setIndex(i);
+			
+			try {
+				dao.getDao(Triangle.class).insert(triangle);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+        	
+        }
+        
+        Log.log(Level.FINEST, "[DEBUG] Loaded vertices : " + builder.verticesG.toString());
 
 	}
 	
