@@ -184,6 +184,7 @@ public class ObjectListView extends JList implements Observer {
 	
 	@Override
 	public void update(Observable obs, Object arg) {
+		Log.debug("Update objectListView");
 		List<Change> changes = (List<Change>) arg;
 		boolean mustRedraw = false;
 		for (Change change : changes) {

@@ -107,24 +107,24 @@ public class A3DSParser extends Parser {
     private void parseObjectChunk() throws IOException {
         String name = reader.readString();
         Log.log(Level.FINEST,"[DEBUG]Found object : " + name);
-        datas.addElement(new PrimitiveData()); 
-        datas.elementAt(datas.size()-1).setName(name);
+        //datas.addElement(new PrimitiveData()); 
+        //datas.elementAt(datas.size()-1).setName(name);
     }
 
     private void parseVerticesList() throws IOException {
         short numVertices = reader.getShort();
-        int index = datas.size()-1;
+        //int index = datas.size()-1;
         for (int i=0; i<numVertices; i++) {
-        	datas.elementAt(index).appendVertex(new Vector3f(reader.getFloat(),reader.getFloat(),reader.getFloat()));
+       // 	datas.elementAt(index).appendVertex(new Vector3f(reader.getFloat(),reader.getFloat(),reader.getFloat()));
         }
         Log.log(Level.FINEST,"[DEBUG]Found " + numVertices + " vertices");
     }
 
     private void parseFacesDescription() throws IOException {
         short numFaces = reader.getShort();
-        int index = datas.size()-1;
+        //int index = datas.size()-1;
         for (int i=0; i<numFaces*3; i++) {
-            datas.elementAt(index).indexes.addElement((int)reader.getShort());
+        //    datas.elementAt(index).indexes.addElement((int)reader.getShort());
         }
         Log.log(Level.FINEST,"[DEBUG]Found " + numFaces + " faces");
     }
@@ -165,7 +165,7 @@ public class A3DSParser extends Parser {
     }
 
 	public static void main(String[] args) {
-		DAEParser d = new DAEParser("/Users/julianschembri/Downloads/test.3ds");
+		//DAEParser d = new DAEParser("/Users/julianschembri/Downloads/test.3ds");
 
 	}
 }

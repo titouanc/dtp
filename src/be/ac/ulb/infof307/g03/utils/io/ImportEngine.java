@@ -40,18 +40,14 @@ public class ImportEngine {
 	}
 	
 	private void handleDae(String fileName) {
-		DAEParser parser = new DAEParser(fileName);
-		Vector<PrimitiveData> datas = parser.getPrimitiveDatas();
-		Entity entity = new Entity();
-		for (PrimitiveData primData : datas) {
-			//Primitivenew Primitive(entity,Primitive.IMPORTED)
-			try {
-				this.dao.getDao(Primitive.class).create(new Primitive(entity,Primitive.IMPORTED));
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+		Entity entity = new Entity("plop");
+		DAEParser parser = new DAEParser(fileName,entity,this.dao);
+		try {
+			this.dao.getDao(Entity.class).insert(entity);
+			this.dao.notifyObservers();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

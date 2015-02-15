@@ -6,6 +6,8 @@ package be.ac.ulb.infof307.g03.utils.parser;
 import java.awt.List;
 import java.util.Vector;
 
+import be.ac.ulb.infof307.g03.models.Primitive;
+
 import com.jme3.math.Vector3f;
 
 /**
@@ -14,9 +16,9 @@ import com.jme3.math.Vector3f;
  */
 public class Parser {
 
-	protected Vector<PrimitiveData> datas = new Vector<PrimitiveData>();
+	protected Vector<Primitive> primitives = new Vector<Primitive>();
 	
-	public Vector<PrimitiveData> getPrimitiveDatas() {
-		return datas;
+	public Vector<Primitive> getPrimitives() {
+		return primitives;
 	}
 }
