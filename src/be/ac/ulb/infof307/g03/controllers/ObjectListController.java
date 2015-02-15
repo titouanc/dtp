@@ -245,7 +245,7 @@ public class ObjectListController implements MouseListener, Observer {
 		
 		if (rVal == JFileChooser.APPROVE_OPTION) {
 			Log.debug("Import "+fileChooser.getCurrentDirectory().toString()+"/"+fileChooser.getSelectedFile().getName());
-			ImportEngine i = new ImportEngine(this.daoFactory);
+			ImportEngine i = new ImportEngine(this.daoFactory, this.project);
 			i.handleImport(fileChooser.getSelectedFile().getName(),fileChooser.getCurrentDirectory().toString());
 		}
 
