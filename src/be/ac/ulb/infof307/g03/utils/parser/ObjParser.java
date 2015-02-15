@@ -42,6 +42,7 @@ public class ObjParser extends Parser {
 	 * @param filename
 	 */
 	public ObjParser(String filename, Entity entity, MasterDAO dao){
+        Log.log(Level.FINEST, "[DEBUG] PARSING OBJ");
 		Primitive primitive = new Primitive(entity, Primitive.IMPORTED);
 		try {
 			dao.getDao(Primitive.class).insert(primitive);
@@ -68,8 +69,9 @@ public class ObjParser extends Parser {
         }
         ArrayList<Integer> indexes = new ArrayList<Integer>();
         ArrayList<Face> faces = builder.faces;
+        Log.log(Level.FINEST, "[DEBUG] FACES : " + faces.toString());
+        Primitive p = new Primitive(entity,Primitive.IMPORTED);
         for (int i=0;i<faces.size();++i){
-			Primitive p = this.primitives.lastElement();
 			
 			ArrayList<FaceVertex> fv = faces.get(i).vertices;
 			VertexGeometric gv1 = fv.get(0).v;
