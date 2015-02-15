@@ -10,7 +10,6 @@ import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.utils.parser.DAEParser;
-import be.ac.ulb.infof307.g03.utils.parser.PrimitiveData;
 
 public class ImportEngine {
 
