@@ -1,6 +1,7 @@
 package be.ac.ulb.infof307.g03.utils.io;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -10,6 +11,7 @@ import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.utils.parser.DAEParser;
+import be.ac.ulb.infof307.g03.utils.parser.KmzParser;
 import be.ac.ulb.infof307.g03.utils.parser.PrimitiveData;
 
 public class ImportEngine {
@@ -47,7 +49,7 @@ public class ImportEngine {
 		} else if (extension.equals("3ds")) {
 			// TODO handle 3ds import
 		} else if (extension.equals("kmz")) {
-			// TODO handle kmz import
+			handleKMZ(path,fileName);
 		}
 		this.project.config("entity.current", entity.getUID());
 		this.project.config("edition.mode", "object");
@@ -74,6 +76,20 @@ public class ImportEngine {
 	private void handleDae(String fileName) {
 		Log.debug("Handle dae");
 		DAEParser parser = new DAEParser(fileName,this.entity,this.dao);
+	}
+	
+	private void handleKMZ(String path, String fileName){
+		Log.debug("Handle KMZ");
+		KmzParser kmzParser = new KmzParser(path+"/"+fileName);
+		String daeFilename;
+		try {
+			daeFilename = kmzParser.getDAEFilename(); // bound DAE file in .KMZ
+			DAEParser daeParser = new DAEParser(path+"/"+daeFilename, this.entity, this.dao);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
 	}
 }
 
