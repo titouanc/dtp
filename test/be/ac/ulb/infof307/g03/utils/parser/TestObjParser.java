@@ -68,6 +68,20 @@ public class TestObjParser {
 	}
 	
 	@Test
+	public void test_import_icosphere() throws SQLException {
+		MasterDAO factory = new MasterDAO(this.db);
+		Entity ent = new Entity("icoSphere");
+		factory.getDao(Entity.class).create(ent);
+		
+		new ObjParser("test/be/ac/ulb/infof307/g03/assets/icoSphere.obj", ent, factory);
+		List<Vertex> vertices = factory.getDao(Vertex.class).queryForAll();
+		assertEquals(42, vertices.size());
+		
+		List<Triangle> triangles = factory.getDao(Triangle.class).queryForAll();
+		assertEquals(80, triangles.size());
+	}
+	
+	@Test
 	public void test_extract_integer(){
 		assertEquals(322, ObjParser.extractVertexIndex("322//322"));
 		assertEquals(322, ObjParser.extractVertexIndex("322/322/322"));
