@@ -4,6 +4,7 @@
 package be.ac.ulb.infof307.g03.views;
 
 import java.awt.Component;
+import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -103,6 +104,21 @@ public class FileChooserView {
 	    }
 		
 	}
+	
+	private static File addExtension(JFileChooser c) {
+	    File file = c.getSelectedFile();
+	    if (c.getFileFilter() instanceof FileNameExtensionFilter) {
+	        String[] exts = ((FileNameExtensionFilter)c.getFileFilter()).getExtensions();
+	        String nameLower = file.getName().toLowerCase();
+	        for (String ext : exts) {
+	            if (nameLower.endsWith('.' + ext.toLowerCase())) {
+	                return file; 
+	            }
+	        }
+	        file = new File(file.toString() + '.' + exts[0]);
+	    }
+	    return file;
+	}
 
 	/**
 	 * Display the file dialog for export
@@ -112,7 +128,7 @@ public class FileChooserView {
 	public void displayExport(Component parent, Entity selectedEntity) {
 		int returnVal = this.chooserExport.showSaveDialog(parent);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	    	this.controller.exportObject(this.chooserExport.getSelectedFile(),selectedEntity);
+	    	this.controller.exportObject(addExtension(this.chooserExport),selectedEntity);
 	    }
 		
 	}
