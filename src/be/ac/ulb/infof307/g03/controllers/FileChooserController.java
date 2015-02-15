@@ -219,14 +219,15 @@ public class FileChooserController {
 		Log.info("Import %s", selectedFile.getName());
 		final String filename = selectedFile.getAbsolutePath();
 		if(new File(filename).exists()){
-			ImportEngine i = new ImportEngine(this.project);
-			i.handleImport(selectedFile.getName(), selectedFile.getParent());
+			ImportEngine importengine = new ImportEngine(this.project);
+			importengine.handleImport(selectedFile);
 		}
 		else{
 			JOptionPane.showMessageDialog(new JFrame(), "File does not exist!", "Erreur",JOptionPane.ERROR_MESSAGE);
 		}
 		
 	}
+	
 	/**
 	 * @param selectedFile The file-object to be exported
 	 * @param selectedEntity The object to be exported
