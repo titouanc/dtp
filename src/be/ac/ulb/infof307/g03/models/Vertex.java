@@ -24,12 +24,6 @@ public class Vertex extends Ordered {
 	private float y = 0;
 	@DatabaseField(uniqueCombo = true)
 	private float z = 0;
-	@DatabaseField
-	private float normalX = 0;
-	@DatabaseField
-	private float normalY = 0;
-	@DatabaseField
-	private float normalZ = 0;
 	/**
 	 * Default constructor (needed by ormlite)
 	 */
@@ -39,15 +33,12 @@ public class Vertex extends Ordered {
 	 * @param primitive The primitive to which the vertex shall belong
 	 * @param coords The coordinates of the new vertex
 	 */
-	public Vertex(Primitive primitive, Vector3f coords, Vector3f normal) {
+	public Vertex(Primitive primitive, Vector3f coords) {
 		super();
 		this.primitive = primitive;
 		this.x = coords.x;
 		this.y = coords.y;
 		this.z = coords.z;
-		this.normalX = normal.x;
-		this.normalY = normal.y;
-		this.normalZ = normal.z;
 	}
 	
 	/**
@@ -62,13 +53,6 @@ public class Vertex extends Ordered {
 	 */
 	public Vector3f asVector3f(){
 		return new Vector3f(this.x, this.y, this.z);
-	}
-	
-	/**
-	 * @return The normal vector of this vertex
-	 */
-	public Vector3f getNormal(){
-		return new Vector3f(this.normalX, this.normalY, this.normalZ);
 	}
 
 	@Override

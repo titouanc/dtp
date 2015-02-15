@@ -208,12 +208,10 @@ public class Primitive extends Meshable {
 		} else if (this.type.equals(Primitive.IMPORTED)) {
 			int nVertices = this.vertices.size();
 			Vector3f[] vertices = new Vector3f[nVertices];
-			Vector3f[] normals = new Vector3f[nVertices];
 			for (Vertex v : this.vertices){
 				int i = v.getIndex();
 				assert 0 <= i && i < nVertices;
 				vertices[i] = v.asVector3f();
-				normals[i] = v.getNormal();
 			}
 			
 			int nTriangles = this.triangles.size();
@@ -230,7 +228,6 @@ public class Primitive extends Meshable {
 			mesh = new Mesh();
 		  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
 		  	mesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(triangles));
-		  	mesh.setBuffer(Type.Normal, 3, BufferUtils.createFloatBuffer(normals));
 		  	mesh.updateBound();
 		}
 		
@@ -268,28 +265,6 @@ public class Primitive extends Meshable {
 		}
 		
 		return positions;
- 	}
-	
-	/**
-	 * @return the array of normals for this primitive
-	 */
-	public float[] getNormals() {
-		Geometry geometry = this.getGeometry();
-		Transform t = geometry.getWorldTransform();
-		
-		FloatBuffer buffer = geometry.getMesh().getFloatBuffer(Type.Normal);
-		float[] normals = new float[buffer.capacity()];
-		buffer.clear();
-		for (int i =0; i<normals.length; i+=3) {
-			Vector3f vertex = new Vector3f(buffer.get(i),buffer.get(i+1),buffer.get(i+2));
-			Vector3f res = new Vector3f();
-			t.transformVector(vertex, res);
-			normals[i] = res.getX();
-			normals[i+1] = res.getY();
-			normals[i+2] = res.getZ();
-		}
-		
-		return normals;
  	}
 	
 	/**

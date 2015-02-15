@@ -59,7 +59,6 @@ public class ExportEngine {
   
   public void daeGeometry(PrintWriter file, Primitive primitive) {
     float[] vertices = primitive.getVertices();
-    float[] normals = primitive.getNormals();
     int[] indexes = primitive.getIndexes();
     
     file.println(	"    <geometry id=\""+primitive.getUID()+"\" name=\""+primitive.getType()+"\">"							);
@@ -79,24 +78,6 @@ public class ExportEngine {
       file.println(	"            </accessor>"																				);
       file.println(	"          </technique_common>"																			);
       file.println(	"        </source>"																						);
-      
-      file.println(	"        <source id=\""+primitive.getUID()+"-normals\">"												);
-      file.print(	"          <float_array id=\""+primitive.getUID()+"-normals-array\" count=\""+normals.length+"\">"		);
-                               for (int i=0; i<normals.length-1; ++i) {
-    	                         file.print(String.valueOf(normals[i])+" ");
-                               }
-      file.println(            String.valueOf(normals[normals.length-1])+"</float_array>"									);
-      file.println(	"          <technique_common>"																			);
-      file.println(	"            <accessor source=\"#"+primitive.getUID()+"-normals-array\" "
-    		                     + "count=\""+String.valueOf(new Integer(normals.length/3))+"\" stride=\"3\">"				);
-      file.println(	"              <param name=\"X\" type=\"float\"/>"														);
-      file.println(	"              <param name=\"Y\" type=\"float\"/>"														);
-      file.println(	"              <param name=\"Z\" type=\"float\"/>"														);
-      file.println(	"            </accessor>"																				);
-      file.println(	"          </technique_common>"																			);
-      file.println(	"        </source>"																						);
-
-      
       file.println(	"        <vertices id=\""+primitive.getUID()+"-vertices\">"												);
       file.println(	"          <input semantic=\"POSITION\" source=\"#"+primitive.getUID()+"-positions\"/>"					);
       file.println(	"        </vertices>"																					);
