@@ -12,5 +12,34 @@
 	<classpathentry kind="lib" path="lib/ormlite-jdbc-4.48.jar"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.7.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jMonkeyEngine"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/eventbus.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/j-ogg-oggd.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/j-ogg-vorbisd.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jbullet.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jglfont-core.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jinput.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-blender.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-core.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-desktop.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-effects.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-jbullet.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-jogg.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-lwjgl-natives.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-lwjgl.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-networking.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-niftygui.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-openal-soft-natives-android.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-plugins.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jME3-terrain.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/joal.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/jogl-all.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/lwjgl.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/nifty-default-controls.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/nifty.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/stack-alloc.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/vecmath.jar"/>
+	<classpathentry kind="lib" path="lib/jMonkeyEngine/xmlpull-xpp3.jar"/>
+	<classpathentry kind="lib" path="lib/objLoader.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
