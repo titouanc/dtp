@@ -55,11 +55,12 @@ public class DAEParser extends Parser {
 		} 
 	}
 
-	public void addVertices(String data, int pos) {
+	public void addVertices(String data) {
+		Log.debug("addVertices : "+data);
 		String[] d = data.split(" ");
 		this.vertices = new Vector<Vertex>();
 		for (int i=0; i<d.length; i+=3) {
-			vertices.add(new Vertex(this.primitives.elementAt(pos), new Vector3f(Float.parseFloat(d[i]),Float.parseFloat(d[i+1]),Float.parseFloat(d[i+2]))));
+			vertices.add(new Vertex(this.primitives.lastElement(), new Vector3f(Float.parseFloat(d[i]),Float.parseFloat(d[i+1]),Float.parseFloat(d[i+2]))));
 			vertices.lastElement().setIndex(i/3);
 			try {
 				this.dao.getDao(Vertex.class).insert(vertices.lastElement());
@@ -70,11 +71,12 @@ public class DAEParser extends Parser {
 		}
 	}
 	
-	public void addIndexes(String data, int pos) {
+	public void addIndexes(String data) {
+		Log.debug("addIndexes : "+data);
 		String[] d = data.split(" ");
 		for (int i=0; i<d.length; i+=3) {
 			try {
-				Primitive p = this.primitives.get(pos);
+				Primitive p = this.primitives.lastElement();
 				Vertex v1 = this.vertices.get(Integer.parseInt(d[i]));
 				Vertex v2 = this.vertices.get(Integer.parseInt(d[i+1]));
 				Vertex v3 = this.vertices.get(Integer.parseInt(d[i+2]));
@@ -91,14 +93,13 @@ public class DAEParser extends Parser {
 	}
 	
 	public void parse() {
+		Log.debug("Parse");
 		NodeList nodeList = document.getElementsByTagName("geometry");
 		for (int i=0; i<nodeList.getLength(); ++i) {
 			primitives.addElement(new Primitive(this.entity,Primitive.IMPORTED));
-			int pos = primitives.size()-1;
 			try {
-				this.dao.getDao(Primitive.class).insert(this.primitives.get(pos));
+				this.dao.getDao(Primitive.class).insert(this.primitives.lastElement());
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 						
@@ -112,13 +113,13 @@ public class DAEParser extends Parser {
 			NodeList srcNodeList = ((Element)nodeList.item(i)).getElementsByTagName("source");
 			for (int k=0; k<srcNodeList.getLength(); ++k) {
 				if (srcNames.contains(srcNodeList.item(k).getAttributes().getNamedItem("id").getTextContent())) {
-					addVertices(((Element) srcNodeList.item(k)).getElementsByTagName("float_array").item(0).getTextContent(),pos);
+					addVertices(((Element) srcNodeList.item(k)).getElementsByTagName("float_array").item(0).getTextContent());
 				}
 			}
 			
 			NodeList polyNodeList = ((Element) nodeList.item(i)).getElementsByTagName("p");
 			for (int k=0; k<polyNodeList.getLength(); ++k ) {
-				addIndexes(polyNodeList.item(k).getTextContent(),pos);
+				addIndexes(polyNodeList.item(k).getTextContent());
 			}
 		}
 	}

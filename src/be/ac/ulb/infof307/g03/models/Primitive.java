@@ -7,11 +7,14 @@ import java.nio.FloatBuffer;
 import be.ac.ulb.infof307.g03.utils.Log;
 import java.util.Vector;
 
+import be.ac.ulb.infof307.g03.utils.Log;
+
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -255,16 +258,24 @@ public class Primitive extends Meshable {
 		} else if (this.type.equals(Primitive.IMPORTED)) {
 			// TODO draw the primitive
 		}
+		Log.debug("Before rescale : "+mesh.getFloatBuffer(Type.Position));
 		Geometry geometry = new Geometry(getUID(),mesh);
 		geometry.scale((float) this.scalex, (float) this.scaley, (float) this.scalez);
 		geometry.rotate((float) this.rotationx, (float) this.rotationy, (float) this.rotationz);
 		geometry.setLocalTranslation((float) this.translationx, (float) this.translationy, (float) this.translationz);
-		mesh = geometry.getMesh();
-				
+		Transform t = geometry.getWorldTransform();
+	
 		FloatBuffer buffer = mesh.getFloatBuffer(Type.Position);
 		float[] positions = new float[buffer.capacity()];
 		buffer.clear();
-		buffer.get(positions);
+		for (int i =0; i<positions.length; i+=3) {
+			Vector3f vertex = new Vector3f(buffer.get(i),buffer.get(i+1),buffer.get(i+2));
+			Vector3f res = new Vector3f();
+			t.transformVector(vertex, res);
+			positions[i] = res.getX();
+			positions[i+1] = res.getY();
+			positions[i+2] = res.getZ();
+		}
 		
 		return positions;
  	}
@@ -285,13 +296,20 @@ public class Primitive extends Meshable {
 		Geometry geometry = new Geometry(getUID(),mesh);
 		geometry.scale((float) this.scalex, (float) this.scaley, (float) this.scalez);
 		geometry.rotate((float) this.rotationx, (float) this.rotationy, (float) this.rotationz);
-		geometry.setLocalTranslation((float) this.translationx, (float) this.translationy, (float) this.translationz);
-		mesh = geometry.getMesh();
-				
+		geometry.setLocalTranslation((float) this.translationx, (float) this.translationy, (float) this.translationz);		
+		Transform t = geometry.getWorldTransform();
+		
 		FloatBuffer buffer = mesh.getFloatBuffer(Type.Normal);
 		float[] normals = new float[buffer.capacity()];
 		buffer.clear();
-		buffer.get(normals);
+		for (int i =0; i<normals.length; i+=3) {
+			Vector3f vertex = new Vector3f(buffer.get(i),buffer.get(i+1),buffer.get(i+2));
+			Vector3f res = new Vector3f();
+			t.transformVector(vertex, res);
+			normals[i] = res.getX();
+			normals[i+1] = res.getY();
+			normals[i+2] = res.getZ();
+		}
 		
 		return normals;
  	}
