@@ -10,6 +10,7 @@ import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.utils.parser.DAEParser;
+import be.ac.ulb.infof307.g03.utils.parser.ObjParser;
 
 public class ImportEngine {
 
@@ -42,7 +43,7 @@ public class ImportEngine {
 		if (extension.equals("dae")) {
 			handleDae(path+"/"+fileName);
 		} else if (extension.equals("obj")) {
-			// TODO handle obj import
+			handleObj(path+"/"+fileName);
 		} else if (extension.equals("3ds")) {
 			// TODO handle 3ds import
 		} else if (extension.equals("kmz")) {
@@ -73,6 +74,11 @@ public class ImportEngine {
 	private void handleDae(String fileName) {
 		Log.debug("Handle dae");
 		DAEParser parser = new DAEParser(fileName,this.entity,this.dao);
+	}
+	
+	private void handleObj(String fileName) {
+		Log.debug("Handle obj");
+		ObjParser parser = new ObjParser(fileName,this.entity,this.dao);
 	}
 }
 

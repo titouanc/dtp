@@ -2,19 +2,28 @@ package be.ac.ulb.infof307.g03.utils.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+
 import java.nio.FloatBuffer;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import java.util.logging.Level;
+
 
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
+
 import be.ac.ulb.infof307.g03.models.Project;
 
+import be.ac.ulb.infof307.g03.utils.Log;
+
+
 public class ExportEngine {
+
   MasterDAO dao = null;
   Project project = null;
   Entity exportable = null;
@@ -40,7 +49,7 @@ public class ExportEngine {
     if (extension.equals("dae")) {
       handleDae(path+"/"+fileName);
     } else if (extension.equals("obj")) {
-      // TODO handle obj import
+		handleObj(path+"/"+fileName);
     } else if (extension.equals("3ds")) {
       // TODO handle 3ds import
     } else if (extension.equals("kmz")) {
@@ -154,4 +163,51 @@ public class ExportEngine {
       e.printStackTrace();
     }
   }
+
+	
+	public ExportEngine(MasterDAO daoFactory) {
+		this.dao = daoFactory;
+	}
+	
+
+
+	
+	public void handleObj(String fileName){
+		try {
+			PrintWriter file = new PrintWriter(fileName,"UTF-8");
+			file.print("# Blender v2.73 (sub 0) OBJ File: ''");
+			file.print("# www.blender.org");
+			for (Primitive primitive : this.exportable.getPrimitives()) {
+				//Vectrices
+				float[] vertices = primitive.getVertices();
+				int verticesNumber = vertices.length/3;
+				for (int i=0; i<verticesNumber; i+=3) {
+					file.print("v ");
+					file.print(String.valueOf(vertices[i])+" ");
+					file.print(String.valueOf(vertices[i+1])+" ");
+					file.print(String.valueOf(vertices[i+2])+" ");
+					file.println();
+				}
+				file.println();
+				//Faces
+				int[] faces = primitive.getIndexes();
+				int facesNumber = faces.length/3;
+				for (int i=0; i<facesNumber; i+=3) {
+					file.print("v ");
+					file.print(String.valueOf(faces[i])+" ");
+					file.print(String.valueOf(faces[i+1])+" ");
+					file.print(String.valueOf(faces[i+2])+" ");
+					file.println();
+				}			
+			}
+			file.close();
+		} catch (FileNotFoundException e) {
+			Log.log(Level.FINEST, "[ERROR] File couldn't be exported");
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			Log.log(Level.FINEST, "[ERROR] File couldn't be exported - Encoding error");
+			e.printStackTrace();
+		}
+		
+	}
 }
