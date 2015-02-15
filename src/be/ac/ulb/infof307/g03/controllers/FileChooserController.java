@@ -219,13 +219,8 @@ public class FileChooserController {
 		Log.info("Open %s", selectedFile.getName());
 		final String filename = selectedFile.getAbsolutePath();
 		if(new File(filename).exists()){
-			ImportEngine i;
-			try {
-				i = new ImportEngine(this.project.getGeometryDAO());
-				i.handleImport(selectedFile.getName(), selectedFile.getParent());
-			} catch (SQLException e) {
-				Log.exception(e);
-			}
+			ImportEngine i = new ImportEngine(this.project);
+			i.handleImport(selectedFile.getName(), selectedFile.getParent());
 		}
 		else{
 			JOptionPane.showMessageDialog(new JFrame(), "File does not exist!", "Erreur",JOptionPane.ERROR_MESSAGE);

@@ -18,8 +18,12 @@ public class ImportEngine {
 	private Project project = null;
 	private Entity entity = null;
 	
-	public ImportEngine(MasterDAO dao, Project project) {
-		this.dao = dao;
+	public ImportEngine(Project project) {
+		try {
+			this.dao = project.getGeometryDAO();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		this.project = project;
 	}
 	
