@@ -208,10 +208,12 @@ public class Primitive extends Meshable {
 		} else if (this.type.equals(Primitive.IMPORTED)) {
 			int nVertices = this.vertices.size();
 			Vector3f[] vertices = new Vector3f[nVertices];
+			Vector3f[] normals = new Vector3f[nVertices];
 			for (Vertex v : this.vertices){
 				int i = v.getIndex();
 				assert 0 <= i && i < nVertices;
 				vertices[i] = v.asVector3f();
+				normals[i] = v.getNormal();
 			}
 			
 			int nTriangles = this.triangles.size();
@@ -225,19 +227,10 @@ public class Primitive extends Meshable {
 				Log.debug("Meshing triangle %s %s %s", t.getV1().toString(), t.getV2().toString(), t.getV3().toString());
 			}
 			
-			Vector2f[] texCoord = new Vector2f[7];
-		  	texCoord[0] = new Vector2f(0.5f, 0.5f);
-		  	texCoord[1] = new Vector2f(0, 0.5f);
-		  	texCoord[2] = new Vector2f(0.25f, 0);
-		  	texCoord[3] = new Vector2f(0.75f, 0);
-		  	texCoord[4] = new Vector2f(1, 0.5f);
-		  	texCoord[5] = new Vector2f(0.75f, 1);
-		  	texCoord[6] = new Vector2f(0.25f, 1);
-			
 			mesh = new Mesh();
 		  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
-		  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(triangles));
-		  	mesh.setBuffer(Type.TexCoord, 2, BufferUtils.createFloatBuffer(texCoord));
+		  	mesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(triangles));
+		  	mesh.setBuffer(Type.Normal, 3, BufferUtils.createFloatBuffer(normals));
 		  	mesh.updateBound();
 		}
 		

@@ -3,7 +3,10 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
+import java.sql.SQLException;
+
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
@@ -49,5 +52,9 @@ public class Triangle extends Ordered {
 	public String getUIDPrefix() {
 		return "trg";
 	}
-
+	
+	@Override
+	protected <Subtype> Where<Subtype, Integer> getWhereForUniqueness(Where<Subtype, Integer> initialClause) throws SQLException {
+		return initialClause.and().eq("primitive_id", this.primitive.getId());
+	}
 }
