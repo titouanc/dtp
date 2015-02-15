@@ -3,23 +3,14 @@ package be.ac.ulb.infof307.g03.controllers;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JFileChooser;
 import javax.swing.JPopupMenu;
-import javax.swing.filechooser.FileFilter;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.utils.io.ExportEngine;
-import be.ac.ulb.infof307.g03.utils.io.ImportEngine;
 import be.ac.ulb.infof307.g03.views.ObjectListView;
 
 /**
@@ -33,11 +24,7 @@ public class ObjectListController implements MouseListener, Observer {
 
 	private Floor currentFloor = null;
 	
-	// Supported file type
-	private static final String FILE_TYPE_OBJ = ".obj";
-	private static final String FILE_TYPE_DAE = ".dae";
-	private static final String FILE_TYPE_3DS = ".3ds";
-	private static final String FILE_TYPE_KMZ = ".kmz";
+	private FileChooserController fileController;
 	
 	/**
 	 * @param project the main project
@@ -62,6 +49,8 @@ public class ObjectListController implements MouseListener, Observer {
 	 */
 	public void run(){
 		initView(this.project);
+		this.fileController = new FileChooserController(this.view, this.project, null); //TODO remplacer null
+		this.fileController.run();
 	}
 	
 	/**
@@ -160,94 +149,22 @@ public class ObjectListController implements MouseListener, Observer {
 		}
 	}
 	
-	private FileFilter exportFileFilter(final String extention) {
-		return new FileFilter() {
-			@Override
-			public String getDescription() {
-				return extention;
-			}
-			@Override
-			public boolean accept(File file) {
-				return file.getName().endsWith(extention);
-			}
-		};
-	}
-	
-	private String getFileName(String fileName) {
-		int pos = fileName.lastIndexOf(".");
-		if (pos > 0) {
-		    return fileName.substring(0, pos);
-		}
-		return fileName;
-	}
-	
-	private String formatFileName(String fileName, String extention) {
-		if (fileName.endsWith(extention)) return fileName;
-		return fileName+extention;
-	}
 	
 	/**
 	 * Create the dialog when the user click on export
 	 * @param selectedEntity The entity to export
 	 */
 	public void onExport(Entity selectedEntity) {
-		JFileChooser fileChooser = new JFileChooser(); 
-		fileChooser.setSelectedFile(new File(selectedEntity.getName()));
-		fileChooser.getSelectedFile();
-		fileChooser.setAcceptAllFileFilterUsed(false);
-		
-		fileChooser.addChoosableFileFilter(exportFileFilter(FILE_TYPE_DAE));
-		fileChooser.addChoosableFileFilter(exportFileFilter(FILE_TYPE_3DS));
-		fileChooser.addChoosableFileFilter(exportFileFilter(FILE_TYPE_KMZ));
-		fileChooser.addChoosableFileFilter(exportFileFilter(FILE_TYPE_OBJ));
-		
-		int rVal = fileChooser.showSaveDialog(view);
-		
-		if (rVal == JFileChooser.APPROVE_OPTION) {
-			ExportEngine e = new ExportEngine(this.project, this.daoFactory);
-			e.handleExport(selectedEntity,formatFileName(fileChooser.getSelectedFile().getName(),fileChooser.getFileFilter().getDescription()),fileChooser.getCurrentDirectory().toString());
-		}
+		this.fileController.notifyDisplayExport(selectedEntity);
 		
 	}
 	
-	private FileFilter importFileFilter(final ArrayList<String> extentions, final String description) {
-		return new FileFilter() {
-			@Override
-			public String getDescription() {
-				return description;
-			}
-			@Override
-			public boolean accept(File file) {
-				for (String extention : extentions) {
-					if (file.getName().endsWith(extention)) {
-						return true;
-					}
-				}
-				return false;
-			}
-		};
-	}
 	
 	/**
 	 * Create the dialog when user click on import
 	 */
 	public void onImport() {		
-		JFileChooser fileChooser = new JFileChooser(); 
-		fileChooser.setAcceptAllFileFilterUsed(false);
-		
-		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_OBJ)),"*"+FILE_TYPE_OBJ));
-		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_DAE)),"*"+FILE_TYPE_DAE));
-		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_3DS)),"*"+FILE_TYPE_3DS));
-		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_KMZ)),"*"+FILE_TYPE_KMZ));
-		fileChooser.addChoosableFileFilter(importFileFilter(new ArrayList<String>(Arrays.asList(FILE_TYPE_3DS,FILE_TYPE_DAE,FILE_TYPE_KMZ,FILE_TYPE_OBJ)),"Tous les fichiers"));
-
-		int rVal = fileChooser.showOpenDialog(view);
-		
-		if (rVal == JFileChooser.APPROVE_OPTION) {
-			ImportEngine i = new ImportEngine(this.daoFactory);
-			i.handleImport(fileChooser.getSelectedFile().getName(),fileChooser.getCurrentDirectory().toString());
-		}
-
+		this.fileController.notifyDisplayImport();
 	}
 	
 	/**

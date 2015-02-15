@@ -9,6 +9,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import be.ac.ulb.infof307.g03.controllers.FileChooserController;
+import be.ac.ulb.infof307.g03.models.Entity;
 
 /**
  * @author pierre
@@ -17,6 +18,7 @@ import be.ac.ulb.infof307.g03.controllers.FileChooserController;
 public class FileChooserView {
 	JFileChooser chooserProject;
 	JFileChooser chooserImport;
+	JFileChooser chooserExport;
 	FileChooserController controller;
 	
 	/**
@@ -29,14 +31,22 @@ public class FileChooserView {
 	    FileNameExtensionFilter filterProject = new FileNameExtensionFilter("Home Plans Project (hpj)", "hpj");
 	    this.chooserProject.setFileFilter(filterProject);
 	    
-	    this.chooserImport = new JFileChooser();
 	    FileNameExtensionFilter filterImportObj = new FileNameExtensionFilter("Wavefront file (.obj)", "obj");
-	    this.chooserImport.setFileFilter(filterImportObj);
 	    FileNameExtensionFilter filterImportDae = new FileNameExtensionFilter("COLLADA file (.dae)", "dae");
-	    this.chooserImport.setFileFilter(filterImportDae);
 	    FileNameExtensionFilter filterImport3ds = new FileNameExtensionFilter("Autodesk 3ds Max file (.3ds)", "3ds");
-	    this.chooserImport.setFileFilter(filterImport3ds);
 	    FileNameExtensionFilter filterImportKmz = new FileNameExtensionFilter("Keyhole Markup Language Archive (.kmz)", "kmz");
+	    
+	    this.chooserExport = new JFileChooser();
+	    chooserExport.setAcceptAllFileFilterUsed(false);
+	    this.chooserExport.setFileFilter(filterImportObj);
+	    this.chooserExport.setFileFilter(filterImportDae);
+	    this.chooserExport.setFileFilter(filterImport3ds);
+	    this.chooserExport.setFileFilter(filterImportKmz);
+	    
+	    this.chooserImport = new JFileChooser();
+	    this.chooserImport.setFileFilter(filterImportObj);
+	    this.chooserImport.setFileFilter(filterImportDae);
+	    this.chooserImport.setFileFilter(filterImport3ds);
 	    this.chooserImport.setFileFilter(filterImportKmz);
 	}
 	
@@ -90,6 +100,19 @@ public class FileChooserView {
 		int returnVal = this.chooserImport.showOpenDialog(parent);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 	    	this.controller.importObject(this.chooserImport.getSelectedFile());
+	    }
+		
+	}
+
+	/**
+	 * Display the file dialog for export
+	 * @param parent The parent window
+	 * @param selectedEntity The object to be exported
+	 */
+	public void displayExport(Component parent, Entity selectedEntity) {
+		int returnVal = this.chooserExport.showSaveDialog(parent);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	    	this.controller.exportObject(this.chooserExport.getSelectedFile(),selectedEntity);
 	    }
 		
 	}

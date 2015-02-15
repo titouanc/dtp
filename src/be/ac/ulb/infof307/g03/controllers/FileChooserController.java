@@ -11,8 +11,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.DemoProject;
+import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
+import be.ac.ulb.infof307.g03.utils.io.ExportEngine;
+import be.ac.ulb.infof307.g03.utils.io.ImportEngine;
 import be.ac.ulb.infof307.g03.views.FileChooserView;
 import be.ac.ulb.infof307.g03.views.GUI;
 
@@ -199,19 +202,64 @@ public class FileChooserController {
 		this.view.displayImport(this.parent);
 		
 	}
+	
+	/**
+	 * Ask the view to display the dialog
+	 * @param selectedEntity The entity to be exported
+	 */
+	public void notifyDisplayExport(Entity selectedEntity) {
+		this.view.displayExport(this.parent, selectedEntity);
+		
+	}
 
 	/**
-	 * @param selectedFile The object to be imported
+	 * @param selectedFile The file-object to be imported
 	 */
 	public void importObject(File selectedFile) {
 		Log.info("Open %s", selectedFile.getName());
 		final String filename = selectedFile.getAbsolutePath();
 		if(new File(filename).exists()){
-			// TODO IMPORT ICI
+			ImportEngine i;
+			try {
+				i = new ImportEngine(this.project.getGeometryDAO());
+				i.handleImport(selectedFile.getName(), selectedFile.getParent());
+			} catch (SQLException e) {
+				Log.exception(e);
+			}
 		}
 		else{
 			JOptionPane.showMessageDialog(new JFrame(), "File does not exist!", "Erreur",JOptionPane.ERROR_MESSAGE);
 		}
 		
 	}
+	/**
+	 * @param selectedFile The file-object to be exported
+	 * @param selectedEntity The object to be exported
+	 */
+	public void exportObject(File selectedFile, Entity selectedEntity) {
+		Log.info("Open %s", selectedFile.getName());
+		final String filename = selectedFile.getAbsolutePath();
+		int dialogResult = JOptionPane.YES_OPTION;
+		if(new File(filename).exists()){
+			int dialogButton = JOptionPane.YES_NO_OPTION;
+			dialogResult = JOptionPane.showConfirmDialog (null, "This object already exists! Would you like you replace it?","Warning",dialogButton);
+		}
+		if(dialogResult == JOptionPane.YES_OPTION){
+			try {
+				ExportEngine e = new ExportEngine(this.project, this.project.getGeometryDAO());
+				String extension = "";
+				int index = selectedFile.getName().lastIndexOf('.');
+				if (index > 0) {
+				    extension = selectedFile.getName().substring(index+1);
+				}
+				e.handleExport(selectedEntity, extension,selectedFile.getParent());
+			} catch (SQLException e) {
+				Log.exception(e);
+			}
+		}
+		else{
+			JOptionPane.showMessageDialog(new JFrame(), "File does not exist!", "Erreur",JOptionPane.ERROR_MESSAGE);
+		}
+}
+
 }
