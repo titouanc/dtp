@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.FloatBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -119,6 +120,33 @@ public void handleExport(Entity entity, File fileToExport) {
 
   }
   
+  private void daeScene(PrintWriter file) {
+	  file.println(		"    <library_visual_scenes>");
+	  file.println(		"      <visual_scene id=\"Scene\" name=\"Scene\">");
+	  for (Primitive primitive : this.exportable.getPrimitives()) {
+		  file.println(	"        <node id=\""+primitive.getUID()+"\" name=\""+primitive.getUID()+"\" type=\"NODE\">");
+	      file.print(	"          <matrix sid=\"transform\">");
+	      FloatBuffer fb =  primitive.getRotMatrix();
+	      for (int i=0; i<fb.capacity(); ++i) {
+	    	  file.print(String.valueOf(fb.get(i))+" ");
+	      }
+	      file.println(	           "</matrix>");
+	      file.println(	"          <instance_geometry url=\"#"+primitive.getUID()+"\">");
+	      file.println(	"            <bind_material>");
+	      file.println(	"              <technique_common>");
+	      //file.println(	"                <instance_material symbol=\"Material_001-material\" target=\"#Material_001-material\"/>");
+	      file.println(	"              </technique_common>");
+	      file.println(	"            </bind_material>");
+	      file.println(	"          </instance_geometry>");
+	      file.println(	"        </node>");
+	  }
+	  file.println(	"      </visual_scene>");
+	  file.println(	"    </library_visual_scenes>");
+	  file.println(	"    <scene>");
+	  file.println(	"      <instance_visual_scene url=\"#Scene\"/>");
+	  file.println(	"    </scene>");
+  }
+  
   public void handleDae(String fileName) {
     try {
       PrintWriter file = new PrintWriter(fileName,"UTF-8");
@@ -130,6 +158,8 @@ public void handleExport(Entity entity, File fileToExport) {
         daeGeometry(file, primitive);
       }
       file.println("  </library_geometries>"																);
+      file.println("  <library_controllers/>");
+      daeScene(file);
       file.println("</COLLADA>"																				);
       file.close();
     } catch (FileNotFoundException e) {
