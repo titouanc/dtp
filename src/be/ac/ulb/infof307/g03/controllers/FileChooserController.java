@@ -221,7 +221,7 @@ public class FileChooserController {
 		if(new File(filename).exists()){
 			ImportEngine i;
 			try {
-				i = new ImportEngine(this.project.getGeometryDAO());
+				i = new ImportEngine(this.project.getGeometryDAO(), this.project);
 				i.handleImport(selectedFile.getName(), selectedFile.getParent());
 			} catch (SQLException e) {
 				Log.exception(e);
