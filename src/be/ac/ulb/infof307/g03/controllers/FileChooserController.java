@@ -216,7 +216,7 @@ public class FileChooserController {
 	 * @param selectedFile The file-object to be imported
 	 */
 	public void importObject(File selectedFile) {
-		Log.info("Open %s", selectedFile.getName());
+		Log.info("Import %s", selectedFile.getName());
 		final String filename = selectedFile.getAbsolutePath();
 		if(new File(filename).exists()){
 			ImportEngine i;
@@ -237,7 +237,7 @@ public class FileChooserController {
 	 * @param selectedEntity The object to be exported
 	 */
 	public void exportObject(File selectedFile, Entity selectedEntity) {
-		Log.info("Open %s", selectedFile.getName());
+		Log.info("Export %s", selectedFile.getName());
 		final String filename = selectedFile.getAbsolutePath();
 		int dialogResult = JOptionPane.YES_OPTION;
 		if(new File(filename).exists()){
