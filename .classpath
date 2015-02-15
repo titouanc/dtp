@@ -12,5 +12,38 @@
 	<classpathentry kind="lib" path="lib/ormlite-jdbc-4.48.jar"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.7.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jMonkeyEngine"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/eventbus.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jbullet.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jglfont-core.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jinput.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-blender.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-core.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-desktop.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-effects.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-jbullet.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-jogg.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-lwjgl.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-lwjgl-natives.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-networking.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-niftygui.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-openal-soft-natives-android.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-plugins.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-terrain.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jME3-testdata.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/joal.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/j-ogg-oggd.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/j-ogg-vorbisd.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/jogl-all.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/lwjgl.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/nifty.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/nifty-default-controls.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/nifty-examples.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/nifty-style-black.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/stack-alloc.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/vecmath.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/workspace/JMonkey/lib/xmlpull-xpp3.jar"/>
+	<classpathentry kind="lib" path="B:/Eclipse/eclipse/Loader3DS1_2.jar"/>
+	<classpathentry kind="lib" path="lib/objLoader.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
