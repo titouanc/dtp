@@ -58,8 +58,6 @@ public class ObjParser extends Parser {
 		Primitive prim = new Primitive(this.buildingEntity, Primitive.IMPORTED);
 		this.dao.getDao(Primitive.class).create(prim);
 		
-		Log.debug("I will now scan the obj file %s", filename);
-		
 		int verticeCount = 0;
 		int triangleCount = 0;
 		while (scan.hasNext()){
@@ -79,16 +77,12 @@ public class ObjParser extends Parser {
 					scan.nextFloat();
 				}
 			} else if (identifier.equals("f")) {
-				Log.debug("I found a face !!!");
 				Vertex[] triangleVertices = new Vertex[3];
 				for (int i=0; i<3; i++){
 					String vertexIndexes = scan.next();
 					int vertexIndex = extractVertexIndex(vertexIndexes);
 					if (1 <= vertexIndex && vertexIndex <= verticeCount){
 						triangleVertices[i] = vertices.get(vertexIndex - 1);
-						Log.debug("Vertice[%d] = %s", i, triangleVertices[i]);
-					} else {
-						Log.debug("FUCK YOUUUU");
 					}
 				}
 				Triangle tr = new Triangle(prim, triangleVertices[0], triangleVertices[1], triangleVertices[2]);
