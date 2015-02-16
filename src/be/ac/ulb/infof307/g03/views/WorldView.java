@@ -120,6 +120,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 
 	}
 	
+	private Boolean isInWorldMode(){
+		return this.controller instanceof WorldController;
+	}
+	
 	/**
 	 * Creates a directional light across the whole world. 
 	 */
@@ -348,9 +352,12 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 		
 		/* No need to redraw if it is a deletion */
-		if (! change.isDeletion())
+		if (! change.isDeletion()){
+			if (change.isCreation() && change.getItem() instanceof Entity && this.isInWorldMode())
+				return;
 			drawMeshable(parent,meshable);
-		
+		}
+			
 		/* Conclusion: updates will do both (detach & redraw) */
 	}
 	
