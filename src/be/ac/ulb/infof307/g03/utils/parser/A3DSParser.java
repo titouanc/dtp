@@ -3,19 +3,12 @@
  */
 package be.ac.ulb.infof307.g03.utils.parser;
 
-import java.awt.List;
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.logging.Level;
 
-import com.jme3.math.Vector3f;
-
-import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
