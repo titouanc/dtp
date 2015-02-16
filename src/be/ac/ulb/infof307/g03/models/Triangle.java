@@ -44,9 +44,26 @@ public class Triangle extends Ordered {
 		this.w = v3;
 	}
 	
-	public Vertex getV1(){return this.u;}
-	public Vertex getV2(){return this.v;}
-	public Vertex getV3(){return this.w;}
+	/**
+	 * @return The first vertex
+	 */
+	public Vertex getV1(){
+		return this.u;
+	}
+	
+	/**
+	 * @return The second vertex
+	 */
+	public Vertex getV2(){
+		return this.v;
+	}
+	
+	/**
+	 * @return The third vertex
+	 */
+	public Vertex getV3(){
+		return this.w;
+	}
 	
 	@Override
 	public String getUIDPrefix() {

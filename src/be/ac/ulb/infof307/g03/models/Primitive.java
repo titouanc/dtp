@@ -5,21 +5,13 @@ package be.ac.ulb.infof307.g03.models;
 
 import java.nio.FloatBuffer;
 
-import be.ac.ulb.infof307.g03.utils.Log;
-
-import java.util.Vector;
-
-import be.ac.ulb.infof307.g03.utils.Log;
-
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
 import com.jme3.math.Matrix4f;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -270,6 +262,9 @@ public class Primitive extends Meshable {
 		return positions;
  	}
 	
+	/**
+	 * @return The rotation matrix 
+	 */
 	public FloatBuffer getRotMatrix() {
 		Geometry geometry = this.getGeometry();
 		Matrix4f m = geometry.getWorldMatrix();
