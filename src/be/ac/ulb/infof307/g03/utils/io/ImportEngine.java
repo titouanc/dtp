@@ -15,6 +15,7 @@ import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.utils.parser.A3DSParser;
 import be.ac.ulb.infof307.g03.utils.parser.DAEParser;
+import be.ac.ulb.infof307.g03.utils.parser.KmzParser;
 import be.ac.ulb.infof307.g03.utils.parser.ObjParser;
 import be.ac.ulb.infof307.g03.utils.parser.Parser;
 
@@ -38,7 +39,7 @@ public class ImportEngine {
 			parserMap.put("3ds", A3DSParser.class);
 			parserMap.put("obj", ObjParser.class);
 			//parserMap.put("dae", DaeParser.class);
-			//parserMap.put("kmz", KmzParser.class);
+			parserMap.put("kmz", KmzParser.class);
 		}
 		try {
 			this.dao = project.getGeometryDAO();
