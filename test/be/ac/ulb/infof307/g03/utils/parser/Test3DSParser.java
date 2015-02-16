@@ -45,6 +45,18 @@ public class Test3DSParser {
 	}
 	
 	@Test
+	public void test_parsewatertower() throws SQLException, IOException {
+		MasterDAO factory = new MasterDAO(this.db);
+		new A3DSParser("test/be/ac/ulb/infof307/g03/assets/watertower.3ds", factory).parse();
+		
+		List<Vertex> vertices = factory.getDao(Vertex.class).queryForAll();
+		assertEquals(1304, vertices.size());
+		
+		List<Triangle> triangles = factory.getDao(Triangle.class).queryForAll();
+		assertEquals(1868, triangles.size());
+	}
+	
+	@Test
 	public void test_parseInt() {
 		byte[] u8 = {0x01};
 		assertEquals(1, A3DSParser.parseInt(u8));
