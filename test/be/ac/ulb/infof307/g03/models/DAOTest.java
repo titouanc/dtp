@@ -11,17 +11,18 @@ import com.j256.ormlite.support.ConnectionSource;
  * @author Titouan Christophe
  */
 public abstract class DAOTest {
-
-	protected MasterDAO dao = null;
+	ConnectionSource db = null;
+	protected MasterDAO master = null;
 
 	@Before
 	public void setUp() throws Exception {
-		ConnectionSource db = new JdbcConnectionSource("jdbc:sqlite::memory:");
+		this.db = new JdbcConnectionSource("jdbc:sqlite::memory:");
 		MasterDAO.migrate(db);
-		dao = new MasterDAO(db);
+		this.master = new MasterDAO(db);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		this.db.close();
 	}
 }

@@ -15,9 +15,9 @@ public class TestEntity extends DAOTest {
 	@Test
 	public void test_empty_entity() throws SQLException {
 		Entity ent = new Entity();
-		dao.getDao(Entity.class).create(ent);
+		master.getDao(Entity.class).create(ent);
 		assertNotEquals(0, ent.getId());
-		dao.getDao(Entity.class).refresh(ent);
+		master.getDao(Entity.class).refresh(ent);
 		assertEquals(0, ent.getPrimitives().size());
 		assertEquals("", ent.getName());
 	}
@@ -25,10 +25,10 @@ public class TestEntity extends DAOTest {
 	@Test
 	public void test_entity_with_primitive() throws SQLException{
 		Entity ent = new Entity();
-		dao.getDao(Entity.class).create(ent);
+		master.getDao(Entity.class).create(ent);
 		Primitive prim = new Primitive(ent, Primitive.CUBE);
-		dao.getDao(Primitive.class).create(prim);
-		dao.getDao(Entity.class).refresh(ent);
+		master.getDao(Primitive.class).create(prim);
+		master.getDao(Entity.class).refresh(ent);
 		
 		List<Primitive> prims = new ArrayList<Primitive>(ent.getPrimitives());
 		assertEquals(1, prims.size());
