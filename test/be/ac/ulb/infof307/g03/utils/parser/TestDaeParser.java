@@ -41,14 +41,14 @@ public class TestDaeParser {
 	}
 
 	@Test
-	public void test_import_face_vertex_only() throws SQLException, IOException {
+	public void test_parse_dae() throws SQLException, IOException {
 		MasterDAO factory = new MasterDAO(this.db);
 		new DAEParser("test/be/ac/ulb/infof307/g03/assets/icoSphere.dae", factory).parse();
 		
 		List<Vertex> vertices = factory.getDao(Vertex.class).queryForAll();
-		assertEquals(8, vertices.size());
+		assertEquals(42, vertices.size());
 		
 		List<Triangle> triangles = factory.getDao(Triangle.class).queryForAll();
-		assertEquals(12, triangles.size());
+		assertEquals(80, triangles.size());
 	}
 }

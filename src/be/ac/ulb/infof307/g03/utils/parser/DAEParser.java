@@ -2,8 +2,6 @@ package be.ac.ulb.infof307.g03.utils.parser;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -11,22 +9,19 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import be.ac.ulb.infof307.g03.models.Entity;
+import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Triangle;
 import be.ac.ulb.infof307.g03.models.Vertex;
 import be.ac.ulb.infof307.g03.utils.Log;
-
-import com.j256.ormlite.dao.ForeignCollection;
-import com.jme3.app.SimpleApplication;
-import com.jme3.math.Vector3f;
 
 public class DAEParser extends Parser {
 	Document document = null;
@@ -38,8 +33,7 @@ public class DAEParser extends Parser {
 			DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance(); 
 			DocumentBuilder constructeur = fabrique.newDocumentBuilder(); 
 			File xml = new File(fileName); 
-			this.document = constructeur.parse(xml); 
-			parse();
+			this.document = constructeur.parse(xml);
 		} catch(ParserConfigurationException pce){ 
 			System.out.println("Erreur de configuration du parseur DOM"); 
 			System.out.println("lors de l'appel a fabrique.newDocumentBuilder();"); 
@@ -52,43 +46,37 @@ public class DAEParser extends Parser {
 		} 
 	}
 
-	public void addVertices(String data) {
+	public void addVertices(String data) throws SQLException {
 		Log.debug("addVertices : "+data);
 		String[] d = data.split(" ");
+		GeometricDAO<Vertex> vertexDao = this.daoFactory.getDao(Vertex.class);
 		this.vertices = new Vector<Vertex>();
 		for (int i=0; i<d.length; i+=3) {
-			vertices.add(new Vertex(this.primitive, new Vector3f(Float.parseFloat(d[i]),Float.parseFloat(d[i+1]),Float.parseFloat(d[i+2]))));
-			vertices.lastElement().setIndex(i/3);
-			try {
-				this.daoFactory.getDao(Vertex.class).create(vertices.lastElement());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Vertex newVert = new Vertex(this.primitive, Float.parseFloat(d[i]), Float.parseFloat(d[i+1]), Float.parseFloat(d[i+2]));
+			newVert.setIndex(i/3);
+			vertexDao.create(newVert);
+			vertices.add(newVert);
 		}
 	}
 	
-	public void addIndexes(String data, int offset, int period) {
+	public void addIndexes(String data, int offset, int period) throws SQLException {
 		Log.debug("addIndexes : "+data);
 		String[] d = data.split(" ");
+		GeometricDAO<Triangle> triangleDao = this.daoFactory.getDao(Triangle.class);
 		for (int i=offset; i<d.length; i+=period*3) {
-			try {
-				Vertex v1 = this.vertices.get(Integer.parseInt(d[i]));
-				Vertex v2 = this.vertices.get(Integer.parseInt(d[i+period]));
-				Vertex v3 = this.vertices.get(Integer.parseInt(d[i+(2*period)]));
-				Triangle triangle = new Triangle(this.primitive,v1,v2,v3);
-				triangle.setIndex((i-offset)/(period*3));
-				this.daoFactory.getDao(Triangle.class).create(triangle);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ArrayIndexOutOfBoundsException e) {
-				//e.printStackTrace();
+			Vertex[] vertices = new Vertex[3];
+			for (int j=0; j<3; j++){
+				int index = Integer.parseInt(d[i + j*period]);
+				assert 0 <= index && index < this.vertices.size();
+				vertices[j] = this.vertices.get(index);
 			}
+			Triangle triangle = new Triangle(this.primitive, vertices);
+			triangle.setIndex((i-offset)/(period*3));
+			triangleDao.create(triangle);
 		}
 	}
 	
-	private void parseIndexes(NodeList nodeList) {
+	private void parseIndexes(NodeList nodeList) throws DOMException, SQLException {
 		int offset = 0, period = 0;
 		for (int l=0; l<nodeList.getLength(); ++l) {
 			NodeList inputNodeList = ((Element) nodeList.item(l)).getElementsByTagName("input");
@@ -103,17 +91,14 @@ public class DAEParser extends Parser {
 		}
 	}
 	
-	public void parse() {
+	@Override
+	public void parse() throws DOMException, SQLException {
 		Log.debug("Parse");
 		NodeList nodeList = document.getElementsByTagName("geometry");
 		for (int i=0; i<nodeList.getLength(); ++i) {
 			if (i>0) {
-				primitive = new Primitive(this.primitive.getEntity(),Primitive.IMPORTED);
-				try {
-					this.daoFactory.getDao(Primitive.class).insert(this.primitive);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				this.primitive = new Primitive(this.primitive.getEntity(), Primitive.IMPORTED);
+				this.daoFactory.getDao(Primitive.class).create(this.primitive);
 			}
 						
 			Node verticesNode = ((Element) nodeList.item(i)).getElementsByTagName("vertices").item(0);
