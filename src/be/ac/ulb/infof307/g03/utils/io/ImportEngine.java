@@ -11,7 +11,6 @@ import java.util.Vector;
 
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
-import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.utils.parser.A3DSParser;
@@ -19,12 +18,21 @@ import be.ac.ulb.infof307.g03.utils.parser.DAEParser;
 import be.ac.ulb.infof307.g03.utils.parser.ObjParser;
 import be.ac.ulb.infof307.g03.utils.parser.Parser;
 
+/**
+ * Handle Import
+ * @author pierre
+ *
+ */
 public class ImportEngine {
 	private static Map<String, Class> parserMap = new HashMap();
 	private MasterDAO dao = null;
 	private Project project = null;
 	private Entity entity = null;
 	
+	/**
+	 * Constructor of the class
+	 * @param project The main project
+	 */
 	public ImportEngine(Project project) {
 		if (parserMap.isEmpty()){
 			parserMap.put("3ds", A3DSParser.class);
@@ -40,6 +48,10 @@ public class ImportEngine {
 		this.project = project;
 	}
 	
+	/**
+	 * The method that call the correct sub-method depending on the format
+	 * @param fileToImport The file containing the object
+	 */
 	public void handleImport(File fileToImport) {
 		String extension = getExtension(fileToImport.getName());
 		if (parserMap.containsKey(extension)){

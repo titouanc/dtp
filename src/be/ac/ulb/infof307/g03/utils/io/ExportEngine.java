@@ -18,17 +18,26 @@ import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
 
 import be.ac.ulb.infof307.g03.models.Project;
-
 import be.ac.ulb.infof307.g03.utils.Log;
 
 
+/**
+ * Handle Export
+ * @author pierre
+ *
+ */
 public class ExportEngine {
 
   MasterDAO dao = null;
   Project project = null;
   Entity exportable = null;
   
-  public ExportEngine(Project project, MasterDAO daoFactory) {
+  /**
+   * Constructor of the class
+ * @param project The main project
+ * @param daoFactory The dao
+ */
+public ExportEngine(Project project, MasterDAO daoFactory) {
     this.dao = daoFactory;
     this.project = project;
   }
@@ -41,7 +50,12 @@ public class ExportEngine {
     return "";
   }
   
-  public void handleExport(Entity entity, File fileToExport) {
+  /**
+   * The method that call the correct sub-method depending on the format
+ * @param entity The entity to export
+ * @param fileToExport The file in which the entity will be saved
+ */
+public void handleExport(Entity entity, File fileToExport) {
     this.exportable = entity;
     String fileName = fileToExport.getName();
     String path = fileToExport.getParent();
@@ -73,6 +87,7 @@ public class ExportEngine {
   public void daeGeometry(PrintWriter file, Primitive primitive) {
     float[] vertices = primitive.getVertices();
     int[] indexes = primitive.getIndexes();
+ 
     
     file.println(	"    <geometry id=\""+primitive.getUID()+"\" name=\""+primitive.getType()+"\">"							);
       file.println(	"      <mesh>"																							);
@@ -91,55 +106,47 @@ public class ExportEngine {
       file.println(	"            </accessor>"																				);
       file.println(	"          </technique_common>"																			);
       file.println(	"        </source>"																						);
+
       file.println(	"        <vertices id=\""+primitive.getUID()+"-vertices\">"												);
       file.println(	"          <input semantic=\"POSITION\" source=\"#"+primitive.getUID()+"-positions\"/>"					);
       file.println(	"        </vertices>"																					);
       
-      file.println(	"        <polylist count=\""+indexes.length+"\">"														);
+      file.println(	"        <triangles count=\""+indexes.length+"\">"														);
       file.println(	"          <input semantic=\"VERTEX\" source=\"#"+primitive.getUID()+"-vertices\" offset=\"0\"/>"		);
-      file.println(	"          <input semantic=\"NORMAL\" source=\"#"+primitive.getUID()+"-normals\" offset=\"1\"/>"		);
-          //  <input semantic="TEXCOORD" source="#Cube_001-mesh-map-0" offset="2" set="0"/>
-      file.print(	"          <vcount>");
-                               for (int i=0; i<indexes.length/3; ++i ) {
-                                 file.print("3 ");
-                               }
-      file.println(            "</vcount>"																					);
       file.print(	"          <p>");
                                for (int i=0; i<indexes.length-1; ++i) {
                                  file.print(String.valueOf(indexes[i])+" ");
                                }
       file.println(            String.valueOf(indexes[indexes.length-1])+"</p>"																						);
-      file.println(	"        </polylist>"																					);
+      file.println(	"        </triangles>"																					);
       file.println(	"      </mesh>"																							);
       file.println(	"    </geometry>"																						);
 
   }
   
   private void daeScene(PrintWriter file) {
-	  file.println(		"    <library_visual_scenes>");
-	  file.println(		"      <visual_scene id=\"Scene\" name=\"Scene\">");
+	  file.println(		"  <library_visual_scenes>"																		);
+	  file.println(		"    <visual_scene id=\"Scene\" name=\"Scene\">"												);
 	  for (Primitive primitive : this.exportable.getPrimitives()) {
-		  file.println(	"        <node id=\""+primitive.getUID()+"\" name=\""+primitive.getUID()+"\" type=\"NODE\">");
-	      file.print(	"          <matrix sid=\"transform\">");
+		  file.println(	"      <node id=\""+primitive.getUID()+"\" name=\""+primitive.getUID()+"\" type=\"NODE\">"		);
+	      file.print(	"        <matrix sid=\"transform\">"															);
 	      FloatBuffer fb =  primitive.getRotMatrix();
 	      for (int i=0; i<fb.capacity(); ++i) {
 	    	  file.print(String.valueOf(fb.get(i))+" ");
 	      }
-	      file.println(	           "</matrix>");
-	      file.println(	"          <instance_geometry url=\"#"+primitive.getUID()+"\">");
-	      file.println(	"            <bind_material>");
-	      file.println(	"              <technique_common>");
-	      //file.println(	"                <instance_material symbol=\"Material_001-material\" target=\"#Material_001-material\"/>");
-	      file.println(	"              </technique_common>");
-	      file.println(	"            </bind_material>");
-	      file.println(	"          </instance_geometry>");
-	      file.println(	"        </node>");
+	      file.println(	         "</matrix>"																			);
+	      file.println(	"        <instance_geometry url=\"#"+primitive.getUID()+"\">"									);
+	      file.println(	"          <bind_material>"																		);
+	      file.println(	"            <technique_common/>"																);
+	      file.println(	"          </bind_material>"																	);
+	      file.println(	"        </instance_geometry>"																	);
+	      file.println(	"      </node>"																					);
 	  }
-	  file.println(	"      </visual_scene>");
-	  file.println(	"    </library_visual_scenes>");
-	  file.println(	"    <scene>");
-	  file.println(	"      <instance_visual_scene url=\"#Scene\"/>");
-	  file.println(	"    </scene>");
+	  file.println(		"    </visual_scene>"																			);
+	  file.println(		"  </library_visual_scenes>"																	);
+	  file.println(		"  <scene>"																						);
+	  file.println(		"    <instance_visual_scene url=\"#Scene\"/>"													);
+	  file.println(		"  </scene>"																					);
   }
   
   public void handleDae(String fileName) {

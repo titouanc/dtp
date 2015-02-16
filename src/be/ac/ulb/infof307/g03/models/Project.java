@@ -4,8 +4,6 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Observable;
 
 import be.ac.ulb.infof307.g03.utils.Log;
