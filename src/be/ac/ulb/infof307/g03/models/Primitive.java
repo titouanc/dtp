@@ -273,10 +273,7 @@ public class Primitive extends Meshable {
 	
 	public FloatBuffer getRotMatrix() {
 		Geometry geometry = this.getGeometry();
-		Transform t = geometry.getWorldTransform();
-		Quaternion q = t.getRotation();
-		Matrix4f m = new Matrix4f();
-		q.toRotationMatrix(m);
+		Matrix4f m = geometry.getWorldMatrix();
 		return m.toFloatBuffer();
 	}
 	
