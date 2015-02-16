@@ -28,8 +28,8 @@ import be.ac.ulb.infof307.g03.models.MasterDAO;
 public class KmzParser extends Parser {
 	private ZipFile zipFile;
     private InputStream stream;
-    private Document document = null;
     private String path;
+    private MasterDAO master = null;
 
 	/**
 	 * Parse the kmz archive file and calls the kml parser
@@ -38,12 +38,13 @@ public class KmzParser extends Parser {
 	 * @throws IOException 
 	 */
 	public KmzParser(String path, MasterDAO dao) throws IOException, SQLException{ // Open kmz file and take the .kml file to parse it
-		super(path,dao);
+		super();
+		this.master = dao;
+		this.path = path;
 		File file=new File(path);
         try {
 			this.zipFile = new ZipFile(file);
 			this.stream = this.findDaeFile(); // Here we got the content of the KML File
-
 		} catch (ZipException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -70,8 +71,8 @@ public class KmzParser extends Parser {
         return null;
     }
 
-	@Override
 	public void parse() throws SQLException, IOException {
-		// TODO use DAE Parser with this.daeFilename
+		DAEParser parser = new DAEParser(this.path, this.master, this.stream);
+		parser.parse();
 	}
 }

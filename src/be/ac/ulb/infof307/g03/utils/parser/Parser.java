@@ -35,6 +35,8 @@ public abstract class Parser {
 		daoFactory.getDao(Primitive.class).create(primitive);
 		this.daoFactory = daoFactory;
 	}
+	
+	public Parser(){}
 
 	public abstract void parse() throws SQLException, IOException;
 }
