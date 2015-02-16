@@ -27,7 +27,7 @@ import be.ac.ulb.infof307.g03.models.MasterDAO;
  */
 public class KmzParser extends Parser {
 	private ZipFile zipFile;
-    private String daeFilename;
+    private InputStream stream;
     private Document document = null;
     private String path;
 
@@ -42,7 +42,7 @@ public class KmzParser extends Parser {
 		File file=new File(path);
         try {
 			this.zipFile = new ZipFile(file);
-			daeFilename = this.findDaeFile(); // Here we got the content of the KML File
+			this.stream = this.findDaeFile(); // Here we got the content of the KML File
 
 		} catch (ZipException e) {
 			e.printStackTrace();
@@ -56,7 +56,7 @@ public class KmzParser extends Parser {
      * @return first KML file or null if there is no KML files
 	 * @throws IOException 
      */
-    public String findDaeFile() throws IOException
+    public InputStream findDaeFile() throws IOException
     {
         Enumeration<? extends ZipEntry> zipEntries = this.zipFile.entries();
         while (zipEntries.hasMoreElements())
@@ -64,7 +64,7 @@ public class KmzParser extends Parser {
             ZipEntry entry = zipEntries.nextElement();
             if (entry.getName().toLowerCase().endsWith(".dae"))
             {
-                return entry.getName();
+                return this.zipFile.getInputStream(entry);
             }
         }
         return null;

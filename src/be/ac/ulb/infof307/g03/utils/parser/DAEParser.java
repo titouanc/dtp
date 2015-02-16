@@ -2,6 +2,7 @@ package be.ac.ulb.infof307.g03.utils.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Vector;
 
