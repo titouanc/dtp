@@ -6,6 +6,7 @@ package be.ac.ulb.infof307.g03.utils.parser;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -18,6 +19,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import be.ac.ulb.infof307.g03.models.MasterDAO;
 /**
  * @author Walter
  *
@@ -31,8 +34,11 @@ public class KmzParser extends Parser {
 	/**
 	 * Parse the kmz archive file and calls the kml parser
 	 * @param filename
+	 * @throws SQLException 
+	 * @throws IOException 
 	 */
-	public KmzParser(String path){ // Open kmz file and take the .kml file to parse it
+	public KmzParser(String path, MasterDAO dao) throws IOException, SQLException{ // Open kmz file and take the .kml file to parse it
+		super(path,dao);
 		File file=new File(path);
         try {
 			this.zipFile = new ZipFile(file);
@@ -102,14 +108,10 @@ public class KmzParser extends Parser {
  			System.out.println(nameList.item(i));
  		}	 
 	}
-    
-	public static void main(String[] args) {
-		KmzParser test = new KmzParser("/home/walter/Desktop/balloon.kmz");
-		try {
-			test.getKMLStream();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+  
+	@Override
+	public void parse() throws SQLException, IOException {
+		// TODO Auto-generated method stub
+		
 	}
 }

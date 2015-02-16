@@ -37,7 +37,7 @@ public class ImportEngine {
 		if (parserMap.isEmpty()){
 			parserMap.put("3ds", A3DSParser.class);
 			parserMap.put("obj", ObjParser.class);
-			//parserMap.put("dae", DaeParser.class);
+			parserMap.put("dae", DAEParser.class);
 			//parserMap.put("kmz", KmzParser.class);
 		}
 		try {

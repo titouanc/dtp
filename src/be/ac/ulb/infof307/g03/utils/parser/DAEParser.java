@@ -31,13 +31,9 @@ import com.jme3.math.Vector3f;
 public class DAEParser extends Parser {
 	Document document = null;
 	Vector<Vertex> vertices = null;
-	Entity entity = null;
-	MasterDAO dao = null;
 	
-	public DAEParser(String fileName, Entity entity, MasterDAO dao) throws IOException, SQLException{
+	public DAEParser(String fileName, MasterDAO dao) throws IOException, SQLException{
 		super(fileName, dao);
-		this.entity = entity ;
-		this.dao = dao;
 		try{ 
 			DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance(); 
 			DocumentBuilder constructeur = fabrique.newDocumentBuilder(); 
@@ -64,7 +60,7 @@ public class DAEParser extends Parser {
 			vertices.add(new Vertex(this.primitive, new Vector3f(Float.parseFloat(d[i]),Float.parseFloat(d[i+1]),Float.parseFloat(d[i+2]))));
 			vertices.lastElement().setIndex(i/3);
 			try {
-				this.dao.getDao(Vertex.class).create(vertices.lastElement());
+				this.daoFactory.getDao(Vertex.class).create(vertices.lastElement());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -72,17 +68,17 @@ public class DAEParser extends Parser {
 		}
 	}
 	
-	public void addIndexes(String data) {
+	public void addIndexes(String data, int offset, int period) {
 		Log.debug("addIndexes : "+data);
 		String[] d = data.split(" ");
-		for (int i=0; i<d.length; i+=3) {
+		for (int i=offset; i<d.length; i+=period*3) {
 			try {
 				Vertex v1 = this.vertices.get(Integer.parseInt(d[i]));
-				Vertex v2 = this.vertices.get(Integer.parseInt(d[i+1]));
-				Vertex v3 = this.vertices.get(Integer.parseInt(d[i+2]));
+				Vertex v2 = this.vertices.get(Integer.parseInt(d[i+period]));
+				Vertex v3 = this.vertices.get(Integer.parseInt(d[i+(2*period)]));
 				Triangle triangle = new Triangle(this.primitive,v1,v2,v3);
-				triangle.setIndex(i/3);
-				this.dao.getDao(Triangle.class).create(triangle);
+				triangle.setIndex((i-offset)/(period*3));
+				this.daoFactory.getDao(Triangle.class).create(triangle);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -92,15 +88,32 @@ public class DAEParser extends Parser {
 		}
 	}
 	
+	private void parseIndexes(NodeList nodeList) {
+		int offset = 0, period = 0;
+		for (int l=0; l<nodeList.getLength(); ++l) {
+			NodeList inputNodeList = ((Element) nodeList.item(l)).getElementsByTagName("input");
+			for (int o=0; o<inputNodeList.getLength(); ++o) {
+				if (inputNodeList.item(o).getAttributes().getNamedItem("semantic").equals("VERTEX")) {
+					offset = Integer.valueOf(inputNodeList.item(o).getAttributes().getNamedItem("offset").getTextContent());
+				}
+			}
+			period = inputNodeList.getLength();
+			NodeList pNodeList = ((Element) nodeList.item(l)).getElementsByTagName("p");
+			addIndexes(pNodeList.item(0).getTextContent(),offset,period);
+		}
+	}
+	
 	public void parse() {
 		Log.debug("Parse");
 		NodeList nodeList = document.getElementsByTagName("geometry");
 		for (int i=0; i<nodeList.getLength(); ++i) {
-			primitive = new Primitive(this.entity,Primitive.IMPORTED);
-			try {
-				this.dao.getDao(Primitive.class).insert(this.primitive);
-			} catch (SQLException e) {
-				e.printStackTrace();
+			if (i>0) {
+				primitive = new Primitive(this.primitive.getEntity(),Primitive.IMPORTED);
+				try {
+					this.daoFactory.getDao(Primitive.class).insert(this.primitive);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 						
 			Node verticesNode = ((Element) nodeList.item(i)).getElementsByTagName("vertices").item(0);
@@ -117,10 +130,14 @@ public class DAEParser extends Parser {
 				}
 			}
 			
-			NodeList polyNodeList = ((Element) nodeList.item(i)).getElementsByTagName("p");
-			for (int k=0; k<polyNodeList.getLength(); ++k ) {
-				addIndexes(polyNodeList.item(k).getTextContent());
+			NodeList polyNodeList = ((Element) nodeList.item(i)).getElementsByTagName("polylist");
+			if (polyNodeList.getLength()>0) {
+				parseIndexes(polyNodeList);
+			} else {
+				NodeList trianglesNodeList = ((Element) nodeList.item(i)).getElementsByTagName("triangles");
+				parseIndexes(trianglesNodeList);
 			}
+			
 		}
 	}
 	
