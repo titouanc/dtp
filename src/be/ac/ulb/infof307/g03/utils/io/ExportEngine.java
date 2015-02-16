@@ -2,7 +2,6 @@ package be.ac.ulb.infof307.g03.utils.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.FloatBuffer;
@@ -14,12 +13,22 @@ import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
 
+/**
+ * Handle Export
+ * @author pierre
+ *
+ */
 public class ExportEngine {
   MasterDAO dao = null;
   Project project = null;
   Entity exportable = null;
   
-  public ExportEngine(Project project, MasterDAO daoFactory) {
+  /**
+   * Constructor of the class
+ * @param project The main project
+ * @param daoFactory The dao
+ */
+public ExportEngine(Project project, MasterDAO daoFactory) {
     this.dao = daoFactory;
     this.project = project;
   }
@@ -32,7 +41,12 @@ public class ExportEngine {
     return "";
   }
   
-  public void handleExport(Entity entity, File fileToExport) {
+  /**
+   * The method that call the correct sub-method depending on the format
+ * @param entity The entity to export
+ * @param fileToExport The file in which the entity will be saved
+ */
+public void handleExport(Entity entity, File fileToExport) {
     this.exportable = entity;
     String fileName = fileToExport.getName();
     String path = fileToExport.getParent();

@@ -2,21 +2,28 @@ package be.ac.ulb.infof307.g03.utils.io;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.Vector;
 
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
-import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.utils.parser.DAEParser;
 
+/**
+ * Handle Import
+ * @author pierre
+ *
+ */
 public class ImportEngine {
 
 	private MasterDAO dao = null;
 	private Project project = null;
 	private Entity entity = null;
 	
+	/**
+	 * Constructor of the class
+	 * @param project The main project
+	 */
 	public ImportEngine(Project project) {
 		try {
 			this.dao = project.getGeometryDAO();
@@ -26,6 +33,10 @@ public class ImportEngine {
 		this.project = project;
 	}
 	
+	/**
+	 * The method that call the correct sub-method depending on the format
+	 * @param fileToImport The file containing the object
+	 */
 	public void handleImport(File fileToImport) {
 		String fileName = fileToImport.getName();
 		String path = fileToImport.getParent();

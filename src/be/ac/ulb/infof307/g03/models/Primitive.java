@@ -226,7 +226,6 @@ public class Primitive extends Meshable {
 				triangles[3*i] = t.getV1().getIndex();
 				triangles[3*i+1] = t.getV2().getIndex();
 				triangles[3*i+2] = t.getV3().getIndex();
-				Log.debug("Meshing triangle %s %s %s", t.getV1().toString(), t.getV2().toString(), t.getV3().toString());
 			}
 			
 			mesh = new Mesh();
