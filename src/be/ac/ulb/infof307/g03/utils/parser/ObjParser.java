@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
+
+
 
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
@@ -17,6 +20,7 @@ import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Triangle;
 import be.ac.ulb.infof307.g03.models.Vertex;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 
 /**
@@ -34,6 +38,7 @@ public class ObjParser extends Parser {
 	public ObjParser(String filename, MasterDAO dao) throws IOException, SQLException{
 		super(filename, dao);
 		this.scan = new Scanner(new File(filename));
+		scan.useLocale(Locale.US);
 	}
 	
 	public static int extractVertexIndex(String text) {
