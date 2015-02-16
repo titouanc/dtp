@@ -43,7 +43,7 @@ public class A3DSParser extends Parser {
     }
 
     private void parseVerticesList() throws IOException, SQLException {
-    	int nVertices = (int) this.readLong(2);
+    	int nVertices = (int) this.readInt(2);
     	GeometricDAO<Vertex> vertexDao = this.daoFactory.getDao(Vertex.class);
         for (int i=0; i<nVertices; i++) {
         	float x = readFloat();
@@ -52,47 +52,54 @@ public class A3DSParser extends Parser {
         	Vertex res = new Vertex(this.primitive, x, y, z);
         	vertexDao.create(res);
         }
-        Log.log(Level.FINEST,"[DEBUG]Found " + nVertices + " vertices");
+        Log.log(Level.FINEST,"[DEBUG] Found " + nVertices + " vertices");
     }
 
     private void parseFacesDescription() throws IOException, SQLException {
-    	int numFaces = (int) this.readLong(2);
+    	int numFaces = (int) this.readInt(2);
         GeometricDAO<Triangle> triangleDao = this.daoFactory.getDao(Triangle.class);
     	ArrayList<Vertex> vertices = new ArrayList<Vertex>(this.daoFactory.getDao(Vertex.class).queryForAll());
     	
         for (int i=0; i<numFaces; i++) {
         	Vertex[] uvw = new Vertex[3];
         	for (int j=0; j<3; j++){
-        		int index = (int) this.readLong(2);
+        		int index = (int) this.readInt(2);
+        		Log.debug("Found index %d", index);
         		assert 0 <= index && index < vertices.size();
-        		uvw[j] = vertices.get(index-1);
+        		uvw[j] = vertices.get(index);
         	}
-        	int flags = this.inFile.read();
+        	int flags = (int) this.readInt(2);
         	Triangle face = new Triangle(this.primitive, uvw);
+        	face.setIndex(i);
         	triangleDao.create(face);
         }
-        Log.log(Level.FINEST,"[DEBUG]Found " + numFaces + " faces");
+        Log.log(Level.FINEST,"[DEBUG] Found " + numFaces + " faces");
     }
     
     private float readFloat() throws IOException{
-    	return Float.intBitsToFloat((int) this.readLong(4));
+    	return Float.intBitsToFloat((int) this.readInt(4));
     }
     
-    private long readLong(int nBytes) throws IOException{
-    	byte[] data = new byte[nBytes];
-    	this.inFile.read(data);
+    public static long parseInt(byte[] bytes){
     	long res = 0;
-    	for (int i=0; i<nBytes; i++){
-    		res += (data[i] << (8*i));
+    	for (int i=0; i<bytes.length; i++){
+    		// THX JAVA FOR 4LL THIS MARVELOUS ADVANCED FEATURES ON ELEMENTARY NUBERZZZZ !!!!
+    		res += (((int) bytes[i]&0xff) << (8*i));
     	}
     	return res;
     }
     
+    private long readInt(int nBytes) throws IOException{
+    	byte[] data = new byte[nBytes];
+    	this.inFile.read(data);
+    	return parseInt(data);
+    }
+    
     private void parseChunk() throws IOException, SQLException{
-    	int identifier = (int) readLong(2);
-		long len = readLong(4) - 6; // 6 bytes header
+    	int identifier = (int) readInt(2);
+		long len = readInt(4) - 6; // 6 bytes header
 		
-		Log.debug("Parse chunk id=%04x, len=%d", identifier, len);
+		Log.debug("Parse chunk id=%04x, len=%d (%08x)", identifier, len, len);
 	
 		assert len >= 0;
 		

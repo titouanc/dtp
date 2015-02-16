@@ -41,7 +41,20 @@ public class Test3DSParser {
 		assertEquals(42, vertices.size());
 		
 		List<Triangle> triangles = factory.getDao(Triangle.class).queryForAll();
-		assertEquals(80, triangles.size());
+		assertEquals(160, triangles.size()); //This version has 2 faces (two sides per triangle)
 	}
-
+	
+	@Test
+	public void test_parseInt() {
+		byte[] u8 = {0x01};
+		assertEquals(1, A3DSParser.parseInt(u8));
+		byte[] u16 = {0x01, 0x00};
+		assertEquals(1, A3DSParser.parseInt(u16));
+		byte[] u32 = {0x01, 0x00, 0x00, 0x00};
+		assertEquals(1, A3DSParser.parseInt(u32));
+		byte[] u32_2 = {0x00, 0x01, 0x00, 0x00};
+		assertEquals(256, A3DSParser.parseInt(u32_2));
+		byte[] u32_3 = {(byte) 0xca, (byte) 0xde, (byte) 0xfe, (byte) 0xca};
+		assertEquals((long) 0xcafedeca, (long) A3DSParser.parseInt(u32_3));
+	}
 }
