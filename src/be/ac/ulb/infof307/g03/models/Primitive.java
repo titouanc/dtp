@@ -119,6 +119,13 @@ public class Primitive extends Meshable {
 	}
 	
 	/**
+	 * @return The entity containing this primitive
+	 */
+	public final Entity getEntity(){
+		return this.entity;
+	}
+	
+	/**
 	 * @param type The primitive type (sphere,cube,...)
 	 */
 	public final void setType(String type){

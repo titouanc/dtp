@@ -1,7 +1,12 @@
 package be.ac.ulb.infof307.g03.utils.io;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import be.ac.ulb.infof307.g03.models.Entity;
@@ -9,16 +14,24 @@ import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
+import be.ac.ulb.infof307.g03.utils.parser.A3DSParser;
 import be.ac.ulb.infof307.g03.utils.parser.DAEParser;
 import be.ac.ulb.infof307.g03.utils.parser.ObjParser;
+import be.ac.ulb.infof307.g03.utils.parser.Parser;
 
 public class ImportEngine {
-
+	private static Map<String, Class> parserMap = new HashMap();
 	private MasterDAO dao = null;
 	private Project project = null;
 	private Entity entity = null;
 	
 	public ImportEngine(Project project) {
+		if (parserMap.isEmpty()){
+			parserMap.put("3ds", A3DSParser.class);
+			parserMap.put("obj", ObjParser.class);
+			//parserMap.put("dae", DaeParser.class);
+			//parserMap.put("kmz", KmzParser.class);
+		}
 		try {
 			this.dao = project.getGeometryDAO();
 		} catch (SQLException e) {
@@ -28,31 +41,13 @@ public class ImportEngine {
 	}
 	
 	public void handleImport(File fileToImport) {
-		String fileName = fileToImport.getName();
-		String path = fileToImport.getParent();
-		String name = getName(fileName);
-		this.entity = new Entity(name);
-		try {
-			this.dao.getDao(Entity.class).insert(this.entity);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String extension = getExtension(fileToImport.getName());
+		if (parserMap.containsKey(extension)){
+			this.parse(fileToImport.getAbsolutePath(), parserMap.get(extension));
+			this.dao.notifyObservers();
+		} else {
+			Log.error("Unknown extension %s", extension);
 		}
-		
-		String extension = getExtension(fileName);
-		if (extension.equals("dae")) {
-			handleDae(path+"/"+fileName);
-		} else if (extension.equals("obj")) {
-			handleObj(path+"/"+fileName);
-		} else if (extension.equals("3ds")) {
-			// TODO handle 3ds import
-		} else if (extension.equals("kmz")) {
-			// TODO handle kmz import
-		}
-		this.project.config("entity.current", entity.getUID());
-		this.project.config("edition.mode", "object");
-		this.dao.notifyObservers();
-		
 	}
 	
 	private String getName(String fileName) {
@@ -71,14 +66,15 @@ public class ImportEngine {
 		return "";
 	}
 	
-	private void handleDae(String fileName) {
-		Log.debug("Handle dae");
-		DAEParser parser = new DAEParser(fileName,this.entity,this.dao);
-	}
-	
-	private void handleObj(String fileName) {
-		Log.debug("Handle obj");
-		ObjParser parser = new ObjParser(fileName,this.entity,this.dao);
+	private void parse(String filename, Class<? extends Parser> parseClass) {
+		try {
+			Constructor<? extends Parser> constr = parseClass.getConstructor(String.class, MasterDAO.class);
+			Parser parser = constr.newInstance(filename, this.dao);
+			parser.parse();
+		} catch (Exception e) {
+			Log.error("Unable to parse %s", filename);
+			e.printStackTrace();
+		}
 	}
 }
 

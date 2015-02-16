@@ -42,6 +42,16 @@ public class A3DSParser extends Parser {
         this.inFile = new FileInputStream(filename);
     }
 
+    private long currentVertexCount() throws SQLException{
+    	GeometricDAO<Vertex> dao = this.daoFactory.getDao(Vertex.class);
+    	return dao.countOf(dao.queryBuilder().setCountOf(true).where().eq("primitive_id", this.primitive.getId()).prepare());
+    }
+    
+    private ArrayList<Vertex> getCurrentVertices() throws SQLException {
+    	GeometricDAO<Vertex> dao = this.daoFactory.getDao(Vertex.class);
+    	return new ArrayList<Vertex>(dao.queryForEq("primitive_id", this.primitive.getId()));
+    }
+    
     private void parseVerticesList() throws IOException, SQLException {
     	int nVertices = (int) this.readInt(2);
     	GeometricDAO<Vertex> vertexDao = this.daoFactory.getDao(Vertex.class);
@@ -50,15 +60,31 @@ public class A3DSParser extends Parser {
         	float y = readFloat();
         	float z = readFloat();
         	Vertex res = new Vertex(this.primitive, x, y, z);
+        	res.setIndex(i);
         	vertexDao.create(res);
         }
         Log.log(Level.FINEST,"[DEBUG] Found " + nVertices + " vertices");
+    }
+    
+    private void parseObjectChunk() throws IOException, SQLException {
+    	byte[] nameBytes = new byte[64];
+		int c = 1;
+		for (int i=0; i<64 && c != 0; i++){
+			c = this.inFile.read();
+			nameBytes[i] = (byte) c;
+		}
+		String name = new String(nameBytes);
+		Log.debug(" ==> name: %s", name);
+		if (this.currentVertexCount() > 0){
+			this.primitive = new Primitive(this.primitive.getEntity(), Primitive.IMPORTED);
+			this.daoFactory.getDao(Primitive.class).create(this.primitive);
+		}
     }
 
     private void parseFacesDescription() throws IOException, SQLException {
     	int numFaces = (int) this.readInt(2);
         GeometricDAO<Triangle> triangleDao = this.daoFactory.getDao(Triangle.class);
-    	ArrayList<Vertex> vertices = new ArrayList<Vertex>(this.daoFactory.getDao(Vertex.class).queryForAll());
+        ArrayList<Vertex> vertices = this.getCurrentVertices();
     	
         for (int i=0; i<numFaces; i++) {
         	Vertex[] uvw = new Vertex[3];
@@ -68,10 +94,14 @@ public class A3DSParser extends Parser {
         		assert 0 <= index && index < vertices.size();
         		uvw[j] = vertices.get(index);
         	}
-        	int flags = (int) this.readInt(2);
+        	this.readInt(2); //Skip flags
         	Triangle face = new Triangle(this.primitive, uvw);
         	face.setIndex(i);
-        	triangleDao.create(face);
+        	try {
+        		triangleDao.create(face);
+        	} catch (SQLException err) {
+        		Log.warn("Unable to insert triangle with vertices %s %s %s", uvw[0].toString(), uvw[1].toString(), uvw[2].toString());
+        	}
         }
         Log.log(Level.FINEST,"[DEBUG] Found " + numFaces + " faces");
     }
@@ -106,14 +136,7 @@ public class A3DSParser extends Parser {
 		switch (identifier) {
 	    	/* Final sections (we should load their content) */
 			case 0x4000:
-				byte[] nameBytes = new byte[64];
-				int c = 1;
-				for (int i=0; i<64 && c != 0; i++){
-					c = this.inFile.read();
-					nameBytes[i] = (byte) c;
-				}
-				String name = new String(nameBytes);
-				Log.debug(" ==> name: %s", name);
+				parseObjectChunk();
 				break;
 			case 0x4110:
 	        	/* vertex = 3 floats, 4 bytes each => 12 bytes per vertex */
