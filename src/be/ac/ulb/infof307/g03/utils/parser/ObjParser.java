@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.utils.parser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,22 +24,16 @@ import be.ac.ulb.infof307.g03.models.Vertex;
  *
  */
 public class ObjParser extends Parser {
-	private MasterDAO dao = null;
-	private Entity buildingEntity = null;
+	private Scanner scan;
 	
 	/**
 	 * @param filename
+	 * @throws SQLException 
+	 * @throws IOException 
 	 */
-	public ObjParser(String filename, Entity entity, MasterDAO dao){
-		this.dao = dao;
-		this.buildingEntity = entity;
-		try {
-			this.parse(filename);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public ObjParser(String filename, MasterDAO dao) throws IOException, SQLException{
+		super(filename, dao);
+		this.scan = new Scanner(new File(filename));
 	}
 	
 	public static int extractVertexIndex(String text) {
@@ -48,14 +43,11 @@ public class ObjParser extends Parser {
 		return Integer.parseInt(text);
 	}
     
-	public void parse(String filename) throws FileNotFoundException, SQLException{
-		Scanner scan = new Scanner(new File(filename));
-		GeometricDAO<Vertex> vertexDao = this.dao.getDao(Vertex.class);
-		GeometricDAO<Triangle> triangleDao = this.dao.getDao(Triangle.class);
+	@Override
+	public void parse() throws SQLException, IOException {
+		GeometricDAO<Vertex> vertexDao = this.daoFactory.getDao(Vertex.class);
+		GeometricDAO<Triangle> triangleDao = this.daoFactory.getDao(Triangle.class);
 		List<Vertex> vertices = new ArrayList<Vertex>();
-		
-		Primitive prim = new Primitive(this.buildingEntity, Primitive.IMPORTED);
-		this.dao.getDao(Primitive.class).create(prim);
 		
 		int verticeCount = 0;
 		int triangleCount = 0;
@@ -65,7 +57,7 @@ public class ObjParser extends Parser {
 				float x = scan.nextFloat();
 				float y = scan.nextFloat();
 				float z = scan.nextFloat();
-				Vertex newVert = new Vertex(prim, x, y, z);
+				Vertex newVert = new Vertex(this.primitive, x, y, z);
 				newVert.setIndex(verticeCount);
 				vertexDao.create(newVert);
 				vertices.add(newVert);
@@ -84,7 +76,7 @@ public class ObjParser extends Parser {
 						triangleVertices[i] = vertices.get(vertexIndex - 1);
 					}
 				}
-				Triangle tr = new Triangle(prim, triangleVertices[0], triangleVertices[1], triangleVertices[2]);
+				Triangle tr = new Triangle(this.primitive, triangleVertices);
 				tr.setIndex(triangleCount);
 				triangleDao.create(tr);
 				triangleCount++;

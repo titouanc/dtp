@@ -36,12 +36,13 @@ public class Triangle extends Ordered {
 	 * @param v2 Its second vertex
 	 * @param v3 Its third vertex
 	 */
-	public Triangle(Primitive primitive, Vertex v1, Vertex v2, Vertex v3) {
+	public Triangle(Primitive primitive, Vertex ... vertices){
 		super();
+		assert vertices.length == 3;
 		this.primitive = primitive;
-		this.u = v1;
-		this.v = v2;
-		this.w = v3;
+		this.u = vertices[0];
+		this.v = vertices[1];
+		this.w = vertices[2];
 	}
 	
 	public Vertex getV1(){return this.u;}

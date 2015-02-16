@@ -4,12 +4,23 @@
 package be.ac.ulb.infof307.g03.utils.parser;
 
 import java.awt.List;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 
 import com.jme3.math.Vector3f;
 
+import be.ac.ulb.infof307.g03.models.Entity;
+import be.ac.ulb.infof307.g03.models.GeometricDAO;
+import be.ac.ulb.infof307.g03.models.MasterDAO;
+import be.ac.ulb.infof307.g03.models.Primitive;
+import be.ac.ulb.infof307.g03.models.Triangle;
+import be.ac.ulb.infof307.g03.models.Vertex;
 import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
@@ -17,155 +28,105 @@ import be.ac.ulb.infof307.g03.utils.Log;
  *
  */
 public class A3DSParser extends Parser {
-
-	/* (non-Javadoc)
-	 * @see be.ac.ulb.infof307.g03.models.Parser#getVertices()
-	 */
+	private FileInputStream inFile;
+	private static int[] interestingSections = {0x4d4d, 0x3d3d, 0x4000, 0x4100};
 
 	/**
 	 * This parser understands the layout of the 3ds file and is
 	 * able to construct a Model from a reader.
 	 *
 	 * @author Bruno
+	 * @throws SQLException 
 	 */
-
-    private A3DSReader reader;
-
-    public A3DSParser(A3DSReader reader) {
-        this.reader = reader;
+    public A3DSParser(String filename, MasterDAO daoFactory) throws IOException, SQLException  {
+        super(filename, daoFactory);
+        this.inFile = new FileInputStream(filename);
     }
 
-    public void parseFile() throws IOException {
-        int limit = readChunk();
-        while (reader.position() < limit) {
-            readChunk();
+    private void parseVerticesList(int nVertices) throws IOException, SQLException {
+    	GeometricDAO<Vertex> vertexDao = this.daoFactory.getDao(Vertex.class);
+        for (int i=0; i<nVertices; i++) {
+        	float x = readFloat();
+        	float y = readFloat();
+        	float z = readFloat();
+        	Vertex res = new Vertex(this.primitive, x, y, z);
+        	vertexDao.create(res);
         }
+        Log.log(Level.FINEST,"[DEBUG]Found " + nVertices + " vertices");
     }
 
-    private int readChunk() throws IOException {
-        short type = reader.getShort();
-        int size = reader.getInt();
-        parseChunk(type, size);
-        return size;
-    }
-
-    private void parseChunk(short type, int size) throws IOException {
-        switch (type) {
-        case 0x0002:
-            parseVersionChunk();
-            break;
-        case 0x3d3d:
-            break;
-        case 0x4000:
-            parseObjectChunk();
-            break;
-        case 0x4100:
-            break;
-        case 0x4110:
-            parseVerticesList();
-            break;
-        case 0x4120:
-            parseFacesDescription();
-            break;
-        case 0x4140:
-            parseMappingCoordinates();
-            break;
-        case 0x4160:
-            parseLocalCoordinateSystem();
-            break;
-        case 0x4d4d:
-            break;
-        case (short)0xafff: // Material block
-            break;
-        case (short)0xa000: // Material name
-            parseMaterialName();
-            break;
-        case (short)0xa200: // Texture map 1
-            break;
-        case (short)0xa300: // Mapping filename
-            parseMappingFilename();
-            break;
-        default:
-            skipChunk(size);
-        }
-    }
-
-    private void skipChunk(int size) throws IOException {
-        move(size - 6); // size includes headers. header is 6 bytes
-    }
-
-    private void move(int i) throws IOException {
-        reader.skip(i);
-    }
-
-
-    private void parseVersionChunk() throws IOException {
-        int version = reader.getInt();
-        Log.log(Level.FINEST,"[DEBUG]Using version " + version);
-    }
-
-    private void parseObjectChunk() throws IOException {
-        String name = reader.readString();
-        Log.log(Level.FINEST,"[DEBUG]Found object : " + name);
-        //datas.addElement(new PrimitiveData()); 
-        //datas.elementAt(datas.size()-1).setName(name);
-    }
-
-    private void parseVerticesList() throws IOException {
-        short numVertices = reader.getShort();
-        //int index = datas.size()-1;
-        for (int i=0; i<numVertices; i++) {
-       // 	datas.elementAt(index).appendVertex(new Vector3f(reader.getFloat(),reader.getFloat(),reader.getFloat()));
-        }
-        Log.log(Level.FINEST,"[DEBUG]Found " + numVertices + " vertices");
-    }
-
-    private void parseFacesDescription() throws IOException {
-        short numFaces = reader.getShort();
-        //int index = datas.size()-1;
-        for (int i=0; i<numFaces*3; i++) {
-        //    datas.elementAt(index).indexes.addElement((int)reader.getShort());
+    private void parseFacesDescription(int numFaces) throws IOException, SQLException {
+        GeometricDAO<Triangle> triangleDao = this.daoFactory.getDao(Triangle.class);
+    	ArrayList<Vertex> vertices = new ArrayList<Vertex>(this.daoFactory.getDao(Vertex.class).queryForAll());
+    	
+        for (int i=0; i<numFaces; i++) {
+        	Vertex[] uvw = new Vertex[3];
+        	for (int j=0; j<3; j++){
+        		int index = (int) this.readLong(2);
+        		assert 1 <= index && index <= vertices.size();
+        		uvw[j] = vertices.get(index-1);
+        	}
+        	Triangle face = new Triangle(this.primitive, uvw);
+        	triangleDao.create(face);
         }
         Log.log(Level.FINEST,"[DEBUG]Found " + numFaces + " faces");
     }
-
-    private void parseLocalCoordinateSystem() throws IOException {
-        float[] x1 = new float[3];
-        float[] x2 = new float[3];
-        float[] x3 = new float[3];
-        float[] origin = new float[3];
-        readVector(x1);
-        readVector(x2);
-        readVector(x3);
-        readVector(origin);
+    
+    private float readFloat() throws IOException{
+    	return Float.intBitsToFloat((int) this.readLong(4));
     }
-
-    private void parseMappingCoordinates() throws IOException {
-        short numVertices = reader.getShort();
-        float[] uv = new float[numVertices * 2];
-        for (int i=0; i<numVertices; i++) {
-            uv[i*2] = reader.getFloat();
-            uv[i*2+1] = reader.getFloat();
+    
+    private long readLong(int nBytes) throws IOException{
+    	byte[] data = new byte[nBytes];
+    	this.inFile.read(data);
+    	long res = 0;
+    	for (int i=0; i<nBytes; i++){
+    		res += (data[i] << (8*i));
+    	}
+    	return res;
+    }
+    
+    private void parseChunk() throws IOException, SQLException{
+    	int identifier = (int) readLong(2);
+		long len = readLong(4) - 6; // 6 bytes header
+		
+		Log.debug("Parse chunk %04x (len=%d %08x)", identifier, len, len);
+	
+		assert len >= 0;
+		
+		switch (identifier) {
+	    	/* Final sections (we should load their content) */
+	        case 0x4110:
+	        	/* vertex = 3 floats, 4 bytes each => 12 bytes per vertex */
+	            parseVerticesList((int) len / 12);
+	            Log.debug(" ==> Vertices");
+	            break;
+	        case 0x4120:
+	        	/* face = 3 indexes, 2 bytes each => 6 bytes per face */
+	            parseFacesDescription((int) len / 6);
+	            Log.debug(" ==> Faces");
+	            break;
+	            
+	        /* Interesting section (we should explore these) */
+	        case 0x4d4d:
+	        case 0x3d3d:
+	        case 0x4000:
+	        case 0x4100:
+	        	Log.debug(" ==> Dive");
+	        	parseChunk();
+	        	break;
+	        	
+	        /* Otherwise just skip */
+	        default:
+	            this.inFile.skip(len);
+	            Log.debug(" ==> Skip");
         }
-        //currentObject.textureCoordinates = uv;
     }
-
-    private void parseMaterialName() throws IOException {
-        String materialName = reader.readString();
-    }
-
-    private void parseMappingFilename() throws IOException {
-        String mappingFile = reader.readString();
-    }
-
-    private void readVector(float[] v) throws IOException {
-        v[0] = reader.getFloat();
-        v[1] = reader.getFloat();
-        v[2] = reader.getFloat();
-    }
-
-	public static void main(String[] args) {
-		//DAEParser d = new DAEParser("/Users/julianschembri/Downloads/test.3ds");
-
+    
+    @Override
+	public void parse() throws SQLException, IOException {
+		while (inFile.available() > 0){
+			parseChunk();
+		}
 	}
 }

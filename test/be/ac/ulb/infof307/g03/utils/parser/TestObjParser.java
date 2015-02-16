@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.utils.parser;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -40,12 +41,10 @@ public class TestObjParser {
 	}
 
 	@Test
-	public void test_import_face_vertex_only() throws SQLException {
+	public void test_import_face_vertex_only() throws SQLException, IOException {
 		MasterDAO factory = new MasterDAO(this.db);
-		Entity ent = new Entity("cube");
-		factory.getDao(Entity.class).create(ent);
+		new ObjParser("test/be/ac/ulb/infof307/g03/assets/cube.obj", factory).parse();
 		
-		new ObjParser("test/be/ac/ulb/infof307/g03/assets/cube.obj", ent, factory);
 		List<Vertex> vertices = factory.getDao(Vertex.class).queryForAll();
 		assertEquals(8, vertices.size());
 		
@@ -54,12 +53,10 @@ public class TestObjParser {
 	}
 	
 	@Test
-	public void test_import_face_vertex_and_normal() throws SQLException {
+	public void test_import_face_vertex_and_normal() throws SQLException, IOException {
 		MasterDAO factory = new MasterDAO(this.db);
-		Entity ent = new Entity("vache");
-		factory.getDao(Entity.class).create(ent);
+		new ObjParser("test/be/ac/ulb/infof307/g03/assets/vache.obj", factory).parse();
 		
-		new ObjParser("test/be/ac/ulb/infof307/g03/assets/vache.obj", ent, factory);
 		List<Vertex> vertices = factory.getDao(Vertex.class).queryForAll();
 		assertEquals(1907, vertices.size());
 		
@@ -68,12 +65,10 @@ public class TestObjParser {
 	}
 	
 	@Test
-	public void test_import_icosphere() throws SQLException {
+	public void test_import_icosphere() throws SQLException, IOException {
 		MasterDAO factory = new MasterDAO(this.db);
-		Entity ent = new Entity("icoSphere");
-		factory.getDao(Entity.class).create(ent);
+		new ObjParser("test/be/ac/ulb/infof307/g03/assets/icoSphere.obj", factory).parse();
 		
-		new ObjParser("test/be/ac/ulb/infof307/g03/assets/icoSphere.obj", ent, factory);
 		List<Vertex> vertices = factory.getDao(Vertex.class).queryForAll();
 		assertEquals(42, vertices.size());
 		
