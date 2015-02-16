@@ -34,7 +34,8 @@ public class DAEParser extends Parser {
 	Entity entity = null;
 	MasterDAO dao = null;
 	
-	public DAEParser(String fileName, Entity entity, MasterDAO dao){
+	public DAEParser(String fileName, Entity entity, MasterDAO dao) throws IOException, SQLException{
+		super(fileName, dao);
 		this.entity = entity ;
 		this.dao = dao;
 		try{ 
@@ -60,7 +61,7 @@ public class DAEParser extends Parser {
 		String[] d = data.split(" ");
 		this.vertices = new Vector<Vertex>();
 		for (int i=0; i<d.length; i+=3) {
-			vertices.add(new Vertex(this.primitives.lastElement(), new Vector3f(Float.parseFloat(d[i]),Float.parseFloat(d[i+1]),Float.parseFloat(d[i+2]))));
+			vertices.add(new Vertex(this.primitive, new Vector3f(Float.parseFloat(d[i]),Float.parseFloat(d[i+1]),Float.parseFloat(d[i+2]))));
 			vertices.lastElement().setIndex(i/3);
 			try {
 				this.dao.getDao(Vertex.class).create(vertices.lastElement());
@@ -76,11 +77,10 @@ public class DAEParser extends Parser {
 		String[] d = data.split(" ");
 		for (int i=0; i<d.length; i+=3) {
 			try {
-				Primitive p = this.primitives.lastElement();
 				Vertex v1 = this.vertices.get(Integer.parseInt(d[i]));
 				Vertex v2 = this.vertices.get(Integer.parseInt(d[i+1]));
 				Vertex v3 = this.vertices.get(Integer.parseInt(d[i+2]));
-				Triangle triangle = new Triangle(p,v1,v2,v3);
+				Triangle triangle = new Triangle(this.primitive,v1,v2,v3);
 				triangle.setIndex(i/3);
 				this.dao.getDao(Triangle.class).create(triangle);
 			} catch (SQLException e) {
@@ -96,9 +96,9 @@ public class DAEParser extends Parser {
 		Log.debug("Parse");
 		NodeList nodeList = document.getElementsByTagName("geometry");
 		for (int i=0; i<nodeList.getLength(); ++i) {
-			primitives.addElement(new Primitive(this.entity,Primitive.IMPORTED));
+			primitive = new Primitive(this.entity,Primitive.IMPORTED);
 			try {
-				this.dao.getDao(Primitive.class).insert(this.primitives.lastElement());
+				this.dao.getDao(Primitive.class).insert(this.primitive);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
