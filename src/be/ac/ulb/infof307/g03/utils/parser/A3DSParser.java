@@ -29,7 +29,6 @@ import be.ac.ulb.infof307.g03.utils.Log;
  */
 public class A3DSParser extends Parser {
 	private FileInputStream inFile;
-	private static int[] interestingSections = {0x4d4d, 0x3d3d, 0x4000, 0x4100};
 
 	/**
 	 * This parser understands the layout of the 3ds file and is
@@ -43,7 +42,8 @@ public class A3DSParser extends Parser {
         this.inFile = new FileInputStream(filename);
     }
 
-    private void parseVerticesList(int nVertices) throws IOException, SQLException {
+    private void parseVerticesList() throws IOException, SQLException {
+    	int nVertices = (int) this.readLong(2);
     	GeometricDAO<Vertex> vertexDao = this.daoFactory.getDao(Vertex.class);
         for (int i=0; i<nVertices; i++) {
         	float x = readFloat();
@@ -55,7 +55,8 @@ public class A3DSParser extends Parser {
         Log.log(Level.FINEST,"[DEBUG]Found " + nVertices + " vertices");
     }
 
-    private void parseFacesDescription(int numFaces) throws IOException, SQLException {
+    private void parseFacesDescription() throws IOException, SQLException {
+    	int numFaces = (int) this.readLong(2);
         GeometricDAO<Triangle> triangleDao = this.daoFactory.getDao(Triangle.class);
     	ArrayList<Vertex> vertices = new ArrayList<Vertex>(this.daoFactory.getDao(Vertex.class).queryForAll());
     	
@@ -63,9 +64,10 @@ public class A3DSParser extends Parser {
         	Vertex[] uvw = new Vertex[3];
         	for (int j=0; j<3; j++){
         		int index = (int) this.readLong(2);
-        		assert 1 <= index && index <= vertices.size();
+        		assert 0 <= index && index < vertices.size();
         		uvw[j] = vertices.get(index-1);
         	}
+        	int flags = this.inFile.read();
         	Triangle face = new Triangle(this.primitive, uvw);
         	triangleDao.create(face);
         }
@@ -90,27 +92,36 @@ public class A3DSParser extends Parser {
     	int identifier = (int) readLong(2);
 		long len = readLong(4) - 6; // 6 bytes header
 		
-		Log.debug("Parse chunk %04x (len=%d %08x)", identifier, len, len);
+		Log.debug("Parse chunk id=%04x, len=%d", identifier, len);
 	
 		assert len >= 0;
 		
 		switch (identifier) {
 	    	/* Final sections (we should load their content) */
-	        case 0x4110:
+			case 0x4000:
+				byte[] nameBytes = new byte[64];
+				int c = 1;
+				for (int i=0; i<64 && c != 0; i++){
+					c = this.inFile.read();
+					nameBytes[i] = (byte) c;
+				}
+				String name = new String(nameBytes);
+				Log.debug(" ==> name: %s", name);
+				break;
+			case 0x4110:
 	        	/* vertex = 3 floats, 4 bytes each => 12 bytes per vertex */
-	            parseVerticesList((int) len / 12);
+	            parseVerticesList();
 	            Log.debug(" ==> Vertices");
 	            break;
 	        case 0x4120:
 	        	/* face = 3 indexes, 2 bytes each => 6 bytes per face */
-	            parseFacesDescription((int) len / 6);
+	            parseFacesDescription();
 	            Log.debug(" ==> Faces");
 	            break;
 	            
 	        /* Interesting section (we should explore these) */
 	        case 0x4d4d:
 	        case 0x3d3d:
-	        case 0x4000:
 	        case 0x4100:
 	        	Log.debug(" ==> Dive");
 	        	parseChunk();
