@@ -155,6 +155,42 @@ pour remettre tout le projet au clair.
 
 \subsection{Bonnes pratiques - Outils}
 
+	Outre les différentes techniques précisées dans les chapitres précédents, 
+	nous avons développé plus intensément les pratiques suivantes.
+
+	\paragraph{Pair programming}
+	Nous avons utilisé cette technique de manière extensive. À peu près la moitié
+	du projet a été écrite en pair programming. Généralement, tout ce qui était
+	codé en solo n'était pas très fiable et buggait; ces parties ont été corrigées
+	en pair programming.
+
+	\paragraph{Regression testing}
+	Le meilleur exemple de regression testing se trouve dans le développement des
+	parsers. Ces morceaux de codes devant suivre des standards plutôt précis, nous
+	nous sommes heurtés plusieurs fois à des problèmes spécifiques pour lesquels
+	nous avons écrit des tests avant d'essayer de débugger le code.
 
 \subsection{Conclusion - What's next}
+
+	Cette itération s'est très bien déroulée. Nous ne pouvons plus nous plaindre
+	de classe trop grande, dont les responsabilités mélangées se perdent les unes
+	entre les autres. La fonctionnalité atteinte est encore très satisfaisante.
+
+	\paragraph{Analyse de la classe Ordered}
+	Les assistants nous ont glissé un mot quant à l'architecture autour de la
+	classe Ordered et nous ont suggéré d'utiliser un design pattern. Nous analyserons
+	ce problème lors de la prochaine itération.
+
+	\paragraph{Optimisation des objets importés}
+	Au vu de la taille des données manipulées avec les objets importés, certaines
+	opérations prennent du temps et doivent être optimisées.
+	
+	\paragraph{Tests}
+	Le code pourrait être mieux couvert par les tests, et malgré une allocation
+	de plus en plus grande de temps pour l'écriture de tests, nous ne sommes pas
+	encore satisfaits par la couverture.
+	
+	\paragraph{Finition}
+	Certains bugs sans grosse conséquence sont présents dans le logiciel. Nous allons
+	passer plus de temps lors de la prochaine itération pour en chasser un maximum.
 
