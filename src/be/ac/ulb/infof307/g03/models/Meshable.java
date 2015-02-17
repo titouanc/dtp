@@ -2,6 +2,7 @@ package be.ac.ulb.infof307.g03.models;
 
 import java.io.File;
 
+
 import com.j256.ormlite.field.DatabaseField;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.AssetNotFoundException;
@@ -152,6 +153,10 @@ public abstract class Meshable extends Geometric {
 					texture = parts[parts.length-1];
 					assetManager.registerLocator(path, FileLocator.class);
 				}
+			}
+			else{
+				if(!(texture.endsWith("Color")) && !(texture.endsWith("Full")))
+					texture += "Color";
 			}
 		} catch (AssetNotFoundException ex){
 			texture = "GrayColor";
