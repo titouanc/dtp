@@ -124,12 +124,6 @@ public void handleExport(Entity entity, File fileToExport) {
 	  file.println(		"    <visual_scene id=\"Scene\" name=\"Scene\">"												);
 	  for (Primitive primitive : this.exportable.getPrimitives()) {
 		  file.println(	"      <node id=\""+primitive.getUID()+"\" name=\""+primitive.getUID()+"\" type=\"NODE\">"		);
-	      file.print(	"        <matrix sid=\"transform\">"															);
-	      FloatBuffer fb =  primitive.getRotMatrix();
-	      for (int i=0; i<fb.capacity(); ++i) {
-	    	  file.print(String.valueOf(fb.get(i))+" ");
-	      }
-	      file.println(	         "</matrix>"																			);
 	      file.println(	"        <instance_geometry url=\"#"+primitive.getUID()+"\">"									);
 	      file.println(	"          <bind_material>"																		);
 	      file.println(	"            <technique_common/>"																);
@@ -145,34 +139,30 @@ public void handleExport(Entity entity, File fileToExport) {
   }
   
   public void handleDae(String fileName) {
-    try {
-      PrintWriter file = new PrintWriter(fileName,"UTF-8");
-      file.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>"												);
-      file.println("<COLLADA xmlns=\"http://www.collada.org/2005/11/COLLADASchema\" version=\"1.4.1\">"		);
-      daeAsset(file);
-      file.println("  <library_geometries>"																	);
-      for (Primitive primitive : this.exportable.getPrimitives()) {
-        daeGeometry(file, primitive);
-      }
-      file.println("  </library_geometries>"																);
-      file.println("  <library_controllers/>");
-      daeScene(file);
-      file.println("</COLLADA>"																				);
-      file.close();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    }
+	  try {
+		  PrintWriter file = new PrintWriter(fileName,"UTF-8");
+		  file.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>"												);
+		  file.println("<COLLADA xmlns=\"http://www.collada.org/2005/11/COLLADASchema\" version=\"1.4.1\">"		);
+		  daeAsset(file);
+		  file.println("  <library_geometries>"																	);
+		  for (Primitive primitive : this.exportable.getPrimitives()) {
+			  daeGeometry(file, primitive);
+		  }
+		  file.println("  </library_geometries>"																);
+		  file.println("  <library_controllers/>"																);
+		  daeScene(file);
+		  file.println("</COLLADA>"																				);
+		  file.close();
+	  } catch (FileNotFoundException e) {
+		  e.printStackTrace();
+	  } catch (UnsupportedEncodingException e) {
+		  e.printStackTrace();
+	  }
   }
-
 	
 	public ExportEngine(MasterDAO daoFactory) {
 		this.dao = daoFactory;
 	}
-	
-
-
 	
 	public void handleObj(String fileName){
 		try {
