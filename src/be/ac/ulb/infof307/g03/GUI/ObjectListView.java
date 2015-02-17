@@ -1,4 +1,4 @@
-package be.ac.ulb.infof307.g03.views;
+package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -9,7 +9,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
-
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -18,7 +17,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
-import be.ac.ulb.infof307.g03.controllers.ObjectListController;
 import be.ac.ulb.infof307.g03.models.Change;
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Floor;

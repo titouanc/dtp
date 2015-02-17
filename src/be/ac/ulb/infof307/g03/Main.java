@@ -3,14 +3,12 @@ package be.ac.ulb.infof307.g03;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
-
 import com.j256.ormlite.logger.LocalLog;
 
-import be.ac.ulb.infof307.g03.controllers.BootController;
+import be.ac.ulb.infof307.g03.GUI.*;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.utils.SplashWindow;
-import be.ac.ulb.infof307.g03.views.*;
 
 /**
  * @author all

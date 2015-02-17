@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.controllers;
+package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.Component;
 import java.io.File;
@@ -17,8 +17,6 @@ import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.utils.io.ExportEngine;
 import be.ac.ulb.infof307.g03.utils.io.ImportEngine;
-import be.ac.ulb.infof307.g03.views.FileChooserView;
-import be.ac.ulb.infof307.g03.views.GUI;
 
 /**
  * @author pierre

@@ -1,10 +1,9 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.views;
+package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.Component;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -26,7 +24,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 

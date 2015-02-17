@@ -1,4 +1,4 @@
-package be.ac.ulb.infof307.g03.controllers;
+package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -11,7 +11,6 @@ import javax.swing.JPopupMenu;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.views.ObjectListView;
 
 /**
  * @author titou, pierre

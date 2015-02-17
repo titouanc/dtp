@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.controllers;
+package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.Dimension;
 import java.sql.SQLException;
@@ -10,8 +10,7 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.views.MainPaneView;
-import be.ac.ulb.infof307.g03.views.WorldView;
+import be.ac.ulb.infof307.g03.world.WorldView;
 
 /**
  * @author fhennecker, pierre

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.views;
+package be.ac.ulb.infof307.g03.world;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -11,12 +11,9 @@ import java.util.Observer;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 
-import be.ac.ulb.infof307.g03.controllers.CameraContext;
-import be.ac.ulb.infof307.g03.controllers.CanvasController;
-import be.ac.ulb.infof307.g03.controllers.ObjectController;
-import be.ac.ulb.infof307.g03.controllers.WorldController;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
+import be.ace.ulb.info307.g03.camera.CameraContext;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;

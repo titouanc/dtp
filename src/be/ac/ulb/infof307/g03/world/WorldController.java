@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.controllers;
+package be.ac.ulb.infof307.g03.world;
 
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
@@ -12,7 +12,6 @@ import java.util.Observer;
 
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.Vector3f;

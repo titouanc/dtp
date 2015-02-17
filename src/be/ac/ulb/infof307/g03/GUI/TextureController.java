@@ -1,7 +1,6 @@
-package be.ac.ulb.infof307.g03.controllers;
+package be.ac.ulb.infof307.g03.GUI;
 
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.views.TextureView;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
 

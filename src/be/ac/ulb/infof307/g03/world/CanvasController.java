@@ -1,4 +1,4 @@
-package be.ac.ulb.infof307.g03.controllers;
+package be.ac.ulb.infof307.g03.world;
 
 
 import java.sql.SQLException;
@@ -15,7 +15,7 @@ import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Meshable;
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.views.WorldView;
+import be.ace.ulb.info307.g03.camera.CameraContext;
 
 public abstract class CanvasController {
 	protected WorldView view = null;

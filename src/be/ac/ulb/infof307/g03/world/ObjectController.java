@@ -1,4 +1,4 @@
-package be.ac.ulb.infof307.g03.controllers;
+package be.ac.ulb.infof307.g03.world;
 
 import java.sql.SQLException;
 import java.util.Observable;
@@ -13,7 +13,6 @@ import be.ac.ulb.infof307.g03.models.Meshable;
 import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.views.WorldView;
 
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.FastMath;

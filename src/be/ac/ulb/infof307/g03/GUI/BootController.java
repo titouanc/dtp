@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.controllers;
+package be.ac.ulb.infof307.g03.GUI;
 
 import java.io.File;
 import java.sql.SQLException;

@@ -1,4 +1,4 @@
-package be.ac.ulb.infof307.g03.controllers;
+package be.ace.ulb.info307.g03.camera;
 
 
 import java.util.Observable;
@@ -7,7 +7,7 @@ import java.util.Observer;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.views.WorldView;
+import be.ac.ulb.infof307.g03.world.WorldView;
 
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;

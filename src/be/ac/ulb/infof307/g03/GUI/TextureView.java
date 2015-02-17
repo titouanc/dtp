@@ -1,4 +1,4 @@
-package be.ac.ulb.infof307.g03.views;
+package be.ac.ulb.infof307.g03.GUI;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
@@ -10,7 +10,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import be.ac.ulb.infof307.g03.controllers.TextureController;
 import be.ac.ulb.infof307.g03.models.Project;
 
 import java.awt.CardLayout;

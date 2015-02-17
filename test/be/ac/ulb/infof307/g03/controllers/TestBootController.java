@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import be.ac.ulb.infof307.g03.GUI.BootController;
 import be.ac.ulb.infof307.g03.models.Project;
 
 

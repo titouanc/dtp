@@ -1,4 +1,4 @@
-package be.ac.ulb.infof307.g03.views;
+package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;

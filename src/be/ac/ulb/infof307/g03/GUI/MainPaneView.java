@@ -1,19 +1,16 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.views;
+package be.ac.ulb.infof307.g03.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
-import be.ac.ulb.infof307.g03.controllers.MainPaneController;
-import be.ac.ulb.infof307.g03.controllers.ObjectListController;
-import be.ac.ulb.infof307.g03.controllers.ObjectTreeController;
-import be.ac.ulb.infof307.g03.controllers.TextureController;
 import be.ac.ulb.infof307.g03.models.Project;
 
 /**

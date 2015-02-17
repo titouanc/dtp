@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.infof307.g03.controllers;
+package be.ac.ulb.infof307.g03.GUI;
 
 
 import java.awt.event.ActionEvent;
@@ -11,8 +11,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
 
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.views.GUI;
-import be.ac.ulb.infof307.g03.views.MenuBarView;
 
 /**
  * @author fhennecker, julian, pierre

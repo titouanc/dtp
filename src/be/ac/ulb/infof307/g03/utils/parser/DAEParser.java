@@ -19,6 +19,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.jme3.math.Matrix4f;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Transform;
 
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
@@ -155,6 +157,7 @@ public class DAEParser extends Parser {
 					} 
 					if (this.transformationMatrix.elementAt(j) != null) {
 						Matrix4f m = this.transformationMatrix.elementAt(j);
+						Log.debug("Matrix4f : "+m.toString());
 						Log.debug("Scale : "+m.toScaleVector().toString());
 						this.primitive.setScale(m.toScaleVector());
 						Log.debug("Translation : "+m.toTranslationVector().toString());

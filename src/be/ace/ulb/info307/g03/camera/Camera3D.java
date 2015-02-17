@@ -1,7 +1,7 @@
-package be.ac.ulb.infof307.g03.controllers;
+package be.ace.ulb.info307.g03.camera;
 
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.views.WorldView;
+import be.ac.ulb.infof307.g03.world.WorldView;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;

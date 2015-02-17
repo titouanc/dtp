@@ -9,9 +9,10 @@ import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 
-import be.ac.ulb.infof307.g03.controllers.WorldController;
+import be.ac.ulb.infof307.g03.GUI.MainPaneController;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.world.WorldController;
 
 import com.jme3.system.AppSettings;
 
