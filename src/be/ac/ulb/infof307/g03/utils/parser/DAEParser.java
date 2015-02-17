@@ -115,7 +115,6 @@ public class DAEParser extends Parser {
 	 * @throws SQLException
 	 */
 	public void addIndexes(String data, int offset, int period) throws SQLException {
-		//Log.debug("addIndexes : "+data);
 		String[] d = data.split(" ");
 		GeometricDAO<Triangle> triangleDao = this.daoFactory.getDao(Triangle.class);
 		for (int i=offset; i<d.length; i+=period*3) {
@@ -138,92 +137,94 @@ public class DAEParser extends Parser {
 	 */
 	private void parseIndexes(NodeList nodeList) throws DOMException, SQLException {
 		int offset = 0, period = 0;
-		for (int l=0; l<nodeList.getLength(); ++l) {
-			NodeList inputNodeList = ((Element) nodeList.item(l)).getElementsByTagName("input");
-			for (int o=0; o<inputNodeList.getLength(); ++o) {
-				if (inputNodeList.item(o).getAttributes().getNamedItem("semantic").equals("VERTEX")) {
-					offset = Integer.valueOf(inputNodeList.item(o).getAttributes().getNamedItem("offset").getTextContent());
+		for (int i=0; i<nodeList.getLength(); ++i) {
+			NodeList inputNodeList = findAllNodes(nodeList.item(i), "input");
+			for (int j=0; j<inputNodeList.getLength(); ++j) {
+				if (attributeContent(inputNodeList.item(j), "semantic").equals("VERTEX")) {
+					offset = Integer.valueOf(attributeContent(inputNodeList.item(j), "offset"));
 				}
 			}
 			period = inputNodeList.getLength();
-			NodeList pNodeList = ((Element) nodeList.item(l)).getElementsByTagName("p");
+			NodeList pNodeList = findAllNodes(nodeList.item(i), "p");
 			addIndexes(pNodeList.item(0).getTextContent(),offset,period);
 		}
 	}
 	
-
+	private NodeList findAllNodes(Node node, String tagName) {
+		return ((Element) node).getElementsByTagName(tagName);
+	}
+	
+	private String attributeContent(Node node,String attributeName) {
+		return node.getAttributes().getNamedItem(attributeName).getTextContent();
+	}
 	
 	@Override
 	public void parse() throws DOMException, SQLException {
-		Log.debug("Parse");
-		
 		NodeList nodeList = document.getElementsByTagName("node");
+		// find all the primitives to draw in the scene
 		for (int i=0; i<nodeList.getLength(); ++i) {
-			NodeList instGeoNodeList = ((Element) nodeList.item(i)).getElementsByTagName("instance_geometry");
+			NodeList instGeoNodeList = findAllNodes(nodeList.item(i), "instance_geometry");
 			if (instGeoNodeList.getLength()>0){
-				nodesName.addElement(instGeoNodeList.item(0).getAttributes().getNamedItem("url").getTextContent().substring(1));
-				NodeList matrixNodeList = ((Element) nodeList.item(i)).getElementsByTagName("matrix");
+				// save the primitive name
+				nodesName.addElement(attributeContent(instGeoNodeList.item(0),"url").substring(1));
+				NodeList matrixNodeList = findAllNodes(nodeList.item(i),"matrix");
 				if (matrixNodeList.getLength()>0) {
+					// save the transformation matrix
 					String matrixInput = matrixNodeList.item(0).getTextContent();
-					Log.debug("Matrix : "+matrixInput);
 					String[] indexList = matrixInput.split(" ");
 					float[] floatList = new float[indexList.length];
-					for (int k=0; k<floatList.length; ++k) {
-						floatList[k] = Float.parseFloat(indexList[k]);
+					for (int j=0; j<floatList.length; ++j) {
+						floatList[j] = Float.parseFloat(indexList[j]);
 					}
 					Matrix4f m = new Matrix4f();
 					m.readFloatBuffer(FloatBuffer.wrap(floatList));
-					
 					this.transformationMatrix.addElement(m);
 				} else {
 					this.transformationMatrix.addElement(null);
 				}
 			}
 		}
-			
-		for (int j=0;j<this.nodesName.size(); ++j) {
-			
+		// find and create the geometry found in the scene
+		for (int i=0;i<this.nodesName.size(); ++i) {
 			NodeList geometryNodeList = document.getElementsByTagName("geometry");
-			for (int i=0; i<geometryNodeList.getLength(); ++i) {
-				if (geometryNodeList.item(i).getAttributes().getNamedItem("id").getTextContent().equals(this.nodesName.elementAt(j))) {	
-					if (i>0) {
+			for (int j=0; j<geometryNodeList.getLength(); ++j) {
+				if (attributeContent(geometryNodeList.item(j),"id").equals(this.nodesName.elementAt(i))) {	
+					if (j>0) {
 						this.primitive = new Primitive(this.primitive.getEntity(), Primitive.IMPORTED);
-					} 
-					if (this.transformationMatrix.elementAt(j) != null) {
-						Matrix4f m = this.transformationMatrix.elementAt(j);
-						Log.debug("Matrix4f : "+m.toString());
-						Log.debug("Scale : "+m.toScaleVector().toString());
-						this.primitive.setScale(m.toScaleVector());
-						Log.debug("Translation : "+m.toTranslationVector().toString());
-						this.primitive.setTranslation(m.toTranslationVector());
-						Log.debug("Rot : "+m.toRotationMatrix().toString());
-						this.primitive.setRotation(m.toRotationMatrix());
-					}
-					if (i>0) {
 						this.daoFactory.getDao(Primitive.class).create(this.primitive);
-					} else {
+					} 
+					// apply the transformation to the primitive
+					if (this.transformationMatrix.elementAt(i) != null) {
+						Matrix4f m = this.transformationMatrix.elementAt(i);
+						this.primitive.setScale(m.toScaleVector());
+						this.primitive.setTranslation(m.toTranslationVector());
+						this.primitive.setRotation(m.toRotationMatrix());
+						
 						this.daoFactory.getDao(Primitive.class).update(this.primitive);
 					}
-								
-					Node verticesNode = ((Element) geometryNodeList.item(i)).getElementsByTagName("vertices").item(0);
-					NodeList inputNodeList = ((Element)verticesNode).getElementsByTagName("input");
+					
+					// find vertices id
+					Node verticesNode = findAllNodes(geometryNodeList.item(j),"vertices").item(0);
+					NodeList inputNodeList = findAllNodes(verticesNode,"input");
 					Vector<String> srcNames = new Vector<String>();
 					for (int k=0; k<inputNodeList.getLength(); ++k ) {
-						srcNames.addElement(inputNodeList.item(k).getAttributes().getNamedItem("source").getTextContent().substring(1));
+						srcNames.addElement(attributeContent(inputNodeList.item(k),"source").substring(1));
 					}
 					
-					NodeList srcNodeList = ((Element)geometryNodeList.item(i)).getElementsByTagName("source");
+					// find the corresponding id in the geometry's sources
+					NodeList srcNodeList = findAllNodes(geometryNodeList.item(j), "source");
 					for (int k=0; k<srcNodeList.getLength(); ++k) {
-						if (srcNames.contains(srcNodeList.item(k).getAttributes().getNamedItem("id").getTextContent())) {
-							addVertices(((Element) srcNodeList.item(k)).getElementsByTagName("float_array").item(0).getTextContent());
+						if (srcNames.contains(attributeContent(srcNodeList.item(k),"id"))) {
+							addVertices(findAllNodes(srcNodeList.item(k), "float_array").item(0).getTextContent());
 						}
 					}
 					
-					NodeList polyNodeList = ((Element) geometryNodeList.item(i)).getElementsByTagName("polylist");
+					// parse the indexes
+					NodeList polyNodeList = findAllNodes(geometryNodeList.item(j),"polylist");
 					if (polyNodeList.getLength()>0) {
 						parseIndexes(polyNodeList);
 					} else {
-						NodeList trianglesNodeList = ((Element) geometryNodeList.item(i)).getElementsByTagName("triangles");
+						NodeList trianglesNodeList = findAllNodes(geometryNodeList.item(j), "triangles");
 						parseIndexes(trianglesNodeList);
 					}
 				}
