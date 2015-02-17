@@ -12,7 +12,7 @@ import be.ac.ulb.infof307.g03.utils.exporter.OBJExporter;
 
 /**
  * Handle Export
- * @author pierre
+ * @author pierre, Walter
  *
  */
 public class ExportEngine {
@@ -53,7 +53,7 @@ public class ExportEngine {
 			A3DSExporter exporter = new A3DSExporter();
 			exporter.export(fileToExport, entity);
 		} else if (extension.equals("kmz")) {
-			KMZExporter exporter = new KMZExporter();
+			KMZExporter exporter = new KMZExporter(this.project);
 			exporter.export(fileToExport, entity);
 		}
 	}
