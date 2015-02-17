@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -57,6 +59,7 @@ public class ImportEngine {
 			this.dao.notifyObservers();
 		} else {
 			Log.error("Unknown extension %s", extension);
+			JOptionPane.showMessageDialog(null,"File extension " + extension + " is not supported","Import error",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
