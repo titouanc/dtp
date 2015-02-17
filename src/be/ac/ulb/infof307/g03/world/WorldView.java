@@ -275,7 +275,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		if (! meshable.isVisible())
 			return;
 		Spatial spatial = meshable.toSpatial(assetManager);
-		Log.debug("Drawing meshable %s: %d triangles", meshable.getUID(), spatial.getTriangleCount());
 		parent.attachChild(spatial);
 	}
 	
