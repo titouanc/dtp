@@ -32,10 +32,10 @@ public class FileChooserView {
 	    FileNameExtensionFilter filterProject = new FileNameExtensionFilter("Home Plans Project (hpj)", "hpj");
 	    this.chooserProject.setFileFilter(filterProject);
 	    
-	    FileNameExtensionFilter filterImportObj = new FileNameExtensionFilter("Wavefront file (.obj)", "obj");
-	    FileNameExtensionFilter filterImportDae = new FileNameExtensionFilter("COLLADA file (.dae)", "dae");
-	    FileNameExtensionFilter filterImport3ds = new FileNameExtensionFilter("Autodesk 3ds Max file (.3ds)", "3ds");
-	    FileNameExtensionFilter filterImportKmz = new FileNameExtensionFilter("Keyhole Markup Language Archive (.kmz)", "kmz");
+	    FileNameExtensionFilter filterImportObj = new FileNameExtensionFilter("*.obj (Wavefront file)", "obj");
+	    FileNameExtensionFilter filterImportDae = new FileNameExtensionFilter("*.dae (COLLADA file)", "dae");
+	    FileNameExtensionFilter filterImport3ds = new FileNameExtensionFilter("*.3ds (Autodesk 3ds Max file)", "3ds");
+	    FileNameExtensionFilter filterImportKmz = new FileNameExtensionFilter("*.kmz (Keyhole Markup Language Archive)", "kmz");
 	    
 	    this.chooserExport = new JFileChooser();
 	    chooserExport.setAcceptAllFileFilterUsed(false);
