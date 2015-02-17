@@ -189,11 +189,11 @@ public class WorldController extends CanvasController implements Observer {
 	    		room.setName(room.getUID());
 	    		
 	    		/* Create all areas of this room (Ground, Roof, Walls)  */
-	    		for (Class<? extends Area> klass : daoFactory.areaClasses){
+	    		for (Class<? extends Area> className : daoFactory.areaClasses){
 					try {
-						Constructor<? extends Area> constr = klass.getConstructor(Room.class);
+						Constructor<? extends Area> constr = className.getConstructor(Room.class);
 						Area newArea = constr.newInstance(room);
-		    			daoFactory.getDao(klass).insert(newArea);
+		    			daoFactory.getDao(className).insert(newArea);
 					} catch (Exception e) {
 						Log.error("Unable to use Area subclass constructor at runtime ! (Missing method ?)");
 						e.printStackTrace();

@@ -32,9 +32,7 @@ public class Triangle extends Ordered {
 	/**
 	 * Create a new Triangle
 	 * @param primitive The primitive to which this Triangle shall belong
-	 * @param v1 Its first vertex
-	 * @param v2 Its second vertex
-	 * @param v3 Its third vertex
+	 * @param vertices The vertices of the triangle
 	 */
 	public Triangle(Primitive primitive, Vertex ... vertices){
 		super();
