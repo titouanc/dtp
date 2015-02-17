@@ -242,12 +242,8 @@ public class FileChooserController {
 			dialogResult = JOptionPane.showConfirmDialog (null, "This object already exists! Would you like you replace it?","Warning",dialogButton);
 		}
 		if(dialogResult == JOptionPane.YES_OPTION){
-			try {
-				ExportEngine exportengine = new ExportEngine(this.project, this.project.getGeometryDAO());
-				exportengine.handleExport(selectedEntity, selectedFile);
-			} catch (SQLException e) {
-				Log.exception(e);
-			}
+			ExportEngine exportengine = new ExportEngine(this.project);
+			exportengine.handleExport(selectedEntity, selectedFile);
 		}
 		else{
 			JOptionPane.showMessageDialog(new JFrame(), "File does not exist!", "Erreur",JOptionPane.ERROR_MESSAGE);
