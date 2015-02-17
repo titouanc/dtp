@@ -1,4 +1,4 @@
-package be.ace.ulb.info307.g03.camera;
+package be.ac.ulb.info307.g03.camera;
 
 import be.ac.ulb.infof307.g03.utils.Log;
 import be.ac.ulb.infof307.g03.world.WorldView;
@@ -32,9 +32,7 @@ public class Camera3D extends CameraController {
 		super(newCam);
 	}
 	
-	/**
-	 * Reset the direction toward which the camera looks
-	 */
+	@Override
 	public void resetCamera(WorldView wv) {
 		Log.info("Reset 3D camera direction");
         cam.setParallelProjection(false);
@@ -43,11 +41,7 @@ public class Camera3D extends CameraController {
         cam.setFrustumPerspective(45f, (float)cam.getWidth() / cam.getHeight(), 1f, 1000f);
 	}
 
-	/**
-	 * Method to use to move the camera
-	 * @param value Used to know if it's a forward or backward move
-	 * @param sideways True if up or down, false if left or right
-	 */
+	@Override
 	public void moveCamera(float value, boolean sideways) {
 		Vector3f pos = cam.getLocation().clone();
 		Vector3f vel = new Vector3f();
@@ -75,11 +69,7 @@ public class Camera3D extends CameraController {
 		cam.setLocation(pos);
 	}
 	
-	/**
-	 * Rotate the camera like a man can move his head using Quaternion
-	 * @param value
-	 * @param axis
-	 */
+	@Override
 	public void rotateCameraByGrab(float value, Vector3f axis) {
 		Matrix3f mat = new Matrix3f();
         mat.fromAngleNormalAxis(this.rotationSpeed * value, axis);
@@ -99,11 +89,8 @@ public class Camera3D extends CameraController {
         cam.setAxes(q);
 	}
 	
-	/**
-	 * Rotate the camera on itself 
-	 * @param value 
-	 */
-	public void rotateCamera(float value, boolean trigoRotate) {
+	@Override
+	public void rotateCamera(float value) {
 		Matrix3f mat = new Matrix3f();
 		mat.fromAngleNormalAxis(this.rotationSpeed * value, cam.getDirection());
 
@@ -122,10 +109,7 @@ public class Camera3D extends CameraController {
 		cam.setAxes(q);
 	}
 	
-	/**
-	 * Move the camera where it looks
-	 * @param value
-	 */
+	@Override
 	public void zoomCamera(float value) {
 		Vector3f pos = cam.getLocation().clone();
 		Vector3f vel = cam.getDirection().clone();
@@ -136,9 +120,7 @@ public class Camera3D extends CameraController {
 		}
 	}
 	
-	/**
-	 * Move the camera using mouse moves
-	 */
+	@Override
 	public void moveCameraByGrab(Vector3f oldPos, Vector3f currPos) {
 		currPos.subtractLocal(oldPos);
 		Vector3f pos = cam.getLocation().clone();
