@@ -94,7 +94,7 @@ public class KMZExporter {
 	
 	/**
 	 * Add a file to a ZIP
-	 * @param kmlFile
+	 * @param file 
 	 * @param zip
 	 * @throws FileNotFoundException
 	 * @throws IOException
