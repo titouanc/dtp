@@ -56,6 +56,7 @@ public class KMZExporter {
 			File kml= new File(filename);		
 			this.addFileToJar(kml,DAEFile); // Add the file with the kml content into the jar(kmz)	and the dae	
 			kml.delete();
+			DAEFile.delete();
 			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
