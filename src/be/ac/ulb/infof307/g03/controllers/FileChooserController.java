@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.controllers;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.swing.JFrame;
@@ -243,7 +244,12 @@ public class FileChooserController {
 		}
 		if(dialogResult == JOptionPane.YES_OPTION){
 			ExportEngine exportengine = new ExportEngine(this.project);
-			exportengine.handleExport(selectedEntity, selectedFile);
+			try {
+				exportengine.handleExport(selectedEntity, selectedFile);
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(new JFrame(), "Export error"+e.getMessage(), "Erreur",JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
 		}
 		else{
 			JOptionPane.showMessageDialog(new JFrame(), "File does not exist!", "Erreur",JOptionPane.ERROR_MESSAGE);

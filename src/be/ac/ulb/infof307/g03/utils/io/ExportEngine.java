@@ -1,6 +1,7 @@
 package be.ac.ulb.infof307.g03.utils.io;
 
 import java.io.File;
+import java.io.IOException;
 
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -40,8 +41,9 @@ public class ExportEngine {
 	 * The method that call the correct sub-method depending on the format
 	 * @param entity The entity to export
 	 * @param fileToExport The file in which the entity will be saved
+	 * @throws IOException 
 	 */
-	public void handleExport(Entity entity, File fileToExport) {
+	public void handleExport(Entity entity, File fileToExport) throws IOException {
 		String fileName = fileToExport.getName();
 		String extension = getExtension(fileName);
 		if (extension.equals("dae")) {
