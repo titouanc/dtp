@@ -134,7 +134,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		rootNode.addLight(sun);
 		
 		AmbientLight ambient = new AmbientLight();
-		ambient.setColor(ColorRGBA.White.mult(1f));
+		ambient.setColor(ColorRGBA.White.mult(2.3f));
 		rootNode.addLight(ambient);
 	}
 	
