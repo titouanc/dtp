@@ -30,16 +30,23 @@ public class KMZExporter {
 	 * @param fileToExport The file in which the object will be write
 	 * @param entity The entity to be exported
 	 */
-	public void export(File fileToExport, Entity entity){
+	public void export(File fileToExport, Entity entity){ //fileToExport is a .kmz
 		try {
-			PrintWriter file = new PrintWriter(fileToExport,"UTF-8");
+			// Get the filename without the extension (kmz !=kml)
+			String filename = fileToExport.getAbsolutePath().replace(".kmz", ".kml");
+
+			PrintWriter file = new PrintWriter(filename,"UTF-8");
 			file.println("<Model id=\"ID\">");
 			file.println("  <Link>");
 			file.println("    <href>"+entity.getName()+".dae</href>");
 			file.println("  </Link>");
 			file.println("</Model>");		
-			file.close();
-			this.addFileToJar(fileToExport); // Add the file with the kml content into the jar(kmz)
+			file.close(); // We wrote the content of the kml file
+			
+			File kml= new File(filename);		
+			this.addFileToJar(kml); // Add the file with the kml content into the jar(kmz)		
+			kml.delete();
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -56,10 +63,11 @@ public class KMZExporter {
 	 */
 	public void addFileToJar(File fileToExport){
 		try {
-			FileOutputStream toBeExported = new FileOutputStream("exportedKMZ.kmz");
+			String filename=fileToExport.getAbsolutePath().replace(".kml",".kmz");
+			FileOutputStream toBeExported = new FileOutputStream(filename);
 			ZipOutputStream zip = new ZipOutputStream(toBeExported);
-
-			addToZipFile(fileToExport.getName(), zip);
+			
+			addToZipFile(fileToExport, zip);
 
 			zip.close();
 			toBeExported.close();
@@ -74,16 +82,15 @@ public class KMZExporter {
 	
 	/**
 	 * Add a file to a ZIP
-	 * @param fileName
+	 * @param kmlFile
 	 * @param zip
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static void addToZipFile(String fileName, ZipOutputStream zip) throws FileNotFoundException, IOException {
+	public static void addToZipFile(File kmlFile, ZipOutputStream zip) throws FileNotFoundException, IOException {
 
-		File file = new File(fileName);
-		FileInputStream fis = new FileInputStream(file);
-		ZipEntry zipEntry = new ZipEntry(fileName);
+		FileInputStream fis = new FileInputStream(kmlFile);
+		ZipEntry zipEntry = new ZipEntry(kmlFile.getName());
 		zip.putNextEntry(zipEntry);
 	
 		byte[] bytes = new byte[1024];
