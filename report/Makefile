@@ -1,16 +1,19 @@
 all: report.pdf stories.pdf meetings.pdf
 
-report.pdf: report.tex iteration1 iteration2
+report.pdf: report.tex iteration1 iteration2 iteration3
 	pdflatex $<
 	# ToC
 	pdflatex $<
 
-.PHONY: iteration1 iteration2 clean pv
+.PHONY: iteration1 iteration2 iteration3 clean pv
 
 iteration1:
 	make -C $@
 
 iteration2:
+	make -C $@
+
+iteration3:
 	make -C $@
 
 stories.pdf: stories.tex
@@ -35,4 +38,5 @@ clean:
 	rm -f report.aux report.log stories.aux stories.log stories.pdf
 	make -C iteration1 clean
 	make -C iteration2 clean
+	make -C iteration3 clean
 	make -C pv clean
