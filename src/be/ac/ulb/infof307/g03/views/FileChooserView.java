@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.views;
 
 import java.awt.Component;
 import java.io.File;
+import java.io.FileFilter;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -39,16 +40,17 @@ public class FileChooserView {
 	    
 	    this.chooserExport = new JFileChooser();
 	    chooserExport.setAcceptAllFileFilterUsed(false);
-	    this.chooserExport.setFileFilter(filterImportObj);
+	    this.chooserExport.setFileFilter(filterImportKmz);
 	    this.chooserExport.setFileFilter(filterImportDae);
 	    this.chooserExport.setFileFilter(filterImport3ds);
-	    this.chooserExport.setFileFilter(filterImportKmz);
+	    this.chooserExport.setFileFilter(filterImportObj);
 	    
 	    this.chooserImport = new JFileChooser();
-	    this.chooserImport.setFileFilter(filterImportObj);
-	    this.chooserImport.setFileFilter(filterImportDae);
-	    this.chooserImport.setFileFilter(filterImport3ds);
-	    this.chooserImport.setFileFilter(filterImportKmz);
+	    this.chooserImport.addChoosableFileFilter(filterImportDae);
+	    this.chooserImport.addChoosableFileFilter(filterImport3ds);
+	    this.chooserImport.addChoosableFileFilter(filterImportKmz);
+	    this.chooserImport.addChoosableFileFilter(filterImportObj);
+	    chooserImport.setAcceptAllFileFilterUsed(true); //needed 
 	}
 	
 	/**
