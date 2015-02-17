@@ -93,18 +93,17 @@ semblait être reconnue à plusieurs endroits comme étant une référence en la
 		l'interaction que les vues et les contrôleurs avaient avec le DAO. On
 		voit très clairement que l'ancien DAO dont la figure prend une page A4
 		en hauteur avait trop de responsabilités et avait des méthodes beaucoup
-		trop spécifiques.\\
+		trop liées aux données qu'il manipulait (\texttt{getRoom()},...).\\
 
 		Nous avons donc changé le GeometryDAO en MasterDAO qui est une Factory de 
-		GeometricDAO génériques. Le MasterDAO entretient donc un GeometricDAO pour chaque
-		type d'objet à insérer dans la base de données. Cette nouvelle architecture 
-		est visible en figure \ref{fig:model:newdaoarchi}. Les nouvelles interactions
-		des vues et des contrôleurs avec les DAO sont représentées en figure
-		\ref{fig:model:newdaointeractions}.\\
+		GeometricDAO génériques (figure \ref{fig:model:newdaoarchi}). Le MasterDAO 
+		crée donc un GeometricDAO pour chaque type d'objet à insérer dans 
+		la base de données. Les nouvelles interactions des vues et des contrôleurs 
+		avec les DAO sont représentées en figure \ref{fig:model:newdaointeractions}.\\
 
-		Le lien du GeometricDAO vers le MasterDAO nous permet de transférer les changements
-		pour un certain objet du modèle vers le MasterDAO, qui est le seul objet
-		que toutes les vues écoutent. On garde donc un seul lien vers le modèle
+		Chaque GeometricDAO retient son MasterDAO pour lui transférer les changements
+		qu'il effectue, ce qui permet au MasterDAO d'ensuite les transférer à tous 
+		ses Listener. On garde donc un seul lien vers le modèle
 		dans les contrôleurs et les vues tout en découplant très fort son accès,
 		et en rendant très facile le rajout de différents types d'objets.\\
 
