@@ -11,6 +11,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import be.ac.ulb.infof307.g03.models.Entity;
+import be.ac.ulb.infof307.g03.models.Project;
 
 
 /**
@@ -19,10 +20,14 @@ import be.ac.ulb.infof307.g03.models.Entity;
  */
 public class KMZExporter {
 	
+	Project project;
+	
 	/**
 	 *  Constructor of KMZExporter
+	 * @param project 
 	 */
-	public KMZExporter(){
+	public KMZExporter(Project project){
+		this.project=project;
 	}
 	
 	/**
@@ -43,8 +48,13 @@ public class KMZExporter {
 			file.println("</Model>");		
 			file.close(); // We wrote the content of the kml file
 			
+			File DAEFile= new File(entity.getName()+".dae");
+			DAEExporter exporter = new DAEExporter(project);
+			exporter.export(DAEFile, entity); // DAEFile got the DAE content<
+			
+			
 			File kml= new File(filename);		
-			this.addFileToJar(kml); // Add the file with the kml content into the jar(kmz)		
+			this.addFileToJar(kml,DAEFile); // Add the file with the kml content into the jar(kmz)	and the dae	
 			kml.delete();
 			
 		} catch (FileNotFoundException e) {
@@ -59,15 +69,17 @@ public class KMZExporter {
 
 	/**
 	 * Add the kml/DAE file to the zip
-	 * @param fileToExport
+	 * @param kmlFile 
+	 * @param daeFile 
 	 */
-	public void addFileToJar(File fileToExport){
+	public void addFileToJar(File kmlFile,File daeFile){
 		try {
-			String filename=fileToExport.getAbsolutePath().replace(".kml",".kmz");
+			String filename=kmlFile.getAbsolutePath().replace(".kml",".kmz");
 			FileOutputStream toBeExported = new FileOutputStream(filename);
 			ZipOutputStream zip = new ZipOutputStream(toBeExported);
 			
-			addToZipFile(fileToExport, zip);
+			addToZipFile(kmlFile, zip);
+			addToZipFile(daeFile, zip);
 
 			zip.close();
 			toBeExported.close();
@@ -87,10 +99,10 @@ public class KMZExporter {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static void addToZipFile(File kmlFile, ZipOutputStream zip) throws FileNotFoundException, IOException {
+	public static void addToZipFile(File file, ZipOutputStream zip) throws FileNotFoundException, IOException {
 
-		FileInputStream fis = new FileInputStream(kmlFile);
-		ZipEntry zipEntry = new ZipEntry(kmlFile.getName());
+		FileInputStream fis = new FileInputStream(file);
+		ZipEntry zipEntry = new ZipEntry(file.getName());
 		zip.putNextEntry(zipEntry);
 	
 		byte[] bytes = new byte[1024];
