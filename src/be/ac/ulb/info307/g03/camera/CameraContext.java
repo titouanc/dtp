@@ -201,9 +201,9 @@ public class CameraContext implements AnalogListener, ActionListener, Observer {
 		} else if (name.equals(BACKWARD)) {
 			this.controller.moveCamera(-value,true);
 		} else if (name.equals(LEFT)) {
-			clickAndGrab(-value, this.camera.getUp());
+			clickAndGrab(-value, Vector3f.UNIT_Z);
 		} else if (name.equals(RIGHT)) {
-			clickAndGrab(value, this.camera.getUp());
+			clickAndGrab(value, Vector3f.UNIT_Z);
 		} else if (name.equals(UP)) {
 			clickAndGrab(value, this.camera.getLeft());
 		} else if (name.equals(DOWN)) {

@@ -19,8 +19,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.jme3.math.Matrix4f;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Transform;
 
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
@@ -29,12 +27,23 @@ import be.ac.ulb.infof307.g03.models.Triangle;
 import be.ac.ulb.infof307.g03.models.Vertex;
 import be.ac.ulb.infof307.g03.utils.Log;
 
+/**
+ * @author julian
+ *
+ */
 public class DAEParser extends Parser {
 	Document document = null;
 	Vector<Vertex> vertices = null;
 	Vector<String> nodesName = new Vector<String>();
 	Vector<Matrix4f> transformationMatrix = new Vector<Matrix4f>();
 	
+	/**
+	 * This parser parses a COLLADA file and constructs a Model with the vertices and the faces found
+	 * @param fileName : the path to the COLLADA source file
+	 * @param dao the DAO factory
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public DAEParser(String fileName, MasterDAO dao) throws IOException, SQLException{
 		super(fileName, dao);
 		try{ 
@@ -54,6 +63,15 @@ public class DAEParser extends Parser {
 		} 
 	}
 	
+	/**
+	 * This parser parses a COLLADA file and constructs a Model with the vertices and the faces found.
+	 * This parser is used for parsing KMZ
+	 * @param fileName : the path to the COLLADA source file
+	 * @param dao the dao factory
+	 * @param stream : the stream created by the kmz parser
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public DAEParser(String fileName, MasterDAO dao, InputStream stream) throws IOException, SQLException{
 		super(fileName, dao);
 		try{ 
@@ -72,8 +90,12 @@ public class DAEParser extends Parser {
 		}
 	}
 
+	/**
+	 * Gets the vertices and adds them to the DAO
+	 * @param data : the data parsed
+	 * @throws SQLException
+	 */
 	public void addVertices(String data) throws SQLException {
-		//Log.debug("addVertices : "+data);
 		String[] d = data.split(" ");
 		GeometricDAO<Vertex> vertexDao = this.daoFactory.getDao(Vertex.class);
 		this.vertices = new Vector<Vertex>();
@@ -85,6 +107,13 @@ public class DAEParser extends Parser {
 		}
 	}
 	
+	/**
+	 * Gets indexes and adds to the DAO 
+	 * @param data : the datas containing the faces
+	 * @param offset : offset needed to find the interesting data package 
+	 * @param period : size of the package
+	 * @throws SQLException
+	 */
 	public void addIndexes(String data, int offset, int period) throws SQLException {
 		//Log.debug("addIndexes : "+data);
 		String[] d = data.split(" ");
@@ -101,7 +130,12 @@ public class DAEParser extends Parser {
 			triangleDao.create(triangle);
 		}
 	}
-	
+	/**
+	 * Parses the nodes looking for the indexes
+	 * @param nodeList : List of XML nodes
+	 * @throws DOMException
+	 * @throws SQLException
+	 */
 	private void parseIndexes(NodeList nodeList) throws DOMException, SQLException {
 		int offset = 0, period = 0;
 		for (int l=0; l<nodeList.getLength(); ++l) {
