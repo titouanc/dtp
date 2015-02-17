@@ -4,7 +4,6 @@
 package be.ac.ulb.infof307.g03.utils.parser;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,14 +12,10 @@ import java.util.Locale;
 import java.util.Scanner;
 
 
-
-import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
-import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Triangle;
 import be.ac.ulb.infof307.g03.models.Vertex;
-import be.ac.ulb.infof307.g03.utils.Log;
 
 
 /**
@@ -31,7 +26,9 @@ public class ObjParser extends Parser {
 	private Scanner scan;
 	
 	/**
-	 * @param filename
+	 * This parser parses an .obj to get the vertices and the faces 
+	 * @param filename : the filename where the .obj is located
+	 * @param dao : the dao factory
 	 * @throws SQLException 
 	 * @throws IOException 
 	 */
@@ -41,6 +38,11 @@ public class ObjParser extends Parser {
 		scan.useLocale(Locale.US);
 	}
 	
+	/**
+	 * Extract the vertex index from the faces (like x/y/z or x//y)
+	 * @param text : the text containing the datas
+	 * @return the integer useful
+	 */
 	public static int extractVertexIndex(String text) {
 		int index = text.indexOf("/");
 		if (index > -1)
