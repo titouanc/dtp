@@ -27,9 +27,9 @@ import be.ac.ulb.infof307.g03.models.MasterDAO;
  */
 public class KmzParser extends Parser {
 	private ZipFile zipFile;
-    private String daeFilename;
-    private Document document = null;
+    private InputStream stream;
     private String path;
+    private MasterDAO master = null;
 
 	/**
 	 * Parse the kmz archive file and calls the kml parser
@@ -38,12 +38,13 @@ public class KmzParser extends Parser {
 	 * @throws IOException 
 	 */
 	public KmzParser(String path, MasterDAO dao) throws IOException, SQLException{ // Open kmz file and take the .kml file to parse it
-		super(path,dao);
+		super();
+		this.master = dao;
+		this.path = path;
 		File file=new File(path);
         try {
 			this.zipFile = new ZipFile(file);
-			daeFilename = this.findDaeFile(); // Here we got the content of the KML File
-
+			this.stream = this.findDaeFile(); // Here we got the content of the KML File
 		} catch (ZipException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -56,7 +57,7 @@ public class KmzParser extends Parser {
      * @return first KML file or null if there is no KML files
 	 * @throws IOException 
      */
-    public String findDaeFile() throws IOException
+    public InputStream findDaeFile() throws IOException
     {
         Enumeration<? extends ZipEntry> zipEntries = this.zipFile.entries();
         while (zipEntries.hasMoreElements())
@@ -64,14 +65,14 @@ public class KmzParser extends Parser {
             ZipEntry entry = zipEntries.nextElement();
             if (entry.getName().toLowerCase().endsWith(".dae"))
             {
-                return entry.getName();
+                return this.zipFile.getInputStream(entry);
             }
         }
         return null;
     }
 
-	@Override
 	public void parse() throws SQLException, IOException {
-		// TODO use DAE Parser with this.daeFilename
+		DAEParser parser = new DAEParser(this.path, this.master, this.stream);
+		parser.parse();
 	}
 }

@@ -3,6 +3,7 @@ package be.ac.ulb.infof307.g03.utils.parser;
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -53,6 +54,24 @@ public class DAEParser extends Parser {
 			System.out.println("Erreur d'entree/sortie"); 
 			System.out.println("lors de l'appel a construteur.parse(xml)"); 
 		} 
+	}
+	
+	public DAEParser(String fileName, MasterDAO dao, InputStream stream) throws IOException, SQLException{
+		super(fileName, dao);
+		try{ 
+			DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance(); 
+			DocumentBuilder constructeur = fabrique.newDocumentBuilder(); 
+			this.document = constructeur.parse(stream);
+		} catch(ParserConfigurationException pce){ 
+			System.out.println("Erreur de configuration du parseur DOM"); 
+			System.out.println("lors de l'appel a fabrique.newDocumentBuilder();"); 
+		} catch(SAXException se){ 
+			System.out.println("Erreur lors du parsing du document"); 
+			System.out.println("lors de l'appel a construteur.parse(xml)"); 
+		} catch(IOException ioe){ 
+			System.out.println("Erreur d'entree/sortie"); 
+			System.out.println("lors de l'appel a construteur.parse(xml)"); 
+		}
 	}
 
 	public void addVertices(String data) throws SQLException {

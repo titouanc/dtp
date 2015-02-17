@@ -36,5 +36,7 @@ public abstract class Parser {
 		this.daoFactory = daoFactory;
 	}
 	
+	public Parser(){}
+
 	public abstract void parse() throws SQLException, IOException;
 }
