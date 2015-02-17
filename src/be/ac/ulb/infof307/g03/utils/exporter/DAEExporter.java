@@ -101,12 +101,6 @@ public class DAEExporter {
 		file.println(		"    <visual_scene id=\"Scene\" name=\"Scene\">"												);
 		for (Primitive primitive : entity.getPrimitives()) {
 			file.println(	"      <node id=\""+primitive.getUID()+"\" name=\""+primitive.getUID()+"\" type=\"NODE\">"		);
-			file.print(	"        <matrix sid=\"transform\">"															);
-			FloatBuffer fb =  primitive.getRotMatrix();
-			for (int i=0; i<fb.capacity(); ++i) {
-				file.print(String.valueOf(fb.get(i))+" ");
-			}
-			file.println(	         "</matrix>"																			);
 			file.println(	"        <instance_geometry url=\"#"+primitive.getUID()+"\">"									);
 			file.println(	"          <bind_material>"																		);
 			file.println(	"            <technique_common/>"																);
