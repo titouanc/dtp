@@ -1,4 +1,4 @@
-package be.ace.ulb.info307.g03.camera;
+package be.ac.ulb.info307.g03.camera;
 
 
 import java.util.Observable;
@@ -201,17 +201,17 @@ public class CameraContext implements AnalogListener, ActionListener, Observer {
 		} else if (name.equals(BACKWARD)) {
 			this.controller.moveCamera(-value,true);
 		} else if (name.equals(LEFT)) {
-			clickAndGrab(-value, this.camera.getUp());
+			clickAndGrab(-value, Vector3f.UNIT_Z);
 		} else if (name.equals(RIGHT)) {
-			clickAndGrab(value, this.camera.getUp());
+			clickAndGrab(value, Vector3f.UNIT_Z);
 		} else if (name.equals(UP)) {
 			clickAndGrab(value, this.camera.getLeft());
 		} else if (name.equals(DOWN)) {
 			clickAndGrab(-value, this.camera.getLeft());
 		} else if (name.equals(ROTATELEFT)) {
-			this.controller.rotateCamera(value,true);
+			this.controller.rotateCamera(value);
 		} else if (name.equals(ROTATERIGHT)) {
-			this.controller.rotateCamera(-value,false);
+			this.controller.rotateCamera(-value);
 		} else if (name.equals(ZOOMIN)) {
 			this.controller.zoomCamera(-value);
 		} else if (name.equals(ZOOMOUT)) {

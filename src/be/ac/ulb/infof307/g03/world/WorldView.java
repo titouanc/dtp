@@ -11,9 +11,9 @@ import java.util.Observer;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 
+import be.ac.ulb.info307.g03.camera.CameraContext;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ace.ulb.info307.g03.camera.CameraContext;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;

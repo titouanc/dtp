@@ -1,4 +1,4 @@
-package be.ace.ulb.info307.g03.camera;
+package be.ac.ulb.info307.g03.camera;
 
 import java.util.Vector;
 
@@ -34,11 +34,7 @@ public class Camera2D extends CameraController {
 		super(newCam);
 	}
     
-	/**
-	 * Method to use to move the camera
-	 * @param value value of movement
-	 * @param sideways direction (up/down or left/right)
-	 */
+    @Override
 	public void moveCamera(float value, boolean sideways) {
 		Vector3f pos = cam.getLocation().clone();
 		Vector3f vel = new Vector3f();
@@ -53,6 +49,7 @@ public class Camera2D extends CameraController {
 		cam.setLocation(pos); 
 	}
 	
+	@Override
 	public void moveCameraByGrab(Vector3f oldPos, Vector3f currPos) {
 		currPos.subtractLocal(oldPos);
 		Vector3f pos = cam.getLocation().clone();
@@ -60,10 +57,7 @@ public class Camera2D extends CameraController {
 		cam.setLocation(pos);
 	}
 	
-	/**
-	 * Place the shapes at the center
-	 * of the user's screen
-	 */
+	@Override
 	public void resetCamera(WorldView wv){
 		Log.debug("Camera2D reset to 2D");
 		Vector<Geometry> shapes = wv.getShapes();
@@ -96,10 +90,7 @@ public class Camera2D extends CameraController {
 	      cam.setFrustum(-1000, 1000, -aspect * this.frustumSize, aspect * this.frustumSize, this.frustumSize, -this.frustumSize);
 	  }
 	
-	/**
-	 * Method used to zoom in or out in 2D mode
-	 * float value : value of zoom
-	 */
+	@Override
 	public void zoomCamera(float value){
 		if(this.frustumSize + 0.3f * value >= this.minimumHeight){
 			
@@ -114,12 +105,8 @@ public class Camera2D extends CameraController {
 		}
     }
 	
-	/**
-	 * Methode used to rotate the camera
-	 * float value : the value of the rotation
-	 * boolean trigoRotate : direction of the rotation
-	 */
-	public void rotateCamera(float value, boolean trigoRotate) {
+	@Override
+	public void rotateCamera(float value) {
 		Matrix3f mat = new Matrix3f();
 		mat.fromAngleNormalAxis(this.rotationSpeed * value, cam.getDirection());
 
@@ -141,7 +128,6 @@ public class Camera2D extends CameraController {
 	@Override
 	public void rotateCameraByGrab(float value, Vector3f axis) {
 		// TODO Auto-generated method stub
-		
 	}
 
 }
