@@ -12,7 +12,9 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
+import com.jme3.math.Matrix3f;
 import com.jme3.math.Matrix4f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -25,6 +27,8 @@ import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Dome;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.util.BufferUtils;
+
+import java.lang.Math;
 
 /**
  * A primitive shape used to build objects
@@ -163,6 +167,12 @@ public class Primitive extends Meshable {
 		this.rotationz = rotation.getZ();
 	}
 	
+	public final void setRotation(Matrix3f rotMat) {
+		this.rotationx = Math.atan2(rotMat.get(2, 1), rotMat.get(2, 2));
+		this.rotationy = Math.atan2(-rotMat.get(2, 0), Math.sqrt(Math.pow(rotMat.get(2,1),2)+Math.pow(rotMat.get(2,2),2)));
+		this.rotationz = Math.atan2(rotMat.get(1,0), rotMat.get(0,0));
+	}
+	
 	/**
 	 * @return A vec3f of primitive scale
 	 */
@@ -274,11 +284,12 @@ public class Primitive extends Meshable {
 	/**
 	 * @return The rotation matrix 
 	 */
-	public FloatBuffer getRotMatrix() {
+	public FloatBuffer getRotMatrix() {		
 		Geometry geometry = this.getGeometry();
 		Matrix4f m = geometry.getWorldMatrix();
 		return m.toFloatBuffer();
 	}
+	
 	
 	/**
 	 * @return the array of normals for this primitive
@@ -297,4 +308,5 @@ public class Primitive extends Meshable {
 	protected String innerToString() {
 		return new String(type+" "+getId());
 	}
+
 }

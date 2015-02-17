@@ -2,6 +2,7 @@ package be.ac.ulb.infof307.g03.utils.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -17,6 +18,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Matrix4f;
+import com.jme3.math.Transform;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
@@ -27,6 +34,8 @@ import be.ac.ulb.infof307.g03.utils.Log;
 public class DAEParser extends Parser {
 	Document document = null;
 	Vector<Vertex> vertices = null;
+	Vector<String> nodesName = new Vector<String>();
+	Vector<Matrix4f> transformationMatrix = new Vector<Matrix4f>();
 	
 	public DAEParser(String fileName, MasterDAO dao) throws IOException, SQLException{
 		super(fileName, dao);
@@ -110,38 +119,72 @@ public class DAEParser extends Parser {
 		}
 	}
 	
+
+	
 	@Override
 	public void parse() throws DOMException, SQLException {
 		Log.debug("Parse");
-		NodeList nodeList = document.getElementsByTagName("geometry");
+		
+		NodeList nodeList = document.getElementsByTagName("node");
 		for (int i=0; i<nodeList.getLength(); ++i) {
-			if (i>0) {
-				this.primitive = new Primitive(this.primitive.getEntity(), Primitive.IMPORTED);
-				this.daoFactory.getDao(Primitive.class).create(this.primitive);
-			}
-						
-			Node verticesNode = ((Element) nodeList.item(i)).getElementsByTagName("vertices").item(0);
-			NodeList inputNodeList = ((Element)verticesNode).getElementsByTagName("input");
-			Vector<String> srcNames = new Vector<String>();
-			for (int k=0; k<inputNodeList.getLength(); ++k ) {
-				srcNames.addElement(inputNodeList.item(k).getAttributes().getNamedItem("source").getTextContent().substring(1));
-			}
-			
-			NodeList srcNodeList = ((Element)nodeList.item(i)).getElementsByTagName("source");
-			for (int k=0; k<srcNodeList.getLength(); ++k) {
-				if (srcNames.contains(srcNodeList.item(k).getAttributes().getNamedItem("id").getTextContent())) {
-					addVertices(((Element) srcNodeList.item(k)).getElementsByTagName("float_array").item(0).getTextContent());
+			NodeList instGeoNodeList = ((Element) nodeList.item(i)).getElementsByTagName("instance_geometry");
+			if (instGeoNodeList.getLength()>0){
+				nodesName.addElement(instGeoNodeList.item(0).getAttributes().getNamedItem("url").getTextContent().substring(1));
+				NodeList matrixNodeList = ((Element) nodeList.item(i)).getElementsByTagName("matrix");
+				if (matrixNodeList.getLength()>0) {
+					String matrixInput = matrixNodeList.item(0).getTextContent();
+					String[] indexList = matrixInput.split(" ");
+					float[] floatList = new float[indexList.length];
+					for (int k=0; k<floatList.length; ++k) {
+						floatList[k] = Float.parseFloat(indexList[k]);
+					}
+					Matrix4f m = new Matrix4f();
+					m.readFloatBuffer(FloatBuffer.wrap(floatList));
+					
+					this.transformationMatrix.addElement(m);
+				} else {
+					this.transformationMatrix.addElement(null);
 				}
 			}
+		}
 			
-			NodeList polyNodeList = ((Element) nodeList.item(i)).getElementsByTagName("polylist");
-			if (polyNodeList.getLength()>0) {
-				parseIndexes(polyNodeList);
-			} else {
-				NodeList trianglesNodeList = ((Element) nodeList.item(i)).getElementsByTagName("triangles");
-				parseIndexes(trianglesNodeList);
+		for (int j=0;j<this.nodesName.size(); ++j) {
+			
+			NodeList geometryNodeList = document.getElementsByTagName("geometry");
+			for (int i=0; i<geometryNodeList.getLength(); ++i) {
+				if (geometryNodeList.item(i).getAttributes().getNamedItem("id").getTextContent().equals(this.nodesName.elementAt(j))) {	
+					if (i>0) {
+						this.primitive = new Primitive(this.primitive.getEntity(), Primitive.IMPORTED);
+						Matrix4f m = this.transformationMatrix.elementAt(j);
+						this.primitive.setScale(m.toScaleVector());
+						this.primitive.setTranslation(m.toTranslationVector());
+						this.primitive.setRotation(m.toRotationMatrix());
+						this.daoFactory.getDao(Primitive.class).create(this.primitive);
+					}
+								
+					Node verticesNode = ((Element) geometryNodeList.item(i)).getElementsByTagName("vertices").item(0);
+					NodeList inputNodeList = ((Element)verticesNode).getElementsByTagName("input");
+					Vector<String> srcNames = new Vector<String>();
+					for (int k=0; k<inputNodeList.getLength(); ++k ) {
+						srcNames.addElement(inputNodeList.item(k).getAttributes().getNamedItem("source").getTextContent().substring(1));
+					}
+					
+					NodeList srcNodeList = ((Element)geometryNodeList.item(i)).getElementsByTagName("source");
+					for (int k=0; k<srcNodeList.getLength(); ++k) {
+						if (srcNames.contains(srcNodeList.item(k).getAttributes().getNamedItem("id").getTextContent())) {
+							addVertices(((Element) srcNodeList.item(k)).getElementsByTagName("float_array").item(0).getTextContent());
+						}
+					}
+					
+					NodeList polyNodeList = ((Element) geometryNodeList.item(i)).getElementsByTagName("polylist");
+					if (polyNodeList.getLength()>0) {
+						parseIndexes(polyNodeList);
+					} else {
+						NodeList trianglesNodeList = ((Element) geometryNodeList.item(i)).getElementsByTagName("triangles");
+						parseIndexes(trianglesNodeList);
+					}
+				}
 			}
-			
 		}
 	}
 	
