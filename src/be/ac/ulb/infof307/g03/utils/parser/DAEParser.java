@@ -18,11 +18,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Matrix4f;
-import com.jme3.math.Transform;
-import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
@@ -75,7 +71,7 @@ public class DAEParser extends Parser {
 	}
 
 	public void addVertices(String data) throws SQLException {
-		Log.debug("addVertices : "+data);
+		//Log.debug("addVertices : "+data);
 		String[] d = data.split(" ");
 		GeometricDAO<Vertex> vertexDao = this.daoFactory.getDao(Vertex.class);
 		this.vertices = new Vector<Vertex>();
@@ -88,7 +84,7 @@ public class DAEParser extends Parser {
 	}
 	
 	public void addIndexes(String data, int offset, int period) throws SQLException {
-		Log.debug("addIndexes : "+data);
+		//Log.debug("addIndexes : "+data);
 		String[] d = data.split(" ");
 		GeometricDAO<Triangle> triangleDao = this.daoFactory.getDao(Triangle.class);
 		for (int i=offset; i<d.length; i+=period*3) {
@@ -133,6 +129,7 @@ public class DAEParser extends Parser {
 				NodeList matrixNodeList = ((Element) nodeList.item(i)).getElementsByTagName("matrix");
 				if (matrixNodeList.getLength()>0) {
 					String matrixInput = matrixNodeList.item(0).getTextContent();
+					Log.debug("Matrix : "+matrixInput);
 					String[] indexList = matrixInput.split(" ");
 					float[] floatList = new float[indexList.length];
 					for (int k=0; k<floatList.length; ++k) {
@@ -155,11 +152,20 @@ public class DAEParser extends Parser {
 				if (geometryNodeList.item(i).getAttributes().getNamedItem("id").getTextContent().equals(this.nodesName.elementAt(j))) {	
 					if (i>0) {
 						this.primitive = new Primitive(this.primitive.getEntity(), Primitive.IMPORTED);
+					} 
+					if (this.transformationMatrix.elementAt(j) != null) {
 						Matrix4f m = this.transformationMatrix.elementAt(j);
+						Log.debug("Scale : "+m.toScaleVector().toString());
 						this.primitive.setScale(m.toScaleVector());
+						Log.debug("Translation : "+m.toTranslationVector().toString());
 						this.primitive.setTranslation(m.toTranslationVector());
+						Log.debug("Rot : "+m.toRotationMatrix().toString());
 						this.primitive.setRotation(m.toRotationMatrix());
+					}
+					if (i>0) {
 						this.daoFactory.getDao(Primitive.class).create(this.primitive);
+					} else {
+						this.daoFactory.getDao(Primitive.class).update(this.primitive);
 					}
 								
 					Node verticesNode = ((Element) geometryNodeList.item(i)).getElementsByTagName("vertices").item(0);

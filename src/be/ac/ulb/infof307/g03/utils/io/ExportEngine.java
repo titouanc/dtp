@@ -19,7 +19,6 @@ public class ExportEngine {
 
 	Project project = null;
 
-
 	/**
 	 * Constructor of the class
 	 * @param project The main project
