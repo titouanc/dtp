@@ -10,8 +10,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import be.ac.ulb.infof307.g03.models.Project;
-
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -41,7 +39,6 @@ public class TextureView extends JPanel implements ItemListener {
 
 	private static final long serialVersionUID = 1L;
 	private TextureController controller;
-	private Project project;
 	
 	private GridBagLayout paneLayout;
 	private ArrayList<String> colorFiles=   new ArrayList <String>();
@@ -90,15 +87,13 @@ public class TextureView extends JPanel implements ItemListener {
 
 	/**
 	 * @param newControler
-	 * @param project
 	 */
-	public TextureView(TextureController newControler, Project project) {
+	public TextureView(TextureController newControler) {
 		//Builds a JPane based on a CardLayout, which is a layout that mages 2+ panes using the same display space
     	super(new CardLayout());  	
     	
     	this.controller = newControler;
-    	this.project = project;
-        
+    	
     	//Uses the GridbagConstraints
     	this.paneLayout = new GridBagLayout();
     	this.setLayout(this.paneLayout);

@@ -175,7 +175,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
 	     * from one floor to another
 	     */
 	    private void addButtonsFloor() {
-	    	Icon upFloorIcon,downFloorIcon,plusFloorIcon;
+	    	Icon plusFloorIcon;
 	    	String classPath = getClass().getResource("ToolsBarView.class").toString();
 	    	String prefix = "";
 

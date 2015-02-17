@@ -25,7 +25,6 @@ public class GUI extends JFrame {
 	private MenuBarController menuBar;
 	private ToolsBarController toolsBar;
 	private MainPaneController workspace;
-	private SplashScreen screen;
 	private Project project;
 	
 	/**
@@ -44,7 +43,7 @@ public class GUI extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		//Sets up the loading screen
-        this.screen = SplashScreen.getSplashScreen();
+        SplashScreen.getSplashScreen();
    
         // Create the menuBar
         this.menuBar = new MenuBarController(aProject, this);
