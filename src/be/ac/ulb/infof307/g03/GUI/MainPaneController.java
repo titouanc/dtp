@@ -68,7 +68,7 @@ public class MainPaneController {
 	 * @param context The jme world context
 	 */
 	public void initView(Project project, JmeCanvasContext context){
-		this.view = new MainPaneView(this, project, context.getCanvas());
+		this.view = new MainPaneView(project, context.getCanvas());
 	}
 	
 	/**

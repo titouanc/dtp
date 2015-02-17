@@ -17,7 +17,7 @@ public class Camera3D extends CameraController {
     private final int minimumHeight = 1;
 	
 	// Speed parameters
-	private float rotationSpeed 	= 1f;
+	private float rotationSpeed 	= 3f;
 	private float moveSpeed 		= 10f;
 	private float zoomSpeed		= 4f;
 	

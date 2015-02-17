@@ -62,14 +62,13 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	 * Run the View
 	 */
 	public void run(){
-		initView(this.project);
+		initView();
 	}
 	
 	/**
-	 * @param aProject
 	 */
-	public void initView(Project aProject){
-		this.view = new TextureView(this,aProject);
+	public void initView(){
+		this.view = new TextureView(this);
 	}
 	
 	/**

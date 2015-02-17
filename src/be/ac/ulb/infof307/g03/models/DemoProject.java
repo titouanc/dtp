@@ -72,24 +72,8 @@ public class DemoProject {
 		daoFactory.getDao(Floor.class).create(firstFloor);
 		daoFactory.getDao(Floor.class).refresh(firstFloor);
     	
-		//createRoom(firstFloor, "Square room 2", a, e, f, d);
 		createRoom(firstFloor, "Irregular room 2", a, d, c, c, g,k, i,j, h);
 		createRoom(firstFloor, "Rectangular room 2 ", f, d, c, l, m);
-		/*
-		Entity entity = new Entity("Cube");
-		dao.create(entity);
-		Primitive prim = new Primitive(entity, Primitive.CUBE);
-		dao.create(prim);
-		
-		dao.refresh(firstFloor);
-		for	(Room room : firstFloor.getRooms()){
-			showRoof(room,dao); // nothing on the top of this room
-		}
-		
-		Item placedObject = new Item(firstFloor, entity);
-		placedObject.setPosition(new Vector3f(-10, -10, 3));
-		dao.create(placedObject);
-		*/
 		
 		/* Create a door object */
 		Entity door = new Entity("Door");
@@ -138,17 +122,9 @@ public class DemoProject {
 	private static Room createGround(Floor floor, String name,String texture ,Point...points) throws SQLException{
 		Room room = new Room(name);
 		
-		//Wall wall = new Wall();
-		//wall.setTexture("BrickFull");
-		//room.setWall(wall);
-		
 		Ground ground = new Ground();
 		ground.setTexture(texture);
 		room.setGround(ground);
-		
-		//Roof roof = new Roof();
-		//roof.setTexture("WoodFull");
-		//room.setRoof(roof);
 		
 		floor.getRooms().add(room);
 		floor.getRooms().refresh(room);
