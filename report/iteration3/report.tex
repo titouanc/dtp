@@ -33,7 +33,7 @@ quelques problèmes qui nous ont été rappelés par la suite par les assistants
 
 	\subsubsection{Meilleure répartition des packages}
 	Il nous a été conseillé de répartir les classes par fonctionnalité plutôt
-	que par \"place\" dans le pattern MVC. Cela a été fait.
+	que par "rôle" dans le pattern MVC. Cela a été fait.
 
 
 \subsection{Suivi du planning}
@@ -51,12 +51,20 @@ pour remettre tout le projet au clair.
 		\paragraph{Rajout des parsers}
 		Nous avons créé un \texttt{ImportEngine} qui va gérer les demandes 
 		d'import de l'utilisateur et la création/gestion des différents parsers 
-		à sa disposition. 
+		à sa disposition. \\
 
 		Chaque parser hérite de la classe \texttt{Parser} qui impose un comportement
 		standard pour chacun d'entre eux. L'\texttt{ImportEngine} travaille dès
 		lors très facilement avec des Parsers qui ont un comportement générique.
-		Il faut donc très peu le modifier si on désire rajouter un Parser.
+		Il faut donc très peu le modifier si on désire rajouter un Parser.\\
+
+		L'architecture du système d'importation est visible à la figure \ref{fig:model:parsersarchi}.
+
+		\begin{figure}
+			\center
+			\includegraphics[width=\textwidth]{iteration3/fig/ParsersArchi.eps}
+			\caption{\label{fig:model:parsersarchi} Architecture du système d'import}
+		\end{figure}
 
 		\paragraph{Rajout des exporters}
 		À l'image de l'\texttt{ImportEngine}, nous avons aussi créé un 
@@ -123,6 +131,21 @@ pour remettre tout le projet au clair.
 	\subsubsection{Changements dans la GUI}
 
 		\paragraph{Refactoring du WorldController}
+		Au terme de la deuxième itération, le WorldController prenait en charge 
+		la gestion du \textit{monde} (bâtiment, etc) et la gestion des objets.
+		Ces 2 comportements n'étant pas liés logiquement et pouvant être séparés,
+		tout en devant garder la même vue (le canevas jMonkey), nous avons séparé
+		le WorldController en plusieurs classes grâce au pattern State.
+		On peut voir un schéma minimaliste de cette nouvelle architecture en 
+		figure \ref{fig:gui:newworldcontroller}.\\
+
+		La WorldView a un contrôleur différent en fonction du mode d'édition
+		dans lequel le programme se situe. 
+		\begin{figure}
+			\center
+			\includegraphics[width=0.5\textwidth]{iteration3/fig/WorldState.eps}
+			\caption{\label{fig:gui:newworldcontroller} Architecture des contrôleurs de la WorldView}
+		\end{figure}
 
 	\subsubsection{Rajouts dans la GUI}
 
