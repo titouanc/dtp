@@ -137,7 +137,7 @@ public abstract class Meshable extends Geometric {
 				if (texture.contains("Colors/")){
 					texture=texture.replace("Colors/", "");					
 				}
-				if (!(texture.contains("Full"))){
+				if (!(texture.contains("Full")) && !(texture.contains("Color"))){
 					texture=texture+"Color";
 				}
 				if (texture.equals("/Textures/Full")){
