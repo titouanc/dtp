@@ -183,19 +183,11 @@ public class ToolsBarView extends JToolBar implements Observer  {
 
 	    	if(classPath.subSequence(0, 3).equals("rsr")){
 	    		prefix = "/";
-	    		upFloorIcon = new ImageIcon(getClass().getResource(prefix + "upFloor.png"));
-	    		downFloorIcon = new ImageIcon(getClass().getResource(prefix + "downFloor.png"));
 	    		plusFloorIcon = new ImageIcon(getClass().getResource(prefix + "plusFloor.png"));
 	    	} else {
 	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/Tools/";
-	    		upFloorIcon = new ImageIcon(prefix + "upFloor.png");
-	    		downFloorIcon = new ImageIcon(prefix + "downFloor.png");
 	    		plusFloorIcon = new ImageIcon(prefix + "plusFloor.png");
 	    	}
-	    	// button floor up
-	        add(createJButton(upFloorIcon, ToolsBarController.FLOOR_UP, "This will increase the floor seen"));
-	        // button floor down
-	        add(createJButton(downFloorIcon, ToolsBarController.FLOOR_DOWN, "This will decrease the floor seen"));
 	        // button new floor
 	        add(createJButton(plusFloorIcon, ToolsBarController.FLOOR_NEW, "Create a new floor."));
 	        // separator

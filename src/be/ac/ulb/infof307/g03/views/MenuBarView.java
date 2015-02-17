@@ -10,7 +10,7 @@ import javax.swing.KeyStroke;
 import be.ac.ulb.infof307.g03.controllers.MenuBarController;
 
 /**
- * @author julianschembri, brochape
+ * @author julianschembri, brochape, walter
  * based on Oracle examples
  * 
  * This class implement the menu bar for the HomePlans GUI

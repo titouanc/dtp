@@ -158,46 +158,6 @@ public class ToolsBarController implements ActionListener, Observer {
 	}
     
     /**
-     * The private method is called when the button floor up
-     * is clicked. It will communicate with the controller
-     */
-    public void onFloorUp(){
-    	String currentFloorUID = project.config("floor.current");
-		try {
-			MasterDAO daoFactory = project.getGeometryDAO();
-			Floor floor = (Floor) daoFactory.getByUID(currentFloorUID);
-			GeometricDAO<Floor> floorDao = daoFactory.getDao(Floor.class);
-	    	Floor nextFloor = floorDao.queryForFirst(floor.getQueryForFollowing(floorDao));
-	    	if (nextFloor != null)
-	    		project.config("floor.current", nextFloor.getUID());
-	    	else
-	    		JOptionPane.showMessageDialog(view, "No floor above");
-		} catch (SQLException ex) {
-			Log.exception(ex);
-		}
-    }
-    
-    /**
-     * The private method is called when the button floor down
-     * is clicked. It will communicate with the controller
-     */
-    public void onFloorDown(){
-    	String currentFloorUID = project.config("floor.current");
-		try {
-			MasterDAO daoFactory = project.getGeometryDAO();
-			Floor floor = (Floor) daoFactory.getByUID(currentFloorUID);
-			GeometricDAO<Floor> floorDao = daoFactory.getDao(Floor.class);
-	    	Floor prevFloor = floorDao.queryForFirst(floor.getQueryForPreceeding(floorDao));
-	    	if (prevFloor != null)
-	    		project.config("floor.current", prevFloor.getUID());
-	    	else
-	    		JOptionPane.showMessageDialog(view, "No floor below");
-		} catch (SQLException ex) {
-			Log.exception(ex);
-		}
-    }
-    
-    /**
      * Callback for "new floor" button
      */
     public void onFloorNew(){
@@ -325,10 +285,6 @@ public class ToolsBarController implements ActionListener, Observer {
 		String cmd = action.getActionCommand();
 		if (cmd.equals(NEWELEMENT)) {
         	onConstruction();
-        } else if (cmd.equals(FLOOR_DOWN)) {
-        	onFloorDown() ;
-        } else if (cmd.equals(FLOOR_UP)) {
-        	onFloorUp();
         } else if (cmd.equals(FLOOR_NEW)){
         	onFloorNew();
         } else if (cmd.equals(VIEW2D)) {
