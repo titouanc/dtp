@@ -86,7 +86,7 @@ public class ImportEngine {
 			parser.parse();
 		} catch (Exception e) {
 			Log.error("Unable to parse %s", filename);
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,"Could not import "+ filename,"Import error",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }
