@@ -17,6 +17,10 @@ import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Meshable;
 import be.ac.ulb.infof307.g03.models.Project;
 
+/**
+ * @author pierre
+ *
+ */
 public abstract class CanvasController {
 	protected WorldView view = null;
 	protected AppSettings appSettings = null;
@@ -25,6 +29,11 @@ public abstract class CanvasController {
     protected Geometric movingGeometric = null;
     protected String mouseMode;
 	
+	/**
+	 * The canvas controller constructor
+	 * @param view
+	 * @param appSettings
+	 */
 	public CanvasController(WorldView view, AppSettings appSettings) {
 		this.view = view;
 		this.project = view.getProject();
@@ -39,6 +48,9 @@ public abstract class CanvasController {
         return this.cameraContext;
     }
     
+    /**
+     * @param cameraContext Set a new camera mode controller
+     */
     public void setCameraContext(CameraContext cameraContext) {
     	this.cameraContext = cameraContext;
     }
@@ -101,8 +113,8 @@ public abstract class CanvasController {
     protected void deselectAll() {
 		try {
 			MasterDAO master = project.getGeometryDAO();
-			for (Class klass : master.areaClasses){
-				GeometricDAO<? extends Area> dao = master.getDao(klass);
+			for (Class className : master.areaClasses){
+				GeometricDAO<? extends Area> dao = master.getDao(className);
 				for (Area area : dao.queryForEq("selected", true)){
 					area.deselect();
 					dao.modify(area);
@@ -127,9 +139,29 @@ public abstract class CanvasController {
 		this.project.getGeometryDAO().notifyObservers();
 	}
 
+	/**
+	 * Called when the mouse move
+	 * @param value the position
+	 */
 	abstract public void mouseMoved(float value);
+	
+	/**
+	 * Called when user click left on the canvas
+	 */
 	abstract public void onLeftClick();
+	
+	/**
+	 * Called when user release the left click on the canvas
+	 */
 	abstract public void onLeftRelease();
+	
+	/**
+	 * Called when user right click on the canvas
+	 */
 	abstract public void onRightClick();
+	
+	/**
+	 * @return The selectionned object
+	 */
 	abstract public Geometric getClickedObject();
 }
