@@ -19,6 +19,13 @@ public abstract class Parser {
 	protected MasterDAO daoFactory;
 	protected Primitive primitive;
 	
+	/**
+	 * Constructor the parsers. Each specific parser extends this class
+	 * @param filename : the filename containing the informations
+	 * @param daoFactory : the DAO factory
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public Parser(String filename, MasterDAO daoFactory) throws IOException, SQLException {
 		File f = new File(filename);
 		assert f.exists() && f.isFile();
@@ -36,7 +43,15 @@ public abstract class Parser {
 		this.daoFactory = daoFactory;
 	}
 	
+	/**
+	 * Void constructor
+	 */
 	public Parser(){}
 
+	/**
+	 * Generic parser 
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public abstract void parse() throws SQLException, IOException;
 }

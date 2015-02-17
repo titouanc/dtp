@@ -41,6 +41,12 @@ public class Vertex extends Ordered {
 		this.z = coords.z;
 	}
 	
+	/**
+	 * @param primitive
+	 * @param x The first coordinate
+	 * @param y The second coordinate
+	 * @param z The third coordinate
+	 */
 	public Vertex(Primitive primitive, float x, float y, float z){
 		super();
 		this.primitive = primitive;

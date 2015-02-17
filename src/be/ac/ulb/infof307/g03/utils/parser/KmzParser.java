@@ -12,13 +12,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 /**
@@ -33,7 +26,8 @@ public class KmzParser extends Parser {
 
 	/**
 	 * Parse the kmz archive file and calls the kml parser
-	 * @param filename
+	 * @param path : the source file with the kmz
+	 * @param dao : the DAO factory
 	 * @throws SQLException 
 	 * @throws IOException 
 	 */
