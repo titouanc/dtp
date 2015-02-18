@@ -9,7 +9,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 
-import be.ac.ulb.info307.g03.camera.CameraContext;
+import be.ac.ulb.infof307.g03.camera.CameraContext;
 import be.ac.ulb.infof307.g03.models.Area;
 import be.ac.ulb.infof307.g03.models.Geometric;
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
