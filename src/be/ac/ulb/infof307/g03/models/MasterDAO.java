@@ -111,7 +111,7 @@ public class MasterDAO extends Observable {
 				throw new SQLException("This class cannot be managed by a MasterDAO !");
 			dao = DaoManager.createDao(this.database, forType);
 			dao.setMaster(this);
-			dao.setObjectCache(true);
+			//dao.setObjectCache(true);
 			this.daos.put(forType, dao);
 		}
 		return dao;
