@@ -271,6 +271,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			} catch (SQLException ex) {
 				Log.exception(ex);
 			}
+			project.config("floor.current", area.getRoom().getFloor().getUID());
 		} else if (element instanceof Room){
 			try {
 				GeometricDAO<Point> pointDao = this.daoFactory.getDao(Point.class);
@@ -281,7 +282,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 					pointDao.modify(p);
 				}
 				this.daoFactory.notifyObservers();
-		
+				project.config("floor.current", room.getFloor().getUID());
 			} catch (SQLException err){
 				Log.exception(err);
 			}
