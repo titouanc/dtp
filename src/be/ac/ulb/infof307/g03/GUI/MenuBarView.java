@@ -53,7 +53,14 @@ public class MenuBarView extends JMenuBar {
         // Separator
         menu.addSeparator();
         // Build Quit action
-        menu.add(createMenuItem("Quit", KeyEvent.VK_Q, MenuBarController.QUIT, "Quit HomePlans application."));    
+        menu.add(createMenuItem("Quit", KeyEvent.VK_Q, MenuBarController.QUIT, "Quit HomePlans application."));
+        
+        
+        // Build the stat menu
+        menu = new JMenu("Window");
+        menu.add(createMenuItem("Statistics", KeyEvent.VK_T, MenuBarController.STATISTICS, "Display the statistics."));
+        menu.getAccessibleContext().setAccessibleDescription("Window. ");
+        this.add(menu);
         
         // Build the Help menu
         menu = new JMenu("Help");

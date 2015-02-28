@@ -64,6 +64,11 @@ public class MenuBarController implements ActionListener {
 	static public final String IMPORT = "import";
 	
 	/**
+	 * Programm statistics
+	 */
+	public static final String STATISTICS = "statistics"; // TODO link to class
+	
+	/**
 	 * Constructor of MenuBarController.
 	 * It creates the view associated with the controller.
 	 * @param project The main project
@@ -204,6 +209,12 @@ public class MenuBarController implements ActionListener {
 		
 	}
 	
+	private void onStatistics() {
+		StatisticsController stat = new StatisticsController(project);
+		stat.run();
+		
+	} 
+	
 	 /**
      * Inherited method from interface ActionListener
      * @param event A mouse click
@@ -231,6 +242,9 @@ public class MenuBarController implements ActionListener {
 			onAbout();
 		}else if(cmd.equals(IMPORT)) {
 			onImport();
+		}else if(cmd.equals(STATISTICS)){
+			onStatistics();
 		}
-	} 
+	}
+
 }
