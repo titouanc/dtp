@@ -78,6 +78,7 @@ public class StatisticsView extends JPanel {
          
         //Display the window.
         frame.pack();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
      
