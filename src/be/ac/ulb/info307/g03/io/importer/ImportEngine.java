@@ -1,4 +1,4 @@
-package be.ac.ulb.infof307.g03.utils.io;
+package be.ac.ulb.info307.g03.io.importer;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -12,11 +12,6 @@ import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.utils.parser.A3DSParser;
-import be.ac.ulb.infof307.g03.utils.parser.DAEParser;
-import be.ac.ulb.infof307.g03.utils.parser.KmzParser;
-import be.ac.ulb.infof307.g03.utils.parser.ObjParser;
-import be.ac.ulb.infof307.g03.utils.parser.Parser;
 
 /**
  * Handle Import

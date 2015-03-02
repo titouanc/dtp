@@ -1,14 +1,10 @@
-package be.ac.ulb.infof307.g03.utils.io;
+package be.ac.ulb.info307.g03.io.exporter;
 
 import java.io.File;
 import java.io.IOException;
 
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.utils.exporter.A3DSExporter;
-import be.ac.ulb.infof307.g03.utils.exporter.DAEExporter;
-import be.ac.ulb.infof307.g03.utils.exporter.KMZExporter;
-import be.ac.ulb.infof307.g03.utils.exporter.OBJExporter;
 
 
 /**

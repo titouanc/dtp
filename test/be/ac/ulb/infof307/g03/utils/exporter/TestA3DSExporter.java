@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.junit.Test;
+
+import be.ac.ulb.info307.g03.io.exporter.A3DSExporter;
+import be.ac.ulb.info307.g03.io.importer.A3DSParser;
 import be.ac.ulb.infof307.g03.models.*;
-import be.ac.ulb.infof307.g03.utils.parser.A3DSParser;
 
 public class TestA3DSExporter extends DAOTest {
 	public static String filename = "TestA3DSExporter.3ds";
