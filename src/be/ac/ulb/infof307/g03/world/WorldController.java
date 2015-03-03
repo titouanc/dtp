@@ -89,16 +89,19 @@ public class WorldController extends CanvasController implements Observer {
 			return;
 		
 		moving.setAbsolutePosition(getXYForMouse(moving.getAbsolutePositionVector().z));
-		
-		try {
-    		MasterDAO dao = this.project.getGeometryDAO();
-    		dao.getDao(Item.class).modify(moving);
-    		if (finalMove) 
-    			movingGeometric = null;
-    		dao.notifyObservers();
-    	} catch (SQLException err){
-    		Log.exception(err);
-    	}
+		if (finalMove) 
+			try {
+	    		MasterDAO dao = this.project.getGeometryDAO();
+	    		dao.getDao(Item.class).modify(moving);
+	    		movingGeometric = null;
+	    		dao.notifyObservers();
+	    	} catch (SQLException err){
+	    		Log.exception(err);
+	    	}
+		else {
+			Change change = new Change(Change.UPDATE, moving);
+			this.view.updateItem(change);
+		}
 	}
     
     /**

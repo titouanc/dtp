@@ -358,6 +358,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	}
 	
 	private void updateFloor(Change change){
+		System.out.println("updateFloor");
 		cleanScene();
 		makeScene();
 	}
@@ -386,25 +387,32 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		synchronized (this.queuedChanges){
 			if (this.queuedChanges.size() > 0){
 				for (Change change : this.queuedChanges){
-					if (change.isDeletion())
-						if (change.getItem() instanceof Primitive) {
-							Meshable meshable = (Meshable) change.getItem();
-							Spatial node = rootNode.getChild(meshable.getUID());
-							if (node != null){
-								node.getParent().detachChild(node);
-							}
-						} else 
-							rootNode.detachChildNamed(change.getItem().getUID());
+					if (change.isDeletion()) {
+						rootNode.detachChildNamed(change.getItem().getUID());
+					} else if (change.getItem() instanceof Item) 
+						updateItem(change);
 					else if (change.getItem() instanceof Meshable)
 						updateMeshable(change);
 					else if (change.getItem() instanceof Point)
 						updatePoint(change);
-					else if (change.getItem() instanceof Floor)
+					else if (change.getItem() instanceof Floor) // when new floor or floor deleted
 						updateFloor(change);
 				}		
 				this.queuedChanges.clear();
 			}
 		}
+	}
+
+	public void updateItem(Change change) {
+		Log.debug("updateItem");
+		Item item = (Item) change.getItem();
+		Spatial node = rootNode.getChild(item.getUID());
+		if (item.isVisible()) 
+			if (node==null) {
+				drawMeshable(rootNode,item);
+			} else {
+				node.setLocalTranslation(item.getAbsolutePositionVector());
+			}
 	}
 
 	/**
