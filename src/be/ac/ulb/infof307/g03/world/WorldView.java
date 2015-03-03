@@ -342,17 +342,11 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		if (node != null){
 			parent = node.getParent();
 			/* 3D object don't exist yet if it is a creation */
-			if (! change.isCreation()) {
-				parent.detachChild(node);
-			}
+			parent.detachChild(node);
 		}
 		
 		/* No need to redraw if it is a deletion */
-		if (! change.isDeletion()){
-			if (change.isCreation() && change.getItem() instanceof Entity && this.isInWorldMode())
-				return;
-			drawMeshable(parent,meshable);
-		}
+		drawMeshable(parent,meshable);
 			
 		/* Conclusion: updates will do both (detach & redraw) */
 	}
@@ -379,6 +373,16 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 	}
 	
+	private void deleteMeshable(Meshable meshable) {
+		if (meshable instanceof Primitive) {
+			Spatial node = rootNode.getChild(meshable.getUID());
+			if (node != null){
+				node.getParent().detachChild(node);
+			}
+		} else 
+			rootNode.detachChildNamed(meshable.getUID());
+	}
+	
 	/**
 	 * Modify scene in render thread, if any Change
 	 */
@@ -387,9 +391,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		synchronized (this.queuedChanges){
 			if (this.queuedChanges.size() > 0){
 				for (Change change : this.queuedChanges){
-					if (change.isDeletion()) {
-						rootNode.detachChildNamed(change.getItem().getUID());
-					} else if (change.getItem() instanceof Item) 
+					if (change.isDeletion()) // handle all deletion
+						deleteMeshable((Meshable) change.getItem());
+					else if (change.getItem() instanceof Item) 
 						updateItem(change);
 					else if (change.getItem() instanceof Meshable)
 						updateMeshable(change);
@@ -404,7 +408,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	}
 
 	public void updateItem(Change change) {
-		Log.debug("updateItem");
 		Item item = (Item) change.getItem();
 		Spatial node = rootNode.getChild(item.getUID());
 		if (item.isVisible()) 
