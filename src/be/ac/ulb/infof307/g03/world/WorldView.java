@@ -117,7 +117,14 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 		Log.debug("DONE");
         final SplashScreen splash = SplashScreen.getSplashScreen();
-        splash.close();
+        try{
+        	splash.close();
+        }
+        catch (NullPointerException ex){
+        	Log.debug("[DEBUG] No splashscreen");
+        }
+        	
+        		
 
 	}
 	

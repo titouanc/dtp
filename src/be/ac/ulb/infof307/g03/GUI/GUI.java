@@ -80,7 +80,6 @@ public class GUI extends JFrame {
 
         while(splashScreen != null){
         	try {
-        		Log.debug("COUCOU");
 	            Thread.sleep(2000);
 	            splashScreen = SplashScreen.getSplashScreen();
 	        }
