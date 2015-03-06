@@ -3,6 +3,7 @@
  */
 package be.ac.ulb.infof307.g03.world;
 
+import java.awt.SplashScreen;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -114,6 +115,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		if(!(classPath.subSequence(0, 3).equals("rsr"))){		
 			this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/assets/", FileLocator.class);
 		}
+		Log.debug("DONE");
+        final SplashScreen splash = SplashScreen.getSplashScreen();
+        splash.close();
 
 	}
 	

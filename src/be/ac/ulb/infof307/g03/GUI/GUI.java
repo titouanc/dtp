@@ -10,10 +10,12 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
 import java.sql.SQLException;
+import java.awt.SplashScreen;
 
 import javax.swing.*;
 
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author julianschembri, pierre
@@ -26,7 +28,7 @@ public class GUI extends JFrame {
 	private ToolsBarController toolsBar;
 	private MainPaneController workspace;
 	private Project project;
-	
+
 	/**
 	 * Constructor of GUI.
 	 * It put every frame needed at the right place on the main frame
@@ -38,6 +40,7 @@ public class GUI extends JFrame {
 		
 		// Create and set up the window
 		super();
+		SplashScreen splashScreen = SplashScreen.getSplashScreen();
 		project = aProject;
 		updateTitle();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,17 +77,17 @@ public class GUI extends JFrame {
         this.setPreferredSize(windowDimension);
         
         this.pack();
-       /* if(this.screen != null){
-	        while(!this.workspace.getWc().getView().isCreated()){
-	        	try {
-		            Thread.sleep(2000);
-		        }
-		        	catch(InterruptedException ex) {
-		        		Log.exception(ex);
-		        }
+
+        while(splashScreen != null){
+        	try {
+        		Log.debug("COUCOU");
+	            Thread.sleep(2000);
+	            splashScreen = SplashScreen.getSplashScreen();
 	        }
-	        this.screen.close();
-        }*/
+	        	catch(InterruptedException ex) {
+	        		Log.exception(ex);
+	        }
+        }
         // Display the window
         this.setVisible(true);
 	}
