@@ -21,6 +21,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Line;
 import com.jme3.system.AppSettings;
 
 /**
@@ -191,15 +192,22 @@ public class WorldController extends CanvasController implements Observer {
     		Vector3f currentPoint= this.inConstruction.get(lastPoint).toVector3f();
     		Vector3f previousPoint = this.inConstruction.get(lastPoint-1).toVector3f();
 
-			Box box = new Box(previousPoint,1.0f,1.0f,1.0f); // previousPoint is the centr
-    		
-            Spatial wall = new Geometry("Box", box );
-            Material mat = view.makeBasicMaterial(new ColorRGBA(6,2,5,0));
+    		Line line = new Line(currentPoint,previousPoint);
+    		line.setLineWidth(3);
+    		Spatial wall = new Geometry("line", line );
+            Material mat = view.makeBasicMaterial(new ColorRGBA(1f, 1f, 0.2f, 0.5f));
+            
+            if (inConstruction.size()>2){
+	    		Line endLine = new Line(currentPoint,inConstruction.get(0).toVector3f());
+	    		endLine.setLineWidth(3);
+	    		Spatial endWall = new Geometry("line", endLine );
+	            Material endMat = view.makeBasicMaterial(new ColorRGBA(1f, 0f, 0f, 1f));
+	            endWall.setMaterial(endMat);
+	    		this.view.getRootNode().attachChild(endWall);
+            }
 
             wall.setMaterial(mat);
-            
     		this.view.getRootNode().attachChild(wall);
-    		
     		
     	}
     }
