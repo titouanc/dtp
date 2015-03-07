@@ -12,8 +12,10 @@ import be.ac.ulb.infof307.g03.models.Wall;
 public class StatisticsController implements Observer {
 	
 	private StatisticsView view;
+	private Project project;
 
 	public StatisticsController(Project project){
+		this.project = project;
 		try {
 			project.getGeometryDAO().addObserver(this);
 		} catch (SQLException e) {
