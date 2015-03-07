@@ -55,7 +55,7 @@ public class SelectionManager {
 			Geometric geom = (Geometric) this.selected;
 			GeometricDAO<? extends Geometric> dao = this.master.getDao(geom.getClass());
 			dao.modify(geom);
-			this.master.notifyAll();
+			this.master.notifyObservers();
 		} catch (SQLException e){
 			e.printStackTrace();
 		}
@@ -77,7 +77,7 @@ public class SelectionManager {
 				Geometric geom = (Geometric) this.selected;
 				GeometricDAO<? extends Geometric> dao = this.master.getDao(geom.getClass());
 				dao.modify(geom);
-				this.master.notifyAll();
+				this.master.notifyObservers();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
