@@ -342,6 +342,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 	}
 	
+	/**
+	 * @param change
+	 */
 	public void updatePrimitive(Change change) {
 		Primitive primitive = (Primitive) change.getItem();
 		if (primitive.isVisible()) 
