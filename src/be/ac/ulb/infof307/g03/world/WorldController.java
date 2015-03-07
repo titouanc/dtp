@@ -109,16 +109,7 @@ public class WorldController extends CanvasController implements Observer {
      * @param area The Area item to select
      */
 	public void selectArea(Area area) {
-		try {
-			Room room = area.getRoom();
-			room.toggleSelect();
-			MasterDAO dao = this.project.getGeometryDAO();
-			
-			dao.getDao(Room.class).modify(room);
-			dao.notifyObservers(room);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		this.project.getSelectionManager().toggleSelect(area.getRoom());
 	}
 	
 	/**
@@ -126,14 +117,7 @@ public class WorldController extends CanvasController implements Observer {
      * @param item The Item to select
      */
 	public void selectItem(Item item) {
-		try {
-			item.toggleSelect();
-			MasterDAO dao = this.project.getGeometryDAO();
-			dao.getDao(Item.class).modify(item);
-			dao.notifyObservers();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		this.project.getSelectionManager().toggleSelect(item);
 	}
 
     /**

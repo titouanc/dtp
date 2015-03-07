@@ -112,15 +112,7 @@ public abstract class CanvasController {
     }
     
     protected void deselectAll() {
-		try {
-			MasterDAO master = project.getGeometryDAO();
-			Geometric selected = (Geometric) this.project.getSelectionManager().selected();
-			GeometricDAO<? extends Geometric> dao = master.getDao(selected.getClass());
-			dao.modify(selected);
-			master.notifyObservers();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}		
+		this.project.getSelectionManager().unselect();	
 	}
     
     /**
