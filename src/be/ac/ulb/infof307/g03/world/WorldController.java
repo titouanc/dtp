@@ -83,7 +83,6 @@ public class WorldController extends CanvasController implements Observer {
     	movingPoint.setX(newPos.x);
     	movingPoint.setY(newPos.y);
     	if (shiftPressed){
-    		System.out.println("SNAP TO GRID WHEN MOVING POINT");
     		movingPoint.setX(Math.round(newPos.x));
         	movingPoint.setY(Math.round(newPos.y));
     	}
@@ -183,7 +182,6 @@ public class WorldController extends CanvasController implements Observer {
     	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
     	Point lastPoint=new Point(newPos.x, newPos.y, 0);
     	if (shiftPressed){
-    		System.out.println("SNAP TO GRID WHEN OONSTRUCRION");
         	lastPoint=new Point(Math.round(newPos.x), Math.round(newPos.y), 0);
     	}
 		lastPoint.select();
@@ -251,6 +249,7 @@ public class WorldController extends CanvasController implements Observer {
     public void finalizeConstruct(){
     	try {
 			MasterDAO daoFactory = this.project.getGeometryDAO();
+	    	GeometricDAO<Point> pointDao = daoFactory.getDao(Point.class);
 			// Minimum 3 points to build a room
 	    	if (this.inConstruction.size() >= 3){
 	    		Room room = new Room();
@@ -277,26 +276,33 @@ public class WorldController extends CanvasController implements Observer {
 	    		room.addPoints(this.inConstruction.get(0)); // close polygon
 	    		daoFactory.getDao(Room.class).modify(room);
 	    		daoFactory.getDao(Floor.class).refresh(this.currentFloor);
+	    		
+		    	for (Point p : this.inConstruction){
+		    		if (p.getBindings().size() == 0){
+		    			pointDao.remove(p);
+		    		} else {
+		    			p.deselect();
+		    			pointDao.modify(p);
+		    		}
+		    	}
+		    		    	
+		    	
+		    	this.view.getRootNode().detachChild(endWall);
 	    	}
-	    	
-	    	GeometricDAO<Point> pointDao = daoFactory.getDao(Point.class);
-	    	for (Point p : this.inConstruction){
-	    		if (p.getBindings().size() == 0){
-	    			pointDao.remove(p);
-	    		} else {
-	    			p.deselect();
+	    	else{
+	    		for (Point p : this.inConstruction){
+		    		p.deselect();
 	    			pointDao.modify(p);
-	    		}
+		    	}
 	    	}
-	    	daoFactory.notifyObservers();
 	    	
-	    	this.inConstruction.clear();
-	    	
-	    	for (Spatial s : this.liveWalls){
-	    		this.view.getRootNode().detachChild(s);
-	    	}
-	    	this.view.getRootNode().detachChild(endWall);
-	    	
+	    daoFactory.notifyObservers();
+	    this.inConstruction.clear();
+	    for (Spatial s : this.liveWalls){
+    		this.view.getRootNode().detachChild(s);
+    	}
+
+
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
