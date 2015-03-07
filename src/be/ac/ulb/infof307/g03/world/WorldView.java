@@ -273,9 +273,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 */
 	private void attachAxes(){
 		Vector3f origin = new Vector3f(0,0,0);
-		Vector3f xAxis = new Vector3f(50,0,0);
-		Vector3f yAxis = new Vector3f(0,50,0);
-		Vector3f zAxis = new Vector3f(0,0,50);
+		Vector3f xAxis = new Vector3f(500,0,0);
+		Vector3f yAxis = new Vector3f(0,500,0);
+		Vector3f zAxis = new Vector3f(0,0,500);
 		
 		attachAxis(origin, xAxis,ColorRGBA.Red);
 		attachAxis(origin, yAxis,ColorRGBA.Green);
