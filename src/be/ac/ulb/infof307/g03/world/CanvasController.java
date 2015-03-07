@@ -16,6 +16,7 @@ import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Meshable;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.models.Selectionable;
 
 /**
  * @author pierre
@@ -113,18 +114,13 @@ public abstract class CanvasController {
     protected void deselectAll() {
 		try {
 			MasterDAO master = project.getGeometryDAO();
-			for (Class className : master.areaClasses){
-				GeometricDAO<? extends Area> dao = master.getDao(className);
-				for (Area area : dao.queryForEq("selected", true)){
-					area.deselect();
-					dao.modify(area);
-				}
-			}
+			Geometric selected = (Geometric) this.project.getSelectionManager().selected();
+			GeometricDAO<? extends Geometric> dao = master.getDao(selected.getClass());
+			dao.modify(selected);
 			master.notifyObservers();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-		
+		}		
 	}
     
     /**

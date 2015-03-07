@@ -110,22 +110,12 @@ public class WorldController extends CanvasController implements Observer {
      */
 	public void selectArea(Area area) {
 		try {
-			area.getRoom().toggleSelect();
+			Room room = area.getRoom();
+			room.toggleSelect();
 			MasterDAO dao = this.project.getGeometryDAO();
 			
-			for (Point p : area.getPoints()){
-				if (area.isSelected())
-					p.select();
-				else
-					p.deselect();
-				dao.getDao(Point.class).modify(p);
-			}
-			dao.getDao(area.getClass()).modify(area);
-			dao.notifyObservers(area);
-			
-			String floorUID = area.getRoom().getFloor().getUID();
-			if (! this.project.config("floor.current").equals(floorUID))
-				this.project.config("floor.current", floorUID);
+			dao.getDao(Room.class).modify(room);
+			dao.notifyObservers(room);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -141,11 +131,6 @@ public class WorldController extends CanvasController implements Observer {
 			MasterDAO dao = this.project.getGeometryDAO();
 			dao.getDao(Item.class).modify(item);
 			dao.notifyObservers();
-			
-			String floorUID = item.getFloor().getUID();
-			if (! currentFloor.getUID().equals(floorUID)){
-				this.project.config("floor.current", floorUID);
-			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

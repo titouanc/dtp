@@ -149,7 +149,6 @@ public class Item extends Meshable implements Selectionable {
 
 	@Override
 	public Spatial toSpatial(Material material) {
-		if (isSelected()) entity.select(); else entity.deselect();
 		Spatial res = entity.toSpatial(material);
 		res.setLocalTranslation(getAbsolutePositionVector());
 		res.setName(getUID());
@@ -158,7 +157,6 @@ public class Item extends Meshable implements Selectionable {
 	
 	@Override
 	public Spatial toSpatial(AssetManager assetManager) {
-		if (isSelected()) entity.select(); else entity.deselect();
 		Spatial res = entity.toSpatial(assetManager);
 		res.setLocalTranslation(getAbsolutePositionVector());
 		res.setName(getUID());
@@ -173,4 +171,9 @@ public class Item extends Meshable implements Selectionable {
 	public void unselect() {this.selected = false;}
 	@Override
 	public void toggleSelect(){this.selected = ! this.selected;}
+
+	@Override
+	protected Boolean drawAsSelected() {
+		return this.isSelected();
+	}
 }

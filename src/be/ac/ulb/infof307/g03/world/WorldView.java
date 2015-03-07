@@ -306,25 +306,24 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			floor = ((WorldController) this.controller).getCurrentFloor();
 		}
 		rootNode.detachChildNamed(point.getUID());
-		if (point.isSelected()){			
-			Sphere mySphere = new Sphere(32,32, 1.0f);
-		    Geometry sphere = new Geometry(point.getUID(), mySphere);
-		    mySphere.setTextureMode(Sphere.TextureMode.Projected);
-		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
-		    sphereMat.setBoolean("UseMaterialColors",true);    
-		    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
-		    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		    sphere.setMaterial(sphereMat);
-		    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
-		    rootNode.attachChild(sphere);
-		    
-		    try {
+		for (Room room: point.getBoundRooms()){
+			if (room.isSelected()){			
+				Sphere mySphere = new Sphere(32,32, 1.0f);
+			    Geometry sphere = new Geometry(point.getUID(), mySphere);
+			    mySphere.setTextureMode(Sphere.TextureMode.Projected);
+			    Material sphereMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
+			    sphereMat.setBoolean("UseMaterialColors",true);    
+			    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
+			    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+			    sphere.setMaterial(sphereMat);
+			    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
+			    rootNode.attachChild(sphere);
+			}
+			try {
 			    GeometricDAO<Room> dao = this.daoFactory.getDao(Room.class);
-				for (Room room : point.getBoundRooms()){
-					dao.refresh(room);
-					for (Meshable meshable : room.getAreas())
-						updateMeshable(Change.update(meshable));
-				}
+				dao.refresh(room);
+				for (Meshable meshable : room.getAreas())
+					updateMeshable(Change.update(meshable));
 			} catch (SQLException ex) {
 				Log.exception(ex);
 			}

@@ -24,12 +24,13 @@ public class Project extends Observable {
 	private Dao<Config, String> config = null;
 	private MasterDAO geo = null;
 	private String filename = null;
+	private SelectionManager sm = null;
 
 	/**
 	 * Create a new Project object (needs to be initialized with load() or create())
 	 */
 	public Project() {
-
+		this.sm = new SelectionManager(this);
 	}
 
 	/**
@@ -162,5 +163,9 @@ public class Project extends Observable {
 		if (this.geo == null)
 			this.geo = new MasterDAO(this.db);
 		return this.geo;
+	}
+	
+	public SelectionManager getSelectionManager(){
+		return this.sm;
 	}
 }
