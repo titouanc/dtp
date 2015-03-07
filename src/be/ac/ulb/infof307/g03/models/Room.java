@@ -13,7 +13,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * @author Titouan Christophe
+ * @author Titouan Christophe, brochape
  * @brief A group is a shape constituted of multiple shapes
  */
 @DatabaseTable(daoClass=GeometricDAO.class)
@@ -61,6 +61,35 @@ public class Room extends Geometric {
 		setName(name);
 		setFloor(floor);
 	}
+	
+	/**
+	 * @return the ground texture
+	 */
+	public String getGroundTexture(){
+		return this.ground.getTexture();
+	}
+	
+	/**
+	 * @return the wall texture
+	 */
+	public String getWallTexture(){
+		return this.wall.getTexture();
+	}
+	
+	/**
+	 * @return the roof texture
+	 */
+	public String getRoofTexture(){
+		return this.roof.getTexture();
+	}
+
+	/**
+	 * @return the volume of the room
+	 */
+	public double getVolume(){
+		return this.ground.getSurface()*this.floor.getHeight();
+	}
+	
 	
 	/**
 	 * Set the floor for this group
@@ -188,4 +217,5 @@ public class Room extends Geometric {
 			res.add(this.roof);
 		return res;
 	}
+	
 }
