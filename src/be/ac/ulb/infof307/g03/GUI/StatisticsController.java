@@ -1,12 +1,10 @@
 package be.ac.ulb.infof307.g03.GUI;
 
 import java.sql.SQLException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import be.ac.ulb.infof307.g03.models.Area;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.Ground;
@@ -15,12 +13,20 @@ import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.models.Room;
 import be.ac.ulb.infof307.g03.models.Wall;
 
+/**
+ * @author pierre
+ *
+ */
 public class StatisticsController implements Observer {
 	
 	private StatisticsView view;
 	private Project project;
 	private MasterDAO master;
 
+	/**
+	 * Constructor of the class StatisticsController
+	 * @param project The main project
+	 */
 	public StatisticsController(Project project){
 		this.project = project;
 		try {
@@ -31,20 +37,31 @@ public class StatisticsController implements Observer {
 		}
 	}
 	
+	/**
+	 *  Run the statistic view
+	 */
 	public void run(){
 		initView();
 	}
 	
-	public void initView(){
+	private void initView(){
 		this.view = new StatisticsView(this);
 		this.updateHTML();
 	}
 	
+	/**
+	 * @return The controller's view
+	 */
 	public StatisticsView getView(){
 		return view;
 		
 	}
 	
+	/**
+	 * Return html formated string of
+	 * general statistics of the project
+	 * @return Html formated string
+	 */
 	public String getGeneralStat(){
 		GeometricDAO<Floor> daoFloor;
 		GeometricDAO<Room> daoRoom;
@@ -94,6 +111,12 @@ public class StatisticsController implements Observer {
 		
 	}
 	
+	/**
+	 * Return html formated string of
+	 *  statistics of the selected room
+	 * @param selectedRoom The room selected for stat
+	 * @return Html fromated string containing stat of the room
+	 */
 	public String getRoomStat(Room selectedRoom){
 		StringBuffer html = new StringBuffer();
 		html.append("<html><head><style type='text/css'>");
@@ -132,6 +155,10 @@ public class StatisticsController implements Observer {
 		
 	}
 	
+	/**
+	 * Update the statistics hmtl according on
+	 * what is selected (room or nothing)
+	 */
 	public void updateHTML(){
 		Room rm = this.master.getRoomSelected();
 		if (rm == null)
