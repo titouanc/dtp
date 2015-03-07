@@ -342,6 +342,18 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 	}
 	
+	public void updatePrimitive(Change change) {
+		Primitive primitive = (Primitive) change.getItem();
+		if (primitive.isVisible()) 
+			if (change.isCreation()) {
+				 drawMeshable(rootNode, primitive);
+			} else {
+				Spatial spatial = rootNode.getChild(primitive.getUID());
+				spatial.setLocalTranslation(primitive.getTranslation());
+			}
+	}
+
+	
 	/**
 	 * Update view when a Meshable has changed
 	 * @param change
@@ -363,7 +375,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	}
 	
 	private void updateFloor(Change change){
-		System.out.println("updateFloor");
 		cleanScene();
 		makeScene();
 	}
@@ -406,6 +417,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 						deleteMeshable((Meshable) change.getItem());
 					else if (change.getItem() instanceof Item) 
 						updateItem(change);
+					else if (change.getItem() instanceof Primitive) 
+						updatePrimitive(change);
 					else if (change.getItem() instanceof Meshable)
 						updateMeshable(change);
 					else if (change.getItem() instanceof Point)
