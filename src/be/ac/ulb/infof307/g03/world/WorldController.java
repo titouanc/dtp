@@ -27,7 +27,6 @@ public class WorldController extends CanvasController implements Observer {
     
 	// Attributes
     private List<Point> inConstruction = new LinkedList <Point>();;	
-    private Floor currentFloor = null;
 
     /**
      * Constructor of WorldController.
@@ -37,12 +36,6 @@ public class WorldController extends CanvasController implements Observer {
      */
     public WorldController(WorldView view, AppSettings settings){
     	super(view, settings);
-    	
-        try {
-			this.currentFloor = (Floor) this.project.getGeometryDAO().getByUID(this.project.config("floor.current"));
-        } catch (SQLException e) {
-			e.printStackTrace();
-		}
         
         view.getProject().addObserver(this);
         view.makeScene();
@@ -53,7 +46,7 @@ public class WorldController extends CanvasController implements Observer {
      * @return The current floor.
      */
     public Floor getCurrentFloor(){
-    	return this.currentFloor;
+    	return this.project.getSelectionManager().currentFloor();
     }
     
     /**
@@ -68,7 +61,7 @@ public class WorldController extends CanvasController implements Observer {
     	if (movingPoint == null)
     		return;
     	
-    	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
+    	Vector3f newPos = getXYForMouse((float) getCurrentFloor().getBaseHeight());
     	movingPoint.setX(newPos.x);
     	movingPoint.setY(newPos.y);
     	
@@ -124,7 +117,7 @@ public class WorldController extends CanvasController implements Observer {
      * Add the points in the Point List when user click to create his wall
      */
     public void construct(){
-    	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
+    	Vector3f newPos = getXYForMouse((float) getCurrentFloor().getBaseHeight());
     	Point lastPoint=new Point(newPos.x, newPos.y, 0);
 		//lastPoint.select();
 		
@@ -155,7 +148,7 @@ public class WorldController extends CanvasController implements Observer {
 			// Minimum 3 points to build a room
 	    	if (this.inConstruction.size() >= 3){
 	    		Room room = new Room();
-	    		room.setFloor(this.currentFloor);
+	    		room.setFloor(getCurrentFloor());
 	    		daoFactory.getDao(Room.class).insert(room);
 	    		daoFactory.getDao(Room.class).refresh(room);
 	    		room.setName(room.getUID());
@@ -177,7 +170,7 @@ public class WorldController extends CanvasController implements Observer {
 	    			room.addPoints(p);
 	    		room.addPoints(this.inConstruction.get(0)); // close polygon
 	    		daoFactory.getDao(Room.class).modify(room);
-	    		daoFactory.getDao(Floor.class).refresh(this.currentFloor);
+	    		daoFactory.getDao(Floor.class).refresh(getCurrentFloor());
 	    	}
 	    	
 	    	GeometricDAO<Point> pointDao = daoFactory.getDao(Point.class);
@@ -231,17 +224,7 @@ public class WorldController extends CanvasController implements Observer {
 	public void update(Observable obs, Object msg) {
     	if (obs instanceof Project) {
     		Config config = (Config) msg;
-    		if (config.getName().equals("floor.current")){
-    			String newUID = config.getValue();
-    			if (this.currentFloor != null && newUID.equals(this.currentFloor.getUID()))
-    				return;
-    			try {
-    				Geometric found = this.project.getGeometryDAO().getByUID(config.getValue());
-    				this.currentFloor = (found != null) ? (Floor) found : null;
-    			} catch (SQLException ex) {
-    				Log.exception(ex);
-    			}
-    		} else if (config.getName().equals("mouse.mode")) {
+    		if (config.getName().equals("mouse.mode")) {
     			this.mouseMode = config.getValue();
     		}
     	}
