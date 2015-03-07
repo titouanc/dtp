@@ -240,4 +240,10 @@ public class ObjectController extends CanvasController implements Observer {
 			}
 		}
 	}
+
+	@Override
+	public void toggleShift() {
+		// TODO Auto-generated method stub
+		
+	}
 }

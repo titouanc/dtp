@@ -37,6 +37,7 @@ public class WorldController extends CanvasController implements Observer {
     private Spatial endWall = null;
     private List<Spatial> liveWalls = new ArrayList<Spatial>() ;
     private Vector3f lastMousePos = null;
+    private boolean shiftPressed = false;
 
     /**
      * Constructor of WorldController.
@@ -78,9 +79,14 @@ public class WorldController extends CanvasController implements Observer {
     		return;
     	
     	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
-    	movingPoint.setX(Math.round(newPos.x));
-    	movingPoint.setY(Math.round(newPos.y));
     	
+    	movingPoint.setX(newPos.x);
+    	movingPoint.setY(newPos.y);
+    	if (shiftPressed){
+    		System.out.println("SNAP TO GRID WHEN MOVING POINT");
+    		movingPoint.setX(Math.round(newPos.x));
+        	movingPoint.setY(Math.round(newPos.y));
+    	}
         try {
         	MasterDAO dao = this.project.getGeometryDAO();
         	dao.getDao(Point.class).modify(movingPoint);
@@ -161,13 +167,25 @@ public class WorldController extends CanvasController implements Observer {
 			e.printStackTrace();
 		}
 	}
+	
+    
+    /**
+     * Toggle selection for Shift
+     */
+    public void toggleShift(){
+    	shiftPressed=!shiftPressed;
+    }
 
     /**
      * Add the points in the Point List when user click to create his wall
      */
     public void construct(){
     	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
-    	Point lastPoint=new Point(Math.round(newPos.x), Math.round(newPos.y), 0);
+    	Point lastPoint=new Point(newPos.x, newPos.y, 0);
+    	if (shiftPressed){
+    		System.out.println("SNAP TO GRID WHEN OONSTRUCRION");
+        	lastPoint=new Point(Math.round(newPos.x), Math.round(newPos.y), 0);
+    	}
 		lastPoint.select();
 				
 		try {
@@ -366,6 +384,7 @@ public class WorldController extends CanvasController implements Observer {
     			dropMovingItem(false);
     	}
     }
+    
 
 	@Override
 	public void onLeftClick() {
@@ -375,7 +394,6 @@ public class WorldController extends CanvasController implements Observer {
 		} else if (this.mouseMode.equals("dragSelect")) {
 			dragSelectHandler();
 		} 
-		
 	}
 
 	@Override
