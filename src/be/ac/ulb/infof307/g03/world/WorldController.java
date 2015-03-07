@@ -3,6 +3,7 @@
  */
 package be.ac.ulb.infof307.g03.world;
 
+import java.awt.Color;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -13,10 +14,15 @@ import java.util.Observer;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 
+import com.jme3.asset.AssetManager;
 import com.jme3.collision.CollisionResults;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 
 /**
@@ -175,6 +181,29 @@ public class WorldController extends CanvasController implements Observer {
         	Log.exception(err);
         }
 		this.inConstruction.add(lastPoint);
+		buildLive();
+    }
+    
+    /**
+     * Build the room in live
+     */
+    public void buildLive(){
+    	if (this.inConstruction.size()>1){ // If more than 2 points, we can mesh them together
+    		int lastPoint=this.inConstruction.size()-1;
+    		Vector3f currentPoint= this.inConstruction.get(lastPoint).toVector3f();
+    		Vector3f previousPoint = this.inConstruction.get(lastPoint-1).toVector3f();
+    		
+    		Box box = new Box(previousPoint.getX(),previousPoint.getY(),previousPoint.getZ());
+    		
+            Spatial wall = new Geometry("Box", box );
+            Material mat = view.makeBasicMaterial(new ColorRGBA(5,5,5,1));
+            
+            wall.setMaterial(mat);
+            wall.setLocalTranslation(currentPoint.getX(),currentPoint.getY(),currentPoint.getZ());  
+            
+    		this.view.getRootNode().attachChild(wall);
+    		
+    	}
     }
     
 	 /**
