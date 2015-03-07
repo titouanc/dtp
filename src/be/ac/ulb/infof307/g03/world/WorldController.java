@@ -190,18 +190,24 @@ public class WorldController extends CanvasController implements Observer {
     public void buildLive(){
     	if (this.inConstruction.size()>1){ // If more than 2 points, we can mesh them together
     		int lastPoint=this.inConstruction.size()-1;
+    		double height = this.currentFloor.getBaseHeight();
+    		
     		Vector3f currentPoint= this.inConstruction.get(lastPoint).toVector3f();
     		Vector3f previousPoint = this.inConstruction.get(lastPoint-1).toVector3f();
+    		
+    		currentPoint.setZ((float) height);
+    		previousPoint.setZ((float) height);
     		
     		Line line = new Line(currentPoint,previousPoint);
     		line.setLineWidth(3);
     		Spatial wall = new Geometry("line", line );
-            Material mat = view.makeBasicMaterial(new ColorRGBA(1f, 1f, 0.2f, 0.5f));     
+            Material mat = view.makeBasicMaterial(new ColorRGBA(1f, 1f, 0.2f, 0.5f));  
+            
             if (inConstruction.size()>2){
             	if (endWall!= null){
             		this.view.getRootNode().detachChild(endWall); // Detach old red line 
             	}
-	    		Line endLine = new Line(currentPoint,inConstruction.get(0).toVector3f());
+	    		Line endLine = new Line(currentPoint,inConstruction.get(0).toVector3f().setZ((float) height));
 	    		endLine.setLineWidth(3);
 	    		Spatial finishedWall = new Geometry("line", endLine );
 	            Material endMat = view.makeBasicMaterial(new ColorRGBA(1f, 0f, 0f, 1f));
