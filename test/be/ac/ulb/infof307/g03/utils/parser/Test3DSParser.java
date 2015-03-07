@@ -10,7 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import be.ac.ulb.info307.g03.io.importer.A3DSParser;
+import be.ac.ulb.infof307.g03.io.importer.A3DSParser;
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Triangle;
