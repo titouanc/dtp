@@ -142,7 +142,7 @@ public class WorldController extends CanvasController implements Observer {
     public void construct(){
     	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
     	Point lastPoint=new Point(newPos.x, newPos.y, 0);
-		lastPoint.select();
+		//lastPoint.select();
 		
 		try {
         	MasterDAO daoFactory = this.project.getGeometryDAO();
@@ -150,7 +150,7 @@ public class WorldController extends CanvasController implements Observer {
         	Point near = pointDao.queryForFirst(lastPoint.getQueryForNear(pointDao, 1));
         	if (near != null){
         		lastPoint = near;
-        		lastPoint.select();
+        		//lastPoint.select();
         		pointDao.modify(lastPoint);
         	} else {
         		pointDao.insert(lastPoint);
@@ -201,7 +201,7 @@ public class WorldController extends CanvasController implements Observer {
 	    		if (p.getBindings().size() == 0){
 	    			pointDao.remove(p);
 	    		} else {
-	    			p.deselect();
+	    			//p.deselect();
 	    			pointDao.modify(p);
 	    		}
 	    	}
