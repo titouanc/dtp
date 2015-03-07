@@ -33,6 +33,7 @@ public class WorldController extends CanvasController implements Observer {
 	// Attributes
     private List<Point> inConstruction = new LinkedList <Point>();;	
     private Floor currentFloor = null;
+    private Spatial endWall = null;
 
     /**
      * Constructor of WorldController.
@@ -191,24 +192,26 @@ public class WorldController extends CanvasController implements Observer {
     		int lastPoint=this.inConstruction.size()-1;
     		Vector3f currentPoint= this.inConstruction.get(lastPoint).toVector3f();
     		Vector3f previousPoint = this.inConstruction.get(lastPoint-1).toVector3f();
-
+    		
     		Line line = new Line(currentPoint,previousPoint);
     		line.setLineWidth(3);
     		Spatial wall = new Geometry("line", line );
-            Material mat = view.makeBasicMaterial(new ColorRGBA(1f, 1f, 0.2f, 0.5f));
-            
+            Material mat = view.makeBasicMaterial(new ColorRGBA(1f, 1f, 0.2f, 0.5f));     
             if (inConstruction.size()>2){
+            	if (endWall!= null){
+            		this.view.getRootNode().detachChild(endWall); // Detach old red line 
+            	}
 	    		Line endLine = new Line(currentPoint,inConstruction.get(0).toVector3f());
 	    		endLine.setLineWidth(3);
-	    		Spatial endWall = new Geometry("line", endLine );
+	    		Spatial finishedWall = new Geometry("line", endLine );
 	            Material endMat = view.makeBasicMaterial(new ColorRGBA(1f, 0f, 0f, 1f));
-	            endWall.setMaterial(endMat);
-	    		this.view.getRootNode().attachChild(endWall);
+	            finishedWall.setMaterial(endMat);
+	    		this.view.getRootNode().attachChild(finishedWall);
+	    		endWall=finishedWall ;
             }
 
             wall.setMaterial(mat);
     		this.view.getRootNode().attachChild(wall);
-    		
     	}
     }
     
