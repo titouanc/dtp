@@ -181,9 +181,13 @@ public class StatisticsController implements Observer {
 		}
 		int numberVertices = 0;
 		int numberFaces = 0;
-		for (Primitive primitive : entity.getPrimitives()) {
-			numberVertices += primitive.getVerticesNumber();
-			numberFaces += primitive.getFaceNumber();
+		if (entity != null){
+			if (entity.getPrimitives() != null){
+				for (Primitive primitive : entity.getPrimitives()) {
+					numberVertices += primitive.getVerticesNumber();
+					numberFaces += primitive.getFaceNumber();
+				}
+			}
 		}
 		StringBuffer html = new StringBuffer();
 		html.append("<html><head><style type='text/css'>");
@@ -198,9 +202,13 @@ public class StatisticsController implements Observer {
 		html.append(numberFaces);
 		html.append("</p>");
 		
-		html.append("<p>Primitive number : ");
-		html.append(entity.getPrimitives().size());
-		html.append("</p>");
+		if (entity != null){
+			if (entity.getPrimitives() != null){
+				html.append("<p>Primitive number : ");
+				html.append(entity.getPrimitives().size());
+				html.append("</p>");
+			}
+		}
 		
 		html.append("</html>");
 		return html.toString();
