@@ -39,6 +39,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
@@ -324,12 +325,13 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			Sphere mySphere = new Sphere(32,32, 1.0f);
 		    Geometry sphere = new Geometry(point.getUID(), mySphere);
 		    mySphere.setTextureMode(Sphere.TextureMode.Projected);
-		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
-		    sphereMat.setBoolean("UseMaterialColors",true);    
-		    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
+		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+		    sphereMat.setColor("Color",new ColorRGBA(0.8f,0.9f,0.2f,0.99f));
 		    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		    sphereMat.getAdditionalRenderState().setDepthTest(false);
 		    sphere.setMaterial(sphereMat);
 		    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
+		    sphere.setCullHint(CullHint.Never);
 		    rootNode.attachChild(sphere);
 		    
 		    try {
