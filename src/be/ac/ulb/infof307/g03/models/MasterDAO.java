@@ -161,4 +161,26 @@ public class MasterDAO extends Observable {
 		setChanged();
 		this.changes.add(chg);
 	}
+	
+	// WARNING : TEMPORARY METHOD
+	public Room getRoomSelected(){
+		GeometricDAO<Room> daoRoom;
+		List<Room> roomList = null;
+		try {
+			daoRoom = this.getDao(Room.class);
+			roomList = daoRoom.queryForAll();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		for (Room rm : roomList){
+			if (rm.isSelected()){
+				return rm
+			}
+			
+		}
+		
+		
+		return null;
+	}
 }

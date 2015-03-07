@@ -87,7 +87,9 @@ public class Room extends Geometric {
 	 * @return the volume of the room
 	 */
 	public double getVolume(){
-		return this.ground.getSurface()*this.floor.getHeight();
+		if (this.ground != null && this.floor != null)
+				return this.ground.getSurface()*this.floor.getHeight();
+		return 0;
 	}
 	
 	

@@ -15,7 +15,7 @@ public class StatisticsView extends JPanel {
 		this.controller = newControler;
 		this.setOpaque(true);
         this.setBackground(Color.WHITE);
-		String labelText ="<html><FONT COLOR=RED>Red</FONT> and <FONT COLOR=BLUE>Blue</FONT> Text</html>";
+		String labelText ="-Empty-";
 		labelHtml = new JLabel();
 		labelHtml.setText(labelText);
 		labelHtml.setVerticalTextPosition(JLabel.TOP);
