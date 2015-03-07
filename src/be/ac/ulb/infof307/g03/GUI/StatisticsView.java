@@ -1,10 +1,12 @@
 package be.ac.ulb.infof307.g03.GUI;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.LayoutFocusTraversalPolicy;
 
 /**
  * @author pierre
@@ -30,9 +32,9 @@ public class StatisticsView extends JPanel {
 		String labelText ="-Empty-";
 		labelHtml = new JLabel();
 		labelHtml.setText(labelText);
-		labelHtml.setVerticalTextPosition(JLabel.TOP);
+		labelHtml.setVerticalTextPosition(JLabel.NORTH);
 		labelHtml.setHorizontalTextPosition(JLabel.CENTER);
-		add(labelHtml);
+		add(labelHtml, BorderLayout.NORTH);
 
 	}
 	
