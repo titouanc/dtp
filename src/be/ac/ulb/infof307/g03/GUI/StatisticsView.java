@@ -1,5 +1,6 @@
 package be.ac.ulb.infof307.g03.GUI;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
@@ -7,22 +8,24 @@ import javax.swing.JPanel;
 
 public class StatisticsView extends JPanel {
 	StatisticsController controller;
-	JLabel label;
+	JLabel labelHtml;
 
 	public StatisticsView(StatisticsController newControler) {
 		super(new GridLayout(1,1));
 		this.controller = newControler;
+		this.setOpaque(true);
+        this.setBackground(Color.WHITE);
 		String labelText ="<html><FONT COLOR=RED>Red</FONT> and <FONT COLOR=BLUE>Blue</FONT> Text</html>";
-		label = new JLabel();
-		label.setText(labelText);
-		label.setVerticalTextPosition(JLabel.BOTTOM);
-		label.setHorizontalTextPosition(JLabel.CENTER);
-		add(label);
+		labelHtml = new JLabel();
+		labelHtml.setText(labelText);
+		labelHtml.setVerticalTextPosition(JLabel.TOP);
+		labelHtml.setHorizontalTextPosition(JLabel.CENTER);
+		add(labelHtml);
 
 	}
 	
 	public void editText(String html){
-		this.label.setText(html);
+		this.labelHtml.setText(html);
 	}
 
 }

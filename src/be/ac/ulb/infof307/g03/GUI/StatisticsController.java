@@ -12,8 +12,10 @@ import be.ac.ulb.infof307.g03.models.Wall;
 public class StatisticsController implements Observer {
 	
 	private StatisticsView view;
+	private Project project;
 
 	public StatisticsController(Project project){
+		this.project = project;
 		try {
 			project.getGeometryDAO().addObserver(this);
 		} catch (SQLException e) {
@@ -29,6 +31,7 @@ public class StatisticsController implements Observer {
 	
 	public void initView(){
 		this.view = new StatisticsView(this);
+		this.updateHTML();
 	}
 	
 	public StatisticsView getView(){
@@ -37,6 +40,19 @@ public class StatisticsController implements Observer {
 	}
 	
 	public void updateHTML(){
+		StringBuffer html = new StringBuffer();
+		html.append("<html><head><style type='text/css'>");
+		html.append("body { background-color: #ffffff; }");
+		html.append("li { font-style: italic; font-size: 30pt; }");
+		html.append("li { font-family: serif; color: #ff5555; }");
+		html.append("ul { border-width: 4px; border-style: solid;border-color: #ff0000; } ");
+	    html.append("ul { background-color: #ffeeee; }");
+		html.append("</style></head>");
+		html.append("<h4>Statistics</h4>");
+		html.append("<p> Bla bla bla bla bla bla </p>");
+		html.append("</html>");
+		
+		view.editText(html.toString());
 		
 	}
 
