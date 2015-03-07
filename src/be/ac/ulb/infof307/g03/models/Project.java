@@ -30,7 +30,7 @@ public class Project extends Observable {
 	 * Create a new Project object (needs to be initialized with load() or create())
 	 */
 	public Project() {
-		this.sm = new SelectionManager(this);
+		
 	}
 
 	/**
@@ -52,6 +52,8 @@ public class Project extends Observable {
 		config("camera.mode", "2D");
 		config("mouse.mode", "dragSelect");
 		config("version.current", "0.3.0");
+		
+		this.sm = new SelectionManager(this);
 	}
 
 	/**
@@ -63,6 +65,7 @@ public class Project extends Observable {
 		this.db = new JdbcConnectionSource("jdbc:sqlite:" + filename);
 		this.config = DaoManager.createDao(this.db, Config.class);
 		this.filename = filename;
+		this.sm = new SelectionManager(this);
 	}
 	
 	/**
