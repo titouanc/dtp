@@ -212,7 +212,6 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		if (element instanceof Floor){
 			Floor current = (Floor) element;
 			this.project.getSelectionManager().setCurrentFloor(current);
-			Log.debug("Current floor %d", this.project.getSelectionManager().currentFloor());
 		} else if (element instanceof Area){
 			Area area = (Area) element;
 			this.project.getSelectionManager().select(area.getRoom());
