@@ -51,7 +51,7 @@ public class TestA3DSExporter extends DAOTest {
 		this.master.getDao(Primitive.class).create(prim);
 		
 		this.master.getDao(Entity.class).refresh(ent);
-		new A3DSExporter().export(new File(filename), ent);
+		new A3DSExporter(new Project()).export(new File(filename), ent);
 		
 		new A3DSParser(filename, this.master).parse();
 		assertEquals(prim.getVertices().length/3, this.master.getDao(Vertex.class).queryForAll().size());
