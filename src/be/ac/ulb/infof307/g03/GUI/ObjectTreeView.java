@@ -130,7 +130,7 @@ public class ObjectTreeView extends JTree implements Observer {
 				sel = area.getRoom().isSelected();
 			} else if (value instanceof Floor){
 				Floor fl = (Floor) value;
-				sel = project.config("floor.current").equals(fl.getUID());
+				sel = project.getSelectionManager().currentFloor() == fl;
 			}
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 			return this;
