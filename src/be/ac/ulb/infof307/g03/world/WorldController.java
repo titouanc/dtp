@@ -236,7 +236,7 @@ public class WorldController extends CanvasController implements Observer {
         
         /* We're not interested if no object */
         if (clicked == null)
-        	this.deselectAll();
+        	this.project.getSelectionManager().unselect();
         
         /* If it is an Area (Wall, Ground, Roof): select it */
         if (clicked instanceof Area)

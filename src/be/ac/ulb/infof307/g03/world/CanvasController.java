@@ -111,10 +111,6 @@ public abstract class CanvasController {
         return new Vector3f(onPlane.getX(),onPlane.getY(), Z);
     }
     
-    protected void deselectAll() {
-		this.project.getSelectionManager().unselect();	
-	}
-    
     /**
 	 * @param clickedItem
 	 * @param newTexture
