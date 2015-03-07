@@ -110,7 +110,7 @@ public class WorldController extends CanvasController implements Observer {
      */
 	public void selectArea(Area area) {
 		try {
-			area.toggleSelect();
+			area.getRoom().toggleSelect();
 			MasterDAO dao = this.project.getGeometryDAO();
 			
 			for (Point p : area.getPoints()){

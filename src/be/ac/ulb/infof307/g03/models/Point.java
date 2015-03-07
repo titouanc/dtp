@@ -27,8 +27,6 @@ public class Point extends Geometric {
 	private double y = 0;
 	@DatabaseField(uniqueCombo = true)
 	private double z = 0;
-	@DatabaseField
-	private Boolean selected = false;
 	@ForeignCollectionField(eager = false, orderColumnName = "room_id")
     private ForeignCollection<Binding> bindings;
 	
@@ -124,36 +122,6 @@ public class Point extends Geometric {
 		this.x = v.getX();
 		this.y = v.getY();
 		this.z = v.getZ();
-	}
-	
-	/**
-	 * Select point
-	 */
-	public void select(){
-		this.selected = true;
-	}
-	
-	/**
-	 * Deselect point
-	 */
-	public void deselect(){
-		this.selected = false;
-	}
-	
-	/**
-	 * Selects point if it is deselected
-	 * Deselects point if it is selected
-	 */
-	public void toggleSelect(){
-		this.selected = !this.selected;
-	}
-	
-	/**
-	 * Is the point selected?
-	 * @return true if this Point is selected
-	 */
-	public Boolean isSelected(){
-		return this.selected;
 	}
 	
 	public String toString(){

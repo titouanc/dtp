@@ -47,4 +47,9 @@ public abstract class Area extends Meshable {
 	public final List<Point> getPoints(){
 		return getRoom().getPoints();
 	}
+	
+	@Override
+	protected Boolean drawAsSelected() {
+		return this.getRoom().isSelected();
+	}
 }
