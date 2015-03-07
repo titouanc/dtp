@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.world;
 
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -14,9 +15,14 @@ import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.jme3.collision.CollisionResults;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Line;
 import com.jme3.system.AppSettings;
 
 /**
@@ -28,6 +34,8 @@ public class WorldController extends CanvasController implements Observer {
 	// Attributes
     private List<Point> inConstruction = new LinkedList <Point>();;	
     private Floor currentFloor = null;
+    private Spatial endWall = null;
+    private List<Spatial> liveWalls = new ArrayList<Spatial>() ;
     private Vector3f lastMousePos = null;
 
     /**
@@ -178,6 +186,45 @@ public class WorldController extends CanvasController implements Observer {
         	Log.exception(err);
         }
 		this.inConstruction.add(lastPoint);
+		buildLive();
+    }
+    
+    /**
+     * Build the room in live
+     */
+    public void buildLive(){
+    	if (this.inConstruction.size()>1){ // If more than 2 points, we can mesh them together
+    		int lastPoint=this.inConstruction.size()-1;
+    		double height = this.currentFloor.getBaseHeight();
+    		
+    		Vector3f currentPoint= this.inConstruction.get(lastPoint).toVector3f();
+    		Vector3f previousPoint = this.inConstruction.get(lastPoint-1).toVector3f();
+    		
+    		currentPoint.setZ((float) height);
+    		previousPoint.setZ((float) height);
+    		
+    		Line line = new Line(currentPoint,previousPoint);
+    		line.setLineWidth(3);
+    		Spatial wall = new Geometry("line", line );
+            Material mat = view.makeBasicMaterial(new ColorRGBA(1f, 1f, 0.2f, 0.8f));  
+            
+            if (inConstruction.size()>2){
+            	if (endWall!= null){
+            		this.view.getRootNode().detachChild(endWall); // Detach old red line 
+            	}
+	    		Line endLine = new Line(currentPoint,inConstruction.get(0).toVector3f().setZ((float) height));
+	    		endLine.setLineWidth(3);
+	    		Spatial finishedWall = new Geometry("line", endLine );
+	            Material endMat = view.makeBasicMaterial(new ColorRGBA(0.8f, 0f, 0f, 0.7f));
+	            finishedWall.setMaterial(endMat);
+	    		this.view.getRootNode().attachChild(finishedWall);
+	    		endWall=finishedWall ;	    		
+            }
+
+            wall.setMaterial(mat);
+            liveWalls.add(wall);
+    		this.view.getRootNode().attachChild(wall);
+    	}
     }
     
 	 /**
@@ -226,6 +273,12 @@ public class WorldController extends CanvasController implements Observer {
 	    	daoFactory.notifyObservers();
 	    	
 	    	this.inConstruction.clear();
+	    	
+	    	for (Spatial s : this.liveWalls){
+	    		this.view.getRootNode().detachChild(s);
+	    	}
+	    	this.view.getRootNode().detachChild(endWall);
+	    	
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
