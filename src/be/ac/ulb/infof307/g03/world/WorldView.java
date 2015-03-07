@@ -188,7 +188,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 * @param color
 	 * @return The material created
 	 */
-	private Material makeBasicMaterial(ColorRGBA color){
+	public Material makeBasicMaterial(ColorRGBA color){
 		Material res = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		res.setColor("Color", color);
@@ -375,6 +375,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	}
 	
 	private void updateFloor(Change change){
+		Log.info("updateFloor");
 		cleanScene();
 		makeScene();
 	}
@@ -431,6 +432,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 	}
 
+	/**
+	 * @param change
+	 */
 	public void updateItem(Change change) {
 		Item item = (Item) change.getItem();
 		Spatial node = rootNode.getChild(item.getUID());
