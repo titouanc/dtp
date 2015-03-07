@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.Ground;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
+import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.models.Room;
 import be.ac.ulb.infof307.g03.models.Wall;
@@ -32,6 +34,7 @@ public class StatisticsController implements Observer {
 		try {
 			this.master = project.getGeometryDAO();
 			this.master.addObserver(this);
+			this.project.addObserver(this);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
@@ -46,7 +49,7 @@ public class StatisticsController implements Observer {
 	
 	private void initView(){
 		this.view = new StatisticsView(this);
-		this.updateHTML();
+		this.updateHTMLWorld();
 	}
 	
 	/**
@@ -156,10 +159,47 @@ public class StatisticsController implements Observer {
 	}
 	
 	/**
-	 * Update the statistics hmtl according on
-	 * what is selected (room or nothing)
+	 * Return html formated string of
+	 *  statistics of the object 
+	 * @return Html fromated string containing stat of the object
 	 */
-	public void updateHTML(){
+	public String getObjectStat() {
+		Entity entity =null;
+		try {
+			entity = (Entity) project.getGeometryDAO().getByUID(project.config("entity.current"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int numberVertices = 0;
+		int numberFaces = 0;
+		for (Primitive primitive : entity.getPrimitives()) {
+			numberVertices += primitive.getVerticesNumber();
+			numberFaces += primitive.getFaceNumber();
+		}
+		StringBuffer html = new StringBuffer();
+		html.append("<html><head><style type='text/css'>");
+	    //html.append("body { background-color: #fffffff; }");
+		html.append("</style></head>");
+		html.append("<h4>Object Statistics</h4>");
+		html.append("<p>Vertices number : ");
+		html.append(numberVertices);
+		html.append("</p>");
+		
+		html.append("<p>Face number : ");
+		html.append(numberFaces);
+		html.append("</p>");
+		html.append("</html>");
+		
+		return html.toString();
+		
+	}
+	
+	/**
+	 * Update the statistics hmtl according on
+	 * what is selected (room or nothing) in world view
+	 */
+	public void updateHTMLWorld(){
 		Room rm = this.master.getRoomSelected();
 		if (rm == null)
 			view.editText(getGeneralStat());
@@ -167,10 +207,28 @@ public class StatisticsController implements Observer {
 			view.editText(getRoomStat(rm));
 		
 	}
+	
+	
+	
+	/**
+	 * Update the statistics hmtl according on
+	 * what is selected (room or nothing) in world view
+	 */
+	public void updateHTMLobject(){
+		view.editText( getObjectStat());
+		
+	}
 
 	@Override
 	public void update(Observable obs, Object obj) {
-		updateHTML();
+		if( obs instanceof Project){
+			if (project.config("edition.mode").equals("object")){
+				updateHTMLobject();
+			}
+		}
+		else{
+			updateHTMLWorld();
+		}
 	}
 	
 	
