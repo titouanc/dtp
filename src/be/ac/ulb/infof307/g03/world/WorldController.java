@@ -203,7 +203,7 @@ public class WorldController extends CanvasController implements Observer {
     		Line line = new Line(currentPoint,previousPoint);
     		line.setLineWidth(3);
     		Spatial wall = new Geometry("line", line );
-            Material mat = view.makeBasicMaterial(new ColorRGBA(1f, 1f, 0.2f, 0.5f));  
+            Material mat = view.makeBasicMaterial(new ColorRGBA(1f, 1f, 0.2f, 0.8f));  
             
             if (inConstruction.size()>2){
             	if (endWall!= null){
@@ -212,7 +212,7 @@ public class WorldController extends CanvasController implements Observer {
 	    		Line endLine = new Line(currentPoint,inConstruction.get(0).toVector3f().setZ((float) height));
 	    		endLine.setLineWidth(3);
 	    		Spatial finishedWall = new Geometry("line", endLine );
-	            Material endMat = view.makeBasicMaterial(new ColorRGBA(1f, 0f, 0f, 1f));
+	            Material endMat = view.makeBasicMaterial(new ColorRGBA(0.8f, 0f, 0f, 0.7f));
 	            finishedWall.setMaterial(endMat);
 	    		this.view.getRootNode().attachChild(finishedWall);
 	    		endWall=finishedWall ;	    		
