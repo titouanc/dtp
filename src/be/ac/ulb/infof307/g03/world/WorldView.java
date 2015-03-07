@@ -322,7 +322,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 		rootNode.detachChildNamed(point.getUID());
 		if (point.isSelected()){			
-			Sphere mySphere = new Sphere(32,32, 1.0f);
+			Sphere mySphere = new Sphere(15,15, 0.7f);
 		    Geometry sphere = new Geometry(point.getUID(), mySphere);
 		    mySphere.setTextureMode(Sphere.TextureMode.Projected);
 		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
@@ -332,6 +332,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		    sphere.setMaterial(sphereMat);
 		    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
 		    sphere.setCullHint(CullHint.Never);
+		    
 		    rootNode.attachChild(sphere);
 		    
 		    try {
