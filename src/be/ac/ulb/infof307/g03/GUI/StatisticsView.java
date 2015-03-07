@@ -7,22 +7,22 @@ import javax.swing.JPanel;
 
 public class StatisticsView extends JPanel {
 	StatisticsController controller;
-	JLabel label;
+	JLabel labelHtml;
 
 	public StatisticsView(StatisticsController newControler) {
 		super(new GridLayout(1,1));
 		this.controller = newControler;
 		String labelText ="<html><FONT COLOR=RED>Red</FONT> and <FONT COLOR=BLUE>Blue</FONT> Text</html>";
-		label = new JLabel();
-		label.setText(labelText);
-		label.setVerticalTextPosition(JLabel.BOTTOM);
-		label.setHorizontalTextPosition(JLabel.CENTER);
-		add(label);
+		labelHtml = new JLabel();
+		labelHtml.setText(labelText);
+		labelHtml.setVerticalTextPosition(JLabel.BOTTOM);
+		labelHtml.setHorizontalTextPosition(JLabel.CENTER);
+		add(labelHtml);
 
 	}
 	
 	public void editText(String html){
-		this.label.setText(html);
+		this.labelHtml.setText(html);
 	}
 
 }

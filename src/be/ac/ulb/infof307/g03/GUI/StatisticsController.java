@@ -31,6 +31,7 @@ public class StatisticsController implements Observer {
 	
 	public void initView(){
 		this.view = new StatisticsView(this);
+		this.updateHTML();
 	}
 	
 	public StatisticsView getView(){
@@ -39,6 +40,18 @@ public class StatisticsController implements Observer {
 	}
 	
 	public void updateHTML(){
+		StringBuffer html = new StringBuffer();
+		html.append("<html><head><style type='text/css'>");
+		html.append("li { font-style: italic; font-size: 30pt; }");
+		html.append("li { font-family: serif; color: #ff5555; }");
+		html.append("ul { border-width: 4px; border-style: solid;border-color: #ff0000; } ");
+	    html.append("ul { background-color: #ffeeee; }");
+		html.append("</style></head>");
+		html.append("<h3>H3 Header</h3>");
+		html.append("<ul><li>large serifed text</li><li>as list items</li>");
+		html.append("</html>");
+		
+		view.editText(html.toString());
 		
 	}
 

@@ -25,9 +25,10 @@ public class MainPaneView extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 
-	private JSplitPane hSplitPane; 
-	private JSplitPane verticalRightSplitPane;
+	private JSplitPane horizontalLeftSplitPane; 
+	private JSplitPane horizontalRightSplitPane; 
 	private JSplitPane verticalLeftSplitPane;
+	private JSplitPane verticalRightSplitPane;
 	private JScrollPane worldListScrollPane;
 	private JScrollPane objectListScrollPane;
 	private JScrollPane textureScrollPane;
@@ -90,26 +91,33 @@ public class MainPaneView extends JPanel {
         
         
 	     // Create split pane
-	     this.verticalRightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,this.worldListScrollPane,this.objectListScrollPane);
-	     // Set up split pane
-	     this.verticalRightSplitPane.setDividerLocation(240);
-	     this.verticalRightSplitPane.setBorder(null);
-        
-        // Create split pane
-		this.hSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.verticalRightSplitPane,canvas);
-		// Set up split pane
-		this.hSplitPane.setDividerLocation(150);
-		this.hSplitPane.setBorder(null);
-        
-        
-	     // Create split pane
-	     this.verticalLeftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,this.textureScrollPane,this.statScrollPane);
+	     this.verticalLeftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,this.worldListScrollPane,this.objectListScrollPane);
 	     // Set up split pane
 	     this.verticalLeftSplitPane.setDividerLocation(240);
 	     this.verticalLeftSplitPane.setBorder(null);
+        
+        // Create split pane
+		this.horizontalLeftSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.verticalLeftSplitPane,canvas);
+		// Set up split pane
+		this.horizontalLeftSplitPane.setDividerLocation(150);
+		this.horizontalLeftSplitPane.setBorder(null);  
+        
+	     // Create split pane
+	     this.verticalRightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,this.textureScrollPane,this.statScrollPane);
+	     // Set up split pane
+	     this.verticalRightSplitPane.setDividerLocation(240);
+	     this.verticalRightSplitPane.setBorder(null);
+	     
+	     // Create split pane
+	     this.horizontalRightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.horizontalLeftSplitPane,this.verticalRightSplitPane);
+	     // Set up split pane
+		this.horizontalRightSplitPane.setDividerLocation(680);
+		this.horizontalRightSplitPane.setBorder(null);  
+	     
+	     
 		// add the splitpane to the inherited Jpanel
-		add(this.hSplitPane);
-		add(this.verticalLeftSplitPane, BorderLayout.EAST);
+		add(this.horizontalRightSplitPane);
+		//add(this.verticalRightSplitPane, BorderLayout.EAST);
 	}
 
 }
