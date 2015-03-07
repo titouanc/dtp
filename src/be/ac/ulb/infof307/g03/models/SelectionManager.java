@@ -49,12 +49,10 @@ public class SelectionManager {
 		if (this.selected instanceof Room){
 			Room room = (Room) this.selected;
 			this.currentFloor = room.getFloor();
-			Log.debug("Selected Room");
 		}
 		else if (this.selected instanceof Item){
 			Item item = (Item) this.selected;
 			this.currentFloor = item.getFloor();
-			Log.debug("Selected Item");
 		}
 
 		// Updating the model with new changes
@@ -62,6 +60,7 @@ public class SelectionManager {
 			Geometric geom = (Geometric) this.selected;
 			GeometricDAO<? extends Geometric> dao = this.master.getDao(geom.getClass());
 			dao.modify(geom);
+			Log.debug("Selected %s", geom.getUID());
 			this.master.notifyObservers();
 		} catch (SQLException e){
 			e.printStackTrace();
@@ -93,6 +92,7 @@ public class SelectionManager {
 				Geometric geom = (Geometric) this.selected;
 				GeometricDAO<? extends Geometric> dao = this.master.getDao(geom.getClass());
 				dao.modify(geom);
+				Log.debug("Unselected %s", geom.getUID());
 				this.master.notifyObservers();
 			} catch (SQLException e) {
 				e.printStackTrace();
