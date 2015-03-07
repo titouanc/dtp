@@ -13,7 +13,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * @brief A point bound to a Room
  */
 @DatabaseTable(daoClass=GeometricDAO.class)
-public class Binding extends Ordered {
+public class Binding extends Indexed {
 	/**
 	 * First point of the line
 	 */

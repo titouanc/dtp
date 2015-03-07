@@ -15,7 +15,7 @@ import com.jme3.math.Vector3f;
  * Points constituting imported objects
  */
 @DatabaseTable(daoClass=GeometricDAO.class)
-public class Vertex extends Ordered {
+public class Vertex extends Indexed {
 	@DatabaseField(foreign = true, uniqueCombo = true, canBeNull = false)
 	private Primitive primitive = null;
 	@DatabaseField(uniqueCombo = true)
