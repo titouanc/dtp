@@ -19,9 +19,11 @@ import be.ac.ulb.infof307.g03.utils.Log;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
@@ -62,6 +64,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	static private final String RIGHT			= "WC_Right";
 	static private final String UP				= "WC_Up";
 	static private final String DOWN			= "WC_Down";
+	static private final String SHIFT			= "Shift";
 	
 	/**
 	 * WorldView's Constructor
@@ -342,6 +345,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 	}
 	
+	/**
+	 * @param change
+	 */
 	public void updatePrimitive(Change change) {
 		Primitive primitive = (Primitive) change.getItem();
 		if (primitive.isVisible()) 
@@ -460,7 +466,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		inputManager.addMapping(LEFT,			new MouseAxisTrigger(0, true));
 		inputManager.addMapping(RIGHT,			new MouseAxisTrigger(0, false));
 		
-		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT);
+        inputManager.addMapping(SHIFT, 			new KeyTrigger(KeyInput.KEY_LSHIFT));
+
+		
+		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT,SHIFT);
 	}
 	
 	/**
@@ -492,7 +501,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 
 	@Override
 	public void onAnalog(String name, float value, float tpf) {
-		if (name.equals(UP) || name.equals(DOWN) || name.equals(LEFT) || name.equals(RIGHT)) {
+		if (name.equals(UP) || name.equals(DOWN) || name.equals(LEFT) || name.equals(RIGHT) ) {
 			this.controller.mouseMoved(value);
 		}
 	}
@@ -515,7 +524,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 				
 			}
 		}
-		
+		else if (name.equals(SHIFT)){ // If Shift is Pressed
+			this.controller.toggleShift();
+		}
 	}
 	
 }
