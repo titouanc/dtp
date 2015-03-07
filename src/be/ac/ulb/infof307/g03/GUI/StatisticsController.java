@@ -75,7 +75,7 @@ public class StatisticsController implements Observer {
 		html.append("<html><head><style type='text/css'>");
 	    //html.append("body { background-color: #fffffff; }");
 		html.append("</style></head>");
-		html.append("<h4>Statistics</h4>");
+		html.append("<h4>General Statistics</h4>");
 		html.append("<p>Surface habitable : ");
 		html.append(habitableSurface);
 		html.append("</p>");
@@ -94,13 +94,38 @@ public class StatisticsController implements Observer {
 		
 	}
 	
-	public String getRoomStat(){
+	public String getRoomStat(Room selectedRoom){
 		StringBuffer html = new StringBuffer();
 		html.append("<html><head><style type='text/css'>");
 	    //html.append("body { background-color: #fffffff; }");
 		html.append("</style></head>");
-		html.append("<h4>Statistics</h4>");
-		html.append("<p> Bla bla bla bla bla bla </p>");
+		html.append("<h4>Statistics : ");
+		html.append(selectedRoom.getName());
+		html.append("</h4>");
+		double habitableSurface = 0;
+		double wallSurface = 0;
+		double roomsVolume = 0;
+		Ground gr = selectedRoom.getGround();
+		if (gr != null)
+			habitableSurface += selectedRoom.getGround().getSurface();
+		Wall wl = selectedRoom.getWall();
+		if (wl != null)
+			wallSurface += selectedRoom.getWall().getSurface();
+		roomsVolume += selectedRoom.getVolume();
+
+		html.append("<html><head><style type='text/css'>");
+	    //html.append("body { background-color: #fffffff; }");
+		html.append("</style></head>");
+		html.append("<p>Surface habitable : ");
+		html.append(habitableSurface);
+		html.append("</p>");
+		html.append("<p>Surface des murs : ");
+		html.append(wallSurface);
+		html.append("</p>");
+		html.append("</p>");
+		html.append("<p>Volume de la pièce : ");
+		html.append(roomsVolume);
+		html.append("</p>");
 		html.append("</html>");
 		
 		return html.toString();
@@ -108,13 +133,17 @@ public class StatisticsController implements Observer {
 	}
 	
 	public void updateHTML(){
-		view.editText(getGeneralStat());
+		Room rm = this.master.getRoomSelected();
+		if (rm == null)
+			view.editText(getGeneralStat());
+		else
+			view.editText(getRoomStat(rm));
 		
 	}
 
 	@Override
 	public void update(Observable obs, Object obj) {
-		System.out.println("____UPDATE____");
+		updateHTML();
 	}
 	
 	
