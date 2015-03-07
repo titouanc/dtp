@@ -60,7 +60,8 @@ public class MainPaneView extends JPanel {
         this.texture = new TextureController(project);
         this.texture.run();
         
-        this.stats = new StatisticsController();
+        this.stats = new StatisticsController(project);
+        this.stats.run();
         
         Dimension listScrollPaneDimension = new Dimension(150,480);
         Dimension textureScrollPaneDimension = new Dimension(150,480);

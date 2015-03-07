@@ -47,4 +47,18 @@ public abstract class Area extends Meshable {
 	public final List<Point> getPoints(){
 		return getRoom().getPoints();
 	}
+	
+	/**
+	 * @return The area surface
+	 */
+	public double getSurface(){
+		double surface = 0;
+		List<Point> points =  getPoints();
+		for (int i = 0; i< points.size(); i+=2){
+			surface += points.get(i+1).getX()*(points.get(i+2).getY()-points.get(i).getY()) + points.get(i+1).getY()*(points.get(i).getX()-points.get(i+2).getX());
+		}
+		surface = surface/2;
+		return surface;
+	}
+	
 }
