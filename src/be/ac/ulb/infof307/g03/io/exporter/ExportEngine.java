@@ -1,4 +1,4 @@
-package be.ac.ulb.info307.g03.io.exporter;
+package be.ac.ulb.infof307.g03.io.exporter;
 
 import java.io.File;
 import java.io.IOException;

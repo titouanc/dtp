@@ -1,7 +1,7 @@
 /**
  * 
  */
-package be.ac.ulb.info307.g03.io.importer;
+package be.ac.ulb.infof307.g03.io.importer;
 
 import java.io.File;
 import java.io.IOException;

@@ -8,8 +8,8 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import be.ac.ulb.info307.g03.io.exporter.A3DSExporter;
-import be.ac.ulb.info307.g03.io.importer.A3DSParser;
+import be.ac.ulb.infof307.g03.io.exporter.A3DSExporter;
+import be.ac.ulb.infof307.g03.io.importer.A3DSParser;
 import be.ac.ulb.infof307.g03.models.*;
 
 public class TestA3DSExporter extends DAOTest {
