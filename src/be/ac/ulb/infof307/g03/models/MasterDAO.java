@@ -164,6 +164,7 @@ public class MasterDAO extends Observable {
 	
 	// WARNING : TEMPORARY METHOD
 	public Room getRoomSelected(){
+		// WARNING : TEMPORARY METHOD
 		GeometricDAO<Room> daoRoom;
 		List<Room> roomList = null;
 		try {
@@ -174,8 +175,8 @@ public class MasterDAO extends Observable {
 			e.printStackTrace();
 		}
 		for (Room rm : roomList){
-			if (rm.isSelected()){
-				return rm
+			if (rm.getGround().isSelected()){
+				return rm;
 			}
 			
 		}
