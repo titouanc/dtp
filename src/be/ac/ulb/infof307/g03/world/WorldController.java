@@ -5,6 +5,7 @@ package be.ac.ulb.infof307.g03.world;
 
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -34,6 +35,7 @@ public class WorldController extends CanvasController implements Observer {
     private List<Point> inConstruction = new LinkedList <Point>();;	
     private Floor currentFloor = null;
     private Spatial endWall = null;
+    private List<Spatial> liveWalls = new ArrayList<Spatial>() ;
 
     /**
      * Constructor of WorldController.
@@ -213,10 +215,11 @@ public class WorldController extends CanvasController implements Observer {
 	            Material endMat = view.makeBasicMaterial(new ColorRGBA(1f, 0f, 0f, 1f));
 	            finishedWall.setMaterial(endMat);
 	    		this.view.getRootNode().attachChild(finishedWall);
-	    		endWall=finishedWall ;
+	    		endWall=finishedWall ;	    		
             }
 
             wall.setMaterial(mat);
+            liveWalls.add(wall);
     		this.view.getRootNode().attachChild(wall);
     	}
     }
@@ -267,6 +270,12 @@ public class WorldController extends CanvasController implements Observer {
 	    	daoFactory.notifyObservers();
 	    	
 	    	this.inConstruction.clear();
+	    	
+	    	for (Spatial s : this.liveWalls){
+	    		this.view.getRootNode().detachChild(s);
+	    	}
+	    	this.view.getRootNode().detachChild(endWall);
+	    	
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
