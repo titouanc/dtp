@@ -32,6 +32,13 @@ public class SelectionManager {
 		}
 	}
 	
+	/**
+	 * - Sets an object as *the* selected object in the entire scene
+	 * - Sets its selected flag to true
+	 * - Saves its changes in the model, notifies observers
+	 * - Sets the current floor to the floor of obj
+	 * @param obj The object to select
+	 */
 	public void select(Selectionable obj){
 		// Unselecting the previously selected object/room
 		this.unselect();
@@ -61,6 +68,10 @@ public class SelectionManager {
 		}
 	}
 	
+	/**
+	 * @param obj The object to select if it wasn't selected, or to unselect if it was selected
+	 * This method writes indirectly to the model and notifies all observers.
+	 */
 	public void toggleSelect(Selectionable obj){
 		if (this.selected == obj){
 			this.unselect();
@@ -70,6 +81,11 @@ public class SelectionManager {
 		}
 	}
 	
+	/**
+	 * - Unselects the currently selected object in the scene
+	 * - Sets its selected flag to false
+	 * - Writes the changes to the model, notifies observers
+	 */
 	public void unselect(){
 		if (this.selected != null) {
 			this.selected.unselect();
@@ -85,14 +101,23 @@ public class SelectionManager {
 		}
 	}
 
+	/**
+	 * @return the currently selected object in the scene
+	 */
 	public Selectionable selected() {
 		return this.selected;
 	}
 	
+	/**
+	 * @return the currently active floor
+	 */
 	public Floor currentFloor(){
 		return this.currentFloor;
 	}
 
+	/**
+	 * @param current the new current floor
+	 */
 	public void setCurrentFloor(Floor current) {
 		this.currentFloor = current;
 	}
