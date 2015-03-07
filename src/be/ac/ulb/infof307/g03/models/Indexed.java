@@ -13,14 +13,14 @@ import com.j256.ormlite.stmt.Where;
  * Base class for indexed items
  * @author Titouan Christophe
  */
-public abstract class Ordered extends Geometric {
+public abstract class Indexed extends Geometric {
 	@DatabaseField(uniqueCombo = true)
 	private int index = 0; 
 	
 	/**
 	 * 
 	 */
-	public Ordered() {
+	public Indexed() {
 	}
 	
 	/**

@@ -273,9 +273,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 */
 	private void attachAxes(){
 		Vector3f origin = new Vector3f(0,0,0);
-		Vector3f xAxis = new Vector3f(50,0,0);
-		Vector3f yAxis = new Vector3f(0,50,0);
-		Vector3f zAxis = new Vector3f(0,0,50);
+		Vector3f xAxis = new Vector3f(500,0,0);
+		Vector3f yAxis = new Vector3f(0,500,0);
+		Vector3f zAxis = new Vector3f(0,0,500);
 		
 		attachAxis(origin, xAxis,ColorRGBA.Red);
 		attachAxis(origin, yAxis,ColorRGBA.Green);
@@ -342,6 +342,18 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 	}
 	
+	public void updatePrimitive(Change change) {
+		Primitive primitive = (Primitive) change.getItem();
+		if (primitive.isVisible()) 
+			if (change.isCreation()) {
+				 drawMeshable(rootNode, primitive);
+			} else {
+				Spatial spatial = rootNode.getChild(primitive.getUID());
+				spatial.setLocalTranslation(primitive.getTranslation());
+			}
+	}
+
+	
 	/**
 	 * Update view when a Meshable has changed
 	 * @param change
@@ -406,6 +418,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 						deleteMeshable((Meshable) change.getItem());
 					else if (change.getItem() instanceof Item) 
 						updateItem(change);
+					else if (change.getItem() instanceof Primitive) 
+						updatePrimitive(change);
 					else if (change.getItem() instanceof Meshable)
 						updateMeshable(change);
 					else if (change.getItem() instanceof Point)

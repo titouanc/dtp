@@ -36,6 +36,7 @@ public class WorldController extends CanvasController implements Observer {
     private Floor currentFloor = null;
     private Spatial endWall = null;
     private List<Spatial> liveWalls = new ArrayList<Spatial>() ;
+    private Vector3f lastMousePos = null;
 
     /**
      * Constructor of WorldController.
@@ -95,8 +96,10 @@ public class WorldController extends CanvasController implements Observer {
 		Item moving = (Item) movingGeometric;
 		if (moving == null)
 			return;
-		
-		moving.setAbsolutePosition(getXYForMouse(moving.getAbsolutePositionVector().z));
+
+		Vector3f delta = getXYForMouse(0).subtract(this.lastMousePos);
+		moving.setAbsolutePosition(moving.getAbsolutePositionVector().add(delta));
+		this.lastMousePos = getXYForMouse(0);
 		if (finalMove) 
 			try {
 	    		MasterDAO dao = this.project.getGeometryDAO();
@@ -346,6 +349,7 @@ public class WorldController extends CanvasController implements Observer {
         else if (clicked instanceof Item){
         	selectItem((Item) clicked);
         	this.movingGeometric = clicked;
+        	this.lastMousePos = getXYForMouse(0);
         }
         
         /* If it is a Point: initiate drag'n drop */

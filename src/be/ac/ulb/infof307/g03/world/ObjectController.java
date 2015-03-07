@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
 
+import be.ac.ulb.infof307.g03.models.Change;
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Geometric;
@@ -88,15 +89,18 @@ public class ObjectController extends CanvasController implements Observer {
     	
     	Vector3f v = getXYForMouse(0);
     	movingPrimitive.setTranslation(new Vector3f(v.x,v.y,movingPrimitive.getTranslation().z));
-
-    	try {
-    		GeometricDAO<Primitive> dao = this.project.getGeometryDAO().getDao(Primitive.class);
-    		dao.modify(movingPrimitive);
-    		if (finalMove) 
+    	if (finalMove)
+    		try {
+    			GeometricDAO<Primitive> dao = this.project.getGeometryDAO().getDao(Primitive.class);
+    			dao.modify(movingPrimitive);
     			movingGeometric = null;
-    		this.project.getGeometryDAO().notifyObservers();
-    	} catch (SQLException err){
-    		Log.exception(err);
+    			this.project.getGeometryDAO().notifyObservers();
+    		} catch (SQLException err){
+    			Log.exception(err);
+    		}
+    	else {
+    		Change change = new Change(Change.UPDATE, movingPrimitive);
+    		view.updatePrimitive(change);
     	}
     }
 	
