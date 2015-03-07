@@ -46,17 +46,27 @@ public class SelectionManager {
 			Item item = (Item) this.selected;
 			this.currentFloor = item.getFloor();
 		}
-		
-	}
-	
-	public void unselectAll(){
-		this.selected.unselect();
-		this.selected = null;
+		try{
+			Geometric geom = (Geometric) this.selected;
+			GeometricDAO<? extends Geometric> dao = this.master.getDao(geom.getClass());
+			dao.modify(geom);
+			this.master.notifyAll();
+		} catch (SQLException e){
+			e.printStackTrace();
+		}
 	}
 	
 	public void unselect(){
 		if (this.selected != null) {
 			this.selected.unselect();
+			try {
+				Geometric geom = (Geometric) this.selected;
+				GeometricDAO<? extends Geometric> dao = this.master.getDao(geom.getClass());
+				dao.modify(geom);
+				this.master.notifyAll();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			this.selected = null;
 		}
 	}
@@ -67,5 +77,9 @@ public class SelectionManager {
 	
 	public Floor currentFloor(){
 		return this.currentFloor;
+	}
+
+	public void setCurrentFloor(Floor current) {
+		this.currentFloor = current;
 	}
 }
