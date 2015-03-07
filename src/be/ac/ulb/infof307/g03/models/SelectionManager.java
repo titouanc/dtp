@@ -6,6 +6,7 @@ package be.ac.ulb.infof307.g03.models;
 import java.sql.SQLException;
 
 import be.ac.ulb.infof307.g03.models.Selectionable;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author fhennecker
@@ -41,11 +42,15 @@ public class SelectionManager {
 		if (this.selected instanceof Room){
 			Room room = (Room) this.selected;
 			this.currentFloor = room.getFloor();
+			Log.debug("Selected Room");
 		}
 		else if (this.selected instanceof Item){
 			Item item = (Item) this.selected;
 			this.currentFloor = item.getFloor();
+			Log.debug("Selected Item");
 		}
+
+		// Updating the model with new changes
 		try{
 			Geometric geom = (Geometric) this.selected;
 			GeometricDAO<? extends Geometric> dao = this.master.getDao(geom.getClass());
@@ -53,6 +58,15 @@ public class SelectionManager {
 			this.master.notifyAll();
 		} catch (SQLException e){
 			e.printStackTrace();
+		}
+	}
+	
+	public void toggleSelect(Selectionable obj){
+		if (this.selected == obj){
+			this.unselect();
+		}
+		else{
+			this.select(obj);
 		}
 	}
 	
