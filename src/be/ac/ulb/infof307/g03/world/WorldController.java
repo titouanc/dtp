@@ -3,7 +3,6 @@
  */
 package be.ac.ulb.infof307.g03.world;
 
-import java.awt.Color;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -14,7 +13,6 @@ import java.util.Observer;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 
-import com.jme3.asset.AssetManager;
 import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -192,16 +190,16 @@ public class WorldController extends CanvasController implements Observer {
     		int lastPoint=this.inConstruction.size()-1;
     		Vector3f currentPoint= this.inConstruction.get(lastPoint).toVector3f();
     		Vector3f previousPoint = this.inConstruction.get(lastPoint-1).toVector3f();
-    		
-    		Box box = new Box(previousPoint.getX(),previousPoint.getY(),previousPoint.getZ());
+
+			Box box = new Box(previousPoint,1.0f,1.0f,1.0f); // previousPoint is the centr
     		
             Spatial wall = new Geometry("Box", box );
-            Material mat = view.makeBasicMaterial(new ColorRGBA(5,5,5,1));
-            
+            Material mat = view.makeBasicMaterial(new ColorRGBA(6,2,5,0));
+
             wall.setMaterial(mat);
-            wall.setLocalTranslation(currentPoint.getX(),currentPoint.getY(),currentPoint.getZ());  
             
     		this.view.getRootNode().attachChild(wall);
+    		
     		
     	}
     }
