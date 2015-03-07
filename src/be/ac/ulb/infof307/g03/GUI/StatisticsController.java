@@ -9,6 +9,7 @@ import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.Ground;
+import be.ac.ulb.infof307.g03.models.Item;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
@@ -68,13 +69,17 @@ public class StatisticsController implements Observer {
 	public String getGeneralStat(){
 		GeometricDAO<Floor> daoFloor;
 		GeometricDAO<Room> daoRoom;
+		GeometricDAO<Item> daoItem;
 		List<Floor> floorList = null;
 		List<Room> roomList = null;
+		List<Item> itemList = null;
 		try {
 			daoFloor = this.master.getDao(Floor.class);
 			floorList = daoFloor.queryForAll();
 			daoRoom = this.master.getDao(Room.class);
 			roomList = daoRoom.queryForAll();
+			daoItem = this.master.getDao(Item.class);
+			itemList = daoItem.queryForAll();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -96,16 +101,19 @@ public class StatisticsController implements Observer {
 	    //html.append("body { background-color: #fffffff; }");
 		html.append("</style></head>");
 		html.append("<h4>General Statistics</h4>");
-		html.append("<p>Surface habitable : ");
+		html.append("<p>Number of object : ");
+		html.append(itemList.size());
+		html.append("</p>");
+		html.append("<p>Living surface : ");
 		html.append(habitableSurface);
 		html.append("</p>");
-		html.append("<p>Surface des murs : ");
+		html.append("<p>Walls surface : ");
 		html.append(wallSurface);
 		html.append("</p>");
-		html.append("<p>Nombre d'étage : ");
+		html.append("<p>Floors number : ");
 		html.append(floorList.size());
 		html.append("</p>");
-		html.append("<p>Volume total : ");
+		html.append("<p>Total volume : ");
 		html.append(roomsVolume);
 		html.append("</p>");
 		html.append("</html>");
@@ -142,14 +150,14 @@ public class StatisticsController implements Observer {
 		html.append("<html><head><style type='text/css'>");
 	    //html.append("body { background-color: #fffffff; }");
 		html.append("</style></head>");
-		html.append("<p>Surface habitable : ");
+		html.append("<p>Living surface : ");
 		html.append(habitableSurface);
 		html.append("</p>");
-		html.append("<p>Surface des murs : ");
+		html.append("<p>Walls surface : ");
 		html.append(wallSurface);
 		html.append("</p>");
 		html.append("</p>");
-		html.append("<p>Volume de la pièce : ");
+		html.append("<p>Room volume : ");
 		html.append(roomsVolume);
 		html.append("</p>");
 		html.append("</html>");
@@ -189,8 +197,12 @@ public class StatisticsController implements Observer {
 		html.append("<p>Face number : ");
 		html.append(numberFaces);
 		html.append("</p>");
-		html.append("</html>");
 		
+		html.append("<p>Primitive number : ");
+		html.append(entity.getPrimitives().size());
+		html.append("</p>");
+		
+		html.append("</html>");
 		return html.toString();
 		
 	}
