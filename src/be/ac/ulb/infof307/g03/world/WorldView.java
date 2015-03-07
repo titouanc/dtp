@@ -19,9 +19,11 @@ import be.ac.ulb.infof307.g03.utils.Log;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
@@ -37,6 +39,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
@@ -62,6 +65,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	static private final String RIGHT			= "WC_Right";
 	static private final String UP				= "WC_Up";
 	static private final String DOWN			= "WC_Down";
+	static private final String SHIFT			= "Shift";
 	
 	/**
 	 * WorldView's Constructor
@@ -321,12 +325,13 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			Sphere mySphere = new Sphere(32,32, 1.0f);
 		    Geometry sphere = new Geometry(point.getUID(), mySphere);
 		    mySphere.setTextureMode(Sphere.TextureMode.Projected);
-		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
-		    sphereMat.setBoolean("UseMaterialColors",true);    
-		    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
+		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+		    sphereMat.setColor("Color",new ColorRGBA(0.8f,0.9f,0.2f,0.99f));
 		    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		    sphereMat.getAdditionalRenderState().setDepthTest(false);
 		    sphere.setMaterial(sphereMat);
 		    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
+		    sphere.setCullHint(CullHint.Never);
 		    rootNode.attachChild(sphere);
 		    
 		    try {
@@ -342,6 +347,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 	}
 	
+	/**
+	 * @param change
+	 */
 	public void updatePrimitive(Change change) {
 		Primitive primitive = (Primitive) change.getItem();
 		if (primitive.isVisible()) 
@@ -460,7 +468,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		inputManager.addMapping(LEFT,			new MouseAxisTrigger(0, true));
 		inputManager.addMapping(RIGHT,			new MouseAxisTrigger(0, false));
 		
-		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT);
+        inputManager.addMapping(SHIFT, 			new KeyTrigger(KeyInput.KEY_LSHIFT));
+
+		
+		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT,SHIFT);
 	}
 	
 	/**
@@ -492,7 +503,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 
 	@Override
 	public void onAnalog(String name, float value, float tpf) {
-		if (name.equals(UP) || name.equals(DOWN) || name.equals(LEFT) || name.equals(RIGHT)) {
+		if (name.equals(UP) || name.equals(DOWN) || name.equals(LEFT) || name.equals(RIGHT) ) {
 			this.controller.mouseMoved(value);
 		}
 	}
@@ -515,7 +526,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 				
 			}
 		}
-		
+		else if (name.equals(SHIFT)){ // If Shift is Pressed
+			this.controller.toggleShift();
+		}
 	}
 	
 }
