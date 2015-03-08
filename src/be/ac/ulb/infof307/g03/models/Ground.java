@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.jdelaunay.delaunay.ConstrainedMesh;
 import org.jdelaunay.delaunay.error.DelaunayError;
+import org.jdelaunay.delaunay.geometries.DEdge;
 import org.jdelaunay.delaunay.geometries.DPoint;
 import org.jdelaunay.delaunay.geometries.DTriangle;
 
@@ -77,26 +78,39 @@ public class Ground extends Area {
 			throw new IllegalArgumentException();
 		}
 		
-		/* 1) Build an array of all points */
-		for (int i=0; i<shape_n_points; i++){
-			Point currentPoint = all_points.get(i);
-			try {
-				delaunay.addPoint(new DPoint(currentPoint.getX(),currentPoint.getY(),baseHeight));
+		/* 1) Add the constraints edges for the dalaunay algorithm */
+		for(int i=0;i<all_points.size()-1;++i){
+			Point orig_point = null;
+			Point dest_point = null;
+			DPoint orig = null;
+			DPoint dest = null;
+			try{
+				orig_point = all_points.get(i);
+				dest_point = all_points.get(i+1);
+				orig = new DPoint((float)orig_point.getX(),(float)orig_point.getY(),baseHeight);
+				dest = new DPoint((float)dest_point.getX(),(float)dest_point.getY(),baseHeight);
 			} catch (DelaunayError e) {
-				Log.error("Could not add point to Delaunay's algorithm");
 				e.printStackTrace();
 			}
+			try {
+				DEdge edge = new DEdge(orig,dest);
+				delaunay.addConstraintEdge(edge);
+			} catch (DelaunayError e) {
+				e.printStackTrace();
+			} 
 		}
 		
+
 		/* 2) Polygon triangulation to make a surface using Delaunay's algorithm*/
 		try {
-			delaunay.processDelaunay();
+			delaunay.forceConstraintIntegrity();
+			delaunay.processDelaunay();//Error here for concave polygons : too many triangles computed despite the constraint edges
 		} catch (DelaunayError e) {
 			Log.error("Could not process Delaunay's algorithm");
 			e.printStackTrace();
 		}
-		Log.debug("Delaunay");
-		System.out.println(delaunay.getTriangleList());
+		
+		/*3) Set up the computed data for jmonkey*/
 		List<DTriangle> triangleList = delaunay.getTriangleList();
 		List<DPoint> pointsList= delaunay.getPoints();
 		Vector3f vertices[] = new Vector3f[shape_n_points];
@@ -110,8 +124,8 @@ public class Ground extends Area {
 		
 		for(int i=0;i<triangleList.size();++i){
 			edges[3 * i] = pointsList.indexOf(triangleList.get(i).getPoint(0));
-			edges[3 * i + 1] = pointsList.indexOf(triangleList.get(i).getPoint(2));
-			edges[3 * i + 2] = pointsList.indexOf(triangleList.get(i).getPoint(1));
+			edges[3 * i + 1] = pointsList.indexOf(triangleList.get(i).getPoint(1));
+			edges[3 * i + 2] = pointsList.indexOf(triangleList.get(i).getPoint(2));
 		}
 		
 		
@@ -121,6 +135,7 @@ public class Ground extends Area {
 		Mesh mesh = new Mesh();
 	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
 	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
+	  	
 	  	Vector2f[] texCoord = new Vector2f[7];
 	  	texCoord[0] = new Vector2f(0.5f, 0.5f);
 	  	texCoord[1] = new Vector2f(0, 0.5f);
