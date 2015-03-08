@@ -48,11 +48,11 @@ public class SelectionManager {
 		
 		if (this.selected instanceof Room){
 			Room room = (Room) this.selected;
-			this.currentFloor = room.getFloor();
+			this.setCurrentFloor(room.getFloor());
 		}
 		else if (this.selected instanceof Item){
 			Item item = (Item) this.selected;
-			this.currentFloor = item.getFloor();
+			this.setCurrentFloor(item.getFloor());
 		}
 
 		// Updating the model with new changes
@@ -118,5 +118,6 @@ public class SelectionManager {
 	 */
 	public void setCurrentFloor(Floor current) {
 		this.currentFloor = current;
+		Log.debug("Set current floor to %s", this.currentFloor.getUID());
 	}
 }
