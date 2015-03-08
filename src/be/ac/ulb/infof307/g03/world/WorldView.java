@@ -15,6 +15,7 @@ import be.ac.ulb.infof307.g03.camera.CameraContext;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 
+import com.j256.ormlite.logger.Slf4jLoggingLog;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
@@ -336,6 +337,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 */
 	private void updateMeshable(Change change){
 		Meshable meshable = (Meshable) change.getItem();
+		this.redrawMeshable(meshable);
+	}
+	
+	private void redrawMeshable(Meshable meshable){
 		Spatial node = rootNode.getChild(meshable.getUID());
 		Node parent = rootNode;
 		if (node != null){
@@ -354,6 +359,13 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		System.out.println("updateFloor");
 		cleanScene();
 		makeScene();
+	}
+	
+	private void updateRoom(Change change){
+		Room room = (Room) change.getItem();
+		for (Meshable meshable : room.getAreas()){
+			this.redrawMeshable(meshable);
+		}
 	}
 	
 	/**
@@ -400,6 +412,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 						updatePoint(change);
 					else if (change.getItem() instanceof Floor) // when new floor or floor deleted
 						updateFloor(change);
+					else if (change.getItem() instanceof Room) // for example if a room has been selected
+						updateRoom(change);
 				}		
 				this.queuedChanges.clear();
 			}

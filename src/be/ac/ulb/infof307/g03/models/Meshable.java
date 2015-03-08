@@ -1,8 +1,6 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.io.File;
-
-
 import com.j256.ormlite.field.DatabaseField;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.AssetNotFoundException;
