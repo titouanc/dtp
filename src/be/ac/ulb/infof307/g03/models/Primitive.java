@@ -285,6 +285,14 @@ public class Primitive extends Meshable implements Selectionable {
  	}
 	
 	/**
+	 * @return The number of Vertices
+	 */
+	public int getVerticesNumber(){
+		Geometry geometry = this.getGeometry();
+		return geometry.getMesh().getVertexCount();
+	}
+	
+	/**
 	 * @return The rotation matrix 
 	 */
 	public FloatBuffer getRotMatrix() {		
@@ -305,6 +313,14 @@ public class Primitive extends Meshable implements Selectionable {
 			res[i] = ib.get(i);
 		}
 		return res;
+	}
+	
+	/**
+	 * @return The number of faces
+	 */
+	public int getFaceNumber(){
+		Geometry geometry = this.getGeometry();
+		return geometry.getMesh().getTriangleCount() ;
 	}
 
 	@Override

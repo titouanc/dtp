@@ -13,7 +13,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * @author Titouan Christophe
  */
 @DatabaseTable(daoClass=GeometricDAO.class)
-public class Floor extends Ordered {
+public class Floor extends Indexed {
 	@DatabaseField
 	private double height = 1.0;
 	@DatabaseField

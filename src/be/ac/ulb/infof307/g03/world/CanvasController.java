@@ -130,6 +130,11 @@ public abstract class CanvasController {
 	abstract public void mouseMoved(float value);
 	
 	/**
+	 * Toggle if shift pressed
+	 */
+	abstract public void toggleShift();
+	
+	/**
 	 * Called when user click left on the canvas
 	 */
 	abstract public void onLeftClick();

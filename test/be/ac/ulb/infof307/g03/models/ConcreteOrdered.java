@@ -10,7 +10,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * A concrete class to test the Ordered models
  */
 @DatabaseTable(daoClass=GeometricDAO.class)
-public class ConcreteOrdered extends Ordered {
+public class ConcreteOrdered extends Indexed {
 
 	/**
 	 * Default constructor

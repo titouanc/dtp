@@ -8,7 +8,6 @@ import com.j256.ormlite.logger.LocalLog;
 import be.ac.ulb.infof307.g03.GUI.*;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
-import be.ac.ulb.infof307.g03.utils.SplashWindow;
 
 /**
  * @author all
@@ -31,8 +30,6 @@ public class Main {
 		System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "info");
 		
 		Log.setLevel(Level.ALL);
-		
-		new SplashWindow(null, 15);
 		
 		// Enqueue a new GUI in main dispatcher
 		java.awt.EventQueue.invokeLater(new Runnable() {

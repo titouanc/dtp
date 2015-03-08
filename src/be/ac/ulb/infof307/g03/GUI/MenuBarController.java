@@ -189,7 +189,8 @@ public class MenuBarController implements ActionListener {
 				+ "Rotation Mode : Drag with left click to rotate\n"
 				+ "Grab Mode : Drag with left click to move\n"
 				+ "Simple Cursor Mode : Used to select\n"
-				+ "New Room : Used to create new rooms; Left click to create corners, Right click to confirm";
+				+ "New Room : Used to create new rooms; Left click to create corners, Right click to confirm \n"
+				+ "Shift + Left click to create or move a point will trigger a Snap To Grid";
 		JOptionPane.showMessageDialog(this.view, helpMessage);
 	}
 	

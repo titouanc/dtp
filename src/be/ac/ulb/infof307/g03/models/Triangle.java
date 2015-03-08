@@ -14,7 +14,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * Triangles constituting imported objects
  */
 @DatabaseTable(daoClass=GeometricDAO.class)
-public class Triangle extends Ordered {
+public class Triangle extends Indexed {
 	@DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true)
 	private Primitive primitive;
 	@DatabaseField(foreign = true, uniqueCombo = true, foreignAutoRefresh = true)

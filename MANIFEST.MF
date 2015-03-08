@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Rsrc-Class-Path: ./ junit.jar org.hamcrest.core_1.3.0.v201303031735.ja
+ r ormlite-core-4.48.jar ormlite-jdbc-4.48.jar sqlite-jdbc-3.8.7.jar e
+ ventbus.jar gluegen-rt.jar j-ogg-oggd.jar j-ogg-vorbisd.jar jbullet.j
+ ar jglfont-core.jar jinput.jar jME3-blender.jar jME3-core.jar jME3-de
+ sktop.jar jME3-effects.jar jME3-jbullet.jar jME3-jogg.jar jME3-lwjgl-
+ natives.jar jME3-lwjgl.jar jME3-networking.jar jME3-niftygui.jar jME3
+ -openal-soft-natives-android.jar jME3-plugins.jar jME3-terrain.jar jo
+ al.jar jogl-all.jar lwjgl.jar nifty-default-controls.jar nifty.jar st
+ ack-alloc.jar vecmath.jar xmlpull-xpp3.jar
+Class-Path: .
+Rsrc-Main-Class: be.ac.ulb.infof307.g03.Main
+Main-Class: org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader
+SplashScreen-Image: loadingscreen.gif

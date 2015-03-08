@@ -6,6 +6,8 @@ package be.ac.ulb.infof307.g03.GUI;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,20 +22,27 @@ import be.ac.ulb.infof307.g03.models.Project;
  * @brief Main part of the Window
  */
 
-public class MainPaneView extends JPanel {
+public class MainPaneView extends JPanel implements ComponentListener {
 	
 	
 	private static final long serialVersionUID = 1L;
-	
-	private JScrollPane textureScrollPane;
 
-	private JSplitPane hSplitPane, vSplitPane;
+	private JSplitPane horizontalLeftSplitPane; 
+	private JSplitPane horizontalRightSplitPane; 
+	private JSplitPane verticalLeftSplitPane;
+	private JSplitPane verticalRightSplitPane;
 	private JScrollPane worldListScrollPane;
 	private JScrollPane objectListScrollPane;
+	private JScrollPane textureScrollPane;
+	private JScrollPane statScrollPane;
+	
 	private ObjectListController objectList;
-
 	private ObjectTreeController objectTree;
 	private TextureController texture ;
+	private StatisticsController stats;
+	
+	private Dimension listScrollPaneMinimumDimension;
+	private Dimension listScrollPanePreferedDimension;
 	
 	
 	/**
@@ -44,6 +53,7 @@ public class MainPaneView extends JPanel {
 	 */
 	public MainPaneView(Project project, Canvas canvas){
 		super(new BorderLayout());
+		this.addComponentListener(this);
         
         // Create the object list
         this.objectList = new ObjectListController(project);
@@ -57,39 +67,96 @@ public class MainPaneView extends JPanel {
         this.texture = new TextureController(project);
         this.texture.run();
         
-        Dimension listScrollPaneDimension = new Dimension(150,480);
-        Dimension textureScrollPaneDimension = new Dimension(150,480);
+        this.stats = new StatisticsController(project);
+        this.stats.run();
+        
+        listScrollPanePreferedDimension = new Dimension(200,480);
+        listScrollPaneMinimumDimension = new Dimension(150,75);
 
         this.worldListScrollPane = new JScrollPane(this.objectTree.getView()); 
         // Set up resize behavior
-        this.worldListScrollPane.setMinimumSize(listScrollPaneDimension);
-        this.worldListScrollPane.setPreferredSize(listScrollPaneDimension);
+        this.worldListScrollPane.setMinimumSize(listScrollPaneMinimumDimension);
+        this.worldListScrollPane.setPreferredSize(listScrollPanePreferedDimension);
         
         this.objectListScrollPane = new JScrollPane(this.objectList.getView());
         // Set up resize behavior
-        this.objectListScrollPane.setMinimumSize(listScrollPaneDimension);
-        this.objectListScrollPane.setPreferredSize(listScrollPaneDimension);
+        this.objectListScrollPane.setMinimumSize(listScrollPaneMinimumDimension);
+        this.objectListScrollPane.setPreferredSize(listScrollPanePreferedDimension);
+	     
+		
+        // Create the texture
+        
+        
+        this.textureScrollPane = new JScrollPane (this.texture.getView());
+        this.textureScrollPane.setMinimumSize(listScrollPaneMinimumDimension);
+        this.textureScrollPane.setPreferredSize(listScrollPanePreferedDimension);
+        
+        // Create the stat
+        this.statScrollPane = new JScrollPane (this.stats.getView());
+        this.statScrollPane.setMinimumSize(listScrollPaneMinimumDimension);
+        this.statScrollPane.setPreferredSize(listScrollPanePreferedDimension);
+        
         
 	     // Create split pane
-	     this.vSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,this.worldListScrollPane,this.objectListScrollPane);
+	     this.verticalLeftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,this.worldListScrollPane,this.objectListScrollPane);
 	     // Set up split pane
-	     this.vSplitPane.setDividerLocation(240);
-	     this.vSplitPane.setBorder(null);
+	     this.verticalLeftSplitPane.setDividerLocation(240);
+	     this.verticalLeftSplitPane.setBorder(null);
         
         // Create split pane
-		this.hSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.vSplitPane,canvas);
+		this.horizontalLeftSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.verticalLeftSplitPane,canvas);
 		// Set up split pane
-		this.hSplitPane.setDividerLocation(150);
-		this.hSplitPane.setBorder(null);
-		
-        // Create right menu
-        this.textureScrollPane = new JScrollPane (this.texture.getView());
-        this.textureScrollPane.setMinimumSize(textureScrollPaneDimension);
-        this.textureScrollPane.setPreferredSize(textureScrollPaneDimension);
+		this.horizontalLeftSplitPane.setDividerLocation(150);
+		this.horizontalLeftSplitPane.setBorder(null);  
         
+	     // Create split pane
+	     this.verticalRightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,this.textureScrollPane,this.statScrollPane);
+	     // Set up split pane
+	     this.verticalRightSplitPane.setDividerLocation(240);
+	     this.verticalRightSplitPane.setBorder(null);
+	     
+	     // Create split pane
+	     this.horizontalRightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,this.horizontalLeftSplitPane,this.verticalRightSplitPane);
+	     // Set up split pane
+		this.horizontalRightSplitPane.setDividerLocation(getRightPanelDividerLocation());
+		this.horizontalRightSplitPane.setBorder(null);  
+	     
+	     
 		// add the splitpane to the inherited Jpanel
-		add(this.hSplitPane);
-		add(this.textureScrollPane, BorderLayout.EAST);
+		add(this.horizontalRightSplitPane);
+		//add(this.verticalRightSplitPane, BorderLayout.EAST);
+	}
+
+
+	@Override
+	public void componentHidden(ComponentEvent arg0) {
+		// No action wanted here
+		
+	}
+
+
+	@Override
+	public void componentMoved(ComponentEvent arg0) {
+		// No action wanted here
+		
+	}
+
+
+	@Override
+	public void componentResized(ComponentEvent arg0) {
+		this.horizontalRightSplitPane.setDividerLocation(getRightPanelDividerLocation());
+		
+	}
+
+
+	@Override
+	public void componentShown(ComponentEvent arg0) {
+		// No action wanted here
+		
+	}
+	
+	private int getRightPanelDividerLocation(){
+		return (int) (this.getSize().getWidth() - this.listScrollPanePreferedDimension.getWidth());
 	}
 
 }

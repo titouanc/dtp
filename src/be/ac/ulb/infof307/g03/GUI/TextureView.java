@@ -125,7 +125,7 @@ public class TextureView extends JPanel implements ItemListener {
     
     /**
      * Get the name of the jar currently running so we don't need to hardcode it
-     * @return the name of the JAR currently reunning
+     * @return the name of the JAR currently running
      */
     private String getRunningJarName(){
     	String name = this.getClass().getResource(this.getClass().getSimpleName() + ".class").getFile();

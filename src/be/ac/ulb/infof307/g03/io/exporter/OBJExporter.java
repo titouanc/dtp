@@ -1,4 +1,4 @@
-package be.ac.ulb.info307.g03.io.exporter;
+package be.ac.ulb.infof307.g03.io.exporter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,6 +10,7 @@ import java.util.logging.Level;
 
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Primitive;
+import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 
 
@@ -17,13 +18,13 @@ import be.ac.ulb.infof307.g03.utils.Log;
  * @author pierre
  *
  */
-public class OBJExporter {
-
+public class OBJExporter extends Exporter{
+	
 	/**
 	 *  Constructor of OBJExporter
 	 */
-	public OBJExporter(){
-
+	public OBJExporter(Project project){
+		super(project);
 	}
 	
 	/**
@@ -31,6 +32,7 @@ public class OBJExporter {
 	 * @param fileToExport The file in which the object will be write
 	 * @param entity The entity to be exported
 	 */
+	@Override
 	public void export(File fileToExport, Entity entity){
 		try {
 			PrintWriter file = new PrintWriter(fileToExport,"UTF-8");

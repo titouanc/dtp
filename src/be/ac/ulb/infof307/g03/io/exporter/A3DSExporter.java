@@ -1,4 +1,4 @@
-package be.ac.ulb.info307.g03.io.exporter;
+package be.ac.ulb.infof307.g03.io.exporter;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -14,14 +14,15 @@ import be.ac.ulb.infof307.g03.models.*;
  * @author pierre
  *
  */
-public class A3DSExporter {
+public class A3DSExporter extends Exporter {
 	DataOutputStream outFile;
+	Project project = null;
 	
 	/**
 	 *  Constructor of A3DSExporter
 	 */
-	public A3DSExporter(){
-		
+	public A3DSExporter(Project project){
+		super(project);
 	}
 	
 	/**
@@ -54,6 +55,7 @@ public class A3DSExporter {
 	 * @param entity The entity to be exported
 	 * @throws IOException 
 	 */
+	@Override
 	public void export(File fileToExport, Entity entity) throws IOException{
 		List<Primitive> primitives = new ArrayList<Primitive>(entity.getPrimitives());
 		int nChunks = primitives.size();

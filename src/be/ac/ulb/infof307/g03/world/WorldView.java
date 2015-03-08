@@ -3,6 +3,7 @@
  */
 package be.ac.ulb.infof307.g03.world;
 
+import java.awt.SplashScreen;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,9 +20,11 @@ import com.j256.ormlite.logger.Slf4jLoggingLog;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
@@ -37,6 +40,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
@@ -62,6 +66,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	static private final String RIGHT			= "WC_Right";
 	static private final String UP				= "WC_Up";
 	static private final String DOWN			= "WC_Down";
+	static private final String SHIFT			= "Shift";
 	
 	/**
 	 * WorldView's Constructor
@@ -115,6 +120,16 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		if(!(classPath.subSequence(0, 3).equals("rsr"))){		
 			this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/assets/", FileLocator.class);
 		}
+		Log.debug("DONE");
+        final SplashScreen splash = SplashScreen.getSplashScreen();
+        try{
+        	splash.close();
+        }
+        catch (NullPointerException ex){
+        	Log.debug("[DEBUG] No splashscreen");
+        }
+        	
+        		
 
 	}
 	
@@ -178,7 +193,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 * @param color
 	 * @return The material created
 	 */
-	private Material makeBasicMaterial(ColorRGBA color){
+	public Material makeBasicMaterial(ColorRGBA color){
 		Material res = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		res.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 		res.setColor("Color", color);
@@ -263,9 +278,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 */
 	private void attachAxes(){
 		Vector3f origin = new Vector3f(0,0,0);
-		Vector3f xAxis = new Vector3f(50,0,0);
-		Vector3f yAxis = new Vector3f(0,50,0);
-		Vector3f zAxis = new Vector3f(0,0,50);
+		Vector3f xAxis = new Vector3f(500,0,0);
+		Vector3f yAxis = new Vector3f(0,500,0);
+		Vector3f zAxis = new Vector3f(0,0,500);
 		
 		attachAxis(origin, xAxis,ColorRGBA.Red);
 		attachAxis(origin, yAxis,ColorRGBA.Green);
@@ -332,6 +347,21 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	}
 	
 	/**
+	 * @param change
+	 */
+	public void updatePrimitive(Change change) {
+		Primitive primitive = (Primitive) change.getItem();
+		if (primitive.isVisible()) 
+			if (change.isCreation()) {
+				 drawMeshable(rootNode, primitive);
+			} else {
+				Spatial spatial = rootNode.getChild(primitive.getUID());
+				spatial.setLocalTranslation(primitive.getTranslation());
+			}
+	}
+
+	
+	/**
 	 * Update view when a Meshable has changed
 	 * @param change
 	 */
@@ -356,7 +386,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	}
 	
 	private void updateFloor(Change change){
-		System.out.println("updateFloor");
+		Log.info("updateFloor");
 		cleanScene();
 		makeScene();
 	}
@@ -406,6 +436,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 						deleteMeshable((Meshable) change.getItem());
 					else if (change.getItem() instanceof Item) 
 						updateItem(change);
+					else if (change.getItem() instanceof Primitive) 
+						updatePrimitive(change);
 					else if (change.getItem() instanceof Meshable)
 						updateMeshable(change);
 					else if (change.getItem() instanceof Point)
@@ -420,6 +452,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		}
 	}
 
+	/**
+	 * @param change
+	 */
 	public void updateItem(Change change) {
 		Item item = (Item) change.getItem();
 		Spatial node = rootNode.getChild(item.getUID());
@@ -445,7 +480,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		inputManager.addMapping(LEFT,			new MouseAxisTrigger(0, true));
 		inputManager.addMapping(RIGHT,			new MouseAxisTrigger(0, false));
 		
-		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT);
+        inputManager.addMapping(SHIFT, 			new KeyTrigger(KeyInput.KEY_LSHIFT));
+
+		
+		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT,SHIFT);
 	}
 	
 	/**
@@ -477,7 +515,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 
 	@Override
 	public void onAnalog(String name, float value, float tpf) {
-		if (name.equals(UP) || name.equals(DOWN) || name.equals(LEFT) || name.equals(RIGHT)) {
+		if (name.equals(UP) || name.equals(DOWN) || name.equals(LEFT) || name.equals(RIGHT) ) {
 			this.controller.mouseMoved(value);
 		}
 	}
@@ -500,7 +538,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 				
 			}
 		}
-		
+		else if (name.equals(SHIFT)){ // If Shift is Pressed
+			this.controller.toggleShift();
+		}
 	}
 	
 }

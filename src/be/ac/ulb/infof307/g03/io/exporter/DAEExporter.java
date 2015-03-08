@@ -1,4 +1,4 @@
-package be.ac.ulb.info307.g03.io.exporter;
+package be.ac.ulb.infof307.g03.io.exporter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,16 +17,14 @@ import be.ac.ulb.infof307.g03.models.Project;
  * @author pierre
  *
  */
-public class DAEExporter {
-
-	private Project project;
+public class DAEExporter extends Exporter {
 
 	/**
 	 *  Constructor of DAEExporter
 	 * @param project The main project
 	 */
 	public DAEExporter(Project project){
-		this.project = project;
+		super(project);
 	}
 
 	/**
@@ -34,6 +32,7 @@ public class DAEExporter {
 	 * @param fileToExport The file in which the object will be write
 	 * @param entity The entity to be exported
 	 */
+	@Override
 	public void export(File fileToExport, Entity entity){
 		try {
 			PrintWriter file = new PrintWriter(fileToExport,"UTF-8");
