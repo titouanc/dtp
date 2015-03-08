@@ -28,10 +28,16 @@ public class SelectionManager {
 		try {
 			this.master = project.getGeometryDAO();
 			this.unselectAll();
+			this.currentFloor = this.getFirstFloor();
 			// TODO set this.currentFloor
 		} catch (SQLException e) {
 			Log.exception(e);
 		}
+	}
+	
+	private Floor getFirstFloor() throws SQLException{
+		GeometricDAO<Floor> dao = this.master.getDao(Floor.class);
+		return dao.queryForFirst(dao.queryBuilder().orderBy("index", true).prepare());
 	}
 	
 	/**
