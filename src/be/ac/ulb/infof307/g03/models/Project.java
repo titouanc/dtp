@@ -39,14 +39,14 @@ public class Project extends Observable {
 	 * @throws SQLException
 	 */
 	public void create(String filename) throws SQLException {
-		load(filename);
+		this.db = new JdbcConnectionSource("jdbc:sqlite:" + filename);
+		this.config = DaoManager.createDao(this.db, Config.class);
+		this.filename = filename;
 		TableUtils.createTableIfNotExists(this.db, Config.class);
 		MasterDAO.migrate(this.db);
 		
 		Floor initialFloor = new Floor(7);
 		getGeometryDAO().getDao(Floor.class).create(initialFloor);
-		
-		this.filename = filename;
 		config("floor.current", initialFloor.getUID());
 		config("edition.mode", "world");
 		config("camera.mode", "2D");

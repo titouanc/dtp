@@ -32,15 +32,12 @@ public class Main {
 		
 		Log.setLevel(Level.ALL);
 		
-		// first log
-		Log.debug("The program started");
-		
 		new SplashWindow(null, 15);
-	
 		
 		// Enqueue a new GUI in main dispatcher
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run(){
+				Log.debug("The program started");
 				BootController bc = new BootController();
 				Project proj = bc.initProject();
 				if (proj == null)

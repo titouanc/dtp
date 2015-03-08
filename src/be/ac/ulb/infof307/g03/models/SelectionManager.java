@@ -17,18 +17,35 @@ import be.ac.ulb.infof307.g03.utils.Log;
  * - the current floor is the floor on which the last selected room/object was
  */
 public class SelectionManager {
-	Project project;
 	MasterDAO master;
 	Selectionable selected = null;
 	Floor currentFloor = null;
 	
+	/** What do we manage here ? */
+	public static Class[] selectionables = {Room.class, Item.class, Primitive.class};
+	
 	SelectionManager(Project project){
-		this.project = project;
 		try {
 			this.master = project.getGeometryDAO();
+			this.unselectAll();
 			// TODO set this.currentFloor
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Log.exception(e);
+		}
+	}
+	
+	/**
+	 * Unselect all the selected objects in database
+	 * @throws SQLException
+	 */
+	private void unselectAll() throws SQLException{
+		for (Class<? extends Geometric> klass : selectionables){
+			GeometricDAO dao = this.master.getDao(klass);
+			for (Object o : dao.queryForEq("selected", true)){
+				Selectionable sel = (Selectionable) o;
+				sel.unselect();
+				dao.update(klass.cast(o));
+			}
 		}
 	}
 	
@@ -41,7 +58,7 @@ public class SelectionManager {
 	 */
 	public void select(Selectionable obj){
 		// Do not unselect/select the same object
-		if (this.selected.getUID().equals(obj.getUID()))
+		if (this.selected != null && this.selected.getUID().equals(obj.getUID()))
 			return;
 		
 		// Unselecting the previously selected object/room
