@@ -40,6 +40,10 @@ public class SelectionManager {
 	 * @param obj The object to select
 	 */
 	public void select(Selectionable obj){
+		// Do not unselect/select the same object
+		if (this.selected.getUID().equals(obj.getUID()))
+			return;
+		
 		// Unselecting the previously selected object/room
 		this.unselect();
 		
