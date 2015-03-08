@@ -72,7 +72,7 @@ public class SelectionManager {
 	 * This method writes indirectly to the model and notifies all observers.
 	 */
 	public void toggleSelect(Selectionable obj){
-		if (this.selected == obj)
+		if (obj.isSelected())
 			this.unselect();
 		else
 			this.select(obj);
