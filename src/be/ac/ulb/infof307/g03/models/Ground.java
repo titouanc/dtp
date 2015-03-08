@@ -3,7 +3,15 @@
  */
 package be.ac.ulb.infof307.g03.models;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.jdelaunay.delaunay.ConstrainedMesh;
+import org.jdelaunay.delaunay.error.DelaunayError;
+import org.jdelaunay.delaunay.geometries.DPoint;
+import org.jdelaunay.delaunay.geometries.DTriangle;
+
+import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.j256.ormlite.table.DatabaseTable;
 import com.jme3.material.Material;
@@ -49,14 +57,17 @@ public class Ground extends Area {
 
 	@Override
 	public final Spatial toSpatial(Material material) {
+
+		
 		List<Point> all_points = getPoints();
 		int shape_n_points = all_points.size();
-		float baseHeight = (float) getRoom().getFloor().getBaseHeight();
-		
 		if (shape_n_points == 0)
 			return null;
+		float baseHeight = (float) getRoom().getFloor().getBaseHeight();
 		
-		/* 0) Closed polygon ? -> we don't need to store both first && last */
+		ConstrainedMesh delaunay = new ConstrainedMesh();
+		
+		/*0) Closed polygon ? -> we don't need to store both first && last */
 		Point firstPoint = all_points.get(0);
 		Point lastPoint = all_points.get(shape_n_points - 1);
 		if (firstPoint.equals(lastPoint))
@@ -67,20 +78,45 @@ public class Ground extends Area {
 		}
 		
 		/* 1) Build an array of all points */
-		Vector3f vertices[] = new Vector3f[shape_n_points];
 		for (int i=0; i<shape_n_points; i++){
-			vertices[i] = all_points.get(i).toVector3f();
-			vertices[i].setZ(baseHeight);
+			Point currentPoint = all_points.get(i);
+			try {
+				delaunay.addPoint(new DPoint(currentPoint.getX(),currentPoint.getY(),baseHeight));
+			} catch (DelaunayError e) {
+				Log.error("Could not add point to Delaunay's algorithm");
+				e.printStackTrace();
+			}
 		}
 		
-		/* 2) Polygon triangulation to make a surface */
-		int n_triangles = shape_n_points - 2;
-		int edges[] = new int[3 * n_triangles];
-		for (int i=0; i<n_triangles; i++){
-			edges[3 * i] = 0;
-			edges[3 * i + 1] = i+2;
-			edges[3 * i + 2] = i+1;
+		/* 2) Polygon triangulation to make a surface using Delaunay's algorithm*/
+		try {
+			delaunay.processDelaunay();
+		} catch (DelaunayError e) {
+			Log.error("Could not process Delaunay's algorithm");
+			e.printStackTrace();
 		}
+		Log.debug("Delaunay");
+		System.out.println(delaunay.getTriangleList());
+		List<DTriangle> triangleList = delaunay.getTriangleList();
+		List<DPoint> pointsList= delaunay.getPoints();
+		Vector3f vertices[] = new Vector3f[shape_n_points];
+		for(int index = 0; index<pointsList.size(); ++index){
+			DPoint currentPoint = pointsList.get(index);
+			vertices[index] = new Vector3f((float)currentPoint.getX(),(float)currentPoint.getY(),(float)currentPoint.getZ());
+		}
+		
+		int n_triangles = triangleList.size();
+		int edges[] = new int[3 * n_triangles];
+		
+		for(int i=0;i<triangleList.size();++i){
+			edges[3 * i] = pointsList.indexOf(triangleList.get(i).getPoint(0));
+			edges[3 * i + 1] = pointsList.indexOf(triangleList.get(i).getPoint(2));
+			edges[3 * i + 2] = pointsList.indexOf(triangleList.get(i).getPoint(1));
+		}
+		
+		
+		
+		
 		
 		Mesh mesh = new Mesh();
 	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
@@ -100,3 +136,4 @@ public class Ground extends Area {
 		return res;
 	}
 }
+
