@@ -355,9 +355,15 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			if (change.isCreation()) {
 				 drawMeshable(rootNode, primitive);
 			} else {
-				Spatial spatial = rootNode.getChild(primitive.getUID());
-				spatial.setLocalTranslation(primitive.getTranslation());
+				this.redrawPrimitive(primitive);
 			}
+	}
+	
+	public void redrawPrimitive(Primitive primitive){
+		Spatial spatial = rootNode.getChild(primitive.getUID());
+		spatial.getParent().detachChild(spatial);
+		drawMeshable(rootNode, primitive);
+		spatial.setLocalTranslation(primitive.getTranslation());
 	}
 
 	

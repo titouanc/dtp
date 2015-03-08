@@ -105,22 +105,6 @@ public class ObjectController extends CanvasController implements Observer {
     }
 	
 	/**
-	 * Select a primitive
-	 * @param primitive
-	 */
-	public void selectPrimitive(Primitive primitive) {
-		try {
-			primitive.toggleSelect();
-			GeometricDAO<Primitive> dao = this.project.getGeometryDAO().getDao(Primitive.class);
-			dao.modify(primitive);
-			this.project.getGeometryDAO().notifyObservers();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	/**
 	 * Create the shape
 	 * @param type Describe the shape render
 	 */
@@ -148,7 +132,7 @@ public class ObjectController extends CanvasController implements Observer {
         	return;
         /* If it is a Primitive : select it */
         if (clicked instanceof Primitive) {
-        	
+        	this.project.getSelectionManager().toggleSelect((Primitive) clicked);
         	this.movingGeometric = (Primitive) clicked;
         }
     }

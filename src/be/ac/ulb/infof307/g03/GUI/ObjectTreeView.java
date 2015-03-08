@@ -134,6 +134,9 @@ public class ObjectTreeView extends JTree implements Observer {
 			} else if (value instanceof Room){
 				Room room = (Room) value;
 				sel = room.isSelected();
+			} else if (value instanceof Primitive){
+				Primitive primitive = (Primitive) value;
+				sel = primitive.isSelected();
 			}
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 			return this;
