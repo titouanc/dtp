@@ -244,6 +244,8 @@ public class StatisticsController implements Observer {
 		if( obs instanceof Project){
 			if (project.config("edition.mode").equals("object")){
 				updateHTMLobject();
+			}else if (project.config("edition.mode").equals("world")){
+				updateHTMLWorld();
 			}
 		}
 		else{
