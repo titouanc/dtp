@@ -35,7 +35,7 @@ public class Item extends Meshable implements Selectionable {
 	@DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
 	private Entity entity;
 	@DatabaseField
-	private Boolean selected;
+	private Boolean selected = false;
 	
 	/**
 	 * Empty constructor of the Item class
