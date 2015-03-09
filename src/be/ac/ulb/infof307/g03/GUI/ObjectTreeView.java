@@ -126,11 +126,17 @@ public class ObjectTreeView extends JTree implements Observer {
 			if (value instanceof DefaultMutableTreeNode)
 				value = ((DefaultMutableTreeNode) value).getUserObject();
 			if (value instanceof Area){
-				Meshable item = (Meshable) value;
-				sel = item.isSelected();
+				Area area = (Area) value;
+				sel = area.getRoom().isSelected();
 			} else if (value instanceof Floor){
 				Floor fl = (Floor) value;
-				sel = project.config("floor.current").equals(fl.getUID());
+				sel = (project.getSelectionManager().currentFloor() == fl);
+			} else if (value instanceof Room){
+				Room room = (Room) value;
+				sel = room.isSelected();
+			} else if (value instanceof Primitive){
+				Primitive primitive = (Primitive) value;
+				sel = primitive.isSelected();
 			}
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 			return this;

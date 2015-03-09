@@ -17,7 +17,7 @@ import com.jme3.scene.Spatial;
  * @author brochape
  */
 @DatabaseTable(daoClass=GeometricDAO.class)
-public class Item extends Meshable {
+public class Item extends Meshable implements Selectionable {
 	@DatabaseField
 	private double positionx = 0;
 	@DatabaseField
@@ -34,7 +34,9 @@ public class Item extends Meshable {
 	private Floor floor;
 	@DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
 	private Entity entity;
-
+	@DatabaseField
+	private Boolean selected = false;
+	
 	/**
 	 * Empty constructor of the Item class
 	 */
@@ -147,7 +149,6 @@ public class Item extends Meshable {
 
 	@Override
 	public Spatial toSpatial(Material material) {
-		if (isSelected()) entity.select(); else entity.deselect();
 		Spatial res = entity.toSpatial(material);
 		res.setLocalTranslation(getAbsolutePositionVector());
 		res.setName(getUID());
@@ -156,10 +157,23 @@ public class Item extends Meshable {
 	
 	@Override
 	public Spatial toSpatial(AssetManager assetManager) {
-		if (isSelected()) entity.select(); else entity.deselect();
 		Spatial res = entity.toSpatial(assetManager);
 		res.setLocalTranslation(getAbsolutePositionVector());
 		res.setName(getUID());
 		return res;
+	}
+	
+	@Override
+	public Boolean isSelected() {return this.selected;}
+	@Override
+	public void select() {this.selected = true;}
+	@Override
+	public void unselect() {this.selected = false;}
+	@Override
+	public void toggleSelect(){this.selected = ! this.selected;}
+
+	@Override
+	protected Boolean drawAsSelected() {
+		return this.isSelected();
 	}
 }

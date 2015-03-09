@@ -19,9 +19,11 @@ import be.ac.ulb.infof307.g03.utils.Log;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
@@ -62,6 +64,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	static private final String RIGHT			= "WC_Right";
 	static private final String UP				= "WC_Up";
 	static private final String DOWN			= "WC_Down";
+	static private final String SHIFT			= "Shift";
 	
 	/**
 	 * WorldView's Constructor
@@ -126,10 +129,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
         	
         		
 
-	}
-	
-	private Boolean isInWorldMode(){
-		return this.controller instanceof WorldController;
 	}
 	
 	/**
@@ -257,6 +256,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 * Cleans the entire scene. Removes all children and lights.
 	 */
 	public void cleanScene(){
+		this.project.getSelectionManager().unselectAll();
 		enqueue(new Callable<Object>() {
 	        public Object call() {
 	        	rootNode.detachAllChildren();
@@ -305,7 +305,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		rootNode.attachChild(axisGeo);
 	}
 
-		
 	/**
 	 * Update view when a Point has changed
 	 * @param change
@@ -316,8 +315,35 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		if (this.controller instanceof WorldController) {
 			floor = ((WorldController) this.controller).getCurrentFloor();
 		}
-		rootNode.detachChildNamed(point.getUID());
-		if (point.isSelected()){			
+		drawOnePoint(point, floor);
+		for (Room room: point.getBoundRooms()){
+			try {
+				GeometricDAO<Room> dao = this.daoFactory.getDao(Room.class);
+				dao.refresh(room);
+				for (Meshable meshable : room.getAreas())
+					updateMeshable(Change.update(meshable));
+			} catch (SQLException ex) {
+				Log.exception(ex);
+			}
+		}
+	}
+	
+	/**
+	 * Show points as spheres around a room
+	 * @param change
+	 */
+	private void showPoints(Room room){
+		Log.debug("Showing points for room %s", room.getUID());
+		for (Point point : room.getPoints()){
+			this.drawOnePoint(point, room.getFloor());
+		}
+	}
+	
+	private void drawOnePoint(Point point, Floor floor){
+		Spatial node = this.rootNode.getChild(point.getUID());
+		if (node != null)
+			node.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
+		else {
 			Sphere mySphere = new Sphere(32,32, 1.0f);
 		    Geometry sphere = new Geometry(point.getUID(), mySphere);
 		    mySphere.setTextureMode(Sphere.TextureMode.Projected);
@@ -328,29 +354,29 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		    sphere.setMaterial(sphereMat);
 		    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
 		    rootNode.attachChild(sphere);
-		    
-		    try {
-			    GeometricDAO<Room> dao = this.daoFactory.getDao(Room.class);
-				for (Room room : point.getBoundRooms()){
-					dao.refresh(room);
-					for (Meshable meshable : room.getAreas())
-						updateMeshable(Change.update(meshable));
-				}
-			} catch (SQLException ex) {
-				Log.exception(ex);
-			}
 		}
 	}
 	
+	/**
+	 * @param change
+	 */
 	public void updatePrimitive(Change change) {
 		Primitive primitive = (Primitive) change.getItem();
 		if (primitive.isVisible()) 
 			if (change.isCreation()) {
 				 drawMeshable(rootNode, primitive);
 			} else {
-				Spatial spatial = rootNode.getChild(primitive.getUID());
-				spatial.setLocalTranslation(primitive.getTranslation());
+				this.redrawPrimitive(primitive);
 			}
+	}
+	
+	public void redrawPrimitive(Primitive primitive){
+		Spatial spatial = rootNode.getChild(primitive.getUID());
+		if (spatial != null){
+			spatial.getParent().detachChild(spatial);
+			drawMeshable(rootNode, primitive);
+			spatial.setLocalTranslation(primitive.getTranslation());
+		}
 	}
 
 	
@@ -360,6 +386,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 */
 	private void updateMeshable(Change change){
 		Meshable meshable = (Meshable) change.getItem();
+		this.redrawMeshable(meshable);
+	}
+	
+	private void redrawMeshable(Meshable meshable){
 		Spatial node = rootNode.getChild(meshable.getUID());
 		Node parent = rootNode;
 		if (node != null){
@@ -378,6 +408,22 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		Log.info("updateFloor");
 		cleanScene();
 		makeScene();
+	}
+	
+	private void updateRoom(Change change){
+		Room room = (Room) change.getItem();
+		if (room.isSelected()){
+			this.showPoints(room);
+		} else {
+			for (Point point : room.getPoints()){
+				Spatial node = this.rootNode.getChild(point.getUID());
+				if (node != null)
+					this.rootNode.detachChild(node);
+			}
+		}
+		for (Meshable meshable : room.getAreas()){
+			this.redrawMeshable(meshable);
+		}
 	}
 	
 	/**
@@ -414,8 +460,15 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		synchronized (this.queuedChanges){
 			if (this.queuedChanges.size() > 0){
 				for (Change change : this.queuedChanges){
-					if (change.isDeletion()) // handle all deletion
-						deleteMeshable((Meshable) change.getItem());
+					if (change.isDeletion()){ // handle all deletion
+						if (change.getItem() instanceof Meshable)
+							deleteMeshable((Meshable) change.getItem());
+						else if (change.getItem() instanceof Point){
+							Spatial node = this.rootNode.getChild(change.getItem().getUID());
+							if (node != null)
+								this.rootNode.detachChild(node);
+						}
+					}
 					else if (change.getItem() instanceof Item) 
 						updateItem(change);
 					else if (change.getItem() instanceof Primitive) 
@@ -426,6 +479,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 						updatePoint(change);
 					else if (change.getItem() instanceof Floor) // when new floor or floor deleted
 						updateFloor(change);
+					else if (change.getItem() instanceof Room) // for example if a room has been selected
+						updateRoom(change);
 				}		
 				this.queuedChanges.clear();
 			}
@@ -460,7 +515,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		inputManager.addMapping(LEFT,			new MouseAxisTrigger(0, true));
 		inputManager.addMapping(RIGHT,			new MouseAxisTrigger(0, false));
 		
-		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT);
+        inputManager.addMapping(SHIFT, 			new KeyTrigger(KeyInput.KEY_LSHIFT));
+
+		
+		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT,SHIFT);
 	}
 	
 	/**
@@ -492,7 +550,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 
 	@Override
 	public void onAnalog(String name, float value, float tpf) {
-		if (name.equals(UP) || name.equals(DOWN) || name.equals(LEFT) || name.equals(RIGHT)) {
+		if (name.equals(UP) || name.equals(DOWN) || name.equals(LEFT) || name.equals(RIGHT) ) {
 			this.controller.mouseMoved(value);
 		}
 	}
@@ -515,7 +573,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 				
 			}
 		}
-		
+		else if (name.equals(SHIFT)){ // If Shift is Pressed
+			this.controller.toggleShift();
+		}
 	}
 	
 }

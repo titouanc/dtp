@@ -16,6 +16,7 @@ import be.ac.ulb.infof307.g03.models.GeometricDAO;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Meshable;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.models.Selectionable;
 
 /**
  * @author pierre
@@ -110,23 +111,6 @@ public abstract class CanvasController {
         return new Vector3f(onPlane.getX(),onPlane.getY(), Z);
     }
     
-    protected void deselectAll() {
-		try {
-			MasterDAO master = project.getGeometryDAO();
-			for (Class className : master.areaClasses){
-				GeometricDAO<? extends Area> dao = master.getDao(className);
-				for (Area area : dao.queryForEq("selected", true)){
-					area.deselect();
-					dao.modify(area);
-				}
-			}
-			master.notifyObservers();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-	}
-    
     /**
 	 * @param clickedItem
 	 * @param newTexture
@@ -144,6 +128,11 @@ public abstract class CanvasController {
 	 * @param value the position
 	 */
 	abstract public void mouseMoved(float value);
+	
+	/**
+	 * Toggle if shift pressed
+	 */
+	abstract public void toggleShift();
 	
 	/**
 	 * Called when user click left on the canvas
