@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.j256.ormlite.dao.ForeignCollection;
+
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
@@ -16,6 +18,7 @@ import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.models.Room;
 import be.ac.ulb.infof307.g03.models.Selectionable;
 import be.ac.ulb.infof307.g03.models.Wall;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author pierre
@@ -161,6 +164,39 @@ public class StatisticsController implements Observer {
 		html.append("<p>Room volume : ");
 		html.append(roomsVolume);
 		html.append("</p>");
+		
+		Floor fl = selectedRoom.getFloor();
+		ForeignCollection<Room> roomList = fl.getRooms();
+		
+		double habitableSurfaceFloor = 0;
+		double wallSurfaceFloor = 0;
+		double roomsVolumeVolume = 0;
+		for (Room room : roomList) {
+			Ground grf = room.getGround();
+			if (grf != null)
+				habitableSurfaceFloor += grf.getSurface();
+			Wall wlf = room.getWall();
+			if (wlf != null)
+				wallSurfaceFloor += wlf.getSurface();
+			roomsVolumeVolume += room.getVolume();
+			
+		}
+		html.append("</style></head>");
+		html.append("<h4>Statistics : ");
+		html.append(fl.toString());
+		html.append("</h4>");
+		html.append("<p>Living surface : ");
+		html.append(habitableSurfaceFloor);
+		html.append("</p>");
+		html.append("<p>Walls surface : ");
+		html.append(wallSurfaceFloor);
+		html.append("</p>");
+		html.append("<p>Total volume : ");
+		html.append(roomsVolumeVolume);
+		html.append("</p>");
+		html.append("</html>");
+		
+		
 		html.append("</html>");
 		
 		return html.toString();
@@ -177,8 +213,7 @@ public class StatisticsController implements Observer {
 		try {
 			entity = (Entity) project.getGeometryDAO().getByUID(project.config("entity.current"));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.exception(e);
 		}
 		int numberVertices = 0;
 		int numberFaces = 0;
@@ -222,6 +257,7 @@ public class StatisticsController implements Observer {
 	 */
 	public void updateHTMLWorld(){
 		Selectionable selected = this.project.getSelectionManager().selected();
+		Log.debug("bonjour %s",selected);
 		if (selected != null && selected instanceof Room){
 			Room rm = (Room) selected;
 			view.editText(getRoomStat(rm));

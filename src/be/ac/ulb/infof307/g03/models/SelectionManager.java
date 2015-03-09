@@ -129,12 +129,12 @@ public class SelectionManager {
 				Geometric geom = (Geometric) this.selected;
 				GeometricDAO<? extends Geometric> dao = this.master.getDao(geom.getClass());
 				dao.modify(geom);
+				this.selected = null;
 				Log.debug("Unselected %s", geom.getUID());
 				this.master.notifyObservers();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			this.selected = null;
 		}
 	}
 
