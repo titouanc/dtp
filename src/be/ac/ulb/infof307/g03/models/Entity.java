@@ -75,7 +75,7 @@ public class Entity extends Meshable {
 	public Spatial toSpatial(Material material) {
 		Node res = new Node(getUID());
 		for (Primitive primitive : getPrimitives()) {
-			if (isSelected()) primitive.select(); else primitive.deselect();
+			// if (this.drawAsSelected()) primitive.select(); else primitive.deselect();
 			res.attachChild(primitive.toSpatial(material));
 		}
 		return res;
@@ -85,9 +85,14 @@ public class Entity extends Meshable {
 	public Spatial toSpatial(AssetManager assetManager) {
 		Node res = new Node(getUID());
 		for (Primitive primitive : getPrimitives()) {
-			if (isSelected()) primitive.select(); else primitive.deselect();
+			// if (this.drawAsSelected()) primitive.select(); else primitive.deselect();
 			res.attachChild(primitive.toSpatial(assetManager));
 		}
 		return res;
+	}
+
+	@Override
+	protected Boolean drawAsSelected() {
+		return false;
 	}
 }

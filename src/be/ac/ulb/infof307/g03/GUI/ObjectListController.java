@@ -16,12 +16,10 @@ import be.ac.ulb.infof307.g03.utils.Log;
  * @author titou, pierre
  *
  */
-public class ObjectListController implements MouseListener, Observer {
+public class ObjectListController implements MouseListener {
 	private ObjectListView view = null;
 	private Project project = null;
 	private MasterDAO daoFactory = null;
-
-	private Floor currentFloor = null;
 	
 	private FileChooserController fileController;
 	
@@ -36,10 +34,6 @@ public class ObjectListController implements MouseListener, Observer {
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
-		Geometric newFloor = this.daoFactory.getByUID(project.config("floor.current"));
-		if (newFloor != null)
-			this.currentFloor = (Floor) newFloor;
-		project.addObserver(this);
 	}
 	
 	/**
@@ -137,9 +131,7 @@ public class ObjectListController implements MouseListener, Observer {
 	 */
 	public void onInsertAction(Entity selectedEntity) {
 		this.project.config("edition.mode", "world");
-		String currentFloorUID = this.project.config("floor.current");
-		Floor currentFloor = (Floor) this.daoFactory.getByUID(currentFloorUID);
-		Item newItem = new Item(currentFloor, selectedEntity);
+		Item newItem = new Item(this.project.getSelectionManager().currentFloor(), selectedEntity);
 		try {
 			this.daoFactory.getDao(Item.class).insert(newItem);
 			this.daoFactory.notifyObservers();
@@ -164,13 +156,6 @@ public class ObjectListController implements MouseListener, Observer {
 	 */
 	public void onImport() {		
 		this.fileController.notifyDisplayImport();
-	}
-	
-	/**
-	 * @return The currently selected floor
-	 */
-	public Floor getCurrentFloor(){
-		return this.currentFloor;
 	}
 	
 	@Override
@@ -198,6 +183,10 @@ public class ObjectListController implements MouseListener, Observer {
 				this.view.clearSelection();
 			}
 		}
+		if (e.getButton()==MouseEvent.BUTTON1) {
+			Entity selectedEntity = (Entity) view.getSelectedValue();
+			this.onEditAction(selectedEntity);
+		}
 		if (e.getButton()==MouseEvent.BUTTON3) {
 			JPopupMenu popupMenu = this.view.createPopupMenu();
 			popupMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -207,15 +196,8 @@ public class ObjectListController implements MouseListener, Observer {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
-
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		Config changed = (Config) arg1;
-		if (changed.getName().equals("floor.current")){
-			Geometric newFloor = this.daoFactory.getByUID(changed.getValue());
-			if (newFloor != null)
-				this.currentFloor = (Floor) newFloor;
-		}
-	}
 	
+	public Floor getCurrentFloor(){
+		return this.project.getSelectionManager().currentFloor();
+	}
 }

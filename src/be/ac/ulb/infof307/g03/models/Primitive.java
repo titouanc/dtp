@@ -32,7 +32,7 @@ import java.lang.Math;
  * @author brochape, Titouan, jschembr
  */
 @DatabaseTable(daoClass=GeometricDAO.class)
-public class Primitive extends Meshable {
+public class Primitive extends Meshable implements Selectionable {
 	/**
 	 * A cube primitive.
 	 */
@@ -84,6 +84,8 @@ public class Primitive extends Meshable {
 	private ForeignCollection<Vertex> vertices;
 	@ForeignCollectionField
 	private ForeignCollection<Triangle> triangles;
+	@DatabaseField
+	private Boolean selected = false;
 	
 	/**
 	 * Primitive empty constructor
@@ -283,6 +285,14 @@ public class Primitive extends Meshable {
  	}
 	
 	/**
+	 * @return The number of Vertices
+	 */
+	public int getVerticesNumber(){
+		Geometry geometry = this.getGeometry();
+		return geometry.getMesh().getVertexCount();
+	}
+	
+	/**
 	 * @return The rotation matrix 
 	 */
 	public FloatBuffer getRotMatrix() {		
@@ -304,10 +314,31 @@ public class Primitive extends Meshable {
 		}
 		return res;
 	}
+	
+	/**
+	 * @return The number of faces
+	 */
+	public int getFaceNumber(){
+		Geometry geometry = this.getGeometry();
+		return geometry.getMesh().getTriangleCount() ;
+	}
 
 	@Override
 	protected String innerToString() {
 		return new String(type+" "+getId());
 	}
 
+	@Override
+	public Boolean isSelected() {return this.selected;}
+	@Override
+	public void select() {this.selected = true;}
+	@Override
+	public void unselect() {this.selected = false;}
+	@Override
+	public void toggleSelect(){this.selected = ! this.selected;}
+
+	@Override
+	protected Boolean drawAsSelected() {
+		return this.isSelected();
+	}
 }
