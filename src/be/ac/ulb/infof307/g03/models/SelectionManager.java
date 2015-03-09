@@ -45,6 +45,7 @@ public class SelectionManager {
 	 * @throws SQLException
 	 */
 	public void unselectAll() {
+		this.selected = null;
 		for (Class<? extends Geometric> klass : selectionables){
 			try{
 				GeometricDAO dao = this.master.getDao(klass);
