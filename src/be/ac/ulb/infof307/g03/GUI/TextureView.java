@@ -372,6 +372,9 @@ public class TextureView extends JPanel {
 		return res;
 	}
 
+	/**
+	 * @return selected texture
+	 */
 	public String getSelectedTextureName() {
 		if (this.displayedList.isSelectionEmpty()) 
 			return null;
