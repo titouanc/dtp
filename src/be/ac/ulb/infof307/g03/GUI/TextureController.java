@@ -33,6 +33,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * @author wmoulart
@@ -149,6 +150,8 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
 	 */
 	public void addNewTexture() throws IOException{	
 		final JFileChooser fc = new JFileChooser();
+		FileNameExtensionFilter filterPng = new FileNameExtensionFilter("Portable Network Graphics (PNG)", "png");
+	    fc.setFileFilter(filterPng);
 		int returnVal = fc.showOpenDialog(this.view);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
 			if(!(classPath.subSequence(0, 3).equals("rsr"))){	
