@@ -16,7 +16,6 @@ import be.ac.ulb.infof307.g03.camera.CameraContext;
 import be.ac.ulb.infof307.g03.models.*;
 import be.ac.ulb.infof307.g03.utils.Log;
 
-import com.j256.ormlite.logger.Slf4jLoggingLog;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.InputManager;
@@ -40,7 +39,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
@@ -131,10 +129,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
         	
         		
 
-	}
-	
-	private Boolean isInWorldMode(){
-		return this.controller instanceof WorldController;
 	}
 	
 	/**
@@ -311,7 +305,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		rootNode.attachChild(axisGeo);
 	}
 
-		
 	/**
 	 * Update view when a Point has changed
 	 * @param change
@@ -322,28 +315,40 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		if (this.controller instanceof WorldController) {
 			floor = ((WorldController) this.controller).getCurrentFloor();
 		}
-		rootNode.detachChildNamed(point.getUID());
+		Spatial node = this.rootNode.getChild(point.getUID());
+		node.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
 		for (Room room: point.getBoundRooms()){
-			if (room.isSelected()){			
-				Sphere mySphere = new Sphere(32,32, 1.0f);
-			    Geometry sphere = new Geometry(point.getUID(), mySphere);
-			    mySphere.setTextureMode(Sphere.TextureMode.Projected);
-			    Material sphereMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
-			    sphereMat.setBoolean("UseMaterialColors",true);    
-			    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
-			    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-			    sphere.setMaterial(sphereMat);
-			    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
-			    rootNode.attachChild(sphere);
-			}
 			try {
-			    GeometricDAO<Room> dao = this.daoFactory.getDao(Room.class);
+				GeometricDAO<Room> dao = this.daoFactory.getDao(Room.class);
 				dao.refresh(room);
 				for (Meshable meshable : room.getAreas())
 					updateMeshable(Change.update(meshable));
 			} catch (SQLException ex) {
 				Log.exception(ex);
 			}
+		}
+	}
+	
+	/**
+	 * Show points as spheres around a room
+	 * @param change
+	 */
+	private void showPoints(Room room){
+		Log.debug("Showing points for room %s", room.getUID());
+		for (Point point : room.getPoints()){
+			Spatial node = this.rootNode.getChild(point.getUID());
+			if (node != null)
+				continue;
+			Sphere mySphere = new Sphere(32,32, 1.0f);
+		    Geometry sphere = new Geometry(point.getUID(), mySphere);
+		    mySphere.setTextureMode(Sphere.TextureMode.Projected);
+		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
+		    sphereMat.setBoolean("UseMaterialColors",true);    
+		    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
+		    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		    sphere.setMaterial(sphereMat);
+		    sphere.setLocalTranslation(point.toVector3f().setZ((float) room.getFloor().getBaseHeight()));
+		    rootNode.attachChild(sphere);
 		}
 	}
 	
@@ -402,6 +407,13 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	
 	private void updateRoom(Change change){
 		Room room = (Room) change.getItem();
+		if (room.isSelected()){
+			this.showPoints(room);
+		} else {
+			for (Point point : room.getPoints()){
+				this.rootNode.detachChildNamed(point.getUID());
+			}
+		}
 		for (Meshable meshable : room.getAreas()){
 			this.redrawMeshable(meshable);
 		}
