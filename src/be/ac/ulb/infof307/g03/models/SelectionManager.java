@@ -99,10 +99,18 @@ public class SelectionManager {
 	 * This method writes indirectly to the model and notifies all observers.
 	 */
 	public void toggleSelect(Selectionable obj){
-		if (obj.isSelected())
+		if (obj.isSelected()){
 			this.unselect();
-		else
+			if (obj instanceof Primitive)
+				try {
+					this.master.getDao(Primitive.class).refresh((Primitive) obj);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+		else{
 			this.select(obj);
+		}
 	}
 	
 	/**
