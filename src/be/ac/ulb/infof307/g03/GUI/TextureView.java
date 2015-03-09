@@ -141,7 +141,8 @@ public class TextureView extends JPanel {
 	/**
 	 * @param newControler
 	 */
-	public TextureView(TextureController controler) {    	
+	public TextureView(TextureController controler) {   
+		super(new BorderLayout());
     	this.controller = controler;
 		
     	//Fixes the width of the pane
@@ -180,13 +181,13 @@ public class TextureView extends JPanel {
         this.displayedList.setLayoutOrientation(JList.VERTICAL);
         this.displayedList.setVisibleRowCount(-1);
         this.displayedList.addMouseListener(controller);
-      
+        
         Dimension dimension = new Dimension(190,200);
         JScrollPane scrollPane = new JScrollPane(this.displayedList);
         scrollPane.setPreferredSize(dimension);
         scrollPane.setMinimumSize(dimension);
 
-		this.add(scrollPane,BorderLayout.PAGE_END);
+		this.add(scrollPane,BorderLayout.CENTER);
 	}
 	
 	public void updateDisplayedList() {
