@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.j256.ormlite.dao.ForeignCollection;
+
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Floor;
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
@@ -16,6 +18,7 @@ import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.models.Room;
 import be.ac.ulb.infof307.g03.models.Selectionable;
 import be.ac.ulb.infof307.g03.models.Wall;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author pierre
@@ -62,6 +65,18 @@ public class StatisticsController implements Observer {
 		
 	}
 	
+	
+	private StringBuffer createHeader(){
+		StringBuffer html = new StringBuffer();
+		html.append("<html><head><style type='text/css'>");
+	    //html.append("body { background-color: #fffffff; }");
+		html.append("</style></head>");
+		html.append("<h3>Statistics</h3>");
+		
+		return html;
+		
+	}
+	
 	/**
 	 * Return html formated string of
 	 * general statistics of the project
@@ -97,10 +112,7 @@ public class StatisticsController implements Observer {
 			roomsVolume += room.getVolume();
 			
 		}
-		StringBuffer html = new StringBuffer();
-		html.append("<html><head><style type='text/css'>");
-	    //html.append("body { background-color: #fffffff; }");
-		html.append("</style></head>");
+		StringBuffer html = this.createHeader();
 		html.append("<h4>General Statistics</h4>");
 		html.append("<p>Number of object : ");
 		html.append(itemList.size());
@@ -130,11 +142,8 @@ public class StatisticsController implements Observer {
 	 * @return Html fromated string containing stat of the room
 	 */
 	public String getRoomStat(Room selectedRoom){
-		StringBuffer html = new StringBuffer();
-		html.append("<html><head><style type='text/css'>");
-	    //html.append("body { background-color: #fffffff; }");
-		html.append("</style></head>");
-		html.append("<h4>Statistics : ");
+		StringBuffer html = this.createHeader();
+		html.append("<h4>");
 		html.append(selectedRoom.getName());
 		html.append("</h4>");
 		double habitableSurface = 0;
@@ -148,9 +157,6 @@ public class StatisticsController implements Observer {
 			wallSurface += selectedRoom.getWall().getSurface();
 		roomsVolume += selectedRoom.getVolume();
 
-		html.append("<html><head><style type='text/css'>");
-	    //html.append("body { background-color: #fffffff; }");
-		html.append("</style></head>");
 		html.append("<p>Living surface : ");
 		html.append(habitableSurface);
 		html.append("</p>");
@@ -161,6 +167,39 @@ public class StatisticsController implements Observer {
 		html.append("<p>Room volume : ");
 		html.append(roomsVolume);
 		html.append("</p>");
+		
+		Floor fl = selectedRoom.getFloor();
+		ForeignCollection<Room> roomList = fl.getRooms();
+		
+		double habitableSurfaceFloor = 0;
+		double wallSurfaceFloor = 0;
+		double roomsVolumeVolume = 0;
+		for (Room room : roomList) {
+			Ground grf = room.getGround();
+			if (grf != null)
+				habitableSurfaceFloor += grf.getSurface();
+			Wall wlf = room.getWall();
+			if (wlf != null)
+				wallSurfaceFloor += wlf.getSurface();
+			roomsVolumeVolume += room.getVolume();
+			
+		}
+		html.append("</style></head>");
+		html.append("<h4>");
+		html.append(fl.toString());
+		html.append("</h4>");
+		html.append("<p>Living surface : ");
+		html.append(habitableSurfaceFloor);
+		html.append("</p>");
+		html.append("<p>Walls surface : ");
+		html.append(wallSurfaceFloor);
+		html.append("</p>");
+		html.append("<p>Total volume : ");
+		html.append(roomsVolumeVolume);
+		html.append("</p>");
+		html.append("</html>");
+		
+		
 		html.append("</html>");
 		
 		return html.toString();
@@ -177,8 +216,7 @@ public class StatisticsController implements Observer {
 		try {
 			entity = (Entity) project.getGeometryDAO().getByUID(project.config("entity.current"));
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.exception(e);
 		}
 		int numberVertices = 0;
 		int numberFaces = 0;
@@ -190,11 +228,8 @@ public class StatisticsController implements Observer {
 				}
 			}
 		}
-		StringBuffer html = new StringBuffer();
-		html.append("<html><head><style type='text/css'>");
-	    //html.append("body { background-color: #fffffff; }");
-		html.append("</style></head>");
-		html.append("<h4>Object Statistics</h4>");
+		StringBuffer html = this.createHeader();
+		html.append("<h4>Object</h4>");
 		html.append("<p>Vertices number : ");
 		html.append(numberVertices);
 		html.append("</p>");
@@ -222,6 +257,7 @@ public class StatisticsController implements Observer {
 	 */
 	public void updateHTMLWorld(){
 		Selectionable selected = this.project.getSelectionManager().selected();
+		Log.debug("bonjour %s",selected);
 		if (selected != null && selected instanceof Room){
 			Room rm = (Room) selected;
 			view.editText(getRoomStat(rm));
