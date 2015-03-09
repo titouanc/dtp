@@ -38,7 +38,7 @@ public class ImportEngine {
 		try {
 			this.dao = project.getGeometryDAO();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Log.exception(e);
 		}
 		this.project = project;
 	}

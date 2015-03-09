@@ -246,7 +246,7 @@ public class FileChooserController {
 				exportengine.handleExport(selectedEntity, selectedFile);
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(new JFrame(), "Export error"+e.getMessage(), "Erreur",JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
+				Log.exception(e);
 			}
 		}
 		else{

@@ -12,6 +12,7 @@ import java.util.zip.ZipOutputStream;
 
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 
 /**
@@ -58,11 +59,9 @@ public class KMZExporter extends Exporter {
 			DAEFile.delete();
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.exception(e);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.exception(e);
 		}
 		
 	}
@@ -85,9 +84,9 @@ public class KMZExporter extends Exporter {
 			toBeExported.close();
 			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Log.exception(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.exception(e);
 		}
 
 	}

@@ -73,7 +73,7 @@ public class ExportEngine {
 			Exporter exporter = constr.newInstance(this.project);
 			exporter.export(new File(fileName), entity);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.exception(e);
 			Log.error("Unable to export %s", fileName);
 			JOptionPane.showMessageDialog(null,"Could not export "+ fileName,"Export error",JOptionPane.ERROR_MESSAGE);
 		}

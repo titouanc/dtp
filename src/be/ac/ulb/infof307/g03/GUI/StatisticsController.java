@@ -40,8 +40,8 @@ public class StatisticsController implements Observer {
 			this.master = project.getGeometryDAO();
 			this.master.addObserver(this);
 			this.project.addObserver(this);
-		} catch (SQLException e1) {
-			e1.printStackTrace();
+		} catch (SQLException e) {
+			Log.exception(e);
 		}
 	}
 	
@@ -97,7 +97,7 @@ public class StatisticsController implements Observer {
 			daoItem = this.master.getDao(Item.class);
 			itemList = daoItem.queryForAll();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			Log.exception(e);
 		}
 		double habitableSurface = 0;
 		double wallSurface = 0;

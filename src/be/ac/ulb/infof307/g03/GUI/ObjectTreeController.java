@@ -163,7 +163,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				itemDao.remove(item);
 			}
 		} catch (SQLException err){
-			err.printStackTrace();
+			Log.exception(err);
 		}
 	}
 	
@@ -178,7 +178,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				Log.info("DELETE %s", item.toString());
 				this.daoFactory.getDao(item.getClass()).remove(item);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				Log.exception(e);
 			}
 			if (item instanceof Floor)
 				this.deleteFloorContent((Floor) item);
@@ -189,7 +189,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 					for (Area area : room.getAreas())
 						this.daoFactory.getDao(area.getClass()).remove(area);
 				} catch (SQLException e) {
-					e.printStackTrace();
+					Log.exception(e);
 				}
 			}
 			this.daoFactory.notifyObservers();
@@ -417,7 +417,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				daoFactory.getDao(Primitive.class).insert(original.clone());
 				daoFactory.notifyObservers();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				Log.exception(e);
 			}
 			
 		}
