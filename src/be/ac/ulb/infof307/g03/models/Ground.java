@@ -23,13 +23,14 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.util.BufferUtils;
-
 /**
  * A ground is a surface delimited by a group of shapes
- * @author Titouan Christophe
+ * @author Titouan Christophe, Bruno Rocha Pereira
  */
 @DatabaseTable(daoClass=GeometricDAO.class)
 public class Ground extends Area {
+	List<DTriangle> triangleList = null;
+	
 	/**
 	 * Create a new empty ground object, and create a new group for it
 	 */
@@ -55,11 +56,58 @@ public class Ground extends Area {
 	public String getUIDPrefix() {
 		return "gnd";
 	}
+	
+	/**
+	 * @param edgeToRemove 
+	 * @param triangleList 
+	 * @param edge_to_remove
+	 * @return
+	 */
+	public List<DTriangle> removeTriangle(DEdge edgeToRemove, List<DTriangle> triangleList){
+		
+		for(DTriangle triangle: triangleList){
+			if(triangle.getEdge(0).equals(edgeToRemove) &&
+			   triangle.getEdge(1).equals(edgeToRemove) &&
+			   triangle.getEdge(2).equals(edgeToRemove)){
+				triangleList.remove(triangleList.indexOf(edgeToRemove));
+			}
+		}
+		return triangleList;
+		
+	}
+	
+	@Override
+	public double getSurface(){
+		double surface = 0;
+		if(triangleList != null){
+			double triangleSurface = 0;
+			System.out.println(triangleList);
+			for (DTriangle triangle : triangleList){
+				System.out.println("Coucou");
+				triangleSurface = 0;
+				for (DEdge edge : triangle.getEdges()){
+					triangleSurface += edge.get2DLength();
+				}
+				triangleSurface /= 2;
+				triangleSurface = Math.sqrt(triangleSurface*
+						(triangleSurface - triangle.getEdge(0).get2DLength())*
+						(triangleSurface - triangle.getEdge(1).get2DLength())*
+						(triangleSurface - triangle.getEdge(2).get2DLength()));
+				surface += triangleSurface;
+				System.out.println(surface);
+				
+			}
+		}
+		
+		
+		return surface;
+	}
+	
+	
 
 	@Override
 	public final Spatial toSpatial(Material material) {
 
-		
 		List<Point> all_points = getPoints();
 		int shape_n_points = all_points.size();
 		if (shape_n_points == 0)
@@ -99,19 +147,30 @@ public class Ground extends Area {
 				e.printStackTrace();
 			} 
 		}
-		
+
 
 		/* 2) Polygon triangulation to make a surface using Delaunay's algorithm*/
 		try {
 			delaunay.forceConstraintIntegrity();
 			delaunay.processDelaunay();//Error here for concave polygons : too many triangles computed despite the constraint edges
+			System.out.println(delaunay.getTriangleList());
 		} catch (DelaunayError e) {
 			Log.error("Could not process Delaunay's algorithm");
 			e.printStackTrace();
 		}
+		triangleList = delaunay.getTriangleList();
+		
+		List<DEdge> constraintEdgesList = delaunay.getConstraintEdges();
+		List<DEdge> dedges = delaunay.getEdges();
+		for (DEdge edge : dedges){
+			if(! constraintEdgesList.contains(edge)){
+				//ANGLE CONSTRAINT : Check if edge is inside the room
+				// If edge is outside, remove the triangles it forms
+				//triangleList = removeTriangle(edge, triangleList);
+			}
+		}
 		
 		/*3) Set up the computed data for jmonkey*/
-		List<DTriangle> triangleList = delaunay.getTriangleList();
 		List<DPoint> pointsList= delaunay.getPoints();
 		Vector3f vertices[] = new Vector3f[shape_n_points];
 		for(int index = 0; index<pointsList.size(); ++index){
@@ -129,7 +188,7 @@ public class Ground extends Area {
 		}
 		
 		
-		
+		System.out.println("Surface : " + getSurface());
 		
 		
 		Mesh mesh = new Mesh();
