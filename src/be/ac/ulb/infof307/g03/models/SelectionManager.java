@@ -44,13 +44,17 @@ public class SelectionManager {
 	 * Unselect all the selected objects in database
 	 * @throws SQLException
 	 */
-	private void unselectAll() throws SQLException{
+	public void unselectAll() {
 		for (Class<? extends Geometric> klass : selectionables){
-			GeometricDAO dao = this.master.getDao(klass);
-			for (Object o : dao.queryForEq("selected", true)){
-				Selectionable sel = (Selectionable) o;
-				sel.unselect();
-				dao.update(klass.cast(o));
+			try{
+				GeometricDAO dao = this.master.getDao(klass);
+				for (Object o : dao.queryForEq("selected", true)){
+					Selectionable sel = (Selectionable) o;
+					sel.unselect();
+					dao.update(klass.cast(o));
+				}
+			} catch (SQLException e){
+				e.printStackTrace();
 			}
 		}
 	}

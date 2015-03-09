@@ -262,6 +262,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 * Cleans the entire scene. Removes all children and lights.
 	 */
 	public void cleanScene(){
+		this.project.getSelectionManager().unselectAll();
 		enqueue(new Callable<Object>() {
 	        public Object call() {
 	        	rootNode.detachAllChildren();
