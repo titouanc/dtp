@@ -338,24 +338,22 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
+		// Nothing need to be done here
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		
+		// Nothing need to be done here
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		// Nothing need to be done here	
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		// Nothing need to be done here	
 	}
 
 	@Override
@@ -379,7 +377,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 		
 	}
 	
