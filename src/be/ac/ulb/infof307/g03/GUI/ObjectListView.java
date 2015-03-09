@@ -36,9 +36,6 @@ public class ObjectListView extends JList implements Observer {
 	private static final long serialVersionUID = 1L;
 
 	class MyCellRenderer extends JLabel implements ListCellRenderer {
-	     //final static ImageIcon longIcon = new ImageIcon("long.gif");
-	     //final static ImageIcon shortIcon = new ImageIcon("short.gif");
-		
 		/**
 		 * 
 		 */
@@ -57,7 +54,6 @@ public class ObjectListView extends JList implements Observer {
 	     {
 	         String s = value.toString();
 	         setText(s);
-	        // setIcon((s.length() > 10) ? longIcon : shortIcon);
 	         if (isSelected) {
 	             setBackground(list.getSelectionBackground());
 	             setForeground(list.getSelectionForeground());
@@ -118,7 +114,7 @@ public class ObjectListView extends JList implements Observer {
 		super();
 		this.controller = controller;
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		setLayoutOrientation(JList.VERTICAL_WRAP);
+		setLayoutOrientation(JList.VERTICAL);
 		setVisibleRowCount(-1);
 		setCellRenderer(new MyCellRenderer());
 		try {
@@ -138,7 +134,6 @@ public class ObjectListView extends JList implements Observer {
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
-		
 	}
 	
 	private String getFloorName(){

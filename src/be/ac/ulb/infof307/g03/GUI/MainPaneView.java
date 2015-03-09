@@ -85,8 +85,6 @@ public class MainPaneView extends JPanel implements ComponentListener {
 	     
 		
         // Create the texture
-        
-        
         this.textureScrollPane = new JScrollPane (this.texture.getView());
         this.textureScrollPane.setMinimumSize(listScrollPaneMinimumDimension);
         this.textureScrollPane.setPreferredSize(listScrollPanePreferedDimension);
