@@ -362,9 +362,11 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	
 	public void redrawPrimitive(Primitive primitive){
 		Spatial spatial = rootNode.getChild(primitive.getUID());
-		spatial.getParent().detachChild(spatial);
-		drawMeshable(rootNode, primitive);
-		spatial.setLocalTranslation(primitive.getTranslation());
+		if (spatial != null){
+			spatial.getParent().detachChild(spatial);
+			drawMeshable(rootNode, primitive);
+			spatial.setLocalTranslation(primitive.getTranslation());
+		}
 	}
 
 	
