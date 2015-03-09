@@ -107,12 +107,10 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
 				if(fileToImport.renameTo(destinationMini)){
 					reScale(destinationMini); // Set image to 20x20 format
 					this.view.updatePanel(filename);
-				}
-				else{
+				} else{
 					Log.debug("The new texture has not been imported. Error.");
 				}
-			}
-			else{
+			} else{
 				JOptionPane.showMessageDialog(view, "Only png allowed for the moment");
 				Log.debug("Only png allowed");
 			}
@@ -137,12 +135,10 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
 				reScale(destinationMini); // Set image to 20x20 format
 				this.view.updatePanel(destinationFull.getAbsolutePath());
 				this.writeToFile(destinationFull.getAbsolutePath()+"\n");			
-			}
-			else{
+			} else{
 				Log.debug("The new texture has not been imported. Error.");
 			}
-		}
-		else{
+		} else{
 			Log.debug("Only .png allowed");
 		}
 	}
@@ -163,8 +159,7 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
 			    catch (NullPointerException ex){
 			    	Log.exception(ex);	
 			    }   
-			}
-			else{
+			} else{
 				try{		
 					File fileToImport = fc.getSelectedFile();
 					this.addTextureJar(fileToImport);
@@ -340,12 +335,20 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
 		}
 		
 		if (SwingUtilities.isLeftMouseButton(e)) {	
-			this.project.config("texture.selected",this.view.getSelectedTextureName());
+			if (!this.view.getSelectedTextureName().equals(this.view.getAddFile())) {
+				this.project.config("texture.selected",this.view.getSelectedTextureName());
+			} else {
+				try {
+					this.addNewTexture();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
 		} else if (SwingUtilities.isRightMouseButton(e)){
 			if (this.view.getCurrentMode().equals(TextureView.TEXTUREMODE)){
 				JPopupMenu PopupMenu = this.view.createPopupMenu();
 				PopupMenu.show(e.getComponent(), e.getX(), e.getY());
-			}		
+			}	
 		}			
 	}
 		

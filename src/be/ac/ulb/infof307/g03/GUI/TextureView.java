@@ -13,22 +13,14 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.jar.JarEntry;
@@ -92,21 +84,21 @@ public class TextureView extends JPanel {
 	 	         setEnabled(list.isEnabled());
 	 	         setFont(list.getFont());
 	 	         setOpaque(true);
+	 	         
+	 	         // TODO voir si manière plus simple
+	 	         if (value.toString().contains("/")){
+	 	        	 // If the filename contains / , it means it's a path so we want just the end of it
+	 	        	 String name="";
+	 	        	 int start = value.toString().lastIndexOf('/') + 1;
+	 	        	 name=value.toString().substring(start);
+	 	        	 name=name.toString().replace("Full","");
+	 	        	 this.setText(name);
+	 	         } else{
+	 	        	 this.setText(value.toString());
+	 	         }
+	 	         
 	 	         return this;
 	 	     }
-	   /*
-	        if (value.toString().contains("/")){
-		        // If the filename contains / , it means it's a path so we want just the end of it
-	        	String name="";
-	        	int start = value.toString().lastIndexOf('/') + 1;
-	        	name=value.toString().substring(start);
-	        	name=name.toString().replace("Full","");
-	        	label.setText(name);
-	        } else{
-	        	label.setText(value.toString());
-	        }
-	        return label;
-	    }*/
 	}
 	
 	/**
@@ -276,7 +268,9 @@ public class TextureView extends JPanel {
     	} else {
     		this.addFiles(); 		
     	}    	
+		this.textureFiles.add(ADDTEXTURE);
 	}
+	
 	
 	/**
 	 * Parse files from /Textures and /Colors in assets
