@@ -48,6 +48,11 @@ public abstract class Area extends Meshable {
 		return getRoom().getPoints();
 	}
 	
+	@Override
+	protected Boolean drawAsSelected() {
+		return this.getRoom().isSelected();
+	}
+
 	/**
 	 * @return The area surface
 	 */
@@ -62,5 +67,4 @@ public abstract class Area extends Meshable {
 		surface = surface/2;
 		return surface;
 	}
-	
 }

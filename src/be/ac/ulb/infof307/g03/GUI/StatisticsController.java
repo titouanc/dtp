@@ -14,6 +14,7 @@ import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.models.Room;
+import be.ac.ulb.infof307.g03.models.Selectionable;
 import be.ac.ulb.infof307.g03.models.Wall;
 
 /**
@@ -220,12 +221,13 @@ public class StatisticsController implements Observer {
 	 * what is selected (room or nothing) in world view
 	 */
 	public void updateHTMLWorld(){
-		Room rm = this.master.getRoomSelected();
-		if (rm == null)
-			view.editText(getGeneralStat());
-		else
+		Selectionable selected = this.project.getSelectionManager().selected();
+		if (selected != null && selected instanceof Room){
+			Room rm = (Room) selected;
 			view.editText(getRoomStat(rm));
-		
+		} else {
+			view.editText(getGeneralStat());
+		}
 	}
 	
 	

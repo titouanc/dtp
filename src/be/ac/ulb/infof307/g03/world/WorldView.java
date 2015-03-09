@@ -39,7 +39,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
@@ -130,10 +129,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
         	
         		
 
-	}
-	
-	private Boolean isInWorldMode(){
-		return this.controller instanceof WorldController;
 	}
 	
 	/**
@@ -261,6 +256,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 * Cleans the entire scene. Removes all children and lights.
 	 */
 	public void cleanScene(){
+		this.project.getSelectionManager().unselectAll();
 		enqueue(new Callable<Object>() {
 	        public Object call() {
 	        	rootNode.detachAllChildren();
@@ -309,7 +305,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		rootNode.attachChild(axisGeo);
 	}
 
-		
 	/**
 	 * Update view when a Point has changed
 	 * @param change
@@ -320,31 +315,45 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		if (this.controller instanceof WorldController) {
 			floor = ((WorldController) this.controller).getCurrentFloor();
 		}
-		rootNode.detachChildNamed(point.getUID());
-		if (point.isSelected()){			
-			Sphere mySphere = new Sphere(15,15, 0.7f);
-		    Geometry sphere = new Geometry(point.getUID(), mySphere);
-		    mySphere.setTextureMode(Sphere.TextureMode.Projected);
-		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-		    sphereMat.setColor("Color",new ColorRGBA(0.8f,0.9f,0.2f,0.99f));
-		    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		    sphereMat.getAdditionalRenderState().setDepthTest(false);
-		    sphere.setMaterial(sphereMat);
-		    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
-		    sphere.setCullHint(CullHint.Never);
-		    
-		    rootNode.attachChild(sphere);
-		    
-		    try {
-			    GeometricDAO<Room> dao = this.daoFactory.getDao(Room.class);
-				for (Room room : point.getBoundRooms()){
-					dao.refresh(room);
-					for (Meshable meshable : room.getAreas())
-						updateMeshable(Change.update(meshable));
-				}
+		drawOnePoint(point, floor);
+		for (Room room: point.getBoundRooms()){
+			try {
+				GeometricDAO<Room> dao = this.daoFactory.getDao(Room.class);
+				dao.refresh(room);
+				for (Meshable meshable : room.getAreas())
+					updateMeshable(Change.update(meshable));
 			} catch (SQLException ex) {
 				Log.exception(ex);
 			}
+		}
+	}
+	
+	/**
+	 * Show points as spheres around a room
+	 * @param change
+	 */
+	private void showPoints(Room room){
+		Log.debug("Showing points for room %s", room.getUID());
+		for (Point point : room.getPoints()){
+			this.drawOnePoint(point, room.getFloor());
+		}
+	}
+	
+	private void drawOnePoint(Point point, Floor floor){
+		Spatial node = this.rootNode.getChild(point.getUID());
+		if (node != null)
+			node.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
+		else {
+			Sphere mySphere = new Sphere(32,32, 1.0f);
+		    Geometry sphere = new Geometry(point.getUID(), mySphere);
+		    mySphere.setTextureMode(Sphere.TextureMode.Projected);
+		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
+		    sphereMat.setBoolean("UseMaterialColors",true);    
+		    sphereMat.setColor("Diffuse",new ColorRGBA(0.8f,0.9f,0.2f,0.5f));
+		    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		    sphere.setMaterial(sphereMat);
+		    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
+		    rootNode.attachChild(sphere);
 		}
 	}
 	
@@ -357,9 +366,17 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			if (change.isCreation()) {
 				 drawMeshable(rootNode, primitive);
 			} else {
-				Spatial spatial = rootNode.getChild(primitive.getUID());
-				spatial.setLocalTranslation(primitive.getTranslation());
+				this.redrawPrimitive(primitive);
 			}
+	}
+	
+	public void redrawPrimitive(Primitive primitive){
+		Spatial spatial = rootNode.getChild(primitive.getUID());
+		if (spatial != null){
+			spatial.getParent().detachChild(spatial);
+			drawMeshable(rootNode, primitive);
+			spatial.setLocalTranslation(primitive.getTranslation());
+		}
 	}
 
 	
@@ -369,6 +386,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 */
 	private void updateMeshable(Change change){
 		Meshable meshable = (Meshable) change.getItem();
+		this.redrawMeshable(meshable);
+	}
+	
+	private void redrawMeshable(Meshable meshable){
 		Spatial node = rootNode.getChild(meshable.getUID());
 		Node parent = rootNode;
 		if (node != null){
@@ -387,6 +408,22 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		Log.info("updateFloor");
 		cleanScene();
 		makeScene();
+	}
+	
+	private void updateRoom(Change change){
+		Room room = (Room) change.getItem();
+		if (room.isSelected()){
+			this.showPoints(room);
+		} else {
+			for (Point point : room.getPoints()){
+				Spatial node = this.rootNode.getChild(point.getUID());
+				if (node != null)
+					this.rootNode.detachChild(node);
+			}
+		}
+		for (Meshable meshable : room.getAreas()){
+			this.redrawMeshable(meshable);
+		}
 	}
 	
 	/**
@@ -423,8 +460,15 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		synchronized (this.queuedChanges){
 			if (this.queuedChanges.size() > 0){
 				for (Change change : this.queuedChanges){
-					if (change.isDeletion()) // handle all deletion
-						deleteMeshable((Meshable) change.getItem());
+					if (change.isDeletion()){ // handle all deletion
+						if (change.getItem() instanceof Meshable)
+							deleteMeshable((Meshable) change.getItem());
+						else if (change.getItem() instanceof Point){
+							Spatial node = this.rootNode.getChild(change.getItem().getUID());
+							if (node != null)
+								this.rootNode.detachChild(node);
+						}
+					}
 					else if (change.getItem() instanceof Item) 
 						updateItem(change);
 					else if (change.getItem() instanceof Primitive) 
@@ -435,6 +479,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 						updatePoint(change);
 					else if (change.getItem() instanceof Floor) // when new floor or floor deleted
 						updateFloor(change);
+					else if (change.getItem() instanceof Room) // for example if a room has been selected
+						updateRoom(change);
 				}		
 				this.queuedChanges.clear();
 			}

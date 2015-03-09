@@ -201,48 +201,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * @param element
 	 */
 	public void deselectElement(Object element) {
-		if (element instanceof Area){
-			Area area = (Area) element;
-			Log.debug("Unselect %s", area.getUID());
-			area.deselect();
-			try {
-				GeometricDAO<Point> pointDao = this.daoFactory.getDao(Point.class);
-				for (Point p : area.getPoints()){
-					p.deselect();
-					pointDao.modify(p);
-				}
-				this.daoFactory.getDao(area.getClass()).modify(area);
-				this.daoFactory.notifyObservers();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} else if (element instanceof Room){
-			Room room = (Room) element;
-			try {
-				GeometricDAO<Point> pointDao = this.daoFactory.getDao(Point.class);
-				for (Point p : room.getPoints()){
-					pointDao.refresh(p);
-					p.deselect();
-					pointDao.modify(p);
-				}
-				this.daoFactory.notifyObservers();
-		
-			} catch (SQLException err){
-				// TODO Auto-generated catch block
-				err.printStackTrace();
-			}
-		} else if (element instanceof Meshable) {
-			Meshable meshable = (Meshable) element;
-			meshable.deselect();
-			try {
-				GeometricDAO<? extends Meshable> meshDao = this.daoFactory.getDao(meshable.getClass());
-				meshDao.modify(meshable);
-				this.daoFactory.notifyObservers();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		this.project.getSelectionManager().unselect();
 	}
 
 	/**
@@ -252,50 +211,15 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void selectElement(Object element) {
 		if (element instanceof Floor){
 			Floor current = (Floor) element;
-			this.project.config("floor.current", current.getUID());
-			System.out.println("CURRENT FLOOR "+this.project.config("floor.current", current.getUID()));
+			this.project.getSelectionManager().setCurrentFloor(current);
 		} else if (element instanceof Area){
 			Area area = (Area) element;
+			this.project.getSelectionManager().select(area.getRoom());
 			Log.debug("Select %s", area.getUID());
-			try {
-				GeometricDAO<Point> pointDao = this.daoFactory.getDao(Point.class);
-				GeometricDAO areaDao = this.daoFactory.getDao(area.getClass());
-				areaDao.refresh(area);
-				area.select();
-				for (Point p : area.getPoints()){
-					p.select();
-					pointDao.modify(p);
-				}
-				areaDao.modify(area);
-				this.daoFactory.notifyObservers();
-			} catch (SQLException ex) {
-				Log.exception(ex);
-			}
-			project.config("floor.current", area.getRoom().getFloor().getUID());
 		} else if (element instanceof Room){
-			try {
-				GeometricDAO<Point> pointDao = this.daoFactory.getDao(Point.class);
-				Room room = (Room) element;
-				for (Point p : room.getPoints()){
-					pointDao.refresh(p);
-					p.select();
-					pointDao.modify(p);
-				}
-				this.daoFactory.notifyObservers();
-				project.config("floor.current", room.getFloor().getUID());
-			} catch (SQLException err){
-				Log.exception(err);
-			}
-		} else if (element instanceof Meshable) {
-			Meshable meshable = (Meshable) element;
-			meshable.select();
-			try {
-				this.daoFactory.getDao(meshable.getClass()).modify(meshable);
-				this.daoFactory.notifyObservers(meshable);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			this.project.getSelectionManager().select((Room) element);
+		} else if (element instanceof Item) {
+			this.project.getSelectionManager().select((Item) element);
 		}
 	}
 

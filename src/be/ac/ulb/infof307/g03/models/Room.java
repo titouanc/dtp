@@ -17,7 +17,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * @brief A group is a shape constituted of multiple shapes
  */
 @DatabaseTable(daoClass=GeometricDAO.class)
-public class Room extends Geometric {
+public class Room extends Geometric implements Selectionable {
 	@DatabaseField(canBeNull = true, unique = true)
 	private String name = null;
 	@DatabaseField(foreign = true, canBeNull = false, foreignAutoRefresh = true)
@@ -30,7 +30,8 @@ public class Room extends Geometric {
 	private Roof roof;
 	@DatabaseField(foreign = true, canBeNull = true, foreignAutoRefresh = true, foreignAutoCreate = true)
 	private Wall wall;
-	
+	@DatabaseField
+	private Boolean selected = false;
 	/**
 	 * Create a new group project with an empty name;
 	 */
@@ -219,5 +220,13 @@ public class Room extends Geometric {
 			res.add(this.roof);
 		return res;
 	}
-	
+
+	@Override
+	public Boolean isSelected() {return this.selected;}
+	@Override
+	public void select() {this.selected = true;}
+	@Override
+	public void unselect() {this.selected = false;}
+	@Override
+	public void toggleSelect(){this.selected = ! this.selected;}
 }

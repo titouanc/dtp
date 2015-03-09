@@ -30,14 +30,13 @@ import com.jme3.system.AppSettings;
  * @brief Controller of the jMonkeyEngine canvas. It handles both the 3D and 2D view.
  */
 public class WorldController extends CanvasController implements Observer {
+	private Spatial endWall = null;
+	private List<Spatial> liveWalls = new ArrayList<Spatial>() ;
+	private Vector3f lastMousePos = null;
+	private boolean shiftPressed = false;
     
 	// Attributes
-    private List<Point> inConstruction = new LinkedList <Point>();;	
-    private Floor currentFloor = null;
-    private Spatial endWall = null;
-    private List<Spatial> liveWalls = new ArrayList<Spatial>() ;
-    private Vector3f lastMousePos = null;
-    private boolean shiftPressed = false;
+    private List<Point> inConstruction = new LinkedList <Point>();
 
     /**
      * Constructor of WorldController.
@@ -47,12 +46,6 @@ public class WorldController extends CanvasController implements Observer {
      */
     public WorldController(WorldView view, AppSettings settings){
     	super(view, settings);
-    	
-        try {
-			this.currentFloor = (Floor) this.project.getGeometryDAO().getByUID(this.project.config("floor.current"));
-        } catch (SQLException e) {
-			e.printStackTrace();
-		}
         
         view.getProject().addObserver(this);
         view.makeScene();
@@ -63,7 +56,7 @@ public class WorldController extends CanvasController implements Observer {
      * @return The current floor.
      */
     public Floor getCurrentFloor(){
-    	return this.currentFloor;
+    	return this.project.getSelectionManager().currentFloor();
     }
     
     /**
@@ -78,8 +71,7 @@ public class WorldController extends CanvasController implements Observer {
     	if (movingPoint == null)
     		return;
     	
-    	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
-    	
+    	Vector3f newPos = getXYForMouse((float) getCurrentFloor().getBaseHeight());
     	movingPoint.setX(newPos.x);
     	movingPoint.setY(newPos.y);
     	if (shiftPressed){
@@ -125,26 +117,7 @@ public class WorldController extends CanvasController implements Observer {
      * @param area The Area item to select
      */
 	public void selectArea(Area area) {
-		try {
-			area.toggleSelect();
-			MasterDAO dao = this.project.getGeometryDAO();
-			
-			for (Point p : area.getPoints()){
-				if (area.isSelected())
-					p.select();
-				else
-					p.deselect();
-				dao.getDao(Point.class).modify(p);
-			}
-			dao.getDao(area.getClass()).modify(area);
-			dao.notifyObservers(area);
-			
-			String floorUID = area.getRoom().getFloor().getUID();
-			if (! this.project.config("floor.current").equals(floorUID))
-				this.project.config("floor.current", floorUID);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		this.project.getSelectionManager().toggleSelect(area.getRoom());
 	}
 	
 	/**
@@ -152,19 +125,7 @@ public class WorldController extends CanvasController implements Observer {
      * @param item The Item to select
      */
 	public void selectItem(Item item) {
-		try {
-			item.toggleSelect();
-			MasterDAO dao = this.project.getGeometryDAO();
-			dao.getDao(Item.class).modify(item);
-			dao.notifyObservers();
-			
-			String floorUID = item.getFloor().getUID();
-			if (! currentFloor.getUID().equals(floorUID)){
-				this.project.config("floor.current", floorUID);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		this.project.getSelectionManager().toggleSelect(item);
 	}
 	
     
@@ -179,20 +140,16 @@ public class WorldController extends CanvasController implements Observer {
      * Add the points in the Point List when user click to create his wall
      */
     public void construct(){
-    	Vector3f newPos = getXYForMouse((float) this.currentFloor.getBaseHeight());
+    	Vector3f newPos = getXYForMouse((float) getCurrentFloor().getBaseHeight());
     	Point lastPoint=new Point(newPos.x, newPos.y, 0);
-    	if (shiftPressed){
-        	lastPoint=new Point(Math.round(newPos.x), Math.round(newPos.y), 0);
-    	}
-		lastPoint.select();
-				
+
 		try {
         	MasterDAO daoFactory = this.project.getGeometryDAO();
         	GeometricDAO<Point> pointDao = daoFactory.getDao(Point.class);
         	Point near = pointDao.queryForFirst(lastPoint.getQueryForNear(pointDao, 1));
         	if (near != null){
         		lastPoint = near;
-        		lastPoint.select();
+        		//lastPoint.select();
         		pointDao.modify(lastPoint);
         	} else {
         		pointDao.insert(lastPoint);
@@ -211,7 +168,7 @@ public class WorldController extends CanvasController implements Observer {
     public void buildLive(){
     	if (this.inConstruction.size()>1){ // If more than 2 points, we can mesh them together
     		int lastPoint=this.inConstruction.size()-1;
-    		double height = this.currentFloor.getBaseHeight();
+    		double height = this.getCurrentFloor().getBaseHeight();
     		
     		Vector3f currentPoint= this.inConstruction.get(lastPoint).toVector3f();
     		Vector3f previousPoint = this.inConstruction.get(lastPoint-1).toVector3f();
@@ -253,7 +210,7 @@ public class WorldController extends CanvasController implements Observer {
 			// Minimum 3 points to build a room
 	    	if (this.inConstruction.size() >= 3){
 	    		Room room = new Room();
-	    		room.setFloor(this.currentFloor);
+	    		room.setFloor(getCurrentFloor());
 	    		daoFactory.getDao(Room.class).insert(room);
 	    		daoFactory.getDao(Room.class).refresh(room);
 	    		room.setName(room.getUID());
@@ -275,26 +232,16 @@ public class WorldController extends CanvasController implements Observer {
 	    			room.addPoints(p);
 	    		room.addPoints(this.inConstruction.get(0)); // close polygon
 	    		daoFactory.getDao(Room.class).modify(room);
-	    		daoFactory.getDao(Floor.class).refresh(this.currentFloor);
-	    		
-		    	for (Point p : this.inConstruction){
-		    		if (p.getBindings().size() == 0){
-		    			pointDao.remove(p);
-		    		} else {
-		    			p.deselect();
-		    			pointDao.modify(p);
-		    		}
-		    	}
-		    		    	
-		    	
-		    	this.view.getRootNode().detachChild(endWall);
+	    		daoFactory.getDao(Floor.class).refresh(getCurrentFloor());
 	    	}
-	    	else{
-	    		for (Point p : this.inConstruction){
-		    		p.deselect();
-	    			pointDao.modify(p);
-		    	}
+	    	
+	    	for (Point p : this.inConstruction){
+	    		if (p.getBindings().size() == 0){
+	    			pointDao.remove(p);
+	    		}
 	    	}
+	    	if (this.endWall != null)
+	    		this.view.getRootNode().detachChild(this.endWall);
 	    	
 	    daoFactory.notifyObservers();
 	    this.inConstruction.clear();
@@ -342,17 +289,7 @@ public class WorldController extends CanvasController implements Observer {
 	public void update(Observable obs, Object msg) {
     	if (obs instanceof Project) {
     		Config config = (Config) msg;
-    		if (config.getName().equals("floor.current")){
-    			String newUID = config.getValue();
-    			if (this.currentFloor != null && newUID.equals(this.currentFloor.getUID()))
-    				return;
-    			try {
-    				Geometric found = this.project.getGeometryDAO().getByUID(config.getValue());
-    				this.currentFloor = (found != null) ? (Floor) found : null;
-    			} catch (SQLException ex) {
-    				Log.exception(ex);
-    			}
-    		} else if (config.getName().equals("mouse.mode")) {
+    		if (config.getName().equals("mouse.mode")) {
     			this.mouseMode = config.getValue();
     		}
     	}
@@ -364,7 +301,7 @@ public class WorldController extends CanvasController implements Observer {
         
         /* We're not interested if no object */
         if (clicked == null)
-        	this.deselectAll();
+        	this.project.getSelectionManager().unselect();
         
         /* If it is an Area (Wall, Ground, Roof): select it */
         if (clicked instanceof Area)
