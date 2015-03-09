@@ -85,7 +85,7 @@ public class TextureView extends JPanel {
 	 	         setFont(list.getFont());
 	 	         setOpaque(true);
 	 	         
-	 	         // TODO voir si manière plus simple
+	 	         // TODO voir si maniÔøΩre plus simple
 	 	         if (value.toString().contains("/")){
 	 	        	 // If the filename contains / , it means it's a path so we want just the end of it
 	 	        	 String name="";
@@ -342,6 +342,7 @@ public class TextureView extends JPanel {
 	public void updatePanel(String filename){
 		filename=filename.replace(".png","");	
 		this.textureFiles.add(this.textureFiles.size()-1,filename);
+		this.updateDisplayedList();
 		this.updateUI();
 	}
 	
