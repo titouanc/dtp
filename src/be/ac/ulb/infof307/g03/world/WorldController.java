@@ -238,9 +238,10 @@ public class WorldController extends CanvasController implements Observer {
 	    	for (Point p : this.inConstruction){
 	    		if (p.getBindings().size() == 0){
 	    			pointDao.remove(p);
-                    this.view.getRootNode().detachChild(endWall);
 	    		}
 	    	}
+	    	if (this.endWall != null)
+	    		this.view.getRootNode().detachChild(this.endWall);
 	    	
 	    daoFactory.notifyObservers();
 	    this.inConstruction.clear();
