@@ -65,6 +65,18 @@ public class StatisticsController implements Observer {
 		
 	}
 	
+	
+	private StringBuffer createHeader(){
+		StringBuffer html = new StringBuffer();
+		html.append("<html><head><style type='text/css'>");
+	    //html.append("body { background-color: #fffffff; }");
+		html.append("</style></head>");
+		html.append("<h3>Statistics</h3>");
+		
+		return html;
+		
+	}
+	
 	/**
 	 * Return html formated string of
 	 * general statistics of the project
@@ -100,10 +112,7 @@ public class StatisticsController implements Observer {
 			roomsVolume += room.getVolume();
 			
 		}
-		StringBuffer html = new StringBuffer();
-		html.append("<html><head><style type='text/css'>");
-	    //html.append("body { background-color: #fffffff; }");
-		html.append("</style></head>");
+		StringBuffer html = this.createHeader();
 		html.append("<h4>General Statistics</h4>");
 		html.append("<p>Number of object : ");
 		html.append(itemList.size());
@@ -133,11 +142,8 @@ public class StatisticsController implements Observer {
 	 * @return Html fromated string containing stat of the room
 	 */
 	public String getRoomStat(Room selectedRoom){
-		StringBuffer html = new StringBuffer();
-		html.append("<html><head><style type='text/css'>");
-	    //html.append("body { background-color: #fffffff; }");
-		html.append("</style></head>");
-		html.append("<h4>Statistics : ");
+		StringBuffer html = this.createHeader();
+		html.append("<h4>");
 		html.append(selectedRoom.getName());
 		html.append("</h4>");
 		double habitableSurface = 0;
@@ -151,9 +157,6 @@ public class StatisticsController implements Observer {
 			wallSurface += selectedRoom.getWall().getSurface();
 		roomsVolume += selectedRoom.getVolume();
 
-		html.append("<html><head><style type='text/css'>");
-	    //html.append("body { background-color: #fffffff; }");
-		html.append("</style></head>");
 		html.append("<p>Living surface : ");
 		html.append(habitableSurface);
 		html.append("</p>");
@@ -182,7 +185,7 @@ public class StatisticsController implements Observer {
 			
 		}
 		html.append("</style></head>");
-		html.append("<h4>Statistics : ");
+		html.append("<h4>");
 		html.append(fl.toString());
 		html.append("</h4>");
 		html.append("<p>Living surface : ");
@@ -225,11 +228,8 @@ public class StatisticsController implements Observer {
 				}
 			}
 		}
-		StringBuffer html = new StringBuffer();
-		html.append("<html><head><style type='text/css'>");
-	    //html.append("body { background-color: #fffffff; }");
-		html.append("</style></head>");
-		html.append("<h4>Object Statistics</h4>");
+		StringBuffer html = this.createHeader();
+		html.append("<h4>Object</h4>");
 		html.append("<p>Vertices number : ");
 		html.append(numberVertices);
 		html.append("</p>");
