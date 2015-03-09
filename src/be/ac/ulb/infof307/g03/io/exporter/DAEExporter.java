@@ -11,6 +11,7 @@ import java.util.Date;
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 
 /**
@@ -49,9 +50,9 @@ public class DAEExporter extends Exporter {
 			file.println("</COLLADA>"																				);
 			file.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Log.exception(e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			Log.exception(e);
 		}
 	}
 

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
+import be.ac.ulb.infof307.g03.utils.Log;
+
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.j256.ormlite.dao.DaoManager;
@@ -57,8 +59,12 @@ public class MasterDAO extends Observable {
 				String prefix = klass.newInstance().getUIDPrefix();
 				this.uidMap.put(prefix, klass);
 			}
-			catch (InstantiationException e) {e.printStackTrace();} 
-			catch (IllegalAccessException e) {e.printStackTrace();}
+			catch (InstantiationException e) {
+				Log.exception(e);
+			} 
+			catch (IllegalAccessException e) {
+				Log.exception(e);
+			}
 		}
 	}
 	
@@ -72,7 +78,7 @@ public class MasterDAO extends Observable {
 				GeometricDAO<? extends Geometric> dao = this.getDao(klass);
 				res = dao.queryForId(id);
 			} catch (SQLException err){
-				err.printStackTrace();
+				Log.exception(err);
 			}
 		}
 		return res;

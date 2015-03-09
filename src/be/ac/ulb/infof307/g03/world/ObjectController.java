@@ -43,8 +43,7 @@ public class ObjectController extends CanvasController implements Observer {
 			this.currentEntity = (Entity) this.project.getGeometryDAO().getByUID(this.project.config("entity.current"));
 			this.view.makeScene(this.currentEntity);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.exception(e);
 		}
 		
         view.getProject().addObserver(this);

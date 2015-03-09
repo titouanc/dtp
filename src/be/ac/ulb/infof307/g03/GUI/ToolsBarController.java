@@ -322,8 +322,7 @@ public class ToolsBarController implements ActionListener, Observer {
     			 dao.insert(entity);
     			 daoFactory.notifyObservers();
     		 } catch (SQLException e) {
-    			 // TODO Auto-generated catch block
-    			 e.printStackTrace();
+    			 Log.exception(e);
     		 }
     		 project.config("entity.current", entity.getUID());
     		 project.config("edition.mode", "object");

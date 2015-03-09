@@ -223,7 +223,7 @@ public class WorldController extends CanvasController implements Observer {
 		    			daoFactory.getDao(className).insert(newArea);
 					} catch (Exception e) {
 						Log.error("Unable to use Area subclass constructor at runtime ! (Missing method ?)");
-						e.printStackTrace();
+						Log.exception(e);
 					}
 	    		}
 	    		

@@ -13,7 +13,9 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 
+
 import be.ac.ulb.infof307.g03.models.MasterDAO;
+import be.ac.ulb.infof307.g03.utils.Log;
 /**
  * @author Walter
  *
@@ -40,9 +42,9 @@ public class KmzParser extends Parser {
 			this.zipFile = new ZipFile(file);
 			this.stream = this.findDaeFile(); // Here we got the content of the KML File
 		} catch (ZipException e) {
-			e.printStackTrace();
+			Log.exception(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.exception(e);
 		}
 	}
 

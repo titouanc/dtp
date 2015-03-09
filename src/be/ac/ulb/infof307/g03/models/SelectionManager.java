@@ -55,7 +55,7 @@ public class SelectionManager {
 					dao.update(klass.cast(o));
 				}
 			} catch (SQLException e){
-				e.printStackTrace();
+				Log.exception(e);
 			}
 		}
 	}
@@ -95,7 +95,7 @@ public class SelectionManager {
 			Log.debug("Selected %s", geom.getUID());
 			this.master.notifyObservers();
 		} catch (SQLException e){
-			e.printStackTrace();
+			Log.exception(e);
 		}
 	}
 	
@@ -110,7 +110,7 @@ public class SelectionManager {
 				try {
 					this.master.getDao(Primitive.class).refresh((Primitive) obj);
 				} catch (SQLException e) {
-					e.printStackTrace();
+					Log.exception(e);
 				}
 		}
 		else{
@@ -134,7 +134,7 @@ public class SelectionManager {
 				Log.debug("Unselected %s", geom.getUID());
 				this.master.notifyObservers();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				Log.exception(e);
 			}
 		}
 	}

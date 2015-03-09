@@ -163,7 +163,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				itemDao.remove(item);
 			}
 		} catch (SQLException err){
-			err.printStackTrace();
+			Log.exception(err);
 		}
 	}
 	
@@ -178,7 +178,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				Log.info("DELETE %s", item.toString());
 				this.daoFactory.getDao(item.getClass()).remove(item);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				Log.exception(e);
 			}
 			if (item instanceof Floor)
 				this.deleteFloorContent((Floor) item);
@@ -189,7 +189,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 					for (Area area : room.getAreas())
 						this.daoFactory.getDao(area.getClass()).remove(area);
 				} catch (SQLException e) {
-					e.printStackTrace();
+					Log.exception(e);
 				}
 			}
 			this.daoFactory.notifyObservers();
@@ -338,24 +338,22 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
+		// Nothing need to be done here
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		
+		// Nothing need to be done here
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		// Nothing need to be done here	
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		// Nothing need to be done here	
 	}
 
 	@Override
@@ -379,7 +377,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 		
 	}
 	
@@ -417,7 +415,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				daoFactory.getDao(Primitive.class).insert(original.clone());
 				daoFactory.notifyObservers();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				Log.exception(e);
 			}
 			
 		}

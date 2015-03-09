@@ -12,6 +12,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import be.ac.ulb.infof307.g03.utils.Log;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -255,8 +257,7 @@ public class TextureView extends JPanel {
     			readFile(new File(addedFilePath));
     		}			    		   		    
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.exception(e);
 		}
     }
     
@@ -311,7 +312,7 @@ public class TextureView extends JPanel {
 			}
 			buffer.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.exception(e);
 		}
 	}
 	

@@ -189,7 +189,7 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
     	        bufferWritter.write(addedFilePath);
     	        bufferWritter.close();
     	}catch(IOException e){
-    		e.printStackTrace();
+    		Log.exception(e);
     	}
 	}
 	
@@ -224,10 +224,10 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
 	      tempFile.renameTo(inFile);	      
 	    }
 	    catch (FileNotFoundException ex) {
-	      ex.printStackTrace();
+	    	Log.exception(ex);
 	    }
 	    catch (IOException ex) {
-	      ex.printStackTrace();
+	    	Log.exception(ex);
 	    }
 	  }
 	
@@ -300,25 +300,25 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 		
 	}
 
@@ -344,7 +344,7 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
 				try {
 					this.addNewTexture();
 				} catch (IOException e1) {
-					e1.printStackTrace();
+					Log.exception(e1);
 				}
 			}
 		} else if (SwingUtilities.isRightMouseButton(e)){

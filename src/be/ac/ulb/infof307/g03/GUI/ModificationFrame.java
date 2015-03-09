@@ -21,6 +21,7 @@ import javax.swing.event.ChangeListener;
 
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
@@ -165,8 +166,8 @@ class ModificationFrame extends JFrame implements ActionListener, PropertyChange
 		try {
 			dao.getDao(Primitive.class).modify(primitive);
 			dao.notifyObservers(primitive);
-		} catch (SQLException e1) {
-			e1.printStackTrace();
+		} catch (SQLException e) {
+			Log.exception(e);
 		}
 	}
 	
