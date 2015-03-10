@@ -71,11 +71,9 @@ public class OBJExporter extends Exporter{
 			}
 			file.close();
 		} catch (FileNotFoundException e) {
-			Log.log(Level.FINEST, "[ERROR] File couldn't be exported");
-			e.printStackTrace();
+			Log.exception(e);
 		} catch (UnsupportedEncodingException e) {
-			Log.log(Level.FINEST, "[ERROR] File couldn't be exported - Encoding error");
-			e.printStackTrace();
+			Log.exception(e);
 		}
 
 	}

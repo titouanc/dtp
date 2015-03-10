@@ -9,24 +9,22 @@ import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 
-import java.awt.CardLayout;
-import java.awt.Color;
+import be.ac.ulb.infof307.g03.utils.Log;
+
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -35,40 +33,81 @@ import java.util.jar.JarFile;
  * @author Walter, brochape
  * @brief view of the panel that ill open when user wants to change texture
  */
-public class TextureView extends JPanel implements ItemListener {
-
-	private static final long serialVersionUID = 1L;
-	private TextureController controller;
+public class TextureView extends JPanel {
 	
-	private GridBagLayout paneLayout;
-	private ArrayList<String> colorFiles=   new ArrayList <String>();
-	private ArrayList<String> textureFiles= new ArrayList <String>();
+	class MyCellRenderer extends DefaultListCellRenderer {
+	    private static final long serialVersionUID = -7799441088157759804L;
+	   
+	    @Override
+	    public Component getListCellRendererComponent(
+	 	       JList list,           // the list
+	 	       Object value,            // value to display
+	 	       int index,               // cell index
+	 	       boolean isSelected,      // is the cell selected
+	 	       boolean cellHasFocus)    // does the cell have focus
+	 	     {
+	 	         String s = value.toString();
+	 	         Icon imageIcon = null;
+	 	         setText(s);
+	 	         if (isSelected) {
+	 	             setBackground(list.getSelectionBackground());
+	 	             setForeground(list.getSelectionForeground());
+	 	         } else {
+	 	             setBackground(list.getBackground());
+	 	             setForeground(list.getForeground());
+	 	         }
+	 	         
+	 	         if(classPath.subSequence(0, 3).equals("rsr")) {
+	 	        	 if (getCurrentMode().equals(TEXTUREMODE)) {
+	 	        		 if (!(value.toString()==ADDTEXTURE)) {
+	 	        			 if(value.toString().contains(File.separator)) {
+	 	        				imageIcon = new ImageIcon(value.toString().replace("Full", "Mini")+".png");
+	 	        			 } else {
+	 	        				 imageIcon = new ImageIcon(getClass().getResource("/"+value.toString()+".png"));
+	 	        			 }
+	 	        		 } else {
+	 	        			 imageIcon = new ImageIcon(getClass().getResource("/"+"addFile.png"));
+	 	        		 }
+	 	        	 } else {
+	 	        		 imageIcon = new ImageIcon(getClass().getResource("/"+value.toString()+"Color.png"));
+	 	        	 }
+	 	         } else {
+	 	        	 String prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/";
+	 	        	 if (getCurrentMode().equals(TEXTUREMODE))   			
+	 	        		 if (!(value.toString()==ADDTEXTURE)) 
+	 	        			 imageIcon = new ImageIcon(prefix+"/Textures/"+value.toString()+".png" );
+	 	        		 else
+	 	        			 imageIcon = new ImageIcon(prefix+"Tools/addFile.png" );
+	 	        	 else
+	 	        		 imageIcon = new ImageIcon(prefix+"Colors/"+value.toString()+"Color.png");
+	 	         }
+	 	         this.setIcon(imageIcon);
+	 	         
+	 	         setEnabled(list.isEnabled());
+	 	         setFont(list.getFont());
+	 	         setOpaque(true);
+	 	         
+	 	         // TODO voir si mani�re plus simple
+	 	         if (value.toString().contains("/")){
+	 	        	 // If the filename contains / , it means it's a path so we want just the end of it
+	 	        	 String name="";
+	 	        	 int start = value.toString().lastIndexOf('/') + 1;
+	 	        	 name=value.toString().substring(start);
+	 	        	 name=name.toString().replace("Full","");
+	 	        	 this.setText(name);
+	 	         } else{
+	 	        	 this.setText(value.toString());
+	 	         }
+	 	         
+	 	         return this;
+	 	     }
+	}
 	
-	// Different String
-	private final static String COLORPANEL = "Colors";
-	private final static String TEXTURESPANEL = "Textures";
-	private final static String ADDTEXTURE= "Add a new Texture...";
-    private static String CURRENTMODE ="" ;
-	private String classPath= getClass().getResource("TextureView.class").toString();
-	private String addedFilePath = "textureAdded" ;
-    
-    // Action alias
-    static private final String DELETE = "Delete";
-
-    // JList containing the colors and the textures
-    static private JList textureList = new JList();
-	static private JList colorList   = new JList();
-	
-	// Panel that will containt the textureList
-	static private JPanel texturesPanel = new JPanel();	
-    private JPanel cards; //a panel that uses CardLayout 
-    
-    /**
+	/**
 	 * This class implements a ActionListener to be 
 	 * used with a popup menu
 	 */
 	class PopupListener implements ActionListener {
-
 		/**
 		 * This method is called when user click on a menu
 		 * @param event click on menu
@@ -77,52 +116,92 @@ public class TextureView extends JPanel implements ItemListener {
 		public void actionPerformed(ActionEvent event) {
 			String cmd = event.getActionCommand();
 			if (cmd.equals(DELETE)) {
-				String toDelete=controller.deleteFile();
-				textureFiles.remove(toDelete);
-				update();
-				
+				controller.onDelete();
 			}
 		}
 	}
+	
+	private static final long serialVersionUID = 1L;
+	private TextureController controller;
+	
+	private Vector<String> colorFiles = new Vector <String>();
+	private Vector<String> textureFiles = new Vector <String>();
+	
+	// Different String
+	public final static String COLORMODE = "Colors";
+	public final static String TEXTUREMODE = "Textures";
+	private final static String ADDTEXTURE= "Add a new Texture...";
+	private String classPath= getClass().getResource("TextureView.class").toString();
+	private String addedFilePath = "textureAdded" ;
+    
+    // Action alias
+    static private final String DELETE = "Delete";
+
+    private JList displayedList = null;	
+    private JComboBox comboBox = null;
 
 	/**
 	 * @param newControler
 	 */
-	public TextureView(TextureController newControler) {
-		//Builds a JPane based on a CardLayout, which is a layout that mages 2+ panes using the same display space
-    	super(new CardLayout());  	
-    	
-    	this.controller = newControler;
-    	
-    	//Uses the GridbagConstraints
-    	this.paneLayout = new GridBagLayout();
-    	this.setLayout(this.paneLayout);
+	public TextureView(TextureController controler) {   
+		super(new BorderLayout());
+    	this.controller = controler;
 		
     	//Fixes the width of the pane
     	this.setPreferredSize(new Dimension(this.getHeight(),100));
     	
-    	// Get filenames
-    	texturesPanel.removeAll();
 		this.addAllFiles();
-		this.textureFiles.add(ADDTEXTURE);
-		this.addTypeSelection();
+		this.addTypeSelectionPanel();
 		this.addMaterialChoice();
-		CURRENTMODE=COLORPANEL; // Mode du début
-
-        
+		this.updateDisplayedList();
     }
+
+	public JList getDisplayedList() {
+		return this.displayedList;
+	}
 	
-	/**
-	 * Read the Jar and get the fileName
-	 * @param obj
-	 * @return
-	 */
-    private static String process(Object obj) {
-        JarEntry entry = (JarEntry)obj;
-        String name = entry.getName();
-        return name;
-      }
-    
+	private void addTypeSelectionPanel(){
+		JPanel typeSelectionPanel = new JPanel();
+		typeSelectionPanel.setMinimumSize(new Dimension(this.getHeight(),100));
+		JLabel typeLabel = new JLabel("Type : ");
+		
+		this.comboBox = new JComboBox();
+		this.comboBox.addItem(COLORMODE);
+		this.comboBox.addItem(TEXTUREMODE);
+		this.comboBox.setEditable(false);
+		this.comboBox.addItemListener(controller);
+        
+        typeSelectionPanel.add(typeLabel,BorderLayout.WEST);
+        typeSelectionPanel.add(this.comboBox,BorderLayout.EAST);	
+        this.add(typeSelectionPanel,BorderLayout.PAGE_START);
+	}
+
+	public void addMaterialChoice(){
+        this.displayedList = new JList();
+        this.displayedList.setCellRenderer(new MyCellRenderer());
+        this.displayedList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        this.displayedList.setLayoutOrientation(JList.VERTICAL);
+        this.displayedList.setVisibleRowCount(-1);
+        this.displayedList.addMouseListener(controller);
+        
+        Dimension dimension = new Dimension(190,200);
+        JScrollPane scrollPane = new JScrollPane(this.displayedList);
+        scrollPane.setPreferredSize(dimension);
+        scrollPane.setMinimumSize(dimension);
+
+		this.add(scrollPane,BorderLayout.CENTER);
+	}
+	
+	public void updateDisplayedList() {
+		this.displayedList.removeAll();
+		if (this.getCurrentMode().equals(COLORMODE)) {
+			this.displayedList.setListData(this.colorFiles);
+		} else if (this.getCurrentMode().equals(TEXTUREMODE)) {
+			this.displayedList.setListData(this.textureFiles);
+		}
+		this.displayedList.updateUI();
+	}
+	
     /**
      * Get the name of the jar currently running so we don't need to hardcode it
      * @return the name of the JAR currently running
@@ -136,6 +215,17 @@ public class TextureView extends JPanel implements ItemListener {
 	    name = name.substring(start, end)+".jar";
 	    return name ;
     }
+    
+	/**
+	 * Read the Jar and get the fileName
+	 * @param obj
+	 * @return
+	 */
+    private static String process(Object obj) {
+        JarEntry entry = (JarEntry)obj;
+        String name = entry.getName();
+        return name;
+      }
     
     /**
      * Parse Jar File and add textures files to the right list
@@ -167,8 +257,7 @@ public class TextureView extends JPanel implements ItemListener {
     			readFile(new File(addedFilePath));
     		}			    		   		    
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.exception(e);
 		}
     }
     
@@ -181,7 +270,9 @@ public class TextureView extends JPanel implements ItemListener {
     	} else {
     		this.addFiles(); 		
     	}    	
+		this.textureFiles.add(ADDTEXTURE);
 	}
+	
 	
 	/**
 	 * Parse files from /Textures and /Colors in assets
@@ -221,40 +312,8 @@ public class TextureView extends JPanel implements ItemListener {
 			}
 			buffer.close();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-	}
-	
-	
-	/**
-	 * Adds the combobox to the main pane
-	 */
-	private void addTypeSelection(){
-		//Simple Label
-		JLabel typeLabel = new JLabel("Type : ");
-		
-		//Pulldown menu
-        JPanel comboBoxPane = new JPanel(); 
-        comboBoxPane.setLayout(new GridLayout(0,1));
-        String comboBoxItems[] = { COLORPANEL, TEXTURESPANEL };
-
-		JComboBox comboBox = new JComboBox(comboBoxItems);
-        comboBox.setEditable(false);
-        comboBox.addItemListener(this);
-        
-        //Adds the label and the pulldown menu to the Panel
-        comboBoxPane.add(typeLabel);
-        comboBoxPane.add(comboBox);
-        
-        //Creates the constraints to be applied on this panel
-        GridBagConstraints gridBagCons = new GridBagConstraints();
-
-		gridBagCons.fill = GridBagConstraints.BOTH;
-	    gridBagCons.anchor = GridBagConstraints.PAGE_START; 
-	    
-	    //Sets the constraints to the pane
-        this.add(comboBoxPane, gridBagCons);
-		
+			Log.exception(e);
+		}
 	}
 	
 	/**
@@ -265,48 +324,10 @@ public class TextureView extends JPanel implements ItemListener {
 	}
 	
 	/**
-	 * @return the color List
-	 */
-	public String getSelectedColorAsString(){
-		if(classPath.subSequence(0, 3).equals("rsr")){		
-			return (colorList.getSelectedValue().toString());
-		}
-		else{
-			return ("Colors/" + colorList.getSelectedValue().toString()+"Color");
-		}
-	}
-	
-	/**
-	 * @return the texture List
-	 */
-	public String getSelectedTexture(){
-		if(classPath.subSequence(0, 3).equals("rsr")){
-			if (textureList.getSelectedValue().toString().equals(ADDTEXTURE)){
-				return ADDTEXTURE;
-			}
-			else{
-				String res = textureList.getSelectedValue().toString();
-				if(!res.contains(File.separator)){
-					res += "Full";
-				}
-				return (res);
-			}
-		}
-		else{
-			if (textureList.getSelectedValue().toString().equals(ADDTEXTURE)){
-				return ADDTEXTURE;
-			}
-			else{
-				return ("Textures/Full/" + textureList.getSelectedValue().toString()+"Full");
-			}
-		}
-	}
-	
-	/**
 	 * @return current mode between texture and colors
 	 */
 	public String getCurrentMode(){
-		return CURRENTMODE;
+		return this.comboBox.getSelectedItem().toString();
 	}
 	
 	/**
@@ -317,72 +338,14 @@ public class TextureView extends JPanel implements ItemListener {
 	}
 	
 	/**
-	 * Update the JPanel : refresh it 
-	 */
-	private void update(){
-		textureList = new JList(this.textureFiles.toArray());
-        textureList.setCellRenderer(new ColorCellRenderer());
-        texturesPanel.removeAll();
-        texturesPanel.add(textureList);
-		texturesPanel.updateUI();
-		textureList.addMouseListener(this.controller);
-	}
-	
-	/**
 	 * @param filename
 	 * Update the panel 
 	 */
 	public void updatePanel(String filename){
 		filename=filename.replace(".png","");	
 		this.textureFiles.add(this.textureFiles.size()-1,filename);
-		this.update();
-	}
- 
-	/**
-	 * Adds the 2 switching panes
-	 */
-	public void addMaterialChoice(){
-        //Creates the "cards".
-        textureList = new JList(this.textureFiles.toArray());
-        textureList.setCellRenderer(new ColorCellRenderer());
-        texturesPanel.add(textureList);
-        texturesPanel.setLayout(new GridLayout(0,1));
-         
-        JPanel colorsPanel = new JPanel();
-        colorList = new JList(this.colorFiles.toArray());
-        colorList.setCellRenderer(new ColorCellRenderer());
-        colorsPanel.add(colorList);
-        colorsPanel.setLayout(new GridLayout(0,1));
-         
-        //Creates the panel that contains the switching panes.
-        this.cards = new JPanel(new CardLayout());
-        this.cards.add(colorsPanel, COLORPANEL);
-        this.cards.add(texturesPanel, TEXTURESPANEL);
-
-        GridBagConstraints gridBagCons = new GridBagConstraints();
-		gridBagCons.fill = GridBagConstraints.BOTH;
-	    gridBagCons.anchor = GridBagConstraints.PAGE_END; //bottom of space;
-	    gridBagCons.weightx = 1;
-	    gridBagCons.weighty = 1;
-		gridBagCons.gridx = 0;
-		gridBagCons.gridy = 1;
-		
-		textureList.addMouseListener(this.controller);
-		colorList.addMouseListener(this.controller);
-        this.add(this.cards, gridBagCons);
-
-		//c.ipady = 200;
-		
-	}
-	
-	/**
-	 * Set the layout if we are in texture mode or color mode
-	 */
-	@Override
-	public void itemStateChanged(ItemEvent evt) {
-        CardLayout cl = (CardLayout) this.cards.getLayout();
-        cl.show(this.cards, (String) evt.getItem());
-        CURRENTMODE = (String) evt.getItem();
+		this.updateDisplayedList();
+		this.updateUI();
 	}
 	
 	/**
@@ -409,91 +372,44 @@ public class TextureView extends JPanel implements ItemListener {
 		res.add(createJMenuItem(DELETE, DELETE, listener));
 		return res;
 	}
-	
-	class ColorCellRenderer extends DefaultListCellRenderer {
 
-	    private static final long serialVersionUID = -7799441088157759804L;
-	    private JLabel _label;
-	    private Color _textSelectionColor = Color.BLACK;
-	    private Color _backgroundSelectionColor = Color.LIGHT_GRAY;
-	    private Color _textNonSelectionColor = Color.BLACK;
-	    private Color _backgroundNonSelectionColor = Color.WHITE;
+	/**
+	 * @return selected texture
+	 */
+	public String getSelectedTextureName() {
+		if (this.displayedList.isSelectionEmpty()) 
+			return null;
+		
+		if (this.getCurrentMode().equals(COLORMODE)) {
+			if(classPath.subSequence(0, 3).equals("rsr")){		
+				return (this.displayedList.getSelectedValue().toString());
+			} else {
+				return ("Colors/" + this.displayedList.getSelectedValue().toString()+"Color");
+			}
+		} else {
+			if(classPath.subSequence(0, 3).equals("rsr")){
+				if (this.displayedList.getSelectedValue().toString().equals(ADDTEXTURE)){
+					return ADDTEXTURE;
+				} else {
+					String res = this.displayedList.getSelectedValue().toString();
+					if(!res.contains(File.separator)){
+						res += "Full";
+					}
+					return (res);
+				}
+			} else {
+				if (this.displayedList.getSelectedValue().toString().equals(ADDTEXTURE)){
+					return ADDTEXTURE;
+				} else {
+					return ("Textures/Full/" + this.displayedList.getSelectedValue().toString()+"Full");
+				}
+			}
+		}
+	}
 
-	    ColorCellRenderer() {
-	        _label = new JLabel();
-	        _label.setOpaque(true);
-	    }
-	    
-	    
-
-	    @Override
-	    public Component getListCellRendererComponent(
-	            JList list,
-	            Object value,
-	            int index,
-	            boolean selected,
-	            boolean expanded) {
-	    	String prefix = "/";
-	    	Icon imageIcon = null;
-	    	if(classPath.subSequence(0, 3).equals("rsr")){
-	    		if (list.equals(textureList)){
-	    			if (!(value.toString()==ADDTEXTURE)){
-	    				if(value.toString().contains(File.separator)){
-	    					imageIcon = new ImageIcon(value.toString().replace("Full", "Mini")+".png");
-	    				}
-	    				else{
-	    					imageIcon = new ImageIcon(
-	    							getClass().getResource(prefix+value.toString()+".png"));
-	    				}
-	    			}
-	    			else{
-	    				imageIcon = new ImageIcon(getClass().getResource(prefix+"addFile.png"));
-	    			}
-	    		}
-	    		else{
-	    			imageIcon = new ImageIcon(getClass().getResource(prefix+value.toString()+"Color.png"));
-	    		}
-	    	} else {
-	    		prefix = System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/";
-	    		if (list.equals(textureList)){	    			
-	    			if (!(value.toString()==ADDTEXTURE)){
-	    				prefix = prefix+"Textures/";
-		    			imageIcon = new ImageIcon(prefix+value.toString()+".png" );
-	    			}
-	    			else{
-	    				prefix=prefix+"Tools/";
-		    			imageIcon = new ImageIcon(prefix+"addFile.png" );
-	    			}
-	    		}
-	    		else{
-	    			prefix = prefix+"Colors/";
-	    			imageIcon = new ImageIcon(prefix+value.toString()+"Color.png");
-	    		}
-	    		
-	    	}
-	        _label.setIcon(imageIcon);
-	        if (value.toString().contains("/")){
-		        // If the filename contains / , it means it's a path so we want just the end of it
-	        	String name="";
-	        	int start = value.toString().lastIndexOf('/') + 1;
-	        	name=value.toString().substring(start);
-	        	name=name.toString().replace("Full","");
-	        	_label.setText(name);
-	        }
-	        else{
-	        	_label.setText(value.toString());
-	        }
-
-	        if (selected) {
-	            _label.setBackground(_backgroundSelectionColor);
-	            _label.setForeground(_textSelectionColor);
-	        } else {
-	            _label.setBackground(_backgroundNonSelectionColor);
-	            _label.setForeground(_textNonSelectionColor);
-	        }
-
-	        return _label;
-	    }
+	public void deleteTexture(String toDelete) {
+		textureFiles.remove(toDelete);
+		updateUI();				
 	}
 		
 }

@@ -136,7 +136,7 @@ public class ObjectListController implements MouseListener {
 			this.daoFactory.getDao(Item.class).insert(newItem);
 			this.daoFactory.notifyObservers();
  		} catch (SQLException e) {
-			e.printStackTrace();
+ 			Log.exception(e);
 		}
 	}
 	

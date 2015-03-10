@@ -98,36 +98,38 @@ public abstract class Meshable extends Geometric {
 		mat.setColor("Diffuse", ColorRGBA.Gray);
 		mat.setColor("Ambient", this.drawAsSelected() ? selectedColor : ColorRGBA.Gray);
 		mat.setColor("Specular", ColorRGBA.Gray);
-		
-		try {
-			if((classPath.subSequence(0, 3).equals("rsr"))){
-				if (texture.contains("Colors/")){
-					texture=texture.replace("Colors/", "");					
-				}
-				if (!(texture.contains("Full")) && !(texture.contains("Color"))){
-					texture=texture+"Color";
-				}
-				if (texture.equals("/Textures/Full")){
-					texture="";
-				}
-				if (texture.contains(File.separator)){
-					String[] parts = texture.split(File.separator);
-					String path = "";
-					for ( int i = 0;i<parts.length-1;++i){
-						path +=File.separator+ parts[i];
-					}
-					texture = parts[parts.length-1];
-					assetManager.registerLocator(path, FileLocator.class);
-				}
+
+		if((classPath.subSequence(0, 3).equals("rsr"))){
+			if (texture.contains("Colors/")){
+				texture=texture.replace("Colors/", "");					
 			}
-			else{
-				if(!(texture.endsWith("Color")) && !(texture.endsWith("Full")))
-					texture += "Color";
+			if (!(texture.contains("Full")) && !(texture.contains("Color"))){
+				texture=texture+"Color";
 			}
-		} catch (AssetNotFoundException ex){
-			texture = "GrayColor";
+			if (texture.equals("/Textures/Full")){
+				texture="";
+			}
+			if (texture.contains(File.separator)){
+				String[] parts = texture.split(File.separator);
+				String path = "";
+				for ( int i = 0;i<parts.length-1;++i){
+					path +=File.separator+ parts[i];
+				}
+				texture = parts[parts.length-1];
+				assetManager.registerLocator(path, FileLocator.class);
+			}
 		}
-		mat.setTexture("DiffuseMap", assetManager.loadTexture(texture+".png"));
+		else{
+			if(!(texture.endsWith("Color")) && !(texture.endsWith("Full")))
+				texture += "Color";
+		}
+		
+		try { 
+			mat.setTexture("DiffuseMap", assetManager.loadTexture(texture+".png"));
+		}
+		catch (AssetNotFoundException ex){
+			mat.setTexture("DiffuseMap", assetManager.loadTexture("GrayColor.png"));
+		}
 		return mat;
 	}
 	

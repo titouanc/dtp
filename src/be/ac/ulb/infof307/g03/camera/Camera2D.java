@@ -127,7 +127,7 @@ public class Camera2D extends CameraController {
 
 	@Override
 	public void rotateCameraByGrab(float value, Vector3f axis) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 	}
 
 }

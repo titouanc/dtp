@@ -180,7 +180,7 @@ public class WorldController extends CanvasController implements Observer {
     		line.setLineWidth(3);
     		Spatial wall = new Geometry("line", line );
             Material mat = view.makeBasicMaterial(new ColorRGBA(1f, 1f, 0.2f, 0.8f));  
-            
+            mat.getAdditionalRenderState().setDepthTest(false);
             if (inConstruction.size()>2){
             	if (endWall!= null){
             		this.view.getRootNode().detachChild(endWall); // Detach old red line 
@@ -189,6 +189,7 @@ public class WorldController extends CanvasController implements Observer {
 	    		endLine.setLineWidth(3);
 	    		Spatial finishedWall = new Geometry("line", endLine );
 	            Material endMat = view.makeBasicMaterial(new ColorRGBA(0.8f, 0f, 0f, 0.7f));
+	            endMat.getAdditionalRenderState().setDepthTest(false);
 	            finishedWall.setMaterial(endMat);
 	    		this.view.getRootNode().attachChild(finishedWall);
 	    		endWall=finishedWall ;	    		
@@ -223,7 +224,7 @@ public class WorldController extends CanvasController implements Observer {
 		    			daoFactory.getDao(className).insert(newArea);
 					} catch (Exception e) {
 						Log.error("Unable to use Area subclass constructor at runtime ! (Missing method ?)");
-						e.printStackTrace();
+						Log.exception(e);
 					}
 	    		}
 	    		
