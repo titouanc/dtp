@@ -126,21 +126,34 @@ public class SelectionManager implements Observer {
 	 * - Unselects the currently selected object in the scene
 	 * - Sets its selected flag to false
 	 * - Writes the changes to the model, notifies observers
+	 * @param mustNotify do we need to consider the unselection as a change and notify observers?
+	 * {@link #unselect(Boolean)}
 	 */
-	public void unselect(){
+	public void unselect(Boolean mustNotify){
 		if (this.selected != null) {
 			this.selected.unselect();
 			try {
 				Geometric geom = (Geometric) this.selected;
-				GeometricDAO<? extends Geometric> dao = this.master.getDao(geom.getClass());
-				dao.modify(geom);
 				this.selected = null;
+				GeometricDAO<? extends Geometric> dao = this.master.getDao(geom.getClass());
+				
+				dao.modify(geom);
+				if (mustNotify)
+					this.master.notifyObservers();
+				
 				Log.debug("Unselected %s", geom.getUID());
-				this.master.notifyObservers();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * Uses unselect and notifies all observers.
+	 * @see #unselect(Boolean)
+	 */
+	public void unselect(){
+		this.unselect(true);
 	}
 
 	/**

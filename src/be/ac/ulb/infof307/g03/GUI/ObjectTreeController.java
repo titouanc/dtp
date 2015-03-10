@@ -201,7 +201,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * @param element
 	 */
 	public void deselectElement(Object element) {
-		this.project.getSelectionManager().unselect();
+		this.project.getSelectionManager().unselect(false);
 	}
 
 	/**
