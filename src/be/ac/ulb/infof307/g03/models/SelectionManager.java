@@ -175,7 +175,10 @@ public class SelectionManager implements Observer {
 	 */
 	public void setCurrentFloor(Floor current) {
 		this.currentFloor = current;
-		Log.debug("Set current floor to %s", this.currentFloor.getUID());
+		if( current !=null)
+			Log.debug("Set current floor to %s", this.currentFloor.getUID());
+		else
+			Log.debug("No floor left");
 	}
 
 	@Override

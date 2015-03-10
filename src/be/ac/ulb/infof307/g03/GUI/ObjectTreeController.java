@@ -131,16 +131,16 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		try {
 			GeometricDAO<Floor> floorDao = this.daoFactory.getDao(Floor.class);
 			/* If we delete the current floor, set current floor to previous, or next */
-			if (deletingFloor.getUID().equals(this.project.config("floor.current"))){
+			if (deletingFloor.equals(this.project.getSelectionManager().currentFloor())){
 				Floor previous = floorDao.queryForFirst(deletingFloor.getQueryForPreceeding(floorDao));
 				if (previous != null){
-					project.config("floor.current", previous.getUID());
+					this.project.getSelectionManager().setCurrentFloor(previous);
 				} else {
 					Floor next = floorDao.queryForFirst(deletingFloor.getQueryForFollowing(floorDao));
 					if (next != null){
-						project.config("floor.current", next.getUID());
+						this.project.getSelectionManager().setCurrentFloor(next);
 					} else {
-						project.config("floor.current", "");
+						this.project.getSelectionManager().setCurrentFloor(null); // TODO define what to send as current floor
 					}
 				}
 			}
