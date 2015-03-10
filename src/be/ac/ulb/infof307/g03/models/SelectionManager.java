@@ -4,6 +4,9 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import be.ac.ulb.infof307.g03.models.Selectionable;
 import be.ac.ulb.infof307.g03.utils.Log;
@@ -16,7 +19,7 @@ import be.ac.ulb.infof307.g03.utils.Log;
  * - a room and an object cannot be selected at the same time
  * - the current floor is the floor on which the last selected room/object was
  */
-public class SelectionManager {
+public class SelectionManager implements Observer {
 	MasterDAO master;
 	Selectionable selected = null;
 	Floor currentFloor = null;
@@ -28,6 +31,7 @@ public class SelectionManager {
 		try {
 			this.master = project.getGeometryDAO();
 			this.unselectAll();
+			this.master.addObserver(this);
 			this.currentFloor = this.getFirstFloor();
 			// TODO set this.currentFloor
 		} catch (SQLException e) {
@@ -159,5 +163,16 @@ public class SelectionManager {
 	public void setCurrentFloor(Floor current) {
 		this.currentFloor = current;
 		Log.debug("Set current floor to %s", this.currentFloor.getUID());
+	}
+
+	@Override
+	public void update(Observable o, Object msg) {
+		if (o instanceof MasterDAO){
+			for (Change chg : (List<Change>) msg){
+				if (chg.isDeletion()){
+					this.unselectAll();
+				}
+			}
+		}
 	}
 }
