@@ -4,6 +4,10 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.util.List;
+
+import org.jdelaunay.delaunay.geometries.DEdge;
+import org.jdelaunay.delaunay.geometries.DTriangle;
+
 import be.ac.ulb.infof307.g03.utils.Log;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -24,6 +28,9 @@ import com.jme3.scene.shape.Box;
 public class Wall extends Area {
 	@DatabaseField
 	private double width = 0.2; 
+	
+	Vector3f start = new Vector3f();
+	Vector3f end = new Vector3f();
 	
 	/**
 	 * Constructor of the class Wall.
@@ -55,6 +62,10 @@ public class Wall extends Area {
 		}
 	}
 	
+	@Override
+	public double getSurface(){		
+		return Math.sqrt(Math.pow((double)start.x-end.x,2) + Math.pow((double)start.y-end.y,2)) * getRoom().getFloor().getHeight();
+	}
 	
 	/**
 	 * @return The width of the Wall.
@@ -84,9 +95,9 @@ public class Wall extends Area {
 		
 		for (int i=0; i<allPoints.size()-1; i++){
 			// 1) Build a box the right length, width and height
-			Vector3f a = allPoints.get(i).toVector3f();
-			Vector3f b = allPoints.get(i+1).toVector3f();
-			Vector2f segment = new Vector2f(b.x-a.x, b.y-a.y);
+			start = allPoints.get(i).toVector3f();
+			end = allPoints.get(i+1).toVector3f();
+			Vector2f segment = new Vector2f(end.x-start.x, end.y-start.y);
 			Vector3f vec1 = new Vector3f(-width/2, -width/2, elevation);
 			Vector3f vec2 = new Vector3f(segment.length()+width/2, width/2, elevation+height-0.001f);
 			Box box = new Box(vec1, vec2);
@@ -94,7 +105,7 @@ public class Wall extends Area {
 			// 2) Place the wall at the right place
 			Geometry wallGeometry = new Geometry(getUID(), box);
 			wallGeometry.setMaterial(material);
-			wallGeometry.setLocalTranslation(a);
+			wallGeometry.setLocalTranslation(start);
 			 
 			// 3) Rotate the wall at the right orientation
 			Quaternion rot = new Quaternion();
