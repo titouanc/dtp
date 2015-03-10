@@ -244,20 +244,19 @@ public class Ground extends Area {
 			edges[3 * i + 2] = pointsList.indexOf(finalTriangleList.get(i).getPoint(2));
 		}
 		
+		triangleList = finalTriangleList;
+		System.out.println("Surface : "+ getSurface());
 		
 		
 		Mesh mesh = new Mesh();
 	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
 	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
 	  	
-	  	Vector2f[] texCoord = new Vector2f[7];
-	  	texCoord[0] = new Vector2f(0.5f, 0.5f);
-	  	texCoord[1] = new Vector2f(0, 0.5f);
-	  	texCoord[2] = new Vector2f(0.25f, 0);
-	  	texCoord[3] = new Vector2f(0.75f, 0);
-	  	texCoord[4] = new Vector2f(1, 0.5f);
-	  	texCoord[5] = new Vector2f(0.75f, 1);
-	  	texCoord[6] = new Vector2f(0.25f, 1);
+	  	Vector2f[] texCoord = new Vector2f[4];
+	  	texCoord[0] = new Vector2f(0,0);
+	  	texCoord[1] = new Vector2f(1,0);
+	  	texCoord[2] = new Vector2f(0,1);
+	  	texCoord[3] = new Vector2f(1,1);
 	  	mesh.setBuffer(Type.TexCoord, 2, BufferUtils.createFloatBuffer(texCoord));
 	  	mesh.updateBound();
 		Geometry res = new Geometry(getUID(), mesh);
