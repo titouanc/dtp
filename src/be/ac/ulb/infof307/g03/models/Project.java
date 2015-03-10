@@ -123,6 +123,7 @@ public class Project extends Observable {
 			if (entry == null){
 				entry = new Config(name, "");
 				this.config.create(entry);
+				Log.debug("Added a new empty key : ".concat(name));
 			}
 			return entry.getValue();
 		} catch (SQLException err){
@@ -147,6 +148,7 @@ public class Project extends Observable {
 			} else {
 				entry = new Config(name, value);
 				this.config.create(entry);
+				Log.debug("Added a new key : ".concat(name).concat(" with value :").concat(value));
 			}
 			setChanged();
 			notifyObservers(entry);
