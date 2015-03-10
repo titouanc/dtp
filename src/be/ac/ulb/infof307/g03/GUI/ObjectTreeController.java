@@ -314,7 +314,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 			floorDao.modify(floor);
 			for (Floor next : floorDao.query(floor.getQueryForFollowing(floorDao))){
 				next.setBaseHeight(next.getBaseHeight() + deltaHeight);
-				floorDao.modify(next);
+				floorDao.update(next);
 			}
 			this.daoFactory.notifyObservers();
 		} catch (SQLException ex){
