@@ -364,9 +364,9 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		// if right click
 		if (SwingUtilities.isRightMouseButton(e)) {
 			// select the closest element near the click on the tree
-			int row = this.view.getClosestRowForLocation(e.getX(), e.getY());
-			this.view.setSelectionRow(row);
-			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) this.view.getLastSelectedPathComponent();
+			TreePath path = this.view.getPathForLocation(e.getX(), e.getY());
+			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+
 			if (clickedNode == null){
 				Log.error("Right-clicked null node");
 			} else {

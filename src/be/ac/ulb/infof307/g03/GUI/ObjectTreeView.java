@@ -57,6 +57,9 @@ public class ObjectTreeView extends JTree implements Observer {
 	 * used with a popup menu
 	 */
 	class PopupListener implements ActionListener {
+		
+		public Geometric boundObject = null; // the object on which we popped up
+
 
 		/**
 		 * This method is called when user click on a menu
@@ -65,41 +68,41 @@ public class ObjectTreeView extends JTree implements Observer {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			String cmd = event.getActionCommand();
-			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
-	        Geometric clickedItem = (Geometric) clickedNode.getUserObject();
-			if (cmd.equals(RENAME)) {
-				String name = JOptionPane.showInputDialog("New name ?");
-				controller.renameNode(clickedItem, name);
-			} else if (cmd.equals(DELETE)) {
-				controller.deselectElement(clickedItem);
-				controller.deleteNode(clickedItem);
-			} else if (cmd.equals(SHOW)){
-				controller.showMeshable((Meshable) clickedItem);
-			} else if (cmd.equals(HIDE)){
-				controller.hideMeshable((Meshable) clickedItem);
-			} else if (cmd.equals(WIDTH)){
-				String userInput = JOptionPane.showInputDialog("Width ?");
-				controller.setWidth((Wall) clickedItem, userInput);
-			} else if (cmd.equals(HEIGHT)){
-				String userInput = JOptionPane.showInputDialog("Height ?");
-				controller.setHeight((Floor) clickedItem, userInput);
-			} else if (cmd.equals(CHANGETEXTURE)){
-				String currentTexture=project.config("texture.selected");
-				// On va assigner à l'objet cliqué la texture sélectionnée
-				if (clickedItem instanceof Meshable){
-					try {
-						controller.setTexture((Meshable)clickedItem,currentTexture);
-					} catch (SQLException ex) {
-						Log.exception(ex);
+			if (boundObject != null){
+				if (cmd.equals(RENAME)) {
+					String name = JOptionPane.showInputDialog("New name ?");
+					controller.renameNode(boundObject, name);
+				} else if (cmd.equals(DELETE)) {
+					controller.deselectElement(boundObject);
+					controller.deleteNode(boundObject);
+				} else if (cmd.equals(SHOW)){
+					controller.showMeshable((Meshable) boundObject);
+				} else if (cmd.equals(HIDE)){
+					controller.hideMeshable((Meshable) boundObject);
+				} else if (cmd.equals(WIDTH)){
+					String userInput = JOptionPane.showInputDialog("Width ?");
+					controller.setWidth((Wall) boundObject, userInput);
+				} else if (cmd.equals(HEIGHT)){
+					String userInput = JOptionPane.showInputDialog("Height ?");
+					controller.setHeight((Floor) boundObject, userInput);
+				} else if (cmd.equals(CHANGETEXTURE)){
+					String currentTexture=project.config("texture.selected");
+					// On va assigner à l'objet cliqué la texture sélectionnée
+					if (boundObject instanceof Meshable){
+						try {
+							controller.setTexture((Meshable)boundObject,currentTexture);
+						} catch (SQLException ex) {
+							Log.exception(ex);
+						}
 					}
+					
+				} else if (cmd.equals(MODIFY)) {
+					ModificationFrame mf = new ModificationFrame((Primitive) boundObject, daoFactory);
+					mf.pack();
+					mf.setVisible(true);
+				} else if (cmd.equals(DUPLICATE)){
+					controller.duplicate(boundObject);
 				}
-				
-			} else if (cmd.equals(MODIFY)) {
-				ModificationFrame mf = new ModificationFrame((Primitive) clickedItem, daoFactory);
-				mf.pack();
-				mf.setVisible(true);
-			} else if (cmd.equals(DUPLICATE)){
-				controller.duplicate(clickedItem);
 			}
 		}
 
@@ -226,6 +229,7 @@ public class ObjectTreeView extends JTree implements Observer {
 			return null;
 		
 		PopupListener listener = new PopupListener();
+		listener.boundObject = geo;
 		JPopupMenu res = new JPopupMenu();
 		
 		res.add(createJMenuItem(DELETE, DELETE, listener));
