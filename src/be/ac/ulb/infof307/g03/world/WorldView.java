@@ -322,7 +322,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 				GeometricDAO<Room> dao = this.daoFactory.getDao(Room.class);
 				dao.refresh(room);
 				for (Meshable meshable : room.getAreas())
-					updateMeshable(Change.update(meshable));
+					updateArea(Change.update(meshable));
 			} catch (SQLException ex) {
 				Log.exception(ex);
 			}
@@ -387,7 +387,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 * Update view when a Meshable has changed
 	 * @param change
 	 */
-	private void updateMeshable(Change change){
+	private void updateArea(Change change){
 		Meshable meshable = (Meshable) change.getItem();
 		this.redrawMeshable(meshable);
 	}
@@ -479,8 +479,8 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 						updateItem(change);
 					else if (change.getItem() instanceof Primitive) 
 						updatePrimitive(change);
-					else if (change.getItem() instanceof Meshable)
-						updateMeshable(change);
+					else if (change.getItem() instanceof Area)
+						updateArea(change);
 					else if (change.getItem() instanceof Point)
 						updatePoint(change);
 					else if (change.getItem() instanceof Floor) // when new floor or floor deleted
