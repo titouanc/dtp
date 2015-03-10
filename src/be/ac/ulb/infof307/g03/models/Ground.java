@@ -250,11 +250,24 @@ public class Ground extends Area {
 	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
 	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
 	  	
-	  	Vector2f[] texCoord = new Vector2f[4];
+	  	
+	  	
+	  	int size = delaunay.getPoints().size();
+	  	if (size < 4){
+	  		size+=1;
+	  	}
+	  	Vector2f[] texCoord = new Vector2f[size];
 	  	texCoord[0] = new Vector2f(0,0);
 	  	texCoord[1] = new Vector2f(1,0);
 	  	texCoord[2] = new Vector2f(0,1);
 	  	texCoord[3] = new Vector2f(1,1);
+	  	for (int todo=size-4 ; todo>0; --todo){
+		  	texCoord[size-todo] = new Vector2f((todo/size),0);
+		  	texCoord[size-todo] = new Vector2f((todo/size),1);
+	  	}
+
+	  	
+	  	
 	  	mesh.setBuffer(Type.TexCoord, 2, BufferUtils.createFloatBuffer(texCoord));
 	  	mesh.updateBound();
 		Geometry res = new Geometry(getUID(), mesh);
