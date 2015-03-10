@@ -227,7 +227,12 @@ public class Ground extends Area {
 		Vector3f vertices[] = new Vector3f[shape_n_points];
 		for(int index = 0; index<pointsList.size(); ++index){
 			DPoint currentPoint = pointsList.get(index);
-			vertices[index] = new Vector3f((float)currentPoint.getX(),(float)currentPoint.getY(),(float)currentPoint.getZ());
+			try{
+				vertices[index] = new Vector3f((float)currentPoint.getX(),(float)currentPoint.getY(),(float)currentPoint.getZ());
+			}
+			catch(Exception e){
+				
+			}
 		}
 		
 		int n_triangles = finalTriangleList.size();

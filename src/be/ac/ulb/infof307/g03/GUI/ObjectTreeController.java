@@ -175,25 +175,34 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		if (object instanceof Geometric){
 			Geometric item = (Geometric) object;
 			// If object is a container (Floor, Room, ...), first delete all of its contents
-			if (item instanceof Floor)
+			if (item instanceof Floor){
+				try {
+					this.daoFactory.getDao(Floor.class).remove((Floor) item);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				this.deleteFloorContent((Floor) item);
-			else if (item instanceof Room){
+			} else if (item instanceof Room){
 				Room room = (Room) item;
 				try {
 					/* Remove all the room's areas */
-					for (Area area : room.getAreas())
+					for (Area area : room.getAreas()){
 						this.daoFactory.getDao(area.getClass()).remove(area);
+					}
 					this.daoFactory.notifyObservers();
+					this.daoFactory.getDao(Room.class).remove(room);
 				} catch (SQLException e) {
 					Log.exception(e);
 				}
-			}
-			// Then delete the object itself
-			try {
-				Log.info("DELETE %s", item.toString());
-				this.daoFactory.getDao(item.getClass()).remove(item);
-			} catch (SQLException e) {
-				Log.exception(e);
+			} else {
+				// Then delete the object itself
+				try {
+					Log.info("DELETE %s", item.toString());
+					this.daoFactory.getDao(item.getClass()).remove(item);
+				} catch (SQLException e) {
+					Log.exception(e);
+				}
 			}
 			this.daoFactory.notifyObservers();
 		}
