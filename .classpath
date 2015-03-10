@@ -39,6 +39,6 @@
 	<classpathentry kind="lib" path="lib/jMonkeyEngine/stack-alloc.jar"/>
 	<classpathentry kind="lib" path="lib/jMonkeyEngine/vecmath.jar"/>
 	<classpathentry kind="lib" path="lib/jMonkeyEngine/xmlpull-xpp3.jar"/>
-	<classpathentry kind="lib" path="lib/jdelaunay-master.jar"/>
+	<classpathentry kind="lib" path="lib/jdelaunay.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
