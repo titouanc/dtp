@@ -122,29 +122,20 @@ public class Ground extends Area {
 	
 	/**
 	 * @param polygon
-	 * @param p 
+	 * @param point 
 	 * @return
-	 * @throws DelaunayError 
 	 */
-	public boolean isInsidePolygon(List<DPoint> polygon,DPoint p) throws DelaunayError
+	public boolean isInsidePolygon(List<Point> polygon, DPoint point )
 	{
-		int i;
-	   	double angle=0;
-	   	DPoint p1 = new DPoint();
-	   	DPoint p2 = new DPoint();
-		
-		for (i=0;i<polygon.size();++i) {
-			p1.setX(polygon.get(i).getX() - p.getX());
-	      	p1.setY(polygon.get(i).getY() - p.getY()); 
-	      	p2.setX(polygon.get((i+1)%polygon.size()).getX() - p.getX());
-	      	p2.setY(polygon.get((i+1)%polygon.size()).getY() - p.getY());
-	      	angle += angle2D(p1.getX(),p1.getY(),p2.getX(),p2.getY());
-	   	}
-
-	   	if (Math.abs(angle) < Math.PI)
-	   		return(false);
-	   	else
-	   		return(true);
+		  int i, j;
+		  boolean res = false;
+		  int nvert = polygon.size();
+		  for (i = 0, j = nvert-1; i < nvert; j = i++) {
+		    if ( ((polygon.get(i).getY()>point.getY()) != (polygon.get(j).getY()>point.getY())) &&
+		     (point.getX() < (polygon.get(j).getX()-polygon.get(i).getX()) * (point.getY()-polygon.get(i).getY()) / (polygon.get(j).getY()-polygon.get(i).getY()) + polygon.get(i).getX()) )
+		       res = !res;
+		  }
+		  return res;
 	}
 	
 	/**
@@ -227,15 +218,8 @@ public class Ground extends Area {
 		triangleList = delaunay.getTriangleList();
 		List<DTriangle> finalTriangleList = new ArrayList<DTriangle>();
 		for (DTriangle triangle : triangleList){
-			try {
-				if(isInsidePolygon(delaunay.getPoints(),getTriangleCenter(triangle))){
-					finalTriangleList.add(triangle);
-					//triangleList.remove(triangleList.indexOf(triangle));
-					//ANGLE CONSTRAINT : Check if edge is inside the room
-					// If edge is outside, remove the triangles it forms
-				}
-			} catch (DelaunayError e) {
-				e.printStackTrace();
+			if(isInsidePolygon(all_points,getTriangleCenter(triangle))){
+				finalTriangleList.add(triangle);
 			}
 		}
 		/*3) Set up the computed data for jmonkey*/
