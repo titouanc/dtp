@@ -244,6 +244,8 @@ public class Ground extends Area {
 			edges[3 * i + 2] = pointsList.indexOf(finalTriangleList.get(i).getPoint(2));
 		}
 		
+		triangleList = finalTriangleList;
+		System.out.println("Surface : "+ getSurface());
 		
 		
 		Mesh mesh = new Mesh();
