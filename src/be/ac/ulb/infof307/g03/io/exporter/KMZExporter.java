@@ -12,22 +12,21 @@ import java.util.zip.ZipOutputStream;
 
 import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 
 /**
  * @author pierre,walter
  *
  */
-public class KMZExporter {
-	
-	Project project;
-	
+public class KMZExporter extends Exporter {
+		
 	/**
 	 *  Constructor of KMZExporter
 	 * @param project 
 	 */
 	public KMZExporter(Project project){
-		this.project=project;
+		super(project);
 	}
 	
 	/**
@@ -35,6 +34,7 @@ public class KMZExporter {
 	 * @param fileToExport The file in which the object will be write
 	 * @param entity The entity to be exported
 	 */
+	@Override
 	public void export(File fileToExport, Entity entity){ //fileToExport is a .kmz
 		try {
 			// Get the filename without the extension (kmz !=kml)
@@ -59,11 +59,9 @@ public class KMZExporter {
 			DAEFile.delete();
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.exception(e);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.exception(e);
 		}
 		
 	}
@@ -86,9 +84,9 @@ public class KMZExporter {
 			toBeExported.close();
 			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Log.exception(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.exception(e);
 		}
 
 	}

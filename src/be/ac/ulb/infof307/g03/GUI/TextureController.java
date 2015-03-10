@@ -5,8 +5,11 @@ import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -30,25 +33,24 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * @author wmoulart
  * @brief Controller of the JPanel that will open when user wants to change the texture of a group.
  */
-public class TextureController implements ActionListener,MouseListener, Observer {
+public class TextureController implements ActionListener, MouseListener, ItemListener, Observer {
 	// Attributes
 	private TextureView view;
 	private Project project;
 	
 	// Static value
-	private final static int _IMG_WIDTH = 20;
-	private final static int _IMG_HEIGHT = 20;
+	private final static int IMG_WIDTH = 20;
+	private final static int IMG_HEIGHT = 20;
 	
-	//private final static String _CHANGETEXTURE	= "Change Texture";
-	private static String fileToDelete= new String();
+	//private final static String CHANGETEXTURE	= "Change Texture";
 	private String classPath= getClass().getResource("TextureController.class").toString();
 
-	
 	
 	/**
 	 * @param aProject
@@ -106,12 +108,10 @@ public class TextureController implements ActionListener,MouseListener, Observer
 				if(fileToImport.renameTo(destinationMini)){
 					reScale(destinationMini); // Set image to 20x20 format
 					this.view.updatePanel(filename);
-				}
-				else{
+				} else{
 					Log.debug("The new texture has not been imported. Error.");
 				}
-			}
-			else{
+			} else{
 				JOptionPane.showMessageDialog(view, "Only png allowed for the moment");
 				Log.debug("Only png allowed");
 			}
@@ -136,12 +136,10 @@ public class TextureController implements ActionListener,MouseListener, Observer
 				reScale(destinationMini); // Set image to 20x20 format
 				this.view.updatePanel(destinationFull.getAbsolutePath());
 				this.writeToFile(destinationFull.getAbsolutePath()+"\n");			
-			}
-			else{
+			} else{
 				Log.debug("The new texture has not been imported. Error.");
 			}
-		}
-		else{
+		} else{
 			Log.debug("Only .png allowed");
 		}
 	}
@@ -152,6 +150,8 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	 */
 	public void addNewTexture() throws IOException{	
 		final JFileChooser fc = new JFileChooser();
+		FileNameExtensionFilter filterPng = new FileNameExtensionFilter("Portable Network Graphics (PNG)", "png");
+	    fc.setFileFilter(filterPng);
 		int returnVal = fc.showOpenDialog(this.view);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
 			if(!(classPath.subSequence(0, 3).equals("rsr"))){	
@@ -162,8 +162,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
 			    catch (NullPointerException ex){
 			    	Log.exception(ex);	
 			    }   
-			}
-			else{
+			} else{
 				try{		
 					File fileToImport = fc.getSelectedFile();
 					this.addTextureJar(fileToImport);
@@ -190,7 +189,7 @@ public class TextureController implements ActionListener,MouseListener, Observer
     	        bufferWritter.write(addedFilePath);
     	        bufferWritter.close();
     	}catch(IOException e){
-    		e.printStackTrace();
+    		Log.exception(e);
     	}
 	}
 	
@@ -225,10 +224,10 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	      tempFile.renameTo(inFile);	      
 	    }
 	    catch (FileNotFoundException ex) {
-	      ex.printStackTrace();
+	    	Log.exception(ex);
 	    }
 	    catch (IOException ex) {
-	      ex.printStackTrace();
+	    	Log.exception(ex);
 	    }
 	  }
 	
@@ -269,9 +268,9 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	 * @return
 	 */
    private static BufferedImage rescaleImage(BufferedImage originalImage, int type){
-		BufferedImage resizedImage = new BufferedImage(_IMG_WIDTH, _IMG_HEIGHT, type);
+		BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, type);
 		Graphics2D image = resizedImage.createGraphics();
-		image.drawImage(originalImage, 0, 0, _IMG_WIDTH, _IMG_HEIGHT, null);
+		image.drawImage(originalImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
 		image.dispose();
 		return resizedImage;
    }
@@ -281,6 +280,8 @@ public class TextureController implements ActionListener,MouseListener, Observer
     * @return file to be deleted
     */
    public String deleteFile(){
+	   String fileToDelete = this.view.getSelectedTextureName();
+
 	   if(!(classPath.subSequence(0, 3).equals("rsr"))){
 		   File fullDimension=new File(System.getProperty("user.dir") + "/src/be/ac/ulb/infof307/g03/assets/"+fileToDelete+".png");
 		   fullDimension.delete();
@@ -299,67 +300,74 @@ public class TextureController implements ActionListener,MouseListener, Observer
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (SwingUtilities.isLeftMouseButton(e)) {			
-			if (this.view.getCurrentMode().equals("Colors")){
-				this.project.config("texture.selected",this.view.getSelectedColorAsString());
-			}
-			else{
-				if(!(this.view.getSelectedTexture().equals(this.view.getAddFile()))){
-					this.project.config("texture.selected",this.view.getSelectedTexture());
+		// Select the texture
+		int proachestIndex = this.view.getDisplayedList().locationToIndex(e.getPoint());
+		Point proachest = this.view.getDisplayedList().indexToLocation(proachestIndex);
+		if (proachest!=null) {
+			if (Math.abs(e.getY()-proachest.getY())<20) {
+				if (! this.view.getDisplayedList().isSelectedIndex(proachestIndex)) {
+					this.view.getDisplayedList().setSelectedIndex(proachestIndex);
 				}
-				else{
-					try {
-						this.addNewTexture();
-					} catch (IOException e1) {
-						Log.exception(e1);
-						// TODO prévenir l'utilisateur pourquoi ça a pas marché
-					}
-				}
+			} else {
+				this.view.getDisplayedList().clearSelection();
 			}
 		}
-		else if (SwingUtilities.isRightMouseButton(e)){
-			if((this.view.getCurrentMode().equals("Textures"))){
-				if(!(this.view.getSelectedTexture().equals(this.view.getAddFile()))){
-					JPopupMenu PopupMenu = this.view.createPopupMenu();
-					fileToDelete=this.view.getSelectedTexture(); // On a le nom comme Textures/Full/xxx
-					if (PopupMenu != null) {
-						PopupMenu.show(e.getComponent(), e.getX(), e.getY());
-					}					
+		
+		if (SwingUtilities.isLeftMouseButton(e)) {	
+			if (!this.view.getSelectedTextureName().equals(this.view.getAddFile())) {
+				this.project.config("texture.selected",this.view.getSelectedTextureName());
+			} else {
+				try {
+					this.addNewTexture();
+				} catch (IOException e1) {
+					Log.exception(e1);
 				}
-				
-			}		
+			}
+		} else if (SwingUtilities.isRightMouseButton(e)){
+			if (this.view.getCurrentMode().equals(TextureView.TEXTUREMODE)){
+				JPopupMenu PopupMenu = this.view.createPopupMenu();
+				PopupMenu.show(e.getComponent(), e.getX(), e.getY());
+			}	
 		}			
 	}
 		
 
 	@Override
-	public void actionPerformed(ActionEvent event) {
-		// TODO Auto-generated method stub
-		
+	public void actionPerformed(ActionEvent event) {		
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		this.view.updateDisplayedList();
+	}
+
+	public void onDelete() {
+		String toDelete = deleteFile();
+		this.view.deleteTexture(toDelete);
 	}
 	
 }

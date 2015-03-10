@@ -131,16 +131,16 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		try {
 			GeometricDAO<Floor> floorDao = this.daoFactory.getDao(Floor.class);
 			/* If we delete the current floor, set current floor to previous, or next */
-			if (deletingFloor.getUID().equals(this.project.config("floor.current"))){
+			if (deletingFloor.equals(this.project.getSelectionManager().currentFloor())){
 				Floor previous = floorDao.queryForFirst(deletingFloor.getQueryForPreceeding(floorDao));
 				if (previous != null){
-					project.config("floor.current", previous.getUID());
+					this.project.getSelectionManager().setCurrentFloor(previous);
 				} else {
 					Floor next = floorDao.queryForFirst(deletingFloor.getQueryForFollowing(floorDao));
 					if (next != null){
-						project.config("floor.current", next.getUID());
+						this.project.getSelectionManager().setCurrentFloor(next);
 					} else {
-						project.config("floor.current", "");
+						this.project.getSelectionManager().setCurrentFloor(null); // TODO define what to send as current floor
 					}
 				}
 			}
@@ -163,7 +163,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				itemDao.remove(item);
 			}
 		} catch (SQLException err){
-			err.printStackTrace();
+			Log.exception(err);
 		}
 	}
 	
@@ -174,12 +174,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void deleteNode(Object object){
 		if (object instanceof Geometric){
 			Geometric item = (Geometric) object;
-			try {
-				Log.info("DELETE %s", item.toString());
-				this.daoFactory.getDao(item.getClass()).remove(item);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			// If object is a container (Floor, Room, ...), first delete all of its contents
 			if (item instanceof Floor)
 				this.deleteFloorContent((Floor) item);
 			else if (item instanceof Room){
@@ -188,9 +183,17 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 					/* Remove all the room's areas */
 					for (Area area : room.getAreas())
 						this.daoFactory.getDao(area.getClass()).remove(area);
+					this.daoFactory.notifyObservers();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					Log.exception(e);
 				}
+			}
+			// Then delete the object itself
+			try {
+				Log.info("DELETE %s", item.toString());
+				this.daoFactory.getDao(item.getClass()).remove(item);
+			} catch (SQLException e) {
+				Log.exception(e);
 			}
 			this.daoFactory.notifyObservers();
 		}
@@ -201,48 +204,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	 * @param element
 	 */
 	public void deselectElement(Object element) {
-		if (element instanceof Area){
-			Area area = (Area) element;
-			Log.debug("Unselect %s", area.getUID());
-			area.deselect();
-			try {
-				GeometricDAO<Point> pointDao = this.daoFactory.getDao(Point.class);
-				for (Point p : area.getPoints()){
-					p.deselect();
-					pointDao.modify(p);
-				}
-				this.daoFactory.getDao(area.getClass()).modify(area);
-				this.daoFactory.notifyObservers();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} else if (element instanceof Room){
-			Room room = (Room) element;
-			try {
-				GeometricDAO<Point> pointDao = this.daoFactory.getDao(Point.class);
-				for (Point p : room.getPoints()){
-					pointDao.refresh(p);
-					p.deselect();
-					pointDao.modify(p);
-				}
-				this.daoFactory.notifyObservers();
-		
-			} catch (SQLException err){
-				// TODO Auto-generated catch block
-				err.printStackTrace();
-			}
-		} else if (element instanceof Meshable) {
-			Meshable meshable = (Meshable) element;
-			meshable.deselect();
-			try {
-				GeometricDAO<? extends Meshable> meshDao = this.daoFactory.getDao(meshable.getClass());
-				meshDao.modify(meshable);
-				this.daoFactory.notifyObservers();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		this.project.getSelectionManager().unselect(false);
 	}
 
 	/**
@@ -252,50 +214,15 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public void selectElement(Object element) {
 		if (element instanceof Floor){
 			Floor current = (Floor) element;
-			this.project.config("floor.current", current.getUID());
-			System.out.println("CURRENT FLOOR "+this.project.config("floor.current", current.getUID()));
+			this.project.getSelectionManager().setCurrentFloor(current);
 		} else if (element instanceof Area){
 			Area area = (Area) element;
+			this.project.getSelectionManager().select(area.getRoom());
 			Log.debug("Select %s", area.getUID());
-			try {
-				GeometricDAO<Point> pointDao = this.daoFactory.getDao(Point.class);
-				GeometricDAO areaDao = this.daoFactory.getDao(area.getClass());
-				areaDao.refresh(area);
-				area.select();
-				for (Point p : area.getPoints()){
-					p.select();
-					pointDao.modify(p);
-				}
-				areaDao.modify(area);
-				this.daoFactory.notifyObservers();
-			} catch (SQLException ex) {
-				Log.exception(ex);
-			}
-			project.config("floor.current", area.getRoom().getFloor().getUID());
 		} else if (element instanceof Room){
-			try {
-				GeometricDAO<Point> pointDao = this.daoFactory.getDao(Point.class);
-				Room room = (Room) element;
-				for (Point p : room.getPoints()){
-					pointDao.refresh(p);
-					p.select();
-					pointDao.modify(p);
-				}
-				this.daoFactory.notifyObservers();
-				project.config("floor.current", room.getFloor().getUID());
-			} catch (SQLException err){
-				Log.exception(err);
-			}
-		} else if (element instanceof Meshable) {
-			Meshable meshable = (Meshable) element;
-			meshable.select();
-			try {
-				this.daoFactory.getDao(meshable.getClass()).modify(meshable);
-				this.daoFactory.notifyObservers(meshable);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			this.project.getSelectionManager().select((Room) element);
+		} else if (element instanceof Item) {
+			this.project.getSelectionManager().select((Item) element);
 		}
 	}
 
@@ -414,24 +341,22 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
+		// Nothing need to be done here
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		
+		// Nothing need to be done here
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		// Nothing need to be done here	
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		// Nothing need to be done here	
 	}
 
 	@Override
@@ -455,7 +380,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// Nothing need to be done here
 		
 	}
 	
@@ -493,7 +418,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				daoFactory.getDao(Primitive.class).insert(original.clone());
 				daoFactory.notifyObservers();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				Log.exception(e);
 			}
 			
 		}

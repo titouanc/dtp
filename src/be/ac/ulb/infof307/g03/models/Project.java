@@ -24,12 +24,13 @@ public class Project extends Observable {
 	private Dao<Config, String> config = null;
 	private MasterDAO geo = null;
 	private String filename = null;
+	private SelectionManager sm = null;
 
 	/**
 	 * Create a new Project object (needs to be initialized with load() or create())
 	 */
 	public Project() {
-
+		
 	}
 
 	/**
@@ -38,15 +39,17 @@ public class Project extends Observable {
 	 * @throws SQLException
 	 */
 	public void create(String filename) throws SQLException {
-		load(filename);
+		this.db = new JdbcConnectionSource("jdbc:sqlite:" + filename);
+		this.config = DaoManager.createDao(this.db, Config.class);
+		this.filename = filename;
 		TableUtils.createTableIfNotExists(this.db, Config.class);
 		MasterDAO.migrate(this.db);
 		
+		this.sm = new SelectionManager(this);
+		
 		Floor initialFloor = new Floor(7);
 		getGeometryDAO().getDao(Floor.class).create(initialFloor);
-		
-		this.filename = filename;
-		config("floor.current", initialFloor.getUID());
+		getSelectionManager().setCurrentFloor(initialFloor);
 		config("edition.mode", "world");
 		config("camera.mode", "2D");
 		config("mouse.mode", "dragSelect");
@@ -62,6 +65,7 @@ public class Project extends Observable {
 		this.db = new JdbcConnectionSource("jdbc:sqlite:" + filename);
 		this.config = DaoManager.createDao(this.db, Config.class);
 		this.filename = filename;
+		this.sm = new SelectionManager(this);
 	}
 	
 	/**
@@ -119,6 +123,7 @@ public class Project extends Observable {
 			if (entry == null){
 				entry = new Config(name, "");
 				this.config.create(entry);
+				Log.debug("Added a new empty key : ".concat(name));
 			}
 			return entry.getValue();
 		} catch (SQLException err){
@@ -143,6 +148,7 @@ public class Project extends Observable {
 			} else {
 				entry = new Config(name, value);
 				this.config.create(entry);
+				Log.debug("Added a new key : ".concat(name).concat(" with value :").concat(value));
 			}
 			setChanged();
 			notifyObservers(entry);
@@ -162,5 +168,9 @@ public class Project extends Observable {
 		if (this.geo == null)
 			this.geo = new MasterDAO(this.db);
 		return this.geo;
+	}
+	
+	public SelectionManager getSelectionManager(){
+		return this.sm;
 	}
 }

@@ -92,13 +92,15 @@ public class Log {
      */
     public static void exception(Exception ex, String msg,  Object...args){
     	getLogger().log(Level.SEVERE, String.format(msg, args),ex);
+    	ex.printStackTrace();
     }
     
     /**
      * @param ex
      * @param args The arguments for format string
      */
-    public static void exception(Exception ex,  Object...args){
-    	getLogger().log(Level.SEVERE, String.format(ex.getMessage(), args),ex);
+    public static void exception(Exception ex){
+    	getLogger().log(Level.SEVERE, ex.getMessage(),ex);
+    	ex.printStackTrace();
     }
 }

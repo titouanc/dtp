@@ -166,7 +166,9 @@ public class ToolsBarController implements ActionListener, Observer {
 			List<Floor> allFloors = floorDao.queryForAll();
 			// Still no floors in the database, create just one
 			if (allFloors.isEmpty()){
-				floorDao.insert(new Floor());
+				Floor floor = new Floor();
+				this.project.getSelectionManager().setCurrentFloor(floor);
+				floorDao.insert(floor);
 			} else {
 				int minFloorIndex = 0;
 				double height = 0;
@@ -179,7 +181,7 @@ public class ToolsBarController implements ActionListener, Observer {
 				newFloor.setBaseHeight(height);
 				newFloor.setIndex(minFloorIndex + 1);
 				floorDao.insert(newFloor);
-				this.project.config("floor.curren", newFloor.getUID());
+				this.project.getSelectionManager().setCurrentFloor(newFloor);
 			}
 	    	daoFactory.notifyObservers();
 		} catch (SQLException ex) {
@@ -322,8 +324,7 @@ public class ToolsBarController implements ActionListener, Observer {
     			 dao.insert(entity);
     			 daoFactory.notifyObservers();
     		 } catch (SQLException e) {
-    			 // TODO Auto-generated catch block
-    			 e.printStackTrace();
+    			 Log.exception(e);
     		 }
     		 project.config("entity.current", entity.getUID());
     		 project.config("edition.mode", "object");

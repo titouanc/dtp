@@ -1,8 +1,6 @@
 package be.ac.ulb.infof307.g03.models;
 
 import java.io.File;
-
-
 import com.j256.ormlite.field.DatabaseField;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.AssetNotFoundException;
@@ -21,8 +19,6 @@ public abstract class Meshable extends Geometric {
 
 	@DatabaseField
 	private Boolean visible = true;
-	@DatabaseField
-	private Boolean selected = false;
 	@DatabaseField
 	private String texture = "Gray";
 	
@@ -67,28 +63,6 @@ public abstract class Meshable extends Geometric {
 	}
 
 	/**
-	 * Select object
-	 */
-	public final void select() {
-		this.selected = true;
-	}
-
-	/**
-	 * Deselect object
-	 */
-	public final void deselect() {
-		this.selected = false;
-	}
-
-	/**
-	 * Selects object if it is deselected
-	 * Deselects object if it is selected
-	 */
-	public final void toggleSelect() {
-		this.selected = !this.selected;
-	}
-
-	/**
 	 * Status of visibility
 	 * @return True if the Shape is visible
 	 */
@@ -96,22 +70,14 @@ public abstract class Meshable extends Geometric {
 		return this.visible;
 	}
 
-	/**
-	 * Is the object selected?
-	 * @return True if the Shape is selected
-	 */
-	public final Boolean isSelected() {
-		return this.selected;
-	}
-
 	public final String toString() {
 		String prefix = isVisible() ? "" : "*";
-		String suffix = isSelected() ? " [S]" : "";
-		return prefix + innerToString() + suffix;
+		return prefix + innerToString();
 	}
 
 	protected abstract String innerToString();
-
+	protected abstract Boolean drawAsSelected();
+	
 	/**
 	 * Convert a meshable object into a jmonkey mesh-like
 	 * @param material The material to be applied to the result mesh
@@ -130,38 +96,40 @@ public abstract class Meshable extends Geometric {
 		mat.setBoolean("UseMaterialColors", true);
 		
 		mat.setColor("Diffuse", ColorRGBA.Gray);
-		mat.setColor("Ambient", this.isSelected() ? selectedColor : ColorRGBA.Gray);
+		mat.setColor("Ambient", this.drawAsSelected() ? selectedColor : ColorRGBA.Gray);
 		mat.setColor("Specular", ColorRGBA.Gray);
-		
-		try {
-			if((classPath.subSequence(0, 3).equals("rsr"))){
-				if (texture.contains("Colors/")){
-					texture=texture.replace("Colors/", "");					
-				}
-				if (!(texture.contains("Full")) && !(texture.contains("Color"))){
-					texture=texture+"Color";
-				}
-				if (texture.equals("/Textures/Full")){
-					texture="";
-				}
-				if (texture.contains(File.separator)){
-					String[] parts = texture.split(File.separator);
-					String path = "";
-					for ( int i = 0;i<parts.length-1;++i){
-						path +=File.separator+ parts[i];
-					}
-					texture = parts[parts.length-1];
-					assetManager.registerLocator(path, FileLocator.class);
-				}
+
+		if((classPath.subSequence(0, 3).equals("rsr"))){
+			if (texture.contains("Colors/")){
+				texture=texture.replace("Colors/", "");					
 			}
-			else{
-				if(!(texture.endsWith("Color")) && !(texture.endsWith("Full")))
-					texture += "Color";
+			if (!(texture.contains("Full")) && !(texture.contains("Color"))){
+				texture=texture+"Color";
 			}
-		} catch (AssetNotFoundException ex){
-			texture = "GrayColor";
+			if (texture.equals("/Textures/Full")){
+				texture="";
+			}
+			if (texture.contains(File.separator)){
+				String[] parts = texture.split(File.separator);
+				String path = "";
+				for ( int i = 0;i<parts.length-1;++i){
+					path +=File.separator+ parts[i];
+				}
+				texture = parts[parts.length-1];
+				assetManager.registerLocator(path, FileLocator.class);
+			}
 		}
-		mat.setTexture("DiffuseMap", assetManager.loadTexture(texture+".png"));
+		else{
+			if(!(texture.endsWith("Color")) && !(texture.endsWith("Full")))
+				texture += "Color";
+		}
+		
+		try { 
+			mat.setTexture("DiffuseMap", assetManager.loadTexture(texture+".png"));
+		}
+		catch (AssetNotFoundException ex){
+			mat.setTexture("DiffuseMap", assetManager.loadTexture("GrayColor.png"));
+		}
 		return mat;
 	}
 	

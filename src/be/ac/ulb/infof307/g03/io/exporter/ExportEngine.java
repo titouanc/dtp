@@ -2,9 +2,21 @@ package be.ac.ulb.infof307.g03.io.exporter;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.swing.JOptionPane;
+
+import be.ac.ulb.infof307.g03.io.importer.A3DSParser;
+import be.ac.ulb.infof307.g03.io.importer.DAEParser;
+import be.ac.ulb.infof307.g03.io.importer.KmzParser;
+import be.ac.ulb.infof307.g03.io.importer.ObjParser;
+import be.ac.ulb.infof307.g03.io.importer.Parser;
 import be.ac.ulb.infof307.g03.models.Entity;
+import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Project;
+import be.ac.ulb.infof307.g03.utils.Log;
 
 
 /**
@@ -14,6 +26,7 @@ import be.ac.ulb.infof307.g03.models.Project;
  */
 public class ExportEngine {
 
+	private static Map<String, Class> exporterMap = new HashMap();
 	Project project = null;
 
 	/**
@@ -21,6 +34,12 @@ public class ExportEngine {
 	 * @param project The main project
 	 */
 	public ExportEngine(Project project) {
+		if (exporterMap.isEmpty()){
+			exporterMap.put("3ds", A3DSExporter.class);
+			exporterMap.put("obj", OBJExporter.class);
+			exporterMap.put("dae", DAEExporter.class);
+			exporterMap.put("kmz", KMZExporter.class);
+		}
 		this.project = project;
 	}
 
@@ -39,20 +58,24 @@ public class ExportEngine {
 	 * @throws IOException 
 	 */
 	public void handleExport(Entity entity, File fileToExport) throws IOException {
-		String fileName = fileToExport.getName();
-		String extension = getExtension(fileName);
-		if (extension.equals("dae")) {
-			DAEExporter exporter = new DAEExporter(this.project);
-			exporter.export(fileToExport, entity);
-		} else if (extension.equals("obj")) {
-			OBJExporter exporter = new OBJExporter();
-			exporter.export(fileToExport, entity);
-		} else if (extension.equals("3ds")) {
-			A3DSExporter exporter = new A3DSExporter();
-			exporter.export(fileToExport, entity);
-		} else if (extension.equals("kmz")) {
-			KMZExporter exporter = new KMZExporter(this.project);
-			exporter.export(fileToExport, entity);
+		String extension = getExtension(fileToExport.getName());
+		if (exporterMap.containsKey(extension)){
+			this.export(entity, fileToExport.getAbsolutePath(), exporterMap.get(extension));
+		} else {
+			Log.error("Unknown extension %s", extension);
+			JOptionPane.showMessageDialog(null,"File extension " + extension + " is not supported","Export error",JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private void export(Entity entity, String fileName, Class<? extends Exporter> exporterClass) {
+		try {
+			Constructor<? extends Exporter> constr = exporterClass.getConstructor(Project.class);
+			Exporter exporter = constr.newInstance(this.project);
+			exporter.export(new File(fileName), entity);
+		} catch (Exception e) {
+			Log.exception(e);
+			Log.error("Unable to export %s", fileName);
+			JOptionPane.showMessageDialog(null,"Could not export "+ fileName,"Export error",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }
