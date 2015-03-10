@@ -58,21 +58,18 @@ public class Ground extends Area {
 	}
 	
 	/**
-	 * @param edgeToRemove 
-	 * @param triangleList 
-	 * @param edge_to_remove
-	 * @return
+	 * @param triangleToRemove 
+	 * @param trianglesList 
+	 * @return the triangle list without the deleted triangle
 	 */
-	public List<DTriangle> removeTriangle(DEdge edgeToRemove, List<DTriangle> triangleList){
+	public List<DTriangle> removeTriangle(DTriangle triangleToRemove, List<DTriangle> trianglesList){
 		
-		for(DTriangle triangle: triangleList){
-			if(triangle.getEdge(0).equals(edgeToRemove) &&
-			   triangle.getEdge(1).equals(edgeToRemove) &&
-			   triangle.getEdge(2).equals(edgeToRemove)){
-				triangleList.remove(triangleList.indexOf(edgeToRemove));
+		for(DTriangle triangle: trianglesList){
+			if(triangle == triangleToRemove){
+				trianglesList.remove(trianglesList.indexOf(triangleToRemove));
 			}
 		}
-		return triangleList;
+		return trianglesList;
 		
 	}
 	
@@ -81,9 +78,7 @@ public class Ground extends Area {
 		double surface = 0;
 		if(triangleList != null){
 			double triangleSurface = 0;
-			System.out.println(triangleList);
 			for (DTriangle triangle : triangleList){
-				System.out.println("Coucou");
 				triangleSurface = 0;
 				for (DEdge edge : triangle.getEdges()){
 					triangleSurface += edge.get2DLength();
@@ -94,13 +89,85 @@ public class Ground extends Area {
 						(triangleSurface - triangle.getEdge(1).get2DLength())*
 						(triangleSurface - triangle.getEdge(2).get2DLength()));
 				surface += triangleSurface;
-				System.out.println(surface);
 				
 			}
 		}
 		
 		
 		return surface;
+	}
+	
+	/**
+	 * @param triangle
+	 * @return
+	 */
+	public DPoint getTriangleCenter(DTriangle triangle){
+		DPoint returnPoint = null;
+		double x = 0;
+		double y = 0;
+		for (DPoint point : triangle.getPoints()){
+			x += point.getX();
+			y += point.getY();
+		}
+		x/=3;
+		y/=3;
+		try {
+			returnPoint = new DPoint(x,y,(double)getRoom().getFloor().getBaseHeight());
+		} catch (DelaunayError e) {
+			e.printStackTrace();
+		}
+		return returnPoint;
+		
+	}
+	
+	/**
+	 * @param polygon
+	 * @param p 
+	 * @return
+	 * @throws DelaunayError 
+	 */
+	public boolean isInsidePolygon(List<DPoint> polygon,DPoint p) throws DelaunayError
+	{
+		int i;
+	   	double angle=0;
+	   	DPoint p1 = new DPoint();
+	   	DPoint p2 = new DPoint();
+		
+		for (i=0;i<polygon.size();++i) {
+			p1.setX(polygon.get(i).getX() - p.getX());
+	      	p1.setY(polygon.get(i).getY() - p.getY()); 
+	      	p2.setX(polygon.get((i+1)%polygon.size()).getX() - p.getX());
+	      	p2.setY(polygon.get((i+1)%polygon.size()).getY() - p.getY());
+	      	angle += angle2D(p1.getX(),p1.getY(),p2.getX(),p2.getY());
+	   	}
+
+	   	if (Math.abs(angle) < Math.PI)
+	   		return(false);
+	   	else
+	   		return(true);
+	}
+	
+	/**
+	 * @param x1 
+	 * @param y1 
+	 * @param x2 
+	 * @param y2 
+	 * @return the angle between the edges
+	 */
+	public double angle2D(double x1, double y1, double x2, double y2){
+		
+		double dtheta,theta1,theta2;
+		
+		
+		theta1 = Math.atan2(y1,x1);
+		theta2 = Math.atan2(y2,x2);
+		dtheta = theta2 - theta1;
+		while (dtheta > Math.PI)
+			dtheta -= 2*Math.PI;
+		while (dtheta < -Math.PI)
+			dtheta += 2*Math.PI;
+
+		return dtheta ;
 	}
 	
 	
@@ -153,23 +220,24 @@ public class Ground extends Area {
 		try {
 			delaunay.forceConstraintIntegrity();
 			delaunay.processDelaunay();//Error here for concave polygons : too many triangles computed despite the constraint edges
-			System.out.println(delaunay.getTriangleList());
 		} catch (DelaunayError e) {
 			Log.error("Could not process Delaunay's algorithm");
 			e.printStackTrace();
 		}
 		triangleList = delaunay.getTriangleList();
-		
-		List<DEdge> constraintEdgesList = delaunay.getConstraintEdges();
-		List<DEdge> dedges = delaunay.getEdges();
-		for (DEdge edge : dedges){
-			if(! constraintEdgesList.contains(edge)){
-				//ANGLE CONSTRAINT : Check if edge is inside the room
-				// If edge is outside, remove the triangles it forms
-				//triangleList = removeTriangle(edge, triangleList);
+		List<DTriangle> finalTriangleList = new ArrayList<DTriangle>();
+		for (DTriangle triangle : triangleList){
+			try {
+				if(isInsidePolygon(delaunay.getPoints(),getTriangleCenter(triangle))){
+					finalTriangleList.add(triangle);
+					//triangleList.remove(triangleList.indexOf(triangle));
+					//ANGLE CONSTRAINT : Check if edge is inside the room
+					// If edge is outside, remove the triangles it forms
+				}
+			} catch (DelaunayError e) {
+				e.printStackTrace();
 			}
 		}
-		
 		/*3) Set up the computed data for jmonkey*/
 		List<DPoint> pointsList= delaunay.getPoints();
 		Vector3f vertices[] = new Vector3f[shape_n_points];
@@ -178,17 +246,15 @@ public class Ground extends Area {
 			vertices[index] = new Vector3f((float)currentPoint.getX(),(float)currentPoint.getY(),(float)currentPoint.getZ());
 		}
 		
-		int n_triangles = triangleList.size();
+		int n_triangles = finalTriangleList.size();
 		int edges[] = new int[3 * n_triangles];
 		
-		for(int i=0;i<triangleList.size();++i){
-			edges[3 * i] = pointsList.indexOf(triangleList.get(i).getPoint(0));
-			edges[3 * i + 1] = pointsList.indexOf(triangleList.get(i).getPoint(1));
-			edges[3 * i + 2] = pointsList.indexOf(triangleList.get(i).getPoint(2));
+		for(int i=0;i<finalTriangleList.size();++i){
+			edges[3 * i] = pointsList.indexOf(finalTriangleList.get(i).getPoint(0));
+			edges[3 * i + 1] = pointsList.indexOf(finalTriangleList.get(i).getPoint(1));
+			edges[3 * i + 2] = pointsList.indexOf(finalTriangleList.get(i).getPoint(2));
 		}
 		
-		
-		System.out.println("Surface : " + getSurface());
 		
 		
 		Mesh mesh = new Mesh();
