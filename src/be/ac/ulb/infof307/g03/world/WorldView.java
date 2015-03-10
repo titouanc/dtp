@@ -468,6 +468,9 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 							if (node != null)
 								this.rootNode.detachChild(node);
 						}
+						else if (change.getItem() instanceof Room){
+							// Do nothing, the room's Areas will delete themselves
+						}
 					}
 					else if (change.getItem() instanceof Item) 
 						updateItem(change);
