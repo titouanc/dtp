@@ -45,15 +45,15 @@ public class Project extends Observable {
 		TableUtils.createTableIfNotExists(this.db, Config.class);
 		MasterDAO.migrate(this.db);
 		
+		this.sm = new SelectionManager(this);
+		
 		Floor initialFloor = new Floor(7);
 		getGeometryDAO().getDao(Floor.class).create(initialFloor);
-		config("floor.current", initialFloor.getUID());
+		getSelectionManager().setCurrentFloor(initialFloor);
 		config("edition.mode", "world");
 		config("camera.mode", "2D");
 		config("mouse.mode", "dragSelect");
 		config("version.current", "0.3.0");
-		
-		this.sm = new SelectionManager(this);
 	}
 
 	/**

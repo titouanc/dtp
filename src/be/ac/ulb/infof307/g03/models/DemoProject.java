@@ -52,7 +52,7 @@ public class DemoProject {
 			  y = new Point(-20,20,0);
 
 		Floor groundFloor = daoFactory.getDao(Floor.class).queryForEq("index", 0).get(0);
-		proj.config("floor.current", groundFloor.getUID());
+		proj.getSelectionManager().setCurrentFloor(groundFloor);
 		
 		Room r1 = createRoom(groundFloor, "Square room", a, e, f, d);
 		showRoof(r1, daoFactory.getDao(Roof.class)); // nothing on the top of this room
