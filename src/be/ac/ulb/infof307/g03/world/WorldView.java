@@ -179,7 +179,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		gridGeo.rotate(roll90);
 		
 		//Moves the center of the grid 
-		gridGeo.center().move(new Vector3f(0,-50,-0.01f));
+		gridGeo.center().move(new Vector3f(0.5f,-50.5f,-0.01f));
 		rootNode.attachChild(gridGeo);
 	}
 	
