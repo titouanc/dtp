@@ -127,6 +127,7 @@ public class Roof extends Area {
 			throw new IllegalArgumentException();
 		}
 		
+		float height = (float)getRoom().getFloor().getBaseHeight()+(float) getRoom().getFloor().getHeight();
 		/* 1) Add the constraints edges for the delaunay algorithm */
 		for(int i=0;i<all_points.size()-1;++i){
 			Point orig_point = null;
@@ -136,8 +137,8 @@ public class Roof extends Area {
 			try{
 				orig_point = all_points.get(i);
 				dest_point = all_points.get(i+1);
-				orig = new DPoint((float)orig_point.getX(),(float)orig_point.getY(),(float)orig_point.getZ()+(float) getRoom().getFloor().getHeight());
-				dest = new DPoint((float)dest_point.getX(),(float)dest_point.getY(),(float)dest_point.getZ()+(float) getRoom().getFloor().getHeight());
+				orig = new DPoint((float)orig_point.getX(),(float)orig_point.getY(),height);
+				dest = new DPoint((float)dest_point.getX(),(float)dest_point.getY(),height);
 			} catch (DelaunayError e) {
 				e.printStackTrace();
 			}
