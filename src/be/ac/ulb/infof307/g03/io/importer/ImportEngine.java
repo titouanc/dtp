@@ -48,7 +48,7 @@ public class ImportEngine {
 	 * @param fileToImport The file containing the object
 	 */
 	public void handleImport(File fileToImport) {
-		String extension = getExtension(fileToImport.getName());
+		String extension = getExtension(fileToImport.getName()).toLowerCase();
 		if (parserMap.containsKey(extension)){
 			this.parse(fileToImport.getAbsolutePath(), parserMap.get(extension));
 			this.dao.notifyObservers();
