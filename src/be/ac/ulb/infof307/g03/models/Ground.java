@@ -30,6 +30,7 @@ import com.jme3.util.BufferUtils;
 @DatabaseTable(daoClass=GeometricDAO.class)
 public class Ground extends Area {
 	List<DTriangle> triangleList = null;
+	List<DTriangle> finalTriangleList = new ArrayList<DTriangle>();
 	
 	/**
 	 * Create a new empty ground object, and create a new group for it
@@ -75,6 +76,7 @@ public class Ground extends Area {
 	
 	@Override
 	public double getSurface(){
+		computeTriangles();
 		double surface = 0;
 		if(triangleList != null){
 			double triangleSurface = 0;
@@ -161,10 +163,10 @@ public class Ground extends Area {
 		return dtheta ;
 	}
 	
-	
-
-	@Override
-	public final Spatial toSpatial(Material material) {
+	/**
+	 * @return
+	 */
+	public ConstrainedMesh computeTriangles(){
 
 		List<Point> all_points = getPoints();
 		int shape_n_points = all_points.size();
@@ -215,13 +217,26 @@ public class Ground extends Area {
 			Log.error("Could not process Delaunay's algorithm");
 			e.printStackTrace();
 		}
+		finalTriangleList = new ArrayList<DTriangle>();
 		triangleList = delaunay.getTriangleList();
-		List<DTriangle> finalTriangleList = new ArrayList<DTriangle>();
 		for (DTriangle triangle : triangleList){
 			if(isInsidePolygon(all_points,getTriangleCenter(triangle))){
 				finalTriangleList.add(triangle);
 			}
 		}
+		
+		triangleList = finalTriangleList;
+		return delaunay;
+		
+	}
+
+	@Override
+	public final Spatial toSpatial(Material material) {
+		ConstrainedMesh delaunay = computeTriangles();
+		System.out.println("Surface : "+ getSurface());
+		List<Point> all_points = getPoints();
+		int shape_n_points = all_points.size();
+
 		/*3) Set up the computed data for jmonkey*/
 		List<DPoint> pointsList= delaunay.getPoints();
 		Vector3f vertices[] = new Vector3f[shape_n_points];
@@ -244,23 +259,19 @@ public class Ground extends Area {
 			edges[3 * i + 2] = pointsList.indexOf(finalTriangleList.get(i).getPoint(2));
 		}
 		
-		triangleList = finalTriangleList;
-		System.out.println("Surface : "+ getSurface());
-		
-		
-		Mesh mesh = new Mesh();
-	  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
-	  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
-	  	
-	  	Vector2f[] texCoord = new Vector2f[4];
-	  	texCoord[0] = new Vector2f(0,0);
-	  	texCoord[1] = new Vector2f(1,0);
-	  	texCoord[2] = new Vector2f(0,1);
-	  	texCoord[3] = new Vector2f(1,1);
-	  	mesh.setBuffer(Type.TexCoord, 2, BufferUtils.createFloatBuffer(texCoord));
-	  	mesh.updateBound();
-		Geometry res = new Geometry(getUID(), mesh);
-		res.setMaterial(material);
+			Mesh mesh = new Mesh();
+		  	mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
+		  	mesh.setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(edges));
+		  	
+		  	Vector2f[] texCoord = new Vector2f[4];
+		  	texCoord[0] = new Vector2f(0,0);
+		  	texCoord[1] = new Vector2f(1,0);
+		  	texCoord[2] = new Vector2f(0,1);
+		  	texCoord[3] = new Vector2f(1,1);
+		  	mesh.setBuffer(Type.TexCoord, 2, BufferUtils.createFloatBuffer(texCoord));
+		  	mesh.updateBound();
+			Geometry res = new Geometry(getUID(), mesh);
+			res.setMaterial(material);
 		return res;
 	}
 }
