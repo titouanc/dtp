@@ -4,8 +4,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JPopupMenu;
 
@@ -199,6 +197,9 @@ public class ObjectListController implements MouseListener {
 	public void mouseReleased(MouseEvent e) {
 	}
 	
+	/**
+	 * @return The current floor
+	 */
 	public Floor getCurrentFloor(){
 		return this.project.getSelectionManager().currentFloor();
 	}

@@ -17,7 +17,6 @@ import javax.swing.JButton;
 
 import be.ac.ulb.infof307.g03.models.Config;
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.utils.Log;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -401,7 +400,7 @@ public class ToolsBarView extends JToolBar implements Observer  {
 
 	/**
 	 * Set the tool drag select selected
-	 * @param b 
+	 * @param b Boolean
 	 */
 	public void setDragSelectSelected(boolean b) {
 		_navigationModule.cursorButton.setSelected(b);

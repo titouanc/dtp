@@ -200,6 +200,16 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 				try {
 					Log.info("DELETE %s", item.toString());
 					this.daoFactory.getDao(item.getClass()).remove(item);
+					if (item instanceof Area){
+						Room rm = ((Area) item).getRoom();
+						if (item instanceof Ground && rm.getRoof() == null && rm.getWall() == null){
+							deleteNode(rm);
+						}else if (rm.getGround() == null && item instanceof Roof && rm.getWall() == null){
+							deleteNode(rm);
+						}else if (rm.getGround() == null && rm.getRoof() == null && item instanceof Wall){
+							deleteNode(rm);
+						}
+					}
 				} catch (SQLException e) {
 					Log.exception(e);
 				}

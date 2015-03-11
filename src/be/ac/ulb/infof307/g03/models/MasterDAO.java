@@ -68,6 +68,11 @@ public class MasterDAO extends Observable {
 		}
 	}
 	
+	/**
+	 * Return the geometric corresponding to the uid
+	 * @param uid The uid of a geometric
+	 * @return The geometric corresponding uid
+	 */
 	public Geometric getByUID(String uid){
 		String parts[] = uid.split("-");
 		Geometric res = null;
@@ -163,6 +168,10 @@ public class MasterDAO extends Observable {
 		notifyObservers();
 	}
 
+	/**
+	 * Add a change to the queued
+	 * @param chg The new change
+	 */
 	public void addChange(Change chg) {
 		setChanged();
 		this.changes.add(chg);

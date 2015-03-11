@@ -10,7 +10,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.SplashScreen;
 import java.sql.SQLException;
-import java.awt.SplashScreen;
 
 import javax.swing.*;
 

@@ -350,7 +350,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		    Material sphereMat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
 		    sphereMat.setColor("Color",new ColorRGBA(0.8f,0.9f,0.2f,0.99f));
 		    sphereMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		    sphereMat.getAdditionalRenderState().setDepthTest(false);
 		    sphere.setMaterial(sphereMat);
 		    sphere.setLocalTranslation(point.toVector3f().setZ((float) floor.getBaseHeight()));
 		    rootNode.attachChild(sphere);
@@ -371,6 +370,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			}
 	}
 	
+	/**
+	 * Re-draw the primitive
+	 * @param primitive The primitive to be drawn
+	 */
 	public void redrawPrimitive(Primitive primitive){
 		Spatial spatial = rootNode.getChild(primitive.getUID());
 		if (spatial != null){
