@@ -29,6 +29,7 @@ public abstract class CanvasController {
 	protected CameraContext cameraContext = null;
     protected Geometric movingGeometric = null;
     protected String mouseMode;
+    protected boolean snapToGrid = false;
 	
 	/**
 	 * The canvas controller constructor
@@ -108,7 +109,12 @@ public abstract class CanvasController {
         /* Get the position of the point along the ray, given its Z coordinate */
         float t = (Z - pos.getZ())/dir.getZ();
         Vector3f onPlane = pos.add(dir.mult(t));
-        return new Vector3f(onPlane.getX(),onPlane.getY(), Z);
+        onPlane.setZ(Z);
+        if (this.snapToGrid){
+        	onPlane.x = Math.round(onPlane.x);
+        	onPlane.y = Math.round(onPlane.y);
+        }
+        return onPlane;
     }
     
     /**
@@ -130,9 +136,12 @@ public abstract class CanvasController {
 	abstract public void mouseMoved(float value);
 	
 	/**
-	 * Toggle if shift pressed
+	 * Enable/disable snap to grid functionnality
+	 * @param value True if snap to grid enabled
 	 */
-	abstract public void toggleShift();
+	public void setSnapToGrid(boolean value){
+		this.snapToGrid = value;
+	}
 	
 	/**
 	 * Called when user click left on the canvas
