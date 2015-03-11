@@ -141,7 +141,8 @@ public class TextureView extends JPanel {
     private JComboBox comboBox = null;
 
 	/**
-	 * @param newControler
+	 * The controller of the texture view class
+	 * @param controler The view's controller
 	 */
 	public TextureView(TextureController controler) {   
 		super(new BorderLayout());
