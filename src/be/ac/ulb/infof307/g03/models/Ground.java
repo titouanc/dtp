@@ -141,29 +141,6 @@ public class Ground extends Area {
 	}
 	
 	/**
-	 * @param x1 
-	 * @param y1 
-	 * @param x2 
-	 * @param y2 
-	 * @return the angle between the edges
-	 */
-	public double angle2D(double x1, double y1, double x2, double y2){
-		
-		double dtheta,theta1,theta2;
-		
-		
-		theta1 = Math.atan2(y1,x1);
-		theta2 = Math.atan2(y2,x2);
-		dtheta = theta2 - theta1;
-		while (dtheta > Math.PI)
-			dtheta -= 2*Math.PI;
-		while (dtheta < -Math.PI)
-			dtheta += 2*Math.PI;
-
-		return dtheta ;
-	}
-	
-	/**
 	 * @return
 	 */
 	public ConstrainedMesh computeTriangles(){
@@ -212,7 +189,7 @@ public class Ground extends Area {
 		/* 2) Polygon triangulation to make a surface using Delaunay's algorithm*/
 		try {
 			delaunay.forceConstraintIntegrity();
-			delaunay.processDelaunay();//Error here for concave polygons : too many triangles computed despite the constraint edges
+			delaunay.processDelaunay();
 		} catch (DelaunayError e) {
 			Log.error("Could not process Delaunay's algorithm");
 			e.printStackTrace();
@@ -233,7 +210,6 @@ public class Ground extends Area {
 	@Override
 	public final Spatial toSpatial(Material material) {
 		ConstrainedMesh delaunay = computeTriangles();
-		System.out.println("Surface : "+ getSurface());
 		List<Point> all_points = getPoints();
 		int shape_n_points = all_points.size();
 
