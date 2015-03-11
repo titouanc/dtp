@@ -121,9 +121,9 @@ public abstract class CanvasController {
 	 */
 	public void setTexture(Meshable clickedItem,String newTexture) throws SQLException {
 		clickedItem.setTexture(newTexture);
-		GeometricDAO<? extends Meshable> dao = this.project.getGeometryDAO().getDao(clickedItem.getClass());
+		GeometricDAO<? extends Meshable> dao = this.project.getMasterDAO().getDao(clickedItem.getClass());
 		dao.modify(clickedItem);
-		this.project.getGeometryDAO().notifyObservers();
+		this.project.getMasterDAO().notifyObservers();
 	}
 
 	/**

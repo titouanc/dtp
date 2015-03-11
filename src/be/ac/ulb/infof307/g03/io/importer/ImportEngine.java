@@ -33,7 +33,7 @@ public class ImportEngine {
 			parserMap.put("kmz", KmzParser.class);
 		}
 		try {
-			this.dao = project.getGeometryDAO();
+			this.dao = project.getMasterDAO();
 		} catch (SQLException e) {
 			Log.exception(e);
 		}

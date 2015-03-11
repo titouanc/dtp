@@ -42,7 +42,7 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 	public ObjectTreeController(Project project) {
 		this.project = project;
 		try {
-			this.daoFactory = project.getGeometryDAO();
+			this.daoFactory = project.getMasterDAO();
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}

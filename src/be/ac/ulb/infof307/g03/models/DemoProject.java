@@ -25,7 +25,7 @@ public class DemoProject {
 		Project proj = new Project();
 		proj.create(":memory:");
 		
-		MasterDAO daoFactory = proj.getGeometryDAO();
+		MasterDAO daoFactory = proj.getMasterDAO();
 		Point a = new Point(0, 0, 0),
 			  c = new Point(8, 8, 0),
 			  d = new Point(0, 8, 0),

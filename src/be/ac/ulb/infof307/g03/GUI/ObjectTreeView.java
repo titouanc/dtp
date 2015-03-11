@@ -264,7 +264,7 @@ public class ObjectTreeView extends JTree implements Observer {
 		this.project = project;
 		
 		try {
-			this.daoFactory = project.getGeometryDAO();
+			this.daoFactory = project.getMasterDAO();
 			this.daoFactory.addObserver(this);
 		} catch (SQLException ex) {
 			Log.exception(ex);

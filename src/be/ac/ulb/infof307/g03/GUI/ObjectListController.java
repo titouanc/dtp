@@ -28,7 +28,7 @@ public class ObjectListController implements MouseListener {
 		this.view = new ObjectListView(this,project);
 		this.project = project;
 		try {
-			this.daoFactory = project.getGeometryDAO();
+			this.daoFactory = project.getMasterDAO();
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}

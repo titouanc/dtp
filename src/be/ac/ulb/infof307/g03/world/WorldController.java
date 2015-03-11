@@ -73,7 +73,7 @@ public class WorldController extends CanvasController implements Observer {
     	movingPoint.setX(newPos.x);
     	movingPoint.setY(newPos.y);
         try {
-        	MasterDAO dao = this.project.getGeometryDAO();
+        	MasterDAO dao = this.project.getMasterDAO();
         	dao.getDao(Point.class).modify(movingPoint);
         	if (finalMove) 
         		movingGeometric = null;
@@ -93,7 +93,7 @@ public class WorldController extends CanvasController implements Observer {
 		this.lastMousePos = getXYForMouse(0);
 		if (finalMove) 
 			try {
-	    		MasterDAO dao = this.project.getGeometryDAO();
+	    		MasterDAO dao = this.project.getMasterDAO();
 	    		dao.getDao(Item.class).modify(moving);
 	    		movingGeometric = null;
 	    		dao.notifyObservers();
@@ -131,7 +131,7 @@ public class WorldController extends CanvasController implements Observer {
     	Point lastPoint=new Point(newPos.x, newPos.y, 0);
 
 		try {
-        	MasterDAO daoFactory = this.project.getGeometryDAO();
+        	MasterDAO daoFactory = this.project.getMasterDAO();
         	GeometricDAO<Point> pointDao = daoFactory.getDao(Point.class);
         	Point near = pointDao.queryForFirst(lastPoint.getQueryForNear(pointDao, 1));
         	if (near != null){
@@ -193,7 +193,7 @@ public class WorldController extends CanvasController implements Observer {
      */
     public void finalizeConstruct(){
     	try {
-			MasterDAO daoFactory = this.project.getGeometryDAO();
+			MasterDAO daoFactory = this.project.getMasterDAO();
 	    	GeometricDAO<Point> pointDao = daoFactory.getDao(Point.class);
 			// Minimum 3 points to build a room
 	    	if (this.inConstruction.size() >= 3){
@@ -257,7 +257,7 @@ public class WorldController extends CanvasController implements Observer {
             Geometry selected = results.getClosestCollision().getGeometry();
             
             try {
-            	MasterDAO dao = this.project.getGeometryDAO();
+            	MasterDAO dao = this.project.getMasterDAO();
                 // Get associated Geometric from database
                 clicked = dao.getByUID(selected.getName());
                 

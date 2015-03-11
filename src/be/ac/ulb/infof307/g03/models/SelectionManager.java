@@ -29,7 +29,7 @@ public class SelectionManager implements Observer {
 	
 	SelectionManager(Project project){
 		try {
-			this.master = project.getGeometryDAO();
+			this.master = project.getMasterDAO();
 			this.unselectAll();
 			this.master.addObserver(this);
 			this.currentFloor = this.getFirstFloor();

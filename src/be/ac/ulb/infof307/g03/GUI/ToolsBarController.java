@@ -118,7 +118,7 @@ public class ToolsBarController implements ActionListener, Observer {
 		project = aProject;  
 		aProject.addObserver(this);
 		try {
-			project.getGeometryDAO().addObserver(this);
+			project.getMasterDAO().addObserver(this);
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
@@ -161,7 +161,7 @@ public class ToolsBarController implements ActionListener, Observer {
      */
     public void onFloorNew(){
 		try {
-			MasterDAO daoFactory = project.getGeometryDAO();
+			MasterDAO daoFactory = project.getMasterDAO();
 			GeometricDAO<Floor> floorDao = daoFactory.getDao(Floor.class);
 			List<Floor> allFloors = floorDao.queryForAll();
 			// Still no floors in the database, create just one
@@ -241,7 +241,7 @@ public class ToolsBarController implements ActionListener, Observer {
      */
     public void onConstruction(){
     	try {
-    		GeometricDAO<Floor> floorDao = project.getGeometryDAO().getDao(Floor.class);
+    		GeometricDAO<Floor> floorDao = project.getMasterDAO().getDao(Floor.class);
 			if( floorDao.queryForAll().isEmpty()){
 				Log.info("User try to switch to construction mode, but there is no floor");
 				JOptionPane.showMessageDialog(view, "You have to create a floor first");
@@ -319,7 +319,7 @@ public class ToolsBarController implements ActionListener, Observer {
     	 if (aName != null) {
     		 Entity entity = new Entity(aName);
     		 try {
-    			 MasterDAO daoFactory = project.getGeometryDAO();
+    			 MasterDAO daoFactory = project.getMasterDAO();
     			 GeometricDAO<Entity> dao = daoFactory.getDao(Entity.class);
     			 dao.insert(entity);
     			 daoFactory.notifyObservers();
@@ -370,7 +370,7 @@ public class ToolsBarController implements ActionListener, Observer {
 		else if (obs instanceof MasterDAO){
 			if (project.config("mouse.mode").equals("construct")){
 				try {
-					if( project.getGeometryDAO().getDao(Floor.class).queryForAll().isEmpty()){
+					if( project.getMasterDAO().getDao(Floor.class).queryForAll().isEmpty()){
 						// if no more floor and user has selected the construct
 						view.setDragSelectSelected(true);
 						onDragSelectMode();

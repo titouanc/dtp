@@ -118,7 +118,7 @@ public class ObjectListView extends JList implements Observer {
 		setVisibleRowCount(-1);
 		setCellRenderer(new MyCellRenderer());
 		try {
-			daoFactory = project.getGeometryDAO();
+			daoFactory = project.getMasterDAO();
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}

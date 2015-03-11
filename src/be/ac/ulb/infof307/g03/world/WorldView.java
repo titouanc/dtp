@@ -78,7 +78,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		this.queuedChanges = new LinkedList<Change>();
 		this.setSettings(settings);
 		try {
-			this.daoFactory= project.getGeometryDAO();
+			this.daoFactory= project.getMasterDAO();
 			this.daoFactory.addObserver(this);
 		} catch (SQLException ex) {
 			Log.exception(ex);

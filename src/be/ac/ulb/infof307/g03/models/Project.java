@@ -48,7 +48,7 @@ public class Project extends Observable {
 		this.sm = new SelectionManager(this);
 		
 		Floor initialFloor = new Floor(7);
-		getGeometryDAO().getDao(Floor.class).create(initialFloor);
+		getMasterDAO().getDao(Floor.class).create(initialFloor);
 		getSelectionManager().setCurrentFloor(initialFloor);
 		config("edition.mode", "world");
 		config("camera.mode", "2D");
@@ -98,12 +98,12 @@ public class Project extends Observable {
 		MasterDAO.migrate(newDB);
 		
 		/* Copy data */
-		new MasterDAO(newDB).copyFrom(getGeometryDAO());
+		new MasterDAO(newDB).copyFrom(getMasterDAO());
 		for (Config c : this.config.queryForAll())
 			newDAO.create(c);
 		
 		/* Replace current DB handler with new one */
-		getGeometryDAO().resetConnection(newDB);
+		getMasterDAO().resetConnection(newDB);
 		this.db.close();
 		this.db = newDB;
 		this.config = newDAO;
@@ -164,7 +164,7 @@ public class Project extends Observable {
 	 * @return A Data Access Object on all geometric models.
 	 * @throws SQLException
 	 */
-	public MasterDAO getGeometryDAO() throws SQLException {
+	public MasterDAO getMasterDAO() throws SQLException {
 		if (this.geo == null)
 			this.geo = new MasterDAO(this.db);
 		return this.geo;

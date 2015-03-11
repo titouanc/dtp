@@ -37,7 +37,7 @@ public class StatisticsController implements Observer {
 	public StatisticsController(Project project){
 		this.project = project;
 		try {
-			this.master = project.getGeometryDAO();
+			this.master = project.getMasterDAO();
 			this.master.addObserver(this);
 			this.project.addObserver(this);
 		} catch (SQLException e) {
@@ -235,7 +235,7 @@ public class StatisticsController implements Observer {
 	public String getObjectStat() {
 		Entity entity =null;
 		try {
-			entity = (Entity) project.getGeometryDAO().getByUID(project.config("entity.current"));
+			entity = (Entity) project.getMasterDAO().getByUID(project.config("entity.current"));
 		} catch (SQLException e) {
 			Log.exception(e);
 		}

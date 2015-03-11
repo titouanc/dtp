@@ -40,7 +40,7 @@ public class ObjectController extends CanvasController implements Observer {
 		super(view, appSettings);
 
 		try {
-			this.currentEntity = (Entity) this.project.getGeometryDAO().getByUID(this.project.config("entity.current"));
+			this.currentEntity = (Entity) this.project.getMasterDAO().getByUID(this.project.config("entity.current"));
 			this.view.makeScene(this.currentEntity);
 		} catch (SQLException e) {
 			Log.exception(e);
@@ -64,9 +64,9 @@ public class ObjectController extends CanvasController implements Observer {
     		}
     	}
     	try {
-			GeometricDAO<Primitive> dao = this.project.getGeometryDAO().getDao(Primitive.class);
+			GeometricDAO<Primitive> dao = this.project.getMasterDAO().getDao(Primitive.class);
 			dao.modify(this.builtPrimitive);
-			this.project.getGeometryDAO().notifyObservers();
+			this.project.getMasterDAO().notifyObservers();
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
@@ -90,10 +90,10 @@ public class ObjectController extends CanvasController implements Observer {
     	movingPrimitive.setTranslation(new Vector3f(v.x,v.y,movingPrimitive.getTranslation().z));
     	if (finalMove)
     		try {
-    			GeometricDAO<Primitive> dao = this.project.getGeometryDAO().getDao(Primitive.class);
+    			GeometricDAO<Primitive> dao = this.project.getMasterDAO().getDao(Primitive.class);
     			dao.modify(movingPrimitive);
     			movingGeometric = null;
-    			this.project.getGeometryDAO().notifyObservers();
+    			this.project.getMasterDAO().notifyObservers();
     		} catch (SQLException err){
     			Log.exception(err);
     		}
@@ -111,12 +111,12 @@ public class ObjectController extends CanvasController implements Observer {
 		Vector3f mousePos = getXYForMouse(0f);
 		this.savedCenter = new Vector2f(mousePos.x,mousePos.y);
 		try {
-			GeometricDAO<Primitive> dao = this.project.getGeometryDAO().getDao(Primitive.class);
+			GeometricDAO<Primitive> dao = this.project.getMasterDAO().getDao(Primitive.class);
 			this.builtPrimitive = new Primitive(this.currentEntity,type);
 			this.builtPrimitive.setScale(new Vector3f(0,0,0));
 			this.builtPrimitive.setTranslation(new Vector3f(this.savedCenter.x,this.savedCenter.y,0));
 			dao.insert(this.builtPrimitive);
-			this.project.getGeometryDAO().notifyObservers();
+			this.project.getMasterDAO().notifyObservers();
 		} catch (SQLException ex) {
 			Log.exception(ex);
 		}
@@ -150,7 +150,7 @@ public class ObjectController extends CanvasController implements Observer {
             Geometry selected = results.getClosestCollision().getGeometry();
             
             try {
-            	MasterDAO dao = this.project.getGeometryDAO();
+            	MasterDAO dao = this.project.getMasterDAO();
                 // Get associated Geometric from database
                 clicked = dao.getByUID(selected.getName());
                 
