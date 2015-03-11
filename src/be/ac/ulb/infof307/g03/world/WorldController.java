@@ -33,7 +33,6 @@ public class WorldController extends CanvasController implements Observer {
 	private Spatial endWall = null;
 	private List<Spatial> liveWalls = new ArrayList<Spatial>() ;
 	private Vector3f lastMousePos = null;
-	private boolean shiftPressed = false;
     
 	// Attributes
     private List<Point> inConstruction = new LinkedList <Point>();
@@ -74,10 +73,6 @@ public class WorldController extends CanvasController implements Observer {
     	Vector3f newPos = getXYForMouse((float) getCurrentFloor().getBaseHeight());
     	movingPoint.setX(newPos.x);
     	movingPoint.setY(newPos.y);
-    	if (shiftPressed){
-    		movingPoint.setX(Math.round(newPos.x));
-        	movingPoint.setY(Math.round(newPos.y));
-    	}
         try {
         	MasterDAO dao = this.project.getGeometryDAO();
         	dao.getDao(Point.class).modify(movingPoint);
@@ -129,13 +124,6 @@ public class WorldController extends CanvasController implements Observer {
 	}
 	
     
-    /**
-     * Toggle selection for Shift
-     */
-    public void toggleShift(){
-    	shiftPressed=!shiftPressed;
-    }
-
     /**
      * Add the points in the Point List when user click to create his wall
      */

@@ -520,7 +520,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		inputManager.addMapping(RIGHT,			new MouseAxisTrigger(0, false));
 		
         inputManager.addMapping(SHIFT, 			new KeyTrigger(KeyInput.KEY_LSHIFT));
-
+        inputManager.addMapping(SHIFT,          new KeyTrigger(KeyInput.KEY_RSHIFT));
 		
 		inputManager.addListener(this, RIGHTCLICK, LEFTCLICK, UP, DOWN, LEFT, RIGHT,SHIFT);
 	}
@@ -578,7 +578,7 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			}
 		}
 		else if (name.equals(SHIFT)){ // If Shift is Pressed
-			this.controller.toggleShift();
+			this.controller.setSnapToGrid(value);
 		}
 	}
 	

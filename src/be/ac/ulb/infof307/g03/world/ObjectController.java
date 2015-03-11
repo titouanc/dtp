@@ -51,7 +51,7 @@ public class ObjectController extends CanvasController implements Observer {
 	}
 
 	private void updateShapeDisplay(boolean finalUpdate) {
-    	Vector3f mousePos = getXYForMouse(0);
+    	Vector3f mousePos = this.getXYForMouse(0);
     	Vector2f currPos = new Vector2f(mousePos.x,mousePos.y);
     	float dist = currPos.distance(this.savedCenter);
 		float dn = dist / FastMath.pow(3, 0.3333f);
@@ -222,11 +222,5 @@ public class ObjectController extends CanvasController implements Observer {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void toggleShift() {
-		// TODO Auto-generated method stub
-		
 	}
 }
