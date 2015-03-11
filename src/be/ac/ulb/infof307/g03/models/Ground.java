@@ -100,8 +100,9 @@ public class Ground extends Area {
 	}
 	
 	/**
+	 * Get the center of a triangle
 	 * @param triangle
-	 * @return
+	 * @return the center
 	 */
 	public DPoint getTriangleCenter(DTriangle triangle){
 		DPoint returnPoint = null;
@@ -123,9 +124,10 @@ public class Ground extends Area {
 	}
 	
 	/**
+	 * Checks if a point is inside a polygon
 	 * @param polygon
 	 * @param point 
-	 * @return
+	 * @return true if the point is inside, false otherwise
 	 */
 	public boolean isInsidePolygon(List<Point> polygon, DPoint point )
 	{
@@ -141,7 +143,8 @@ public class Ground extends Area {
 	}
 	
 	/**
-	 * @return
+	 * Compute the triangles generated via the delaunay algorithm
+	 * @return the mesh created by delaunay's algorithm
 	 */
 	public ConstrainedMesh computeTriangles(){
 

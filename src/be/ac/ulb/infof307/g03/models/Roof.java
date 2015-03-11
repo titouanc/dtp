@@ -58,9 +58,12 @@ public class Roof extends Area {
 	@Override
 	public String getUIDPrefix() {
 		return "roof";
-	}/**
+	}
+
+	/**
+	 * Get the center of a triangle
 	 * @param triangle
-	 * @return
+	 * @return the center
 	 */
 	public DPoint getTriangleCenter(DTriangle triangle){
 		DPoint returnPoint = null;
@@ -80,11 +83,12 @@ public class Roof extends Area {
 		return returnPoint;
 		
 	}
-	
+
 	/**
+	 * Checks if a point is inside a polygon
 	 * @param polygon
 	 * @param point 
-	 * @return
+	 * @return true if the point is inside, false otherwise
 	 */
 	public boolean isInsidePolygon(List<Point> polygon, DPoint point )
 	{
@@ -99,9 +103,10 @@ public class Roof extends Area {
 		  return res;
 	}
 	
-	
+
 	/**
-	 * @return
+	 * Compute the triangles generated via the delaunay algorithm
+	 * @return the mesh created by delaunay's algorithm
 	 */
 	public ConstrainedMesh computeTriangles(){
 
@@ -109,7 +114,6 @@ public class Roof extends Area {
 		int shape_n_points = all_points.size();
 		if (shape_n_points == 0)
 			return null;
-		float height = (float) getRoom().getFloor().getBaseHeight() + (float) getRoom().getFloor().getHeight();
 		
 		ConstrainedMesh delaunay = new ConstrainedMesh();
 		
