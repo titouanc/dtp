@@ -97,7 +97,6 @@ public class Log {
     
     /**
      * @param ex
-     * @param args The arguments for format string
      */
     public static void exception(Exception ex){
     	getLogger().log(Level.SEVERE, ex.getMessage(),ex);

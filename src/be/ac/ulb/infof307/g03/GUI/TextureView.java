@@ -128,7 +128,10 @@ public class TextureView extends JPanel {
 	private Vector<String> textureFiles = new Vector <String>();
 	
 	// Different String
-	public final static String COLORMODE = "Colors";
+	private final static String COLORMODE = "Colors";
+	/**
+	 * Texture mode
+	 */
 	public final static String TEXTUREMODE = "Textures";
 	private final static String ADDTEXTURE= "Add a new Texture...";
 	private String classPath= getClass().getResource("TextureView.class").toString();
@@ -157,6 +160,9 @@ public class TextureView extends JPanel {
 		this.updateDisplayedList();
     }
 
+	/**
+	 * @return The displayed list of color/texture
+	 */
 	public JList getDisplayedList() {
 		return this.displayedList;
 	}
@@ -177,6 +183,9 @@ public class TextureView extends JPanel {
         this.add(typeSelectionPanel,BorderLayout.PAGE_START);
 	}
 
+	/**
+	 * Add the material choice
+	 */
 	public void addMaterialChoice(){
         this.displayedList = new JList();
         this.displayedList.setCellRenderer(new MyCellRenderer());
@@ -193,6 +202,9 @@ public class TextureView extends JPanel {
 		this.add(scrollPane,BorderLayout.CENTER);
 	}
 	
+	/**
+	 * Update the color/texture displayed list
+	 */
 	public void updateDisplayedList() {
 		this.displayedList.removeAll();
 		if (this.getCurrentMode().equals(COLORMODE)) {
@@ -408,6 +420,10 @@ public class TextureView extends JPanel {
 		}
 	}
 
+	/**
+	 * Delete the texture to be deleted
+	 * @param toDelete The texture to delete
+	 */
 	public void deleteTexture(String toDelete) {
 		textureFiles.remove(toDelete);
 		updateUI();				
