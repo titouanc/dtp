@@ -365,6 +365,9 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
 		this.view.updateDisplayedList();
 	}
 
+	/**
+	 * When user click on delete texture
+	 */
 	public void onDelete() {
 		String toDelete = deleteFile();
 		this.view.deleteTexture(toDelete);

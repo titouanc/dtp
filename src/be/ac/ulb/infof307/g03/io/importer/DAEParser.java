@@ -25,7 +25,6 @@ import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Primitive;
 import be.ac.ulb.infof307.g03.models.Triangle;
 import be.ac.ulb.infof307.g03.models.Vertex;
-import be.ac.ulb.infof307.g03.utils.Log;
 
 /**
  * @author julian

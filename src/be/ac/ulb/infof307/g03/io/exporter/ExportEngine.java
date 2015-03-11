@@ -8,13 +8,8 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
-import be.ac.ulb.infof307.g03.io.importer.A3DSParser;
-import be.ac.ulb.infof307.g03.io.importer.DAEParser;
-import be.ac.ulb.infof307.g03.io.importer.KmzParser;
-import be.ac.ulb.infof307.g03.io.importer.ObjParser;
-import be.ac.ulb.infof307.g03.io.importer.Parser;
+
 import be.ac.ulb.infof307.g03.models.Entity;
-import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
 

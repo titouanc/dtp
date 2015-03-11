@@ -20,6 +20,7 @@ public class A3DSExporter extends Exporter {
 	
 	/**
 	 *  Constructor of A3DSExporter
+	 * @param project The main project
 	 */
 	public A3DSExporter(Project project){
 		super(project);

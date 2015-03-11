@@ -10,13 +10,10 @@ import com.jme3.system.AppSettings;
 import com.jme3.system.JmeContext;
 
 import be.ac.ulb.infof307.g03.camera.CameraContext;
-import be.ac.ulb.infof307.g03.models.Area;
 import be.ac.ulb.infof307.g03.models.Geometric;
 import be.ac.ulb.infof307.g03.models.GeometricDAO;
-import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Meshable;
 import be.ac.ulb.infof307.g03.models.Project;
-import be.ac.ulb.infof307.g03.models.Selectionable;
 
 /**
  * @author pierre
