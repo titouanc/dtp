@@ -29,7 +29,7 @@ meetings.pdf: meetings.tex
 	pdflatex $<
 
 meetings.tex: pv
-	/bin/echo "\\documentclass[a4paper]{article} \\usepackage{framed} \\usepackage{fullpage} \\usepackage[french]{babel} \\usepackage[utf8]{inputenc} \\usepackage[T1]{fontenc}" > $@
+	/bin/echo "\\documentclass[a4paper]{article} \\usepackage{framed} \\usepackage{fullpage} \\usepackage[french]{babel} \\usepackage[utf8]{inputenc} \\usepackage[T1]{fontenc} \\usepackage{float}" > $@
 	/bin/echo "\\title{PV des réunions} \\author{Groupe 3} \\begin{document} \\maketitle \\tableofcontents" >> $@
 	cat pv/main.tex >> $@
 	/bin/echo "\\end{document}" >> $@
