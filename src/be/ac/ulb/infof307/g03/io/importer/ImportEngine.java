@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
-import be.ac.ulb.infof307.g03.models.Entity;
 import be.ac.ulb.infof307.g03.models.MasterDAO;
 import be.ac.ulb.infof307.g03.models.Project;
 import be.ac.ulb.infof307.g03.utils.Log;
@@ -21,8 +20,6 @@ import be.ac.ulb.infof307.g03.utils.Log;
 public class ImportEngine {
 	private static Map<String, Class> parserMap = new HashMap();
 	private MasterDAO dao = null;
-	private Project project = null;
-	private Entity entity = null;
 	
 	/**
 	 * Constructor of the class
@@ -40,7 +37,6 @@ public class ImportEngine {
 		} catch (SQLException e) {
 			Log.exception(e);
 		}
-		this.project = project;
 	}
 	
 	/**
@@ -58,13 +54,6 @@ public class ImportEngine {
 		}
 	}
 	
-	private String getName(String fileName) {
-		int i = fileName.lastIndexOf('.');
-		if (i > 0) {
-			return fileName.substring(0, i);
-		}
-		return ""; 
-	}
 	
 	private String getExtension(String fileName) {
 		int i = fileName.lastIndexOf('.');

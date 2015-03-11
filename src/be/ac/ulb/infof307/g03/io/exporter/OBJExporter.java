@@ -21,6 +21,7 @@ public class OBJExporter extends Exporter{
 	
 	/**
 	 *  Constructor of OBJExporter
+	 * @param project The main project
 	 */
 	public OBJExporter(Project project){
 		super(project);

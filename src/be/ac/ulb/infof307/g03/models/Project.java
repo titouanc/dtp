@@ -170,6 +170,9 @@ public class Project extends Observable {
 		return this.geo;
 	}
 	
+	/**
+	 * @return The selection manager
+	 */
 	public SelectionManager getSelectionManager(){
 		return this.sm;
 	}
