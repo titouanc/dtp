@@ -46,7 +46,6 @@ public class SelectionManager implements Observer {
 	
 	/**
 	 * Unselect all the selected objects in database
-	 * @throws SQLException
 	 */
 	public void unselectAll() {
 		this.selected = null;

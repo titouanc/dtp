@@ -6,7 +6,6 @@ import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.LayoutFocusTraversalPolicy;
 
 /**
  * @author pierre

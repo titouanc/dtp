@@ -370,6 +370,10 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 			}
 	}
 	
+	/**
+	 * Re-draw the primitive
+	 * @param primitive The primitive to be drawn
+	 */
 	public void redrawPrimitive(Primitive primitive){
 		Spatial spatial = rootNode.getChild(primitive.getUID());
 		if (spatial != null){
