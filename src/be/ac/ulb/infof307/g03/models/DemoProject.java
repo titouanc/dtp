@@ -60,10 +60,10 @@ public class DemoProject {
 		createRoom(groundFloor, "Irregular room", a, d, c, c, g,k, i,j, h);
 		createRoom(groundFloor, "Rectangular room", f, d, c, l, m);
 		
-		createGround(groundFloor, "Jardin-gauche", "GrassFull", n , o , p ,q);
-		createGround(groundFloor, "Jardin-droite", "GrassFull", v , w , x ,y);
-		createGround(groundFloor, "Jardin-arrière", "GrassFull", q , s , r ,v);
-		createGround(groundFloor, "Chemin", "Gray", r , s , t ,u);
+		createGround(groundFloor, "Left-Garden", "GrassFull", n , o , p ,q);
+		createGround(groundFloor, "Right-Garden", "GrassFull", v , w , x ,y);
+		createGround(groundFloor, "Back-Garden", "GrassFull", q , s , r ,v);
+		createGround(groundFloor, "Trail", "Gray", r , s , t ,u);
 		
 		Floor firstFloor = new Floor();
 		firstFloor.setBaseHeight(groundFloor.getHeight());
