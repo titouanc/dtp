@@ -257,7 +257,6 @@ public class StatisticsController implements Observer {
 	 */
 	public void updateHTMLWorld(){
 		Selectionable selected = this.project.getSelectionManager().selected();
-		Log.debug("bonjour %s",selected);
 		if (selected != null && selected instanceof Room){
 			Room rm = (Room) selected;
 			view.editText(getRoomStat(rm));

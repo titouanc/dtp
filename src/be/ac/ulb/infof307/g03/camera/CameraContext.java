@@ -165,7 +165,6 @@ public class CameraContext implements AnalogListener, ActionListener, Observer {
 	}
 	
 	private void updateController(String value) {
-		Log.debug("[DEBUG] CameraContext controller updated : " + value);
 		if (value.equals("2D")) {
 			setcontroller(new Camera2D(this.camera));
 		} else if (value.equals("3D")) {

@@ -227,7 +227,6 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		} else if (element instanceof Area){
 			Area area = (Area) element;
 			this.project.getSelectionManager().select(area.getRoom());
-			Log.debug("Select %s", area.getUID());
 		} else if (element instanceof Room){
 			this.project.getSelectionManager().select((Room) element);
 		} else if (element instanceof Item) {

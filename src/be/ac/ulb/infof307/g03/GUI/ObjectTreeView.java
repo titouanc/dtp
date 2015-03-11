@@ -170,7 +170,6 @@ public class ObjectTreeView extends JTree implements Observer {
 	 * @throws SQLException
 	 */
 	public void createTree() throws SQLException{
-		Log.debug("createTree");
 		root.removeAllChildren();
 		for (Floor floor : this.daoFactory.getDao(Floor.class).queryForAll()){
 			DefaultMutableTreeNode floorNode = createNode(floor);
@@ -205,7 +204,6 @@ public class ObjectTreeView extends JTree implements Observer {
 	 * Empty the tree
 	 */
 	public void clearTree() {
-		Log.debug("clearTree");
 		for (DefaultMutableTreeNode node : this.nodes.values()) {
 			node.removeFromParent();
 			this.nodes.remove(node);
@@ -332,7 +330,6 @@ public class ObjectTreeView extends JTree implements Observer {
 			}
 			/* Creation: insert in right place in tree */
 			else if (change.isCreation() && ! this.nodes.containsKey(changed.getUID())){
-				Log.debug("Tree view create node for %s", changed.getUID());
 				if (! isShown(changed))
 					continue;
 				

@@ -332,7 +332,6 @@ public class WorldController extends CanvasController implements Observer {
 
 	@Override
 	public void onLeftClick() {
-		Log.debug("Left Click");
 		if (this.mouseMode.equals("construct")) { // We're in construct mode and left-click: add a point 
 			construct();
 		} else if (this.mouseMode.equals("dragSelect")) {
@@ -342,7 +341,6 @@ public class WorldController extends CanvasController implements Observer {
 
 	@Override
 	public void onLeftRelease() {
-		Log.debug("Left Release");
 		if (movingGeometric != null) { // We're moving a point, and mouse button up: stop the point here
 			if (movingGeometric instanceof Point)
 				dropMovingPoint(true);
@@ -353,7 +351,6 @@ public class WorldController extends CanvasController implements Observer {
 
 	@Override
 	public void onRightClick() {
-		Log.debug("Right Click");
 		if (this.inConstruction.size() > 0) { // We're building a shape, and right-click: finish shape
 			finalizeConstruct();
 		} else if (this.mouseMode.equals("dragSelect")){

@@ -304,7 +304,6 @@ public class ToolsBarView extends JToolBar implements Observer  {
      * Set world mode selected
      */
     public void setWorldModeSelected() {
-		Log.debug("Switch to world mode");
     	_navigationModule.worldButton.setSelected(true);
     }
     
@@ -312,7 +311,6 @@ public class ToolsBarView extends JToolBar implements Observer  {
      * Set object mode selected
      */
     public void setObjectModeSelected() {
-    	Log.debug("Switch to object mode");
     	_navigationModule.objectButton.setSelected(true);
     }
 

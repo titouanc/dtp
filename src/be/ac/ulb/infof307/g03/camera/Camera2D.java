@@ -59,7 +59,6 @@ public class Camera2D extends CameraController {
 	
 	@Override
 	public void resetCamera(WorldView wv){
-		Log.debug("Camera2D reset to 2D");
 		Vector<Geometry> shapes = wv.getShapes();
 		  float minX = 0,minY = 0,maxX = 0,maxY = 0,X = 0, Y= 0,Z = 0;
 		  int offset=17;
