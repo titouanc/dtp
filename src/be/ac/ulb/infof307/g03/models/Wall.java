@@ -63,7 +63,7 @@ public class Wall extends Area {
 	}
 	
 	@Override
-	public double getSurface(){		
+	public double getSurface(){
 		return Math.sqrt(Math.pow((double)start.x-end.x,2) + Math.pow((double)start.y-end.y,2)) * getRoom().getFloor().getHeight();
 	}
 	
