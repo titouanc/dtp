@@ -119,13 +119,12 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 		if(!(classPath.subSequence(0, 3).equals("rsr"))){		
 			this.assetManager.registerLocator(System.getProperty("user.dir") +"/src/be/ac/ulb/infof307/g03/assets/", FileLocator.class);
 		}
-		Log.debug("DONE");
         final SplashScreen splash = SplashScreen.getSplashScreen();
         try{
         	splash.close();
         }
         catch (NullPointerException ex){
-        	Log.debug("[DEBUG] No splashscreen");
+        	Log.exception(ex, "No splashscreen");
         }
         	
         		
@@ -334,7 +333,6 @@ public class WorldView extends SimpleApplication implements Observer, ActionList
 	 * @param change
 	 */
 	private void showPoints(Room room){
-		Log.debug("Showing points for room %s", room.getUID());
 		for (Point point : room.getPoints()){
 			this.drawOnePoint(point, room.getFloor());
 		}

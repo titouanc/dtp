@@ -109,11 +109,11 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
 					reScale(destinationMini); // Set image to 20x20 format
 					this.view.updatePanel(filename);
 				} else{
-					Log.debug("The new texture has not been imported. Error.");
+					Log.error("The new texture has not been imported. Error.");
 				}
 			} else{
 				JOptionPane.showMessageDialog(view, "Only png allowed for the moment");
-				Log.debug("Only png allowed");
+				Log.error("Only png allowed");
 			}
 	    }
 	    catch (NullPointerException ex){
@@ -137,10 +137,10 @@ public class TextureController implements ActionListener, MouseListener, ItemLis
 				this.view.updatePanel(destinationFull.getAbsolutePath());
 				this.writeToFile(destinationFull.getAbsolutePath()+"\n");			
 			} else{
-				Log.debug("The new texture has not been imported. Error.");
+				Log.error("The new texture has not been imported. Error.");
 			}
 		} else{
-			Log.debug("Only .png allowed");
+			Log.error("Only .png allowed");
 		}
 	}
 	

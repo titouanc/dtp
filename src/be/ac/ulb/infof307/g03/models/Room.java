@@ -88,7 +88,7 @@ public class Room extends Geometric implements Selectionable {
 	 * @return the volume of the room
 	 */
 	public double getVolume(){
-		if (this.ground != null && this.floor != null)
+		if (this.ground != null && this.floor != null && this.wall != null)
 				return this.ground.getSurface()*this.floor.getHeight();
 		return 0;
 	}

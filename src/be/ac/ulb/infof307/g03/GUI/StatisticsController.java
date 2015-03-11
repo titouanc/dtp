@@ -118,16 +118,16 @@ public class StatisticsController implements Observer {
 		html.append(itemList.size());
 		html.append("</p>");
 		html.append("<p>Living surface : ");
-		html.append(habitableSurface);
+		html.append(round(habitableSurface,1));
 		html.append("</p>");
 		html.append("<p>Walls surface : ");
-		html.append(wallSurface);
+		html.append(round(wallSurface,1));
 		html.append("</p>");
 		html.append("<p>Floors number : ");
 		html.append(floorList.size());
 		html.append("</p>");
 		html.append("<p>Total volume : ");
-		html.append(roomsVolume);
+		html.append(round(roomsVolume,1));
 		html.append("</p>");
 		html.append("</html>");
 		
@@ -135,6 +135,15 @@ public class StatisticsController implements Observer {
 		
 	}
 	
+	private static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    long tmp = Math.round(value);
+	    return (double) tmp / factor;
+	}
+
 	/**
 	 * Return html formated string of
 	 *  statistics of the selected room
@@ -158,14 +167,14 @@ public class StatisticsController implements Observer {
 		roomsVolume += selectedRoom.getVolume();
 
 		html.append("<p>Living surface : ");
-		html.append(habitableSurface);
+		html.append(round(habitableSurface,1));
 		html.append("</p>");
 		html.append("<p>Walls surface : ");
-		html.append(wallSurface);
+		html.append(round(wallSurface,1));
 		html.append("</p>");
 		html.append("</p>");
 		html.append("<p>Room volume : ");
-		html.append(roomsVolume);
+		html.append(round(roomsVolume,1));
 		html.append("</p>");
 		
 		Floor fl = selectedRoom.getFloor();
@@ -189,13 +198,13 @@ public class StatisticsController implements Observer {
 		html.append(fl.toString());
 		html.append("</h4>");
 		html.append("<p>Living surface : ");
-		html.append(habitableSurfaceFloor);
+		html.append(round(habitableSurfaceFloor,1));
 		html.append("</p>");
 		html.append("<p>Walls surface : ");
-		html.append(wallSurfaceFloor);
+		html.append(round(wallSurfaceFloor,1));
 		html.append("</p>");
 		html.append("<p>Total volume : ");
-		html.append(roomsVolumeVolume);
+		html.append(round(roomsVolumeVolume,1));
 		html.append("</p>");
 		html.append("</html>");
 		
@@ -257,7 +266,6 @@ public class StatisticsController implements Observer {
 	 */
 	public void updateHTMLWorld(){
 		Selectionable selected = this.project.getSelectionManager().selected();
-		Log.debug("bonjour %s",selected);
 		if (selected != null && selected instanceof Room){
 			Room rm = (Room) selected;
 			view.editText(getRoomStat(rm));
