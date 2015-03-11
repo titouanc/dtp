@@ -100,13 +100,16 @@ public class StatisticsController implements Observer {
 			Log.exception(e);
 		}
 		double habitableSurface = 0;
+		double surfaceTotal = 0;
 		double wallSurface = 0;
 		double roomsVolume = 0;
 		for (Room room : roomList) {
 			Ground gr = room.getGround();
-			if (gr != null)
-				habitableSurface += room.getGround().getSurface();
 			Wall wl = room.getWall();
+			if (gr != null )
+				surfaceTotal += room.getGround().getSurface();
+			if (gr != null && wl != null)
+				habitableSurface += room.getGround().getSurface();
 			if (wl != null)
 				wallSurface += room.getWall().getSurface();
 			roomsVolume += room.getVolume();
@@ -119,6 +122,9 @@ public class StatisticsController implements Observer {
 		html.append("</p>");
 		html.append("<p>Living surface : ");
 		html.append(round(habitableSurface,1));
+		html.append("</p>");
+		html.append("<p>Total surface : ");
+		html.append(round(surfaceTotal,1));
 		html.append("</p>");
 		html.append("<p>Walls surface : ");
 		html.append(round(wallSurface,1));
@@ -166,7 +172,7 @@ public class StatisticsController implements Observer {
 			wallSurface += selectedRoom.getWall().getSurface();
 		roomsVolume += selectedRoom.getVolume();
 
-		html.append("<p>Living surface : ");
+		html.append("<p>Surface : ");
 		html.append(round(habitableSurface,1));
 		html.append("</p>");
 		html.append("<p>Walls surface : ");
@@ -181,13 +187,16 @@ public class StatisticsController implements Observer {
 		ForeignCollection<Room> roomList = fl.getRooms();
 		
 		double habitableSurfaceFloor = 0;
+		double totalSurfaceFloor = 0;
 		double wallSurfaceFloor = 0;
 		double roomsVolumeVolume = 0;
 		for (Room room : roomList) {
 			Ground grf = room.getGround();
-			if (grf != null)
-				habitableSurfaceFloor += grf.getSurface();
 			Wall wlf = room.getWall();
+			if (grf != null)
+				totalSurfaceFloor += grf.getSurface();
+			if (grf != null && wlf != null)
+				habitableSurfaceFloor += grf.getSurface();
 			if (wlf != null)
 				wallSurfaceFloor += wlf.getSurface();
 			roomsVolumeVolume += room.getVolume();
@@ -199,6 +208,9 @@ public class StatisticsController implements Observer {
 		html.append("</h4>");
 		html.append("<p>Living surface : ");
 		html.append(round(habitableSurfaceFloor,1));
+		html.append("</p>");
+		html.append("<p>Total surface : ");
+		html.append(round(totalSurfaceFloor,1));
 		html.append("</p>");
 		html.append("<p>Walls surface : ");
 		html.append(round(wallSurfaceFloor,1));
