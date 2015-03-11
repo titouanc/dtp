@@ -185,7 +185,9 @@ public class ObjectListController implements MouseListener {
 		}
 		if (e.getButton()==MouseEvent.BUTTON1) {
 			Entity selectedEntity = (Entity) view.getSelectedValue();
-			this.onEditAction(selectedEntity);
+			if (selectedEntity != null){
+				this.onEditAction(selectedEntity);
+			}
 		}
 		if (e.getButton()==MouseEvent.BUTTON3) {
 			JPopupMenu popupMenu = this.view.createPopupMenu();
