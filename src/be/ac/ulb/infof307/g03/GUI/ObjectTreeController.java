@@ -373,15 +373,16 @@ public class ObjectTreeController implements TreeSelectionListener, MouseListene
 		if (SwingUtilities.isRightMouseButton(e)) {
 			// select the closest element near the click on the tree
 			TreePath path = this.view.getPathForLocation(e.getX(), e.getY());
-			DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-
-			if (clickedNode == null){
-				Log.error("Right-clicked null node");
-			} else {
-				Geometric clickedItem = (Geometric) clickedNode.getUserObject();
-				JPopupMenu menuForItem = this.view.createPopupMenu(clickedItem);
-				if (menuForItem != null) 
-					menuForItem.show(e.getComponent(), e.getX(), e.getY());
+			if (path != null){
+				DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+				if (clickedNode == null){
+					Log.error("Right-clicked null node");
+				} else {
+					Geometric clickedItem = (Geometric) clickedNode.getUserObject();
+					JPopupMenu menuForItem = this.view.createPopupMenu(clickedItem);
+					if (menuForItem != null) 
+						menuForItem.show(e.getComponent(), e.getX(), e.getY());
+				}
 			}
 		}
 	}
